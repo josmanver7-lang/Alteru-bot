@@ -248,52 +248,76 @@ client.once('clientReady', async () => {
   }
 });
 
+const processedMessages = new Set();
+
 client.on('messageCreate', async (message) => {
 
-  console.log(
-    'Mensaje recibido:',
-    message.id,
-    'por',
-    process.pid
-  );
+if (processedMessages.has(message.id)) {
+return;
+}
 
-  if (message.author.bot) return;
+processedMessages.add(message.id);
 
-});
+setTimeout(() => {
+processedMessages.delete(message.id);
+}, 60000);
 
-  const prompt = content.slice(2).trim();
+console.log(
+'Mensaje recibido:',
+message.id,
+'por',
+process.pid
+);
 
-  if (!prompt) {
-    await message.reply(
-      'Escribe algo después de !a'
-    );
-    return;
-  }
+if (message.author.bot) return;
 
-  try {
-    if (!loreCache) {
-      loreCache = await loadAlteruLore();
-    }
+const content = message.content.trim();
 
-    await message.channel.sendTyping();
+if (!content.toLowerCase().startsWith('!a')) {
+return;
+}
 
-    const reply = await askOpenRouter(
-      message.author.id,
-      prompt,
-      loreCache
-    );
+const prompt = content.slice(2).trim();
 
-    await message.reply(
-      reply.slice(0, 2000)
-    );
-  } catch (err) {
-    console.error(err);
+if (!prompt) {
+await message.reply(
+'Escribe algo después de !a'
+);
+return;
+}
 
-    await message.reply(
-      'Ahora mismo no puedo responder.'
-    );
-  }
+try {
+
+```
+if (!loreCache) {
+  loreCache = await loadAlteruLore();
+}
+
+await message.channel.sendTyping();
+
+const reply = await askOpenRouter(
+  message.author.id,
+  prompt,
+  loreCache
+);
+
+await message.reply(
+  reply.slice(0, 2000)
+);
+```
+
+} catch (err) {
+
+```
+console.error(err);
+
+await message.reply(
+  'Ahora mismo no puedo responder.'
+);
+```
+
+}
+
 });
 
 client.login(DISCORD_TOKEN);
-        
