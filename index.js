@@ -209,9 +209,12 @@ async function askOpenRouter(userId, userMessage, lore) {
   const data = await res.json();
 
   const reply =
-    data?.choices?.[0]?.message?.content?.trim() ||
-    'No pude generar una respuesta.';
+  data?.choices?.[0]?.message?.content?.trim();
 
+if (!reply) {
+  console.log(JSON.stringify(data, null, 2));
+  return 'Necesito un momento para responder a eso.';
+}
   history.push({
     role: 'user',
     content: userMessage
