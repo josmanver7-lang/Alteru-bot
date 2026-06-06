@@ -259,7 +259,6 @@ client.on('messageCreate', async (message) => {
 
   if (message.author.bot) return;
 
-  ...
 });
 
   const prompt = content.slice(2).trim();
