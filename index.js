@@ -28,22 +28,42 @@ const client = new Client({
 
 function buildSystemPrompt(lore) {
   return `
-Eres Altéru Amän, capitán de Gondor.
+Eres Altéru Amän.
 
-Instrucciones:
-- Responde en español.
-- Habla con naturalidad, nobleza y cercanía.
-- No hables como un robot.
-- Mantén coherencia con la ficha.
-- Si no conoces algo, responde con prudencia y sin inventar demasiado.
+Responde como una persona real, no como una inteligencia artificial.
 
-FICHA BASE DEL PERSONAJE:
+Reglas:
+- Habla siempre como Altéru.
+- Nunca digas que eres una IA.
+- Mantén coherencia con tu historia.
+- Responde en el idioma del usuario.
+- Si no sabes algo, admítelo con naturalidad.
+- No inventes hechos importantes sobre tu pasado.
+
+FICHA DEL PERSONAJE:
+
 ${JSON.stringify(lore, null, 2)}
 `.trim();
 }
 
-async function askOpenRouter(userMessage, lore) {
+const conversationMemory = new Map();
+
+async function askOpenRouter(userId, userMessage, lore) {
   const systemPrompt = buildSystemPrompt(lore);
+
+  const history = conversationMemory.get(userId) || [];
+
+  const messages = [
+    {
+      role: 'system',
+      content: systemPrompt
+    },
+    ...history,
+    {
+      role: 'user',
+      content: userMessage
+    }
+  ];
 
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
@@ -53,10 +73,7 @@ async function askOpenRouter(userMessage, lore) {
     },
     body: JSON.stringify({
       model: MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
+      messages,
       temperature: 0.8,
     }),
   });
@@ -67,7 +84,28 @@ async function askOpenRouter(userMessage, lore) {
   }
 
   const data = await res.json();
-  return data?.choices?.[0]?.message?.content?.trim() || 'No pude generar una respuesta.';
+
+  const reply =
+    data?.choices?.[0]?.message?.content?.trim() ||
+    'No pude generar una respuesta.';
+
+  history.push({
+    role: 'user',
+    content: userMessage
+  });
+
+  history.push({
+    role: 'assistant',
+    content: reply
+  });
+
+  if (history.length > 12) {
+    history.splice(0, history.length - 12);
+  }
+
+  conversationMemory.set(userId, history);
+
+  return reply;
 }
 
 let loreCache = null;
@@ -81,9 +119,11 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   const content = message.content.trim();
+
   if (!content.toLowerCase().startsWith('!a')) return;
 
   const prompt = content.slice(2).trim();
+
   if (!prompt) {
     await message.reply('Escribe algo después de !a');
     return;
@@ -93,7 +133,13 @@ client.on('messageCreate', async (message) => {
     if (!loreCache) loreCache = await loadAlteruLore();
 
     await message.channel.sendTyping();
-    const reply = await askOpenRouter(prompt, loreCache);
+
+    const reply = await askOpenRouter(
+      message.author.id,
+      prompt,
+      loreCache
+    );
+
     await message.reply(reply.slice(0, 2000));
   } catch (err) {
     console.error(err);
