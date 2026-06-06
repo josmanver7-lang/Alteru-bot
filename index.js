@@ -248,14 +248,19 @@ client.once('clientReady', async () => {
   }
 });
 
-client.on('messageCreate', async message => {
+client.on('messageCreate', async (message) => {
+
+  console.log(
+    'Mensaje recibido:',
+    message.id,
+    'por',
+    process.pid
+  );
+
   if (message.author.bot) return;
 
-  const content = message.content.trim();
-
-  if (!content.toLowerCase().startsWith('!a')) {
-    return;
-  }
+  ...
+});
 
   const prompt = content.slice(2).trim();
 
