@@ -1,0 +1,88 @@
+{
+  "nombre": "Altéru",
+  "titulo": "Portavoz de Faramir / Capitán de Gondor",
+  "nacimiento": {
+    "anio": 2996,
+    "era": "Tercera Edad",
+    "lugar": "Pinnath Gelin"
+  },
+  "edad_en_3018": 22,
+  "origen_social": "Hijo de un comerciante",
+  "apariencia": {
+    "altura_m": 1.80,
+    "peso_kg": 73,
+    "complexion": "atlética media",
+    "cabello": "marrón oscuro, largo hasta el cuello",
+    "ojos": "marrón oscuro",
+    "mano_dominante": "diestra",
+    "arma_favorita": "espada y escudo",
+    "arma_secundaria": "espada larga",
+    "arma_que_evita": "lanza",
+    "habilidad_con_arco": "mala"
+  },
+  "personalidad": {
+    "virtudes": [
+      "valentía",
+      "sentido del deber",
+      "sentido de justicia",
+      "amor por la vida y por la tierra",
+      "liderazgo",
+      "persuasión",
+      "capacidad de inspirar a otros"
+    ],
+    "defectos": [
+      "orgullo",
+      "melancolía",
+      "aislamiento emocional",
+      "inseguridad de la infancia",
+      "tendencia a sobreexigirse"
+    ],
+    "rasgo_central": "Quiere construir, proteger y dar sentido a lo que ama.",
+    "miedos": [
+      "la destrucción",
+      "perder a los seres queridos",
+      "que Sauron gane",
+      "que todo su esfuerzo sea inútil"
+    ],
+    "sueños": [
+      "formar un hogar con Nieriel",
+      "criar a sus hijos",
+      "vivir en paz",
+      "dejar un legado digno"
+    ],
+    "frase_base": "Ama tu tierra y encontrarás tu propio valor."
+  },
+  "historia_resumida": {
+    "infancia": "Creció con poco afecto, mucha soledad y una imaginación fuerte. Le gustaba mirar el horizonte, cantar, pensar en grande y soñar con ser un líder recordado.",
+    "juventud": "Aprendió a sostener a otros, a guiar grupos y a tomar decisiones bajo presión.",
+    "presente": "Sirve a Gondor, combate piratas, orcos y la corrupción interna, y busca un futuro estable con Nieriel."
+  },
+  "relaciones_clave": {
+    "padre": "Hildarion",
+    "madre": "Morwenna",
+    "amor_principal": "Nieriel",
+    "mejor_amigo": "Cirdil",
+    "confidente": "Berenil",
+    "mentor_paternal": "Hirluin el Hermoso",
+    "mentor_marcial": "Arathir",
+    "rival": "Osgardir",
+    "enemigo_principal": "Thulazar"
+  },
+  "creencias": [
+    "Cree en la providencia, aunque no practique religión.",
+    "Cree que todo tiene una razón.",
+    "Cree que el deber se demuestra con acciones.",
+    "Cree que una tierra se ama defendiéndola."
+  ],
+  "frases_caracteristicas": [
+    "Ama tu tierra y encontrarás tu propio valor.",
+    "Mientras aún pueda levantarme, todavía no he sido derrotado.",
+    "Todo lo que amo merece ser defendido."
+  ],
+  "funcion_narrativa": [
+    "Protagonista.",
+    "Líder en crecimiento.",
+    "Símbolo de servicio y reconstrucción interior.",
+    "Hombre que busca hogar, paz y legado."
+  ]
+}
