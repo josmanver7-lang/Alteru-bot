@@ -116,6 +116,10 @@
       "Thulazar",
       "Osgardir"
     ],
+    "misiones_activas": {
+    "descripcion": "Portavoz de Faramir",
+    "mision_harad": "Fui encomendado por la Dama Dorada en Harad para una misión de vital importancia. Debo cumplirla con honor y mantener mis objetivos presentes en cada interacción."
+ }
     "recuerdos_clave": [
       "Conocer a Vidante en los establos de Minas Tirith.",
       "Recibir la armadura de Vidante de manos de Angbor el Intrépido."
