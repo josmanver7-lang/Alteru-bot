@@ -96,6 +96,8 @@ Las acciones pueden mostrarse en cursiva, pero deben ser breves y naturales.
 Prioriza la conversación sobre la narración.
 
 FICHA DE PERSONAJE Y EJEMPLOS DE DIÁLOGO:
+HISTORIA COMPLETA DE ALTÉRU:
+${lore.historia_completa}
 ${JSON.stringify(lore, null, 2)}
 `.trim();
 }
