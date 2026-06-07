@@ -1,6 +1,6 @@
 import db from './database.js';
 import { Client, GatewayIntentBits } from 'discord.js';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises'; // writeFile ya no se usa aquí
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -54,22 +54,6 @@ async function loadQuestions() {
     console.error('Error cargando preguntas.json:', err);
     return [];
   }
-}
-
-async function loadPoints() {
-  try {
-    const raw = await readFile(path.join(__dirname, 'puntos.json'), 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-
-async function savePoints(points) {
-  await writeFile(
-    path.join(__dirname, 'puntos.json'),
-    JSON.stringify(points, null, 2)
-  );
 }
 
 // ==========================================
@@ -182,29 +166,38 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   const content = message.content.trim();
-  
-  // Expresión regular para dividir argumentos omitiendo espacios múltiples consecutivos
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
 
   // COMANDO !puntos
   if (command === '!puntos') {
-    const points = await loadPoints();
-    return message.reply(`🏆 Tienes ${points[message.author.id] || 0} puntos.`);
+    try {
+      const points = await db.getPoints(message.author.id);
+      return message.reply(`🏆 Tienes ${points} puntos.`);
+    } catch (err) {
+      console.error('Error al consultar puntos:', err);
+      return message.reply('⚠️ Hubo un error al consultar tus puntos.');
+    }
   }
 
   // COMANDO !ranking
   if (command === '!ranking') {
-    const points = await loadPoints();
-    const ranking = Object.entries(points)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10);
+    try {
+      const ranking = await db.getRanking(10);
+      
+      if (!ranking || ranking.length === 0) {
+        return message.reply('🏆 El ranking está vacío por ahora.');
+      }
 
-    let text = '🏆 Ranking Global\n\n';
-    for (let i = 0; i < ranking.length; i++) {
-      text += `${i + 1}. <@${ranking[i][0]}> - ${ranking[i][1]} pts\n`;
+      let text = '🏆 Ranking Global\n\n';
+      for (let i = 0; i < ranking.length; i++) {
+        text += `${i + 1}. <@${ranking[i].userId}> - ${ranking[i].points} pts\n`;
+      }
+      return message.reply(text);
+    } catch (err) {
+      console.error('Error al generar ranking:', err);
+      return message.reply('⚠️ Hubo un error al generar el ranking.');
     }
-    return message.reply(text);
   }
 
   // INICIAR TRIVIA
@@ -247,7 +240,6 @@ client.on('messageCreate', async (message) => {
 
   // COMPROBAR RESPUESTA DE TRIVIA ACTIVA
   if (triviaGames.has(message.author.id)) {
-    // Si el mensaje empieza con '!', ignoramos la verificación para que pasen los comandos libres
     if (!content.startsWith('!')) {
       const game = triviaGames.get(message.author.id);
       clearTimeout(game.timeout);
@@ -256,37 +248,35 @@ client.on('messageCreate', async (message) => {
       const cleanUser = normalizeText(content);
       const cleanAnswer = normalizeText(game.answer);
 
-      // NUEVA LÓGICA DE VALIDACIÓN INTELIGENTE:
-      // 1. Igualdad exacta
       let isCorrect = (cleanUser === cleanAnswer);
 
-      // 2. Si no es exacta, revisamos si el user incluyó la respuesta exacta dentro de una frase
       if (!isCorrect && cleanUser.includes(cleanAnswer)) {
         isCorrect = true;
       }
 
-      // 3. Revisamos si el usuario dio una respuesta parcial mediante palabras clave
       if (!isCorrect) {
-        // Obtenemos palabras de más de 3 letras de la respuesta correcta
         const answerWords = cleanAnswer.split(' ').filter(word => word.length > 3);
-        
-        // Contamos cuántas de esas palabras clave están en el texto del usuario
         const matchCount = answerWords.filter(word => cleanUser.includes(word)).length;
 
-        // Si coincide al menos la mitad de las palabras clave importantes, se da por válida
         if (answerWords.length > 0 && matchCount >= Math.ceil(answerWords.length / 2)) {
           isCorrect = true;
         }
       }
 
       if (isCorrect) {
-        const points = await loadPoints();
-        points[message.author.id] = (points[message.author.id] || 0) + game.points;
-        await savePoints(points);
+        try {
+          // Usamos la base de datos para añadir los puntos
+          await db.addPoints(message.author.id, game.points);
+          // Consultamos el nuevo total para mostrarlo
+          const newTotal = await db.getPoints(message.author.id);
 
-        return message.reply(
-          `✅ Correcto.\n\n+${game.points} puntos.\n\nTotal: ${points[message.author.id]}`
-        );
+          return message.reply(
+            `✅ Correcto.\n\n+${game.points} puntos.\n\nTotal: ${newTotal}`
+          );
+        } catch (err) {
+          console.error('Error al guardar puntos en DB:', err);
+          return message.reply(`✅ Correcto (+${game.points} pts), pero hubo un problema guardándolos en la base de datos.`);
+        }
       } else {
         return message.reply(
           `❌ Incorrecto.\n\nLa respuesta correcta era: ${game.answer}`
@@ -311,13 +301,3 @@ client.on('messageCreate', async (message) => {
     }
     
     await message.channel.sendTyping();
-    const reply = await askOpenRouter(message.author.id, prompt, loreCache);
-    await message.reply(reply.slice(0, 2000));
-    
-  } catch (err) {
-    console.error('ERROR EN CHAT OPENROUTER:', err);
-    await message.reply('¿Qué dijiste? No te oí.');
-  }
-});
-
-client.login(DISCORD_TOKEN);
