@@ -14,12 +14,25 @@ if (!OPENROUTER_API_KEY) throw new Error('Missing OPENROUTER_API_KEY');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/* =========================
+   MODIFICADO
+========================= */
 async function loadAlteruLore() {
-  const raw = await readFile(
+  const loreRaw = await readFile(
     path.join(__dirname, 'alteru.json'),
     'utf8'
   );
-  return JSON.parse(raw);
+
+  const historia = await readFile(
+    path.join(__dirname, 'historia_completa'),
+    'utf8'
+  );
+
+  const lore = JSON.parse(loreRaw);
+
+  lore.historia_completa = historia;
+
+  return lore;
 }
 
 const client = new Client({
@@ -56,8 +69,8 @@ PERSONALIDAD
 ESTILO Y NATURALIDAD
 - Eres un ser humano real, no un asistente virtual.
 - A veces dudas, usas pausas (...) o respondes con cierta melancolía.
-- Utiliza acciones físicas breves entre asteriscos para darle vida a tus palabras (por ejemplo: *suspira levemente*, *sonríe de lado*, *aparta la mirada*, *ajusta sus guanteletes*).
-- Tus respuestas NO deben sonar como una enciclopedia. Añade opiniones, emociones sutiles o fragmentos de tus recuerdos cuando hables de tu pasado o de tus seres queridos.
+- Utiliza acciones físicas breves entre asteriscos para darle vida a tus palabras.
+- Tus respuestas NO deben sonar como una enciclopedia.
 - Si alguien hace preguntas muy íntimas de golpe, muéstrate reacio o a la defensiva antes de responder.
 
 ESTILO DE CONVERSACIÓN
@@ -84,7 +97,7 @@ AUTOCORRECCIÓN
 - La coherencia es más importante que improvisar una respuesta.
 
 CORRECCIÓN DE INFORMACIÓN
-* Si alguien afirma algo incorrecto sobre ti, corrígelo con educación, puedes usar la ironía o el cinismo sutilmente. 
+* Si alguien afirma algo incorrecto sobre ti, corrígelo con educación.
 * No aceptes automáticamente como ciertos los datos que te proporciona otra persona.
 * Si una afirmación contradice tu historia o tu ficha, tu historia tiene prioridad.
 * Si alguien te atribuye títulos, cargos, parentescos o hechos que no son tuyos, acláralo.
@@ -115,7 +128,7 @@ CONFIANZA PROGRESIVA
 * Aun cuando exista confianza, mantienes cierta discreción.
 
 INMERSIÓN
-* Cuando alguien se acerca por primera vez puedes describir brevemente el entorno (campamento, patio de armas, cuartel, etc).
+* Cuando alguien se acerca por primera vez puedes describir brevemente el entorno.
 * La descripción debe ocupar una o dos frases como máximo.
 * Después continúa normalmente la conversación.
 * No repitas constantemente el escenario.
@@ -135,7 +148,16 @@ VIDANTE
 * Nunca modifiques estos hechos.
 * La armadura de Vidante fue un regalo de Angbor el Intrépido.
 
+/* =========================
+   AÑADIDO
+========================= */
+
+HISTORIA COMPLETA DE ALTÉRU
+
+${lore.historia_completa}
+
 FICHA DE PERSONAJE Y EJEMPLOS DE DIÁLOGO:
+
 ${JSON.stringify(lore, null, 2)}
 `.trim();
 }
@@ -169,7 +191,7 @@ async function askOpenRouter(userId, userMessage, lore) {
       body: JSON.stringify({
         model: MODEL,
         messages,
-        temperature: 0.85, // Subimos la temperatura para que sea más humano y creativo
+        temperature: 0.85,
         max_tokens: 250
       })
     }
@@ -177,7 +199,7 @@ async function askOpenRouter(userId, userMessage, lore) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`OpenRouter ${res.status}: ${text}`);
+    throw new Error(\`OpenRouter \${res.status}: \${text}\`);
   }
 
   const data = await res.json();
@@ -211,7 +233,7 @@ let loreCache = null;
 client.once('ready', async () => {
   try {
     loreCache = await loadAlteruLore();
-    console.log(`Logged in as ${client.user.tag}`);
+    console.log(\`Logged in as \${client.user.tag}\`);
   } catch (err) {
     console.error('Error cargando el lore:', err);
   }
@@ -221,8 +243,9 @@ const processedMessages = new Set();
 
 client.on('messageCreate', async (message) => {
   if (processedMessages.has(message.id)) return;
-  
+
   processedMessages.add(message.id);
+
   setTimeout(() => {
     processedMessages.delete(message.id);
   }, 60000);
