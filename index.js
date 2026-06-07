@@ -20,9 +20,10 @@ async function loadAlteruLore() {
     'utf8'
   );
 
-  const historia = await readFile(
-    path.join(__dirname, 'historia_completa.txt'),
-    'utf8'
+  const historiaPath = path.join(__dirname, 'historia_completa.txt');
+console.log('Buscando:', historiaPath);
+
+const historia = await readFile(historiaPath, 'utf8');
   );
 
   const lore = JSON.parse(loreRaw);
