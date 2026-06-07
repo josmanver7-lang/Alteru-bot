@@ -233,7 +233,7 @@ let loreCache = null;
 client.once('ready', async () => {
   try {
     loreCache = await loadAlteruLore();
-    console.log(`Logged in as \${client.user.tag}\`);
+    console.log(`Logged in as ${client.user.tag}`);
   } catch (err) {
     console.error('Error cargando el lore:', err);
   }
