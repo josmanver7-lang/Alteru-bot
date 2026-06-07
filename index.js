@@ -220,8 +220,8 @@ client.on('messageCreate', async (message) => {
     await message.reply(reply.slice(0, 2000));
   } catch (err) {
     console.error(err);
-    await message.reply('Ahora mismo no puedo responder.');
+    await message.reply('¿Qué dijiste? No pude oírte.');
   }
 });
 
-client.login(DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);
