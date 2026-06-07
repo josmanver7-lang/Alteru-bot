@@ -221,6 +221,7 @@ client.on('messageCreate', async (message) => {
   await message.reply(
     `Error: ${err.message}`
   );
+  }
   });
 
 client.login(process.env.DISCORD_TOKEN);
