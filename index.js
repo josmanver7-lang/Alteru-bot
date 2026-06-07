@@ -216,9 +216,11 @@ client.on('messageCreate', async (message) => {
 
     await message.reply(reply.slice(0, 2000));
   } catch (err) {
-    console.error(err);
-    await message.reply('¿Qué dijiste? No pude oírte.');
+  console.error('ERROR:', err);
+
+  await message.reply(
+    `Error: ${err.message}`
+  );
   }
-});
 
 client.login(process.env.DISCORD_TOKEN);
