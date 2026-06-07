@@ -25,9 +25,8 @@ console.log('Buscando:', historiaPath);
 
 const historia = await readFile(historiaPath, 'utf8');
 
-  const lore = JSON.parse(loreRaw);
-  lore.historia_completa = historia;
-
+lore.historia_completa =
+  historia.slice(0, 30000);
   return lore;
 }
 
