@@ -24,7 +24,6 @@ async function loadAlteruLore() {
 console.log('Buscando:', historiaPath);
 
 const historia = await readFile(historiaPath, 'utf8');
-  );
 
   const lore = JSON.parse(loreRaw);
   lore.historia_completa = historia;
