@@ -1,0 +1,14 @@
+[
+  {
+    "pregunta": "¿Quién destruyó el Anillo Único?",
+    "respuesta": "frodo",
+    "dificultad": "facil",
+    "puntos": 5
+  },
+  {
+    "pregunta": "¿Quién era el jardinero de Frodo?",
+    "respuesta": "sam",
+    "dificultad": "facil",
+    "puntos": 5
+  }
+]
