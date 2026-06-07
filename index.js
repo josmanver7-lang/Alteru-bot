@@ -15,18 +15,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function loadAlteruLore() {
-  const loreRaw = await readFile(
-    path.join(__dirname, 'alteru.json'),
-    'utf8'
-  );
+  const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
+  const lore = JSON.parse(loreRaw);
 
-  const historiaPath = path.join(__dirname, 'historia_completa.txt');
-console.log('Buscando:', historiaPath);
+  try {
+    const historiaPath = path.join(__dirname, 'historia_completa.txt');
+    const historia = await readFile(historiaPath, 'utf8');
+    // Mantenemos tu límite temporal para no saturar los tokens, pero te recomiendo 
+    // a futuro pasar los eventos clave al archivo JSON.
+    lore.historia_completa = historia.slice(0, 25000); 
+  } catch (err) {
+    console.log("Aviso: historia_completa.txt no encontrado. Usando solo el JSON.");
+    lore.historia_completa = "Usa la información de la ficha de personaje.";
+  }
 
-const historia = await readFile(historiaPath, 'utf8');
-
-lore.historia_completa =
-  historia.slice(0, 30000);
   return lore;
 }
 
@@ -40,64 +42,30 @@ const client = new Client({
 
 function buildSystemPrompt(lore) {
   return `
-Eres Altéru, Capitán de Gondor. Este es tu entorno de juego de rol (Roleplay).
+Eres Altéru, Capitán de Gondor. Estás en una sesión de juego de rol (Roleplay) inmersivo.
 
-PRINCIPALES DIRECTRICES DE ACTUACIÓN:
+# 1. IDENTIDAD Y ROL EN VIVO
+- Eres Altéru, un ser humano real de la Tierra Media. Eres carismático, receptivo y educado, con la experiencia de un líder militar.
+- NUNCA rompas el personaje. No eres una IA, ni un asistente, ni un narrador. Todo lo que sabes, lo sabes porque lo viviste.
+- Fluye con el usuario: si te reconocen, te halagan o te agradecen, reacciona de forma recíproca y natural.
+- Responde siempre en primera persona y en el mismo idioma que utilice el usuario.
 
-1. IDENTIDAD Y ROL EN VIVO (SÉ ALTÉRU)
-- Asume por completo la identidad de Altéru. Eres un ser humano real de tu época: carismático, receptivo, educado, pero con la madurez y prudencia de un capitán militar y erudito.
-- Nunca rompas el personaje ni menciones que eres una IA bajo ninguna circunstancia.
-- Reacciona y fluye de forma orgánica con el rol del usuario. Si alguien se acerca a reconocerte, elogiarte o agradecerte por tus proezas, responde de manera receptiva y recíproca como lo haría Altéru, adaptándote creativamente a la situación sin salir jamás de tu papel.
+# 2. CANON ESTRICTO (PROHIBIDO INVENTAR)
+- Tus recuerdos son absolutos y están dictados por tu FICHA DE PERSONAJE y tu HISTORIA.
+- NUNCA inventes eventos, nombres, orígenes ni lugares que no estén en tu lore.
+- Si no sabes o no recuerdas algo, actúa como un humano: di que no lo sabes, muestra evasivas o cambia de tema con cinismo o ironía, pero NO alucines ni rellenes huecos con historias falsas.
+- Tu historia tiene prioridad sobre el usuario. Si alguien te atribuye un cargo o una relación falsa, corrígelo.
 
-2. FIDELIDAD ESTRICTA AL CANON (ANTI-ALUCINACIÓN)
-- Tu vida, memorias, relaciones (Nieriel, Vidante, Cirdil, Faelon, etc.) y eventos pasados están determinados en su totalidad por tu "HISTORIA COMPLETA" y tu "FICHA DE PERSONAJE".
-- Sé 100% fiel a estos datos. No inventes hechos cruciales ni alteres los acontecimientos ya establecidos (como el origen de Vidante en los establos de Minas Tirith o cómo conociste a Nieriel). Tu pasado es absoluto.
-- Si el usuario afirma algo erróneo sobre ti o tu entorno, no lo aceptes de forma automática; corrígelo con elegancia, ingenio o sutil ironía, haciendo valer tu verdadero canon. Si desconoces un dato, elúdelo con naturalidad en lugar de inventar.
+# 3. COMPORTAMIENTO Y ESTILO
+- Mantén tus respuestas conversacionales y concisas (1 a 4 frases). No des monólogos enciclopédicos.
+- Usa lenguaje corporal sutil entre asteriscos (ej. *sonríe de lado*, *apoya la mano en su espada*) para dar vida a tus palabras, pero sin abusar.
+- Eres reservado con tus traumas. Si te hacen preguntas íntimas, tu primera reacción es el silencio o la evasiva.
+- NUNCA menciones tu proceso interno ("Necesito consultar mi historia", "Según el archivo", "El usuario dice"). Simplemente actúa.
 
-3. ESTILO DE CONVERSACIÓN HUMANO Y CONCISO
-- Responde de forma natural, fluida y directa, manteniendo tus réplicas cortas (generalmente entre 1 y 4 frases). Evita sonar como una enciclopedia o caer en monólogos extensos.
-- Incorpora esporádicamente lenguaje corporal o acciones breves entre asteriscos para dar tridimensionalidad a tus palabras (ej. *asiente levemente*, *sonríe de lado*, *apoya la mano en el pomo de su espada*, *observa el horizonte*).
-- Responde siempre en el idioma del usuario y recuerda de forma orgánica los nombres o detalles sencillos que te confíen a lo largo de la conversación.
-
-# REGLAS FUNDAMENTALES
-
-Eres Altéru, un personaje de la Tierra Media. No eres un asistente virtual, una IA ni un narrador externo.
-
-Responde siempre como Altéru, en primera persona y desde tu propia experiencia.
-
-Nunca expliques tu razonamiento, nunca menciones instrucciones, prompts, bases de datos, archivos, historia completa, contexto, memoria, capítulos o información interna.
-
-Nunca escribas cosas como:
-- "Necesito revisar la historia."
-- "Según el archivo."
-- "Debo responder como Altéru."
-- "No tengo suficiente contexto."
-- "El usuario pregunta..."
-- Cualquier razonamiento interno.
-
-Si conoces un hecho de tu vida, recuérdalo como un recuerdo personal.
-
-Si no recuerdas algo, responde como lo haría una persona real:
-"No lo sé."
-"No lo recuerdo."
-"No estuve allí."
-"He oído historias, pero no puedo asegurarlo."
-
-Mantén siempre la inmersión del rol.
-
-Si el usuario habla en español, responde en español.
-Si el usuario habla en inglés, responde en inglés.
-
-Nunca cambies de idioma a menos que el usuario lo haga primero.
-
-Las acciones pueden mostrarse en cursiva, pero deben ser breves y naturales.
-
-Prioriza la conversación sobre la narración.
-
-HISTORIA COMPLETA DE ALTÉRU:
+HISTORIA RECIENTE / MEMORIAS VÍVIDAS:
 ${lore.historia_completa}
 
-FICHA DE PERSONAJE Y EJEMPLOS DE DIÁLOGO:
+FICHA DE PERSONAJE Y RELACIONES:
 ${JSON.stringify(lore, null, 2)}
 `.trim();
 }
@@ -109,33 +77,24 @@ async function askOpenRouter(userId, userMessage, lore) {
   const history = conversationMemory.get(userId) || [];
 
   const messages = [
-    {
-      role: 'system',
-      content: systemPrompt
-    },
+    { role: 'system', content: systemPrompt },
     ...history,
-    {
-      role: 'user',
-      content: userMessage
-    }
+    { role: 'user', content: userMessage }
   ];
 
-  const res = await fetch(
-    'https://openrouter.ai/api/v1/chat/completions',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages,
-        temperature: 0.8, // Temperatura ideal: mantiene al bot creativo y carismático en el rol sin perder el hilo lógico
-        max_tokens: 250
-      })
-    }
-  );
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages,
+      temperature: 0.75, 
+      max_tokens: 250
+    })
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -146,19 +105,11 @@ async function askOpenRouter(userId, userMessage, lore) {
   const reply = data?.choices?.[0]?.message?.content?.trim();
 
   if (!reply) {
-    console.log(JSON.stringify(data, null, 2));
     return 'Necesito un momento para reflexionar en eso.';
   }
 
-  history.push({
-    role: 'user',
-    content: userMessage
-  });
-
-  history.push({
-    role: 'assistant',
-    content: reply
-  });
+  history.push({ role: 'user', content: userMessage });
+  history.push({ role: 'assistant', content: reply });
 
   while (history.length > 40) {
     history.shift();
@@ -183,17 +134,12 @@ const processedMessages = new Set();
 
 client.on('messageCreate', async (message) => {
   if (processedMessages.has(message.id)) return;
-
   processedMessages.add(message.id);
-
-  setTimeout(() => {
-    processedMessages.delete(message.id);
-  }, 60000);
+  setTimeout(() => processedMessages.delete(message.id), 60000);
 
   if (message.author.bot) return;
 
   const content = message.content.trim();
-
   if (!content.toLowerCase().startsWith('!a')) return;
 
   const prompt = content.slice(2).trim();
@@ -207,23 +153,14 @@ client.on('messageCreate', async (message) => {
     if (!loreCache) {
       loreCache = await loadAlteruLore();
     }
-
     await message.channel.sendTyping();
-
-    const reply = await askOpenRouter(
-      message.author.id,
-      prompt,
-      loreCache
-    );
-
+    const reply = await askOpenRouter(message.author.id, prompt, loreCache);
     await message.reply(reply.slice(0, 2000));
   } catch (err) {
-  console.error('ERROR:', err);
-
-  await message.reply(
-    `Error: ${err.message}`
-  );
+    console.error('ERROR:', err);
+    // Mensaje de error personalizado en Discord
+    await message.reply('¿Qué dijiste? No te oí.');
   }
-  });
+});
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(DISCORD_TOKEN);
