@@ -1,3 +1,4 @@
+import db from './database.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
