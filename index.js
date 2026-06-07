@@ -199,7 +199,7 @@ async function askOpenRouter(userId, userMessage, lore) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(\`OpenRouter \${res.status}: \${text}\`);
+    throw new Error(`OpenRouter ${res.status}: ${text}`);
   }
 
   const data = await res.json();
@@ -233,7 +233,7 @@ let loreCache = null;
 client.once('ready', async () => {
   try {
     loreCache = await loadAlteruLore();
-    console.log(\`Logged in as \${client.user.tag}\`);
+    console.log(`Logged in as \${client.user.tag}\`);
   } catch (err) {
     console.error('Error cargando el lore:', err);
   }
