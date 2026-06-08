@@ -119,7 +119,7 @@
 "dificultad": "facil",
 "puntos": 10
 },
-  {
+{
 pregunta: "¿Cómo se llamaba el padre de Gimli?",
 opciones: ["Glóin", "Thrór", "Dáin", "Balin"],
 respuesta: "Glóin",
