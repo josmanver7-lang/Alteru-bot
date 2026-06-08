@@ -1,14 +1,122 @@
 [
-  {
-    "pregunta": "¿Quién destruyó el Anillo Único?",
-    "respuesta": "frodo",
-    "dificultad": "facil",
-    "puntos": 5
-  },
-  {
-    "pregunta": "¿Quién era el jardinero de Frodo?",
-    "respuesta": "sam",
-    "dificultad": "facil",
-    "puntos": 5
-  }
+{
+"pregunta": "¿Quién fue el portador del Anillo Único durante la Guerra del Anillo?",
+"respuesta": "Frodo",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién destruyó finalmente el Anillo Único?",
+"respuesta": "Gollum",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el padre de Isildur?",
+"respuesta": "Elendil",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién llevó a Frodo desde el Bosque de los Trolls hasta Rivendel?",
+"respuesta": "Glorfindel",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién forjó los Tres Anillos Élficos?",
+"respuesta": "Celebrimbor",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Qué Maia se convirtió en Sauron?",
+"respuesta": "Sauron",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el reino fundado por Elendil en el norte?",
+"respuesta": "Arnor",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el reino fundado por Isildur y Anárion en el sur?",
+"respuesta": "Gondor",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién fue el mago conocido como Mithrandir?",
+"respuesta": "Gandalf",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cuál era la capital de Gondor durante la Guerra del Anillo?",
+"respuesta": "Minas Tirith",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el caballo de Gandalf?",
+"respuesta": "Sombragris",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién era el padre de Legolas?",
+"respuesta": "Thranduil",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Qué dragón atacó Erebor?",
+"respuesta": "Smaug",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el reino enano bajo la Montaña Solitaria?",
+"respuesta": "Erebor",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién era el heredero de Isildur durante la Guerra del Anillo?",
+"respuesta": "Aragorn",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién fundó Rohan junto a los Eorlingas?",
+"respuesta": "Eorl",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba la dama de Lothlórien?",
+"respuesta": "Galadriel",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Quién era el señor de Rivendel?",
+"respuesta": "Elrond",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Qué ciudad de LOTRO sirve como centro principal de los Montaraces en las Quebradas del Norte?",
+"respuesta": "Esteldin",
+"dificultad": "facil",
+"puntos": 10
+},
+{
+"pregunta": "¿Cómo se llamaba el reino insular de los Dúnedain antes de su caída?",
+"respuesta": "Númenor",
+"dificultad": "facil",
+"puntos": 10
+}
 ]
