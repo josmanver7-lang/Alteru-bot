@@ -1,4 +1,4 @@
-6.7.0[
+[
 {
 "pregunta": "¿Quién fue el portador del Anillo Único durante la Guerra del Anillo?",
 "respuesta": "Frodo",
@@ -120,124 +120,143 @@
 "puntos": 10
 },
 {
-pregunta: "¿Cómo se llamaba el padre de Gimli?",
-opciones: ["Glóin", "Thrór", "Dáin", "Balin"],
-respuesta: "Glóin",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llamaba el padre de Gimli?",
+  "opciones": ["Glóin", "Thrór", "Dáin", "Balin"],
+  "respuesta": "Glóin",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cómo se llamaba el padre de Legolas?",
-opciones: ["Elrond", "Thranduil", "Celeborn", "Oropher"],
-respuesta: "Thranduil",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llamaba el padre de Legolas?",
+  "opciones": ["Elrond", "Thranduil", "Celeborn", "Oropher"],
+  "respuesta": "Thranduil",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Quién condujo a Frodo hasta Rivendel tras ser herido en la Cima de los Vientos?",
-opciones: ["Aragorn", "Arwen", "Glorfindel", "Elladan"],
-respuesta: "Glorfindel",
-dificultad: "normal"
+  "pregunta": "¿Quién condujo a Frodo hasta Rivendel tras ser herido en la Cima de los Vientos?",
+  "opciones": ["Aragorn", "Arwen", "Glorfindel", "Elladan"],
+  "respuesta": "Glorfindel",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué Maia adoptó el nombre de Annatar para engañar a los Elfos?",
-opciones: ["Saruman", "Sauron", "Radagast", "Melian"],
-respuesta: "Sauron",
-dificultad: "normal"
+  "pregunta": "¿Qué Maia adoptó el nombre de Annatar para engañar a los Elfos?",
+  "opciones": ["Saruman", "Sauron", "Radagast", "Melian"],
+  "respuesta": "Sauron",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Quién forjó los Tres Anillos élficos?",
-opciones: ["Celebrimbor", "Sauron", "Gil-galad", "Círdan"],
-respuesta: "Celebrimbor",
-dificultad: "normal"
+  "pregunta": "¿Quién forjó los Tres Anillos élficos?",
+  "opciones": ["Celebrimbor", "Sauron", "Gil-galad", "Círdan"],
+  "respuesta": "Celebrimbor",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué reino fundó Isildur en el norte?",
-opciones: ["Gondor", "Arnor", "Rhudaur", "Cardolan"],
-respuesta: "Arnor",
-dificultad: "normal"
+  "pregunta": "¿Qué reino fundó Isildur en el norte?",
+  "opciones": ["Gondor", "Arnor", "Rhudaur", "Cardolan"],
+  "respuesta": "Arnor",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cómo se llamaba la espada rota de Elendil?",
-opciones: ["Gurthang", "Orcrist", "Narsil", "Aeglos"],
-respuesta: "Narsil",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llamaba la espada rota de Elendil?",
+  "opciones": ["Gurthang", "Orcrist", "Narsil", "Aeglos"],
+  "respuesta": "Narsil",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cuál fue la capital original de Arnor?",
-opciones: ["Fornost", "Annúminas", "Tharbad", "Amon Sûl"],
-respuesta: "Annúminas",
-dificultad: "normal"
+  "pregunta": "¿Cuál fue la capital original de Arnor?",
+  "opciones": ["Fornost", "Annúminas", "Tharbad", "Amon Sûl"],
+  "respuesta": "Annúminas",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué ciudad fue la principal fortaleza del Rey Brujo de Angmar?",
-opciones: ["Carn Dûm", "Fornost", "Dol Guldur", "Angrenost"],
-respuesta: "Carn Dûm",
-dificultad: "normal"
+  "pregunta": "¿Qué ciudad fue la principal fortaleza del Rey Brujo de Angmar?",
+  "opciones": ["Carn Dûm", "Fornost", "Dol Guldur", "Angrenost"],
+  "respuesta": "Carn Dûm",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué reino se encontraba al oeste de Cardolan?",
-opciones: ["Rhudaur", "Arnor", "Arthedain", "Angmar"],
-respuesta: "Arthedain",
-dificultad: "normal"
+  "pregunta": "¿Qué reino se encontraba al oeste de Cardolan?",
+  "opciones": ["Rhudaur", "Arnor", "Arthedain", "Angmar"],
+  "respuesta": "Arthedain",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cómo se llama el puente que conecta Bree con las Quebradas del Norte?",
-opciones: ["Puente de los Caballetes", "Puente Gris", "Puente del Isen", "Puente de Piedra"],
-respuesta: "Puente de los Caballetes",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llama el puente que conecta Bree con las Quebradas del Norte?",
+  "opciones": ["Puente de los Caballetes", "Puente Gris", "Puente del Isen", "Puente de Piedra"],
+  "respuesta": "Puente de los Caballetes",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿En qué región se encuentra Esteldín?",
-opciones: ["Rhudaur", "Arthedain", "Cardolan", "Forochel"],
-respuesta: "Arthedain",
-dificultad: "normal"
+  "pregunta": "¿En qué región se encuentra Esteldín?",
+  "opciones": ["Rhudaur", "Arthedain", "Cardolan", "Forochel"],
+  "respuesta": "Arthedain",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué pueblo se encuentra junto a Bree y Archet?",
-opciones: ["Combe", "Staddle", "Trestlebridge", "Thorenhad"],
-respuesta: "Combe",
-dificultad: "normal"
+  "pregunta": "¿Qué pueblo se encuentra junto a Bree y Archet?",
+  "opciones": ["Combe", "Staddle", "Trestlebridge", "Thorenhad"],
+  "respuesta": "Combe",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cuál es la principal ciudad restaurada de Evendim?",
-opciones: ["Fornost", "Annúminas", "Tinnudir", "Ost Forod"],
-respuesta: "Annúminas",
-dificultad: "normal"
+  "pregunta": "¿Cuál es la principal ciudad restaurada de Evendim?",
+  "opciones": ["Fornost", "Annúminas", "Tinnudir", "Ost Forod"],
+  "respuesta": "Annúminas",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué pueblo hobbit es famoso por albergar la Alcaldía de la Comarca?",
-opciones: ["Hobbiton", "Delagua", "Michel Delving", "Buckland"],
-respuesta: "Michel Delving",
-dificultad: "normal"
+  "pregunta": "¿Qué pueblo hobbit es famoso por albergar la Alcaldía de la Comarca?",
+  "opciones": ["Hobbiton", "Delagua", "Michel Delving", "Buckland"],
+  "respuesta": "Michel Delving",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Quién fue el primer Rey de Rohan?",
-opciones: ["Helm", "Théoden", "Eorl", "Brego"],
-respuesta: "Eorl",
-dificultad: "normal"
+  "pregunta": "¿Quién fue el primer Rey de Rohan?",
+  "opciones": ["Helm", "Théoden", "Eorl", "Brego"],
+  "respuesta": "Eorl",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cómo se llamaba la hija de Helm Mano de Hierro?",
-opciones: ["Éowyn", "Morwen", "Héra", "Fréalaf"],
-respuesta: "Héra",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llamaba la hija de Helm Mano de Hierro?",
+  "opciones": ["Éowyn", "Morwen", "Héra", "Fréalaf"],
+  "respuesta": "Héra",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué pueblo habitaba el Bosque de Drúadan?",
-opciones: ["Lossoth", "Druedain", "Beórnidas", "Dúnedain"],
-respuesta: "Druedain",
-dificultad: "normal"
+  "pregunta": "¿Qué pueblo habitaba el Bosque de Drúadan?",
+  "opciones": ["Lossoth", "Drúedain", "Beórnidas", "Dúnedain"],
+  "respuesta": "Drúedain",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Qué fortaleza protege el Anduin frente a Minas Tirith?",
-opciones: ["Cair Andros", "Dol Amroth", "Osgiliath", "Pelargir"],
-respuesta: "Cair Andros",
-dificultad: "normal"
+  "pregunta": "¿Qué fortaleza protege el Anduin frente a Minas Tirith?",
+  "opciones": ["Cair Andros", "Dol Amroth", "Osgiliath", "Pelargir"],
+  "respuesta": "Cair Andros",
+  "dificultad": "normal",
+  "puntos": 20
 },
 {
-pregunta: "¿Cómo se llamaba el padre de Boromir y Faramir?",
-opciones: ["Ecthelion", "Denethor", "Cirion", "Thorongil"],
-respuesta: "Denethor",
-dificultad: "normal"
+  "pregunta": "¿Cómo se llamaba el padre de Boromir y Faramir?",
+  "opciones": ["Ecthelion", "Denethor", "Cirion", "Thorongil"],
+  "respuesta": "Denethor",
+  "dificultad": "normal",
+  "puntos": 20
 }
-{  
 ]
