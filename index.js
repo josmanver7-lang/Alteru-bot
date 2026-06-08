@@ -324,5 +324,5 @@ client.on('messageCreate', async (message) => {
     await message.reply('¿Qué dijiste? No te oí.');
   }
 });
-
+await db.connectDB();
 client.login(DISCORD_TOKEN);
