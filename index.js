@@ -165,8 +165,13 @@ let loreCache = null;
 
 client.once('ready', async () => {
   try {
+
+    await db.connectDB();
+
     loreCache = await loadAlteruLore();
+
     console.log(`Logged in as ${client.user.tag}`);
+
   } catch (err) {
     console.error('Error cargando el lore inicial:', err);
   }
@@ -189,23 +194,31 @@ client.on('messageCreate', async (message) => {
 
   // COMANDO !puntos
   if (command === '!puntos') {
-    const points = await loadPoints();
-    return message.reply(`🏆 Tienes ${points[message.author.id] || 0} puntos.`);
-  }
+
+  const points = await db.getPoints(
+    message.author.id
+  );
+
+  return message.reply(
+    `🏆 Tienes ${points} puntos.`
+  );
+}
 
   // COMANDO !ranking
   if (command === '!ranking') {
-    const points = await loadPoints();
-    const ranking = Object.entries(points)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10);
 
-    let text = '🏆 Ranking Global\n\n';
-    for (let i = 0; i < ranking.length; i++) {
-      text += `${i + 1}. <@${ranking[i][0]}> - ${ranking[i][1]} pts\n`;
-    }
-    return message.reply(text);
+  const ranking = await db.getRanking();
+
+  let text = '🏆 Ranking Global\n\n';
+
+  for (let i = 0; i < ranking.length; i++) {
+
+    text += `${i + 1}. <@${ranking[i].userId}> - ${ranking[i].points} pts\n`;
+
   }
+
+  return message.reply(text);
+}
 
   // INICIAR TRIVIA
   if (command === '!trivia') {
@@ -281,13 +294,19 @@ client.on('messageCreate', async (message) => {
 
       if (isCorrect) {
         try {
-          const points = await loadPoints();
-          points[message.author.id] = (points[message.author.id] || 0) + game.points;
-          await savePoints(points);
+          await db.addPoints(
+  message.author.id,
+  game.points
+);
 
-          return message.reply(
-            `✅ Correcto.\n\n+${game.points} puntos.\n\nTotal: ${points[message.author.id]}`
-          );
+const total =
+  await db.getPoints(
+    message.author.id
+  );
+
+return message.reply(
+  `✅ Correcto.\n\n+${game.points} puntos.\n\nTotal: ${total}`
+);
         } catch (error) {
           console.error("Error intentando guardar en puntos.json:", error);
           return message.reply(`✅ Correcto (+${game.points} pts), pero hubo un error de escritura interno.`);
