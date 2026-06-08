@@ -19,14 +19,13 @@ const __dirname = path.dirname(__filename);
 //   FUNCIONES AUXILIARES (NIVEL SUPERIOR)
 // ==========================================
 
-// Función para limpiar tildes, mayúsculas y signos de puntuación
 function normalizeText(text) {
   if (!text) return '';
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remueve acentos por completo
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "") // Limpia signos de puntuación
+    .replace(/[\u0300-\u036f]/g, "") 
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "") 
     .trim();
 }
 
@@ -70,22 +69,6 @@ async function loadQuestions() {
   }
 }
 
-async function loadPoints() {
-  try {
-    const raw = await readFile(path.join(__dirname, 'puntos.json'), 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-
-async function savePoints(points) {
-  await writeFile(
-    path.join(__dirname, 'puntos.json'),
-    JSON.stringify(points, null, 2)
-  );
-}
-
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
@@ -127,7 +110,7 @@ ${lore.historia_completa}
 
 const conversationMemory = new Map();
 const triviaGames = new Map();
-const dailyTriviaAttempts = new Map(); // Registro de intentos diarios de trivia
+const dailyTriviaAttempts = new Map(); 
 
 async function askOpenRouter(userId, userMessage, lore) {
   const systemPrompt = buildSystemPrompt(lore);
@@ -180,13 +163,9 @@ let loreCache = null;
 
 client.once('ready', async () => {
   try {
-
     await db.connectDB();
-
     loreCache = await loadAlteruLore();
-
     console.log(`Logged in as ${client.user.tag}`);
-
   } catch (err) {
     console.error('Error cargando el lore inicial:', err);
   }
@@ -202,73 +181,64 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   const content = message.content.trim();
-  
-  // Expresión regular para dividir argumentos omitiendo espacios múltiples consecutivos
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
 
-  // COMANDO !puntos
   if (command === '!puntos') {
-
-    const points = await db.getPoints(
-      message.author.id
-    );
-
-    return message.reply(
-      `🏆 Tienes ${points} puntos.`
-    );
+    const points = await db.getPoints(message.author.id);
+    return message.reply(`🏆 Tienes ${points} puntos.`);
   }
 
-  // COMANDO !perfil
+  // NUEVO COMANDO !perfil ACTUALIZADO
   if (command === '!perfil') {
-    const puntos = await db.getPoints(message.author.id);
-    const rango = obtenerRango(puntos);
+    const perfil = await db.getProfile(message.author.id);
+    const ranking = await db.getRanking();
+    
+    // Calcular estadísticas
+    const posicion = ranking.findIndex(p => p.userId === message.author.id) + 1;
+    const correctas = perfil.correctas || 0;
+    const incorrectas = perfil.incorrectas || 0;
+    const total = correctas + incorrectas;
+    const precision = total > 0 ? Math.round((correctas / total) * 100) : 0;
+    
+    const racha = perfil.mejorRacha || 0;
+    const intentosHoy = dailyTriviaAttempts.get(message.author.id) || 0;
+    const restantes = 5 - intentosHoy;
+    const rango = obtenerRango(perfil.points || 0);
 
     return message.reply(
-      `📜 Perfil de Trivia\n\n👤 Usuario: ${message.author.username}\n\n🏆 Puntos: ${puntos}\n🥇 Rango: ${rango}`
+      `📜 **Perfil de Trivia**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}`
     );
   }
 
-  // COMANDO !ranking
   if (command === '!ranking') {
-
     const ranking = await db.getRanking();
-
     let text = '🏆 Ranking Global\n\n';
-
     for (let i = 0; i < ranking.length; i++) {
-
       text += `${i + 1}. <@${ranking[i].userId}> - ${ranking[i].points} pts\n`;
-
     }
-
     return message.reply(text);
   }
 
-  // COMANDO !resetear
   if (command === '!resetear') {
     dailyTriviaAttempts.set(message.author.id, 0);
     return message.reply('🔄 Tus intentos diarios de trivia han sido reiniciados. ¡Tienes 5 oportunidades más!');
   }
 
-  // INICIAR TRIVIA
   if (command === '!trivia') {
     if (triviaGames.has(message.author.id)) {
       return message.reply('Ya tienes una trivia activa.');
     }
 
-    // Comprobación de límite diario (Máximo 5)
     const intentos = dailyTriviaAttempts.get(message.author.id) || 0;
     if (intentos >= 5) {
-      return message.reply('⚠️ Has alcanzado el límite máximo de 5 trivias por día. Usa `!resetear` para reiniciar tus intentos.');
+      // Mensaje modificado como pediste
+      return message.reply('⚠️ Has alcanzado el límite máximo de 5 trivias por día. Vuelve mañana.');
     }
 
     let dificultad = args[1]?.toLowerCase();
 
-    if (
-      dificultad &&
-      !['facil', 'normal', 'dificil', 'legendario'].includes(dificultad)
-    ) {
+    if (dificultad && !['facil', 'normal', 'dificil', 'legendario'].includes(dificultad)) {
       return message.reply('⚠️ Dificultad inválida. Usa:\n\n`!trivia facil`, `!trivia normal`, `!trivia dificil` o `!trivia legendario`, o solo `!trivia` para una al azar.');
     }
 
@@ -279,13 +249,11 @@ client.on('messageCreate', async (message) => {
       pool = questions;
     } else {
       pool = questions.filter(q => q.dificultad === dificultad);
-      
       if (!pool.length) {
         return message.reply('No hay preguntas disponibles para esa dificultad.');
       }
     }
 
-    // Se incrementa el intento diario ya que la dificultad es válida y el juego va a empezar
     dailyTriviaAttempts.set(message.author.id, intentos + 1);
 
     const question = pool[Math.floor(Math.random() * pool.length)];
@@ -293,51 +261,61 @@ client.on('messageCreate', async (message) => {
 
     const timeout = setTimeout(async () => {
       triviaGames.delete(message.author.id);
+      await db.addWrongAnswer(message.author.id); // Registrar como fallo al agotarse el tiempo
       await message.channel.send(
-        `⌛ Tiempo agotado.\n\nLa respuesta correcta era: ||${question.respuesta}||`
+        `⌛ Tiempo agotado para <@${message.author.id}>.\n\nLa respuesta correcta era: ||${question.respuesta}||`
       );
     }, 15000);
 
     triviaGames.set(message.author.id, {
       answer: question.respuesta,
+      options: question.opciones, // Guardamos opciones para validarlas
       points: question.puntos,
       timeout
     });
 
-    return message.reply(
-      `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/5)\n\n${question.pregunta}\n\n⏳ Tienes 15 segundos`
-    );
+    // LÓGICA PARA MOSTRAR OPCIONES A, B, C, D
+    let textoPregunta = `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/5)\n\n${question.pregunta}\n\n`;
+
+    if (question.opciones && Array.isArray(question.opciones)) {
+      textoPregunta += question.opciones
+        .map((op, i) => `${String.fromCharCode(65 + i)}. ${op}`)
+        .join('\n');
+      textoPregunta += '\n\n';
+    }
+
+    textoPregunta += `⏳ Tienes 15 segundos`;
+    return message.reply(textoPregunta);
   }
 
-  // COMPROBAR RESPUESTA DE TRIVIA ACTIVA
   if (triviaGames.has(message.author.id)) {
-    // Si el mensaje empieza con '!', ignoramos la verificación para que pasen los comandos libres
     if (!content.startsWith('!')) {
       const game = triviaGames.get(message.author.id);
       clearTimeout(game.timeout);
       triviaGames.delete(message.author.id);
 
-      const cleanUser = normalizeText(content);
+      let cleanUser = normalizeText(content);
       const cleanAnswer = normalizeText(game.answer);
 
-      // LÓGICA DE VALIDACIÓN INTELIGENTE:
-      // 1. Igualdad exacta
+      // LÓGICA DE OPCIONES MÚLTIPLES: Si el usuario responde 'A', 'B', 'C', o 'D'
+      if (game.options && ['a', 'b', 'c', 'd'].includes(cleanUser)) {
+        const indice = cleanUser.charCodeAt(0) - 97; // 'a' es 97 en ASCII
+        const opcionElegida = game.options[indice];
+        if (opcionElegida) {
+          cleanUser = normalizeText(opcionElegida);
+        }
+      }
+
       let isCorrect = (cleanUser === cleanAnswer);
 
-      // 2. Si no es exacta, revisamos si el user incluyó la respuesta exacta dentro de una frase
       if (!isCorrect && cleanUser.includes(cleanAnswer)) {
         isCorrect = true;
       }
 
-      // 3. Revisamos si el usuario dio una respuesta parcial mediante palabras clave
       if (!isCorrect) {
-        // Obtenemos palabras de más de 3 letras de la respuesta correcta
         const answerWords = cleanAnswer.split(' ').filter(word => word.length > 3);
-        
-        // Contamos cuántas de esas palabras clave están en el texto del usuario
         const matchCount = answerWords.filter(word => cleanUser.includes(word)).length;
 
-        // Si coincide al menos la mitad de las palabras clave importantes, se da por válida
         if (answerWords.length > 0 && matchCount >= Math.ceil(answerWords.length / 2)) {
           isCorrect = true;
         }
@@ -348,17 +326,13 @@ client.on('messageCreate', async (message) => {
           const puntosAntes = await db.getPoints(message.author.id);
           const rangoAnterior = obtenerRango(puntosAntes);
 
-          await db.addPoints(message.author.id, game.points);
+          // Se actualizan estadísticas de acierto
+          await db.addCorrectAnswer(message.author.id, game.points);
 
           const total = await db.getPoints(message.author.id);
           const rangoNuevo = obtenerRango(total);
 
-          let texto = 
-`✅ Correcto.
-
-+${game.points} puntos.
-
-🏆 Total: ${total}`;
+          let texto = `✅ Correcto.\n\n+${game.points} puntos.\n\n🏆 Total: ${total}`;
 
           if (rangoAnterior !== rangoNuevo) {
             texto += `\n\n🎉 ¡Felicidades! Has ascendido al rango de **${rangoNuevo}**.`;
@@ -367,10 +341,16 @@ client.on('messageCreate', async (message) => {
           return message.reply(texto);
 
         } catch (error) {
-          console.error("Error intentando guardar en puntos.json:", error);
+          console.error("Error intentando guardar en base de datos:", error);
           return message.reply(`✅ Correcto (+${game.points} pts), pero hubo un error de escritura interno.`);
         }
       } else {
+        try {
+          // Se actualizan estadísticas de error
+          await db.addWrongAnswer(message.author.id);
+        } catch(error) {
+          console.error("Error guardando fallo:", error);
+        }
         return message.reply(
           `❌ Incorrecto.\n\nLa respuesta correcta era: ||${game.answer}||`
         );
@@ -378,7 +358,6 @@ client.on('messageCreate', async (message) => {
     }
   }
 
-  // COMANDO DE CONVERSACIÓN CON EL BOT (!a)
   if (command !== '!a') return;
 
   const prompt = content.slice(args[0].length).trim();
@@ -402,5 +381,6 @@ client.on('messageCreate', async (message) => {
     await message.reply('¿Qué dijiste? No te oí.');
   }
 });
+
 await db.connectDB();
 client.login(DISCORD_TOKEN);
