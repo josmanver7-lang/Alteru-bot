@@ -1,8 +1,3 @@
-¡Claro que sí! He traducido todos los términos, clases, regiones y mecánicas que estaban en inglés al español, respetando los nombres oficiales de la localización de los libros y de la comunidad de *The Lord of the Rings Online* (LOTRO).
-Además, he corregido y adaptado las preguntas que sugeriste (por ejemplo, ajustando la pregunta de las razas élficas para que la opción incorrecta sea "Edain", que son hombres, y corrigiendo los nombres de los reyes numenoreanos). También he añadido nuevas preguntas para alcanzar el total de 50 preguntas extra, abarcando diferentes dificultades, algo de la botánica de los Granjeros, manuscritos de los Eruditos y curiosidades sobre regiones de Gondor como Pinnath Gelin.
-Por último, he aplicado tus reglas de formato: todas las respuestas están ocultas con || para Discord, y **ninguna** de las preguntas de dificultad "fácil" tiene la propiedad opciones.
-Aquí tienes el archivo JSON actualizado y listo para tu bot de Discord:
-```json
 [
   {
     "pregunta": "¿Quién fue el portador del Anillo Único durante la Guerra del Anillo?",
