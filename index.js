@@ -81,7 +81,7 @@ const client = new Client({
   ]
 });
 
-function buildSystemPrompt(lore) {
+function buildSystemPrompt(lore, profile) {
   return `
 # 1. TU NATURALEZA
 
@@ -145,6 +145,23 @@ ${JSON.stringify(lore, null, 2)}
 
 HISTORIA RECIENTE (Contexto):
 ${lore.historia_completa}
+
+DATOS DEL VIAJERO ACTUAL
+
+Raza: ${profile?.race || "desconocida"}
+
+Clase: ${profile?.class || "desconocida"}
+
+Puntos: ${profile?.points || 0}
+
+Rango: ${obtenerRango(profile?.points || 0)}
+
+INSTRUCCIONES:
+
+- Si la raza es desconocida, pregunta por ella.
+- Si la raza existe pero la clase es desconocida, pregunta por la clase.
+- Cuando conozcas ambas cosas, recuerda esos datos en futuras conversaciones.
+- Trata al usuario según su rango dentro del campamento.
 `.trim();
 }
 
@@ -153,7 +170,8 @@ const triviaGames = new Map();
 const dailyTriviaAttempts = new Map(); 
 
 async function askOpenRouter(userId, userMessage, lore) {
-  const systemPrompt = buildSystemPrompt(lore);
+  const profile = await db.getProfile(userId);
+  const systemPrompt = buildSystemPrompt(lore, profile);
   const history = conversationMemory.get(userId) || [];
 
   const messages = [
@@ -229,12 +247,10 @@ client.on('messageCreate', async (message) => {
     return message.reply(`🏆 Tienes ${points} puntos.`);
   }
 
-  // NUEVO COMANDO !perfil ACTUALIZADO
   if (command === '!perfil') {
     const perfil = await db.getProfile(message.author.id);
     const ranking = await db.getRanking();
     
-    // Calcular estadísticas
     const posicion = ranking.findIndex(p => p.userId === message.author.id) + 1;
     const correctas = perfil.correctas || 0;
     const incorrectas = perfil.incorrectas || 0;
@@ -272,7 +288,6 @@ client.on('messageCreate', async (message) => {
 
     const intentos = dailyTriviaAttempts.get(message.author.id) || 0;
     if (intentos >= 5) {
-      // Mensaje modificado como pediste
       return message.reply('⚠️ Has alcanzado el límite máximo de 5 trivias por día. Vuelve mañana.');
     }
 
@@ -301,7 +316,7 @@ client.on('messageCreate', async (message) => {
 
     const timeout = setTimeout(async () => {
       triviaGames.delete(message.author.id);
-      await db.addWrongAnswer(message.author.id); // Registrar como fallo al agotarse el tiempo
+      await db.addWrongAnswer(message.author.id);
       await message.channel.send(
         `⌛ Tiempo agotado para <@${message.author.id}>.\n\nLa respuesta correcta era: ||${question.respuesta}||`
       );
@@ -309,12 +324,11 @@ client.on('messageCreate', async (message) => {
 
     triviaGames.set(message.author.id, {
       answer: question.respuesta,
-      options: question.opciones, // Guardamos opciones para validarlas
+      options: question.opciones,
       points: question.puntos,
       timeout
     });
 
-    // LÓGICA PARA MOSTRAR OPCIONES A, B, C, D
     let textoPregunta = `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/5)\n\n${question.pregunta}\n\n`;
 
     if (question.opciones && Array.isArray(question.opciones)) {
@@ -337,9 +351,8 @@ client.on('messageCreate', async (message) => {
       let cleanUser = normalizeText(content);
       const cleanAnswer = normalizeText(game.answer);
 
-      // LÓGICA DE OPCIONES MÚLTIPLES: Si el usuario responde 'A', 'B', 'C', o 'D'
       if (game.options && ['a', 'b', 'c', 'd'].includes(cleanUser)) {
-        const indice = cleanUser.charCodeAt(0) - 97; // 'a' es 97 en ASCII
+        const indice = cleanUser.charCodeAt(0) - 97;
         const opcionElegida = game.options[indice];
         if (opcionElegida) {
           cleanUser = normalizeText(opcionElegida);
@@ -366,7 +379,6 @@ client.on('messageCreate', async (message) => {
           const puntosAntes = await db.getPoints(message.author.id);
           const rangoAnterior = obtenerRango(puntosAntes);
 
-          // Se actualizan estadísticas de acierto
           await db.addCorrectAnswer(message.author.id, game.points);
 
           const total = await db.getPoints(message.author.id);
@@ -386,7 +398,6 @@ client.on('messageCreate', async (message) => {
         }
       } else {
         try {
-          // Se actualizan estadísticas de error
           await db.addWrongAnswer(message.author.id);
         } catch(error) {
           console.error("Error guardando fallo:", error);
@@ -401,6 +412,24 @@ client.on('messageCreate', async (message) => {
   if (command !== '!a') return;
 
   const prompt = content.slice(args[0].length).trim();
+  const profile = await db.getProfile(message.author.id);
+  const text = prompt.toLowerCase();
+
+  if (!profile.race) {
+    const races = ["elfo", "enano", "hobbit", "hombre", "beornida", "beórnida"];
+    const foundRace = races.find(r => text.includes(r));
+    if (foundRace) {
+      await db.updateTravelerData(message.author.id, { race: foundRace });
+    }
+  }
+
+  if (profile.race && !profile.class) {
+    const classes = ["guardian", "guardián", "campeon", "campeón", "cazador", "capitan", "capitán", "maestre del saber", "minstrel", "burglar", "runekeeper", "warden", "brawler", "mariner"];
+    const foundClass = classes.find(c => text.includes(c));
+    if (foundClass) {
+      await db.updateTravelerData(message.author.id, { class: foundClass });
+    }
+  }
 
   if (!prompt) {
     await message.reply('Escribe algo después de !a para hablar con Altéru.');
