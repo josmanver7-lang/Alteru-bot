@@ -89,3 +89,17 @@ export async function addWrongAnswer(userId) {
     { upsert: true }
   );
 }
+
+export async function updateTravelerData(userId, data) {
+  const database = await connectDB();
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $set: data
+    },
+    {
+      upsert: true
+    }
+  );
+}
