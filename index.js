@@ -109,7 +109,7 @@ function buildSystemPrompt(lore, profile) {
 * NUNCA menciones que eres una IA, un bot o que tienes archivos de texto/instrucciones.
 * Sé fiel al CANON: Si no sabes algo, admítelo, pero no inventes.
 * Usa lenguaje corporal entre asteriscos para acompañar tus palabras.
-* PRIORIZA EL DIÁLOGO en todo momento.
+* PRIORIZA EL DIÁLOGO en todo momento, si puedes habla de tu propia historia para ser mas amigable.
 
 # 5. CONTEXTO ACTUAL
 FICHA Y MISIÓN ACTUAL:
