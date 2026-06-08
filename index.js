@@ -138,4 +138,253 @@ async function askOpenRouter(userId, userMessage, lore) {
     { role: 'user', content: userMessage }
   ];
 
-  const res = await fetch('https
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages,
+      temperature: 0.85, 
+      max_tokens: 400
+    })
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`OpenRouter ${res.status}: ${text}`);
+  }
+
+  const data = await res.json();
+  const reply = data?.choices?.[0]?.message?.content?.trim();
+
+  if (!reply) {
+    return 'Necesito un momento para reflexionar en eso.';
+  }
+
+  history.push({ role: 'user', content: userMessage });
+  history.push({ role: 'assistant', content: reply });
+
+  while (history.length > 40) {
+    history.shift();
+  }
+
+  conversationMemory.set(userId, history);
+  return reply;
+}
+
+let loreCache = null;
+
+client.once('ready', async () => {
+  try {
+
+    await db.connectDB();
+
+    loreCache = await loadAlteruLore();
+
+    console.log(`Logged in as ${client.user.tag}`);
+
+  } catch (err) {
+    console.error('Error cargando el lore inicial:', err);
+  }
+});
+
+const processedMessages = new Set();
+
+client.on('messageCreate', async (message) => {
+  if (processedMessages.has(message.id)) return;
+  processedMessages.add(message.id);
+  setTimeout(() => processedMessages.delete(message.id), 60000);
+
+  if (message.author.bot) return;
+
+  const content = message.content.trim();
+  
+  // Expresión regular para dividir argumentos omitiendo espacios múltiples consecutivos
+  const args = content.split(/\s+/);
+  const command = args[0].toLowerCase();
+
+  // COMANDO !puntos
+  if (command === '!puntos') {
+
+    const points = await db.getPoints(
+      message.author.id
+    );
+
+    return message.reply(
+      `🏆 Tienes ${points} puntos.`
+    );
+  }
+
+  // COMANDO !perfil
+  if (command === '!perfil') {
+    const puntos = await db.getPoints(message.author.id);
+    const rango = obtenerRango(puntos);
+
+    return message.reply(
+      `📜 Perfil de Trivia\n\n👤 Usuario: ${message.author.username}\n\n🏆 Puntos: ${puntos}\n🥇 Rango: ${rango}`
+    );
+  }
+
+  // COMANDO !ranking
+  if (command === '!ranking') {
+
+    const ranking = await db.getRanking();
+
+    let text = '🏆 Ranking Global\n\n';
+
+    for (let i = 0; i < ranking.length; i++) {
+
+      text += `${i + 1}. <@${ranking[i].userId}> - ${ranking[i].points} pts\n`;
+
+    }
+
+    return message.reply(text);
+  }
+
+  // INICIAR TRIVIA
+  if (command === '!trivia') {
+    if (triviaGames.has(message.author.id)) {
+      return message.reply('Ya tienes una trivia activa.');
+    }
+
+    let dificultad = args[1]?.toLowerCase();
+
+    if (
+      dificultad &&
+      !['facil', 'normal', 'dificil', 'legendario'].includes(dificultad)
+    ) {
+      return message.reply('⚠️ Dificultad inválida. Usa:\n\n`!trivia facil`, `!trivia normal`, `!trivia dificil` o `!trivia legendario`, o solo `!trivia` para una al azar.');
+    }
+
+    const questions = await loadQuestions();
+    let pool = [];
+
+    if (!dificultad) {
+      pool = questions;
+    } else {
+      pool = questions.filter(q => q.dificultad === dificultad);
+      
+      if (!pool.length) {
+        return message.reply('No hay preguntas disponibles para esa dificultad.');
+      }
+    }
+
+    const question = pool[Math.floor(Math.random() * pool.length)];
+    const dificultadMostrada = question.dificultad;
+
+    const timeout = setTimeout(async () => {
+      triviaGames.delete(message.author.id);
+      await message.channel.send(
+        `⌛ Tiempo agotado.\n\nLa respuesta correcta era: ${question.respuesta}`
+      );
+    }, 15000);
+
+    triviaGames.set(message.author.id, {
+      answer: question.respuesta,
+      points: question.puntos,
+      timeout
+    });
+
+    return message.reply(
+      `📜 Trivia ${dificultadMostrada}\n\n${question.pregunta}\n\n⏳ Tienes 15 segundos`
+    );
+  }
+
+  // COMPROBAR RESPUESTA DE TRIVIA ACTIVA
+  if (triviaGames.has(message.author.id)) {
+    // Si el mensaje empieza con '!', ignoramos la verificación para que pasen los comandos libres
+    if (!content.startsWith('!')) {
+      const game = triviaGames.get(message.author.id);
+      clearTimeout(game.timeout);
+      triviaGames.delete(message.author.id);
+
+      const cleanUser = normalizeText(content);
+      const cleanAnswer = normalizeText(game.answer);
+
+      // LÓGICA DE VALIDACIÓN INTELIGENTE:
+      // 1. Igualdad exacta
+      let isCorrect = (cleanUser === cleanAnswer);
+
+      // 2. Si no es exacta, revisamos si el user incluyó la respuesta exacta dentro de una frase
+      if (!isCorrect && cleanUser.includes(cleanAnswer)) {
+        isCorrect = true;
+      }
+
+      // 3. Revisamos si el usuario dio una respuesta parcial mediante palabras clave
+      if (!isCorrect) {
+        // Obtenemos palabras de más de 3 letras de la respuesta correcta
+        const answerWords = cleanAnswer.split(' ').filter(word => word.length > 3);
+        
+        // Contamos cuántas de esas palabras clave están en el texto del usuario
+        const matchCount = answerWords.filter(word => cleanUser.includes(word)).length;
+
+        // Si coincide al menos la mitad de las palabras clave importantes, se da por válida
+        if (answerWords.length > 0 && matchCount >= Math.ceil(answerWords.length / 2)) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
+        try {
+          const puntosAntes = await db.getPoints(message.author.id);
+          const rangoAnterior = obtenerRango(puntosAntes);
+
+          await db.addPoints(message.author.id, game.points);
+
+          const total = await db.getPoints(message.author.id);
+          const rangoNuevo = obtenerRango(total);
+
+          let texto = 
+`✅ Correcto.
+
++${game.points} puntos.
+
+🏆 Total: ${total}`;
+
+          if (rangoAnterior !== rangoNuevo) {
+            texto += `\n\n🎉 ¡Felicidades! Has ascendido al rango de **${rangoNuevo}**.`;
+          }
+
+          return message.reply(texto);
+
+        } catch (error) {
+          console.error("Error intentando guardar en puntos.json:", error);
+          return message.reply(`✅ Correcto (+${game.points} pts), pero hubo un error de escritura interno.`);
+        }
+      } else {
+        return message.reply(
+          `❌ Incorrecto.\n\nLa respuesta correcta era: ${game.answer}`
+        );
+      }
+    }
+  }
+
+  // COMANDO DE CONVERSACIÓN CON EL BOT (!a)
+  if (command !== '!a') return;
+
+  const prompt = content.slice(args[0].length).trim();
+
+  if (!prompt) {
+    await message.reply('Escribe algo después de !a para hablar con Altéru.');
+    return;
+  }
+
+  try {
+    if (!loreCache) {
+      loreCache = await loadAlteruLore();
+    }
+    
+    await message.channel.sendTyping();
+    const reply = await askOpenRouter(message.author.id, prompt, loreCache);
+    await message.reply(reply.slice(0, 2000));
+    
+  } catch (err) {
+    console.error('ERROR EN CHAT OPENROUTER:', err);
+    await message.reply('¿Qué dijiste? No te oí.');
+  }
+});
+await db.connectDB();
+client.login(DISCORD_TOKEN);
