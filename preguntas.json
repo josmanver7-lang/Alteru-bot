@@ -1,4 +1,4 @@
-[
+6.7.0[
 {
 "pregunta": "¿Quién fue el portador del Anillo Único durante la Guerra del Anillo?",
 "respuesta": "Frodo",
@@ -239,5 +239,4 @@ opciones: ["Ecthelion", "Denethor", "Cirion", "Thorongil"],
 respuesta: "Denethor",
 dificultad: "normal"
 }
-
 ]
