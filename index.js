@@ -109,7 +109,7 @@ Eres Altéru, Capitán de Gondor. Tu objetivo es CONVERSAR, ROLEAR y CONECTAR co
 
 # 2. CONOCIMIENTO Y LENGUAS
 - Eres un erudito: hablas Oestron, Sindarin (responde en Sindarin si te lo piden o si el contexto es élfico) y conoces términos de Gul Sakhasa.
-- Conoces la historia de Gondor, Arnor y eventos como la Batalla de los Cinco Ejércitos. Si alguien menciona estos temas, desarrolla tu response con erudición y pasión.
+- Conoces la historia de Gondor, Arnor y eventos como la Batalla de los Cinco Ejéctitos. Si alguien menciona estos temas, desarrolla tu respuesta con erudición y pasión.
 
 # 3. REGLAS DE ORO
 - NUNCA menciones que eres una IA o que tienes archivos de texto.
@@ -127,6 +127,7 @@ ${lore.historia_completa}
 
 const conversationMemory = new Map();
 const triviaGames = new Map();
+const dailyTriviaAttempts = new Map(); // Registro de intentos diarios de trivia
 
 async function askOpenRouter(userId, userMessage, lore) {
   const systemPrompt = buildSystemPrompt(lore);
@@ -244,10 +245,22 @@ client.on('messageCreate', async (message) => {
     return message.reply(text);
   }
 
+  // COMANDO !resetear
+  if (command === '!resetear') {
+    dailyTriviaAttempts.set(message.author.id, 0);
+    return message.reply('🔄 Tus intentos diarios de trivia han sido reiniciados. ¡Tienes 5 oportunidades más!');
+  }
+
   // INICIAR TRIVIA
   if (command === '!trivia') {
     if (triviaGames.has(message.author.id)) {
       return message.reply('Ya tienes una trivia activa.');
+    }
+
+    // Comprobación de límite diario (Máximo 5)
+    const intentos = dailyTriviaAttempts.get(message.author.id) || 0;
+    if (intentos >= 5) {
+      return message.reply('⚠️ Has alcanzado el límite máximo de 5 trivias por día. Usa `!resetear` para reiniciar tus intentos.');
     }
 
     let dificultad = args[1]?.toLowerCase();
@@ -272,13 +285,16 @@ client.on('messageCreate', async (message) => {
       }
     }
 
+    // Se incrementa el intento diario ya que la dificultad es válida y el juego va a empezar
+    dailyTriviaAttempts.set(message.author.id, intentos + 1);
+
     const question = pool[Math.floor(Math.random() * pool.length)];
     const dificultadMostrada = question.dificultad;
 
     const timeout = setTimeout(async () => {
       triviaGames.delete(message.author.id);
       await message.channel.send(
-        `⌛ Tiempo agotado.\n\nLa respuesta correcta era: ${question.respuesta}`
+        `⌛ Tiempo agotado.\n\nLa respuesta correcta era: ||${question.respuesta}||`
       );
     }, 15000);
 
@@ -289,7 +305,7 @@ client.on('messageCreate', async (message) => {
     });
 
     return message.reply(
-      `📜 Trivia ${dificultadMostrada}\n\n${question.pregunta}\n\n⏳ Tienes 15 segundos`
+      `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/5)\n\n${question.pregunta}\n\n⏳ Tienes 15 segundos`
     );
   }
 
@@ -356,7 +372,7 @@ client.on('messageCreate', async (message) => {
         }
       } else {
         return message.reply(
-          `❌ Incorrecto.\n\nLa respuesta correcta era: ${game.answer}`
+          `❌ Incorrecto.\n\nLa respuesta correcta era: ||${game.answer}||`
         );
       }
     }
