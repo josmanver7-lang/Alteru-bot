@@ -258,5 +258,110 @@
   "respuesta": "Denethor",
   "dificultad": "normal",
   "puntos": 20
-}
+},
+{
+  "pregunta": "¿Qué reino surgió de Arnor tras la división del reino del norte?",
+  "opciones": ["Arthedain", "Gondor", "Angmar", "Rhovanion"],
+  "respuesta": "Arthedain",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cómo se llamaba la torre situada en Amon Sûl?",
+  "opciones": ["Orthanc", "Barad-dûr", "Weathertop", "Torre de Amon Sûl"],
+  "respuesta": "Torre de Amon Sûl",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué rey de Gondor ordenó la construcción de los Argonath?",
+  "opciones": ["Anárion", "Rómendacil II", "Isildur", "Eärnur"],
+  "respuesta": "Rómendacil II",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cómo se llamaba la fortaleza principal de Angmar?",
+  "opciones": ["Carn Dûm", "Fornost", "Dol Guldur", "Minas Morgul"],
+  "respuesta": "Carn Dûm",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué pueblo habita las costas heladas de Forochel?",
+  "opciones": ["Lossoth", "Druedain", "Hombres del Bosque", "Beórnidas"],
+  "respuesta": "Lossoth",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cuál era la capital de Arthedain antes de su caída?",
+  "opciones": ["Annúminas", "Fornost", "Tharbad", "Amon Sûl"],
+  "respuesta": "Fornost",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué asentamiento sirve como base de los Montaraces en las Quebradas del Norte?",
+  "opciones": ["Esteldín", "Trestlebridge", "Combe", "Fornost"],
+  "respuesta": "Esteldín",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cómo se llama la bahía situada al extremo este de Gondor?",
+  "opciones": ["Belfalas", "Lebennin", "Anfalas", "Lhûn"],
+  "respuesta": "Anfalas",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué pueblo se encuentra entre Bree y Archet?",
+  "opciones": ["Combe", "Staddle", "Trestlebridge", "Adso"],
+  "respuesta": "Combe",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué reino combatió durante siglos contra Angmar?",
+  "opciones": ["Arthedain", "Harad", "Rhûn", "Dale"],
+  "respuesta": "Arthedain",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cómo se llamaba el padre de Thorin Escudo de Roble?",
+  "opciones": ["Thrór", "Thráin II", "Dáin", "Fundin"],
+  "respuesta": "Thráin II",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué ciudad de Rohan se encuentra en el Folde Oeste?",
+  "opciones": ["Aldburg", "Edoras", "Upbourn", "Helm's Deep"],
+  "respuesta": "Aldburg",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Cómo se llamaba la antigua capital de Rhovanion?",
+  "opciones": ["Framsburg", "Dale", "Esgaroth", "No se conoce con certeza"],
+  "respuesta": "No se conoce con certeza",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué refugio élfico se encuentra oculto en las Quebradas del Norte?",
+  "opciones": ["Gath Forthnír", "Rivendel", "Esteldin", "Gildor's Camp"],
+  "respuesta": "Gildor's Camp",
+  "dificultad": "dificil",
+  "puntos": 30
+},
+{
+  "pregunta": "¿Qué facción imperial domina gran parte de Harad en LOTRO?",
+  "opciones": ["Ordakhai", "Corsarios", "Vastagos de la Moneda", "Haradrim"],
+  "respuesta": "Ordakhai",
+  "dificultad": "dificil",
+  "puntos": 30
+}  
 ]
