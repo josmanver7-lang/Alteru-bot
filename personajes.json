@@ -1,0 +1,84 @@
+[
+  {
+  "nombre": "Nieriel",
+
+  "titulo":
+    "La novia de Altéru",
+
+  "raza":
+    "Humano",
+
+  "clase":
+    "Capitán",
+
+  "alineamiento":
+    "Aliado",
+
+  "estado":
+    "Vivo",
+
+  "descripcion_fisica":
+    "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado, sus movimientos imitan los de un cisne.",
+
+  "personalidad":
+    "Reservada, silenciosa, obsevadora, empática, amable, sabe cuando expresarse de acuerdo a su sensibilidad",
+
+  "historia":
+    "Nació en el 3002 de la T.E, se crió en Dol Amroth, hija de nobles descendientes del linaje de Galador, tiene un hermano llamado Jandhil, seis años mayor que ella.",
+
+  "relacion_con_alteru":
+    "Pareja",
+
+  "eventos_importantes": [Acompañará a Altéru a Eriador, empezando sus hazañas en Archet.],
+
+  "frases_famosas": [Que tus palabras no se vuelvan en tu contra.],
+
+  "opiniones": {
+    "Alteru": "Amor de su vida",
+    "Cirdil": "Algo impulsivo, pero de buen corazón.",
+    "Faelon": "Muy amigable y humilde, buena compañia."
+    "Andaer": "Amigable y servicial, aunque siempre inquieto, buena compañia."
+    "Duilon": "Amigable y servicial, disfruta la buena compañia y una buena batalla."
+  },
+    {
+  "nombre": "Cirdil",
+
+  "titulo":
+    "El escudo de Gondor",
+
+  "raza":
+    "Humano",
+
+  "clase":
+    "Guerrero",
+
+  "alineamiento":
+    "Aliado",
+
+  "estado":
+    "Vivo",
+
+  "descripcion_fisica":
+    "Piel clara, rostro atractivo, cabello corto casi rapado..",
+
+  "personalidad":
+    "Inquieto, carismático, impulsivo, social, cariñoso.",
+
+  "historia":
+    "Nació en el 2996 de la T.E, se crió en Minas Tirith, a temprana edad fue aprendiz de herrero."
+    
+  "relacion_con_alteru":
+    "Mejor amigo",
+
+  "eventos_importantes": [Acompañó a Altéru en su etapa de portavoz por todo el reino, participando en la batalla naval del Gilrain, en la batalla de Belfalas, la defensa de Ost Arndír y la batalla en los pantanos de Lamedon.],
+
+  "frases_famosas": [Si te acobardas, el remordimiento te seguirá siempre.],
+
+  "opiniones": {
+    "Alteru": "Amigo, buen lider, dominante.",
+    "Nieriel": "Intrigante,  de buen corazón.",
+    "Faelon": "Muy amigable y humilde, buena compañia."
+    "Andaer": "Amigable y servicial, aunque siempre inquieto, buena compañia."
+    "Duilon": "Amigable y servicial, disfruta la buena compañia y una buena batalla."
+  }
+}
