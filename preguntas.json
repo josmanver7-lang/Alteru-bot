@@ -337,13 +337,6 @@
   "puntos": 30
 },
 {
-  "pregunta": "¿Qué ciudad de Rohan se encuentra en el Folde Oeste?",
-  "opciones": ["Aldburg", "Edoras", "Upbourn", "Helm's Deep"],
-  "respuesta": "Aldburg",
-  "dificultad": "dificil",
-  "puntos": 30
-},
-{
   "pregunta": "¿Cómo se llamaba la antigua capital de Rhovanion?",
   "opciones": ["Framsburg", "Dale", "Esgaroth", "No se conoce con certeza"],
   "respuesta": "No se conoce con certeza",
@@ -363,5 +356,319 @@
   "respuesta": "Ordakhai",
   "dificultad": "dificil",
   "puntos": 30
-}  
+},
+{
+"pregunta": "¿Qué rey de Gondor ordenó la construcción de los Argonath?",
+"opciones": ["Anárion", "Romendacil II", "Minalcar", "Isildur"],
+"respuesta": "Romendacil II",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cómo se llamaba la gran araña de la que descendía Ella-Laraña?",
+"opciones": ["Thuringwethil", "Ungoliant", "Arien", "Melian"],
+"respuesta": "Ungoliant",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cuál fue la antigua capital de Rhudaur antes de caer bajo la influencia de Angmar?",
+"opciones": ["Amon Sûl", "Fornost", "Cameth Brin", "Annúminas"],
+"respuesta": "Cameth Brin",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cómo se llamaba el refugio élfico situado en la Quebrada del Norte?",
+"opciones": ["Gath Forthnír", "Echad Garthadir", "Rivendel", "Eregion"],
+"respuesta": "Echad Garthadir",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué pueblo habitaba las regiones heladas de Forochel?",
+"opciones": ["Lossoth", "Druedain", "Beórnidas", "Ordakhai"],
+"respuesta": "Lossoth",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cuál era el nombre del puerto principal de Númenor?",
+"opciones": ["Andúnië", "Umbar", "Rómenna", "Pelargir"],
+"respuesta": "Rómenna",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Quién fue el último rey de Arnor antes de la división del reino?",
+"opciones": ["Argeleb I", "Eärendur", "Arvedui", "Amlaith"],
+"respuesta": "Eärendur",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué asentamiento se encuentra al sur de Bree y suele pasar desapercibido para muchos aventureros?",
+"opciones": ["Combe", "Staddle", "Adso's Camp", "Archet"],
+"respuesta": "Staddle",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cómo se llamaba el padre de Thorin Escudo de Roble?",
+"opciones": ["Thrór", "Thráin II", "Dáin", "Fundin"],
+"respuesta": "Thráin II",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué río separa Rohan de Gondor durante gran parte de su recorrido?",
+"opciones": ["Anduin", "Lefnui", "Mering", "Entalluvio"],
+"respuesta": "Mering",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué fortaleza protegía el acceso norte a Mordor?",
+"opciones": ["Minas Morgul", "Barad-dûr", "Cirith Ungol", "Morannon"],
+"respuesta": "Morannon",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué rey de Arnor murió ahogado en las aguas heladas de Forochel?",
+"opciones": ["Arvedui", "Argeleb", "Araphant", "Malvegil"],
+"respuesta": "Arvedui",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cuál de estas instancias de 6 jugadores pertenece al clúster de 'In Their Absence' en LOTRO?", 
+"opciones": ["Sari-surma", "Sammath Gûl", "Halls of Crafting", "Fornost"], 
+"respuesta": "Sari-surma", 
+"dificultad": "legendaria", 
+"puntos": 40
+},
+{
+"pregunta": "¿Qué ciudad de Rohan se encuentra en el Folde Oeste?",
+"opciones": ["Edoras", "Aldburg", "Upbourn", "Helm's Deep"],
+"respuesta": "Aldburg",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué familia enana gobernó Moria durante la mayor parte de su historia?",
+"opciones": ["Puños de Hierro", "Barbalargas", "Duramanos", "Pies de Piedra"],
+"respuesta": "Barbalargas",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Cómo se llamaba la torre construida en Amon Sûl?",
+"opciones": ["Elostirion", "Orthanc", "Torre de Amon Sûl", "Minas Ithil"],
+"respuesta": "Torre de Amon Sûl",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué senda utilizó principalmente la Comunidad para cruzar las Montañas Nubladas tras fracasar en Caradhras?",
+"opciones": ["Paso Alto", "Moria", "Paso del Cuerno Rojo", "Cirith Forn"],
+"respuesta": "Moria",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Quién fue el padre de Denethor II?",
+"opciones": ["Ecthelion II", "Thorongil", "Cirion", "Boromir I"],
+"respuesta": "Ecthelion II",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{
+"pregunta": "¿Qué pueblo de Eriador se encuentra entre Bree y las Quebradas del Norte siguiendo el Gran Camino del Este?",
+"opciones": ["Combe", "Trestlebridge", "Archet", "Staddle"],
+"respuesta": "Trestlebridge",
+"dificultad": "legendaria",
+"puntos": 40
+},
+{ 
+"pregunta": "¿Quién es el portador del Anillo Único al inicio de La Comunidad del Anillo?",  
+"respuesta": "Bilbo", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cómo se llama el Mago Gris?", 
+"opciones": ["Gandalf", "Saruman", "Radagast", "Alatar"], 
+"respuesta": "Gandalf", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿De qué raza es Legolas?", 
+"opciones": ["Hombre", "Enano", "Hobbit", "Elfo"], 
+"respuesta": "Elfo", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cuál es la capital del reino de Rohan?", 
+"opciones": ["Minas Tirith", "Edoras", "Bree", "Rivendel"], 
+"respuesta": "Edoras", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Qué criatura persigue a la Comunidad desde Moria?", 
+"opciones": ["Un Troll", "Un Balrog", "Un Nazgûl", "Gollum"], 
+"respuesta": "Gollum", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cuál es el arma preferida de Gimli?", 
+"opciones": ["Hacha", "Espada", "Arco", "Lanza"], 
+"respuesta": "Hacha", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Dónde se forjó el Anillo Único?", 
+"opciones": ["Erebor", "Isengard", "Monte del Destino", "Eregion"], 
+"respuesta": "Monte del Destino", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Quién es el Señor Oscuro de Mordor?",
+"respuesta": "Sauron", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Qué pariente de Frodo le deja el Anillo Único?",  
+"respuesta": "Bilbo", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cómo se llama el bosque donde viven los Ents?", 
+"respuesta": "Fangorn", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Quién gobierna en Isengard?", 
+"respuesta": "Saruman", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Qué bestias voladoras montan los Nazgûl?", 
+"opciones": ["Águilas", "Bestias Aladas", "Dragones", "Murciélagos gigantes"], 
+"respuesta": "Bestias Aladas", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cómo se llama el poni de Sam?", 
+"opciones": ["Bill", "Gamyo", "Brego", "Crinblanca"], 
+"respuesta": "Bill", 
+"dificultad": "normal", 
+"puntos": 10 
+},
+{ "pregunta": "¿En qué taberna conocen los Hobbits a Aragorn?",  
+"respuesta": "El Poni Pisador", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": 
+"¿Cómo llaman los elfos a Aragorn?",  
+"respuesta": "Estel", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿Cuál es la moneda principal en LOTRO?", 
+"opciones": ["Plata", "Oro", "Cobre", "Gemas"], 
+"respuesta": "Oro", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+{ 
+"pregunta": "¿En qué región de LOTRO comienzan los Hobbits?",  
+"respuesta": "La Comarca", 
+"dificultad": "fácil", 
+"puntos": 10 
+},
+  { "pregunta": "¿Qué raza en LOTRO empieza su aventura en Thorin's Gate?", "opciones": ["Elfos y Enanos", "Solo Enanos", "Hombres y Enanos", "Hobbits y Elfos"], "respuesta": "Elfos y Enanos", "dificultad": "fácil", "puntos": 10 },
+  { "pregunta": "¿Qué clase en LOTRO es conocida por sus curaciones tocando instrumentos?", "opciones": ["Lore-master", "Minstrel", "Rune-keeper", "Captain"], "respuesta": "Minstrel", "dificultad": "fácil", "puntos": 10 },
+  { "pregunta": "¿Cómo se llama la primera instancia grupal que suelen hacer los jugadores en LOTRO?", "opciones": ["Garth Agarwen", "Carn Dûm", "The Great Barrows", "Fornost"], "respuesta": "The Great Barrows", "dificultad": "fácil", "puntos": 10 },
+  { "pregunta": "¿Quién es el padre de Aragorn?", "opciones": ["Arador", "Arathorn", "Dirhael", "Aranuir"], "respuesta": "Arathorn", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llamaba la espada de Isildur antes de romperse?", "opciones": ["Glamdring", "Orcrist", "Andúril", "Narsil"], "respuesta": "Narsil", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué objeto roba Pippin mientras Gandalf duerme?", "opciones": ["El Anillo Único", "Su vara", "El Palantír", "Su pipa"], "respuesta": "El Palantír", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿A quién pertenece originalmente el anillo Nenya, el Anillo de Agua?", "opciones": ["Elrond", "Galadriel", "Círdan", "Gil-galad"], "respuesta": "Galadriel", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llama el capitán de los guardias de Ithilien?", "opciones": ["Boromir", "Mablung", "Faramir", "Damrod"], "respuesta": "Faramir", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué nombre recibe el gran cuerno de Rohan?", "opciones": ["Cuerno de Helm", "Cuerno de Gondor", "Cuerno de Eorl", "Cuerno de la Marca"], "respuesta": "Cuerno de Helm", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué criatura custodia la puerta oeste de Moria?", "opciones": ["El Balrog", "Trasgos", "El Guardián del Agua", "Trolls de las cavernas"], "respuesta": "El Guardián del Agua", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué nombre da Bárbol a Merry y Pippin?", "opciones": ["Medianos", "Pequeños Orcos", "Niños", "Entingas"], "respuesta": "Entingas", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llama el rey de los Muertos del Sagrario?", "opciones": ["Rey de las Montañas", "No tiene nombre conocido", "El Rey Maldito", "Gorgoroth"], "respuesta": "No tiene nombre conocido", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cuál es el nombre de la esposa de Tom Bombadil?", "opciones": ["Melian", "Baya de Oro", "Lúthien", "Nimrodel"], "respuesta": "Baya de Oro", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿En qué región de LOTRO se encuentra la ciudad de Annúminas?", "opciones": ["Forochel", "Angmar", "Evendim", "Eregion"], "respuesta": "Evendim", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué nivel máximo tenía LOTRO en su lanzamiento base (Shadows of Angmar)?", "opciones": ["40", "50", "60", "65"], "respuesta": "50", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cuál es la profesión en LOTRO que fabrica armas de metal?", "opciones": ["Weaponsmith", "Armourer", "Woodworker", "Tinker"], "respuesta": "Weaponsmith", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿A qué nivel pueden los jugadores en LOTRO acceder a los Objetos Legendarios por primera vez?", "opciones": ["Nivel 40", "Nivel 45", "Nivel 50", "Nivel 55"], "respuesta": "Nivel 45", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿En qué zona de LOTRO los jugadores de nivel 42 suelen encontrar los primeros campamentos de los Hombres de las Colinas?", "opciones": ["Eregion", "Angmar", "Montañas Nubladas", "Forochel"], "respuesta": "Angmar", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué clase en LOTRO utiliza 'Jabalinas' (Javelins)?", "opciones": ["Hunter", "Warden", "Champion", "Burglar"], "respuesta": "Warden", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llama el sistema de combate PVP en LOTRO?", "opciones": ["Arena", "Monster Play", "Battlegrounds", "War of the Ring"], "respuesta": "Monster Play", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cuál de estas no es una virtud en LOTRO?", "opciones": ["Zeal", "Valour", "Patience", "Wisdom"], "respuesta": "Patience", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llama el festival de LOTRO que celebra la primavera?", "opciones": ["Yule Festival", "Spring Festival", "Farmers Faire", "Harvestmath"], "respuesta": "Spring Festival", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Qué raza se añadió a LOTRO con la expansión de Mordor?", "opciones": ["High Elves", "Stout-axes", "Beornings", "Hobbits del Río"], "respuesta": "High Elves", "dificultad": "normal", "puntos": 20 },
+  { "pregunta": "¿Cómo se llamaba el padre de Elrond?", "opciones": ["Eärendil", "Ereinion", "Finwë", "Turgon"], "respuesta": "Eärendil", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál es el verdadero nombre del Nazgûl conocido como el Rey Brujo?", "opciones": ["Khamûl", "Gothmog", "Nunca se revela", "Tar-Calyamacil"], "respuesta": "Nunca se revela", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Qué espada élfica encontró Gandalf en la cueva de los trolls?", "opciones": ["Dardo", "Glamdring", "Orcrist", "Gúthwinë"], "respuesta": "Glamdring", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿En qué año de la Tercera Edad se destruyó el Anillo Único?", "opciones": ["3001", "3018", "3019", "3021"], "respuesta": "3019", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Quién forjó los tres anillos de los Elfos?", "opciones": ["Fëanor", "Sauron", "Celebrimbor", "Gil-galad"], "respuesta": "Celebrimbor", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál era el nombre de Rohan antes de que la casa de Eorl se asentara allí?", "opciones": ["Calenardhon", "Enedwaith", "Rhovanion", "Gondor Norte"], "respuesta": "Calenardhon", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cómo se llama la madre de Légolas?", "opciones": ["Celebrian", "Nerdanel", "Desconocida", "Lúthien"], "respuesta": "Desconocida", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿A quién le regaló Bilbo su cota de malla de Mithril en LOTR (los libros)?", "opciones": ["A Thorin", "A Frodo", "A Gimli", "Al museo de Cavada Grande"], "respuesta": "A Frodo", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál de estos bosques NO fue un remanente del gran bosque primitivo?", "opciones": ["Bosque Negro", "Fangorn", "Bosque de Lórien", "El Viejo Bosque"], "respuesta": "Bosque de Lórien", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Qué animal representaba a la casa de Hador?", "opciones": ["El Cuervo", "El Dragón", "El Lobo", "El Caballo"], "respuesta": "El Dragón", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "En LOTRO, ¿qué profesión recolecta y refina materiales antiguos como las 'Sales de cobre' (Copper Salts)?", "opciones": ["Metalsmith", "Scholar (Erudito)", "Jeweller", "Farmer"], "respuesta": "Scholar (Erudito)", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cómo se llama la incursión (raid) de nivel 60 que se encuentra en Lothlórien?", "opciones": ["The Rift", "Helegrod", "Dar Narbugud", "Ost Dunhoth"], "respuesta": "Dar Narbugud", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "En el sistema de granjas de LOTRO (Farmer), ¿qué cultivo se utiliza para hacer la cerveza 'Spring Barley'? ", "opciones": ["Lúpulo", "Cebada de Primavera", "Avena", "Trigo de Invierno"], "respuesta": "Cebada de Primavera", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál es la capital de la región de Forochel en LOTRO?", "opciones": ["Kuru-leiri", "Sûri-kylä", "Kauppa-kohta", "Zigilgund"], "respuesta": "Sûri-kylä", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Qué atributo principal incrementa el daño táctico del Rune-keeper en LOTRO?", "opciones": ["Will", "Fate", "Agility", "Might"], "respuesta": "Will", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cómo se llama el gran balrog de Moria que los jugadores enfrentan en la historia épica de LOTRO?", "opciones": ["Gothmog", "Thaurlach", "Durin's Bane", "Udûn"], "respuesta": "Durin's Bane", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Qué nivel de reputación es superior a 'Kindred' en LOTRO?", "opciones": ["Ally", "Friend", "Respected", "Acquaintance"], "respuesta": "Respected", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Quién es el líder de los Ranger de Esteldín en LOTRO?", "opciones": ["Halbarad", "Golodir", "Aragorn", "Daervunn"], "respuesta": "Halbarad", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿En qué región de LOTRO se encuentra el laberinto de Goblin-town?", "opciones": ["Montañas Nubladas", "Ettenmoors", "Angmar", "Trollshaws"], "respuesta": "Montañas Nubladas", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál de estas clases fue añadida en una actualización posterior y no en una gran expansión?", "opciones": ["Warden", "Beorning", "Rune-keeper", "Brawler"], "respuesta": "Beorning", "dificultad": "difícil", "puntos": 30 },
+  { "pregunta": "¿Cuál es el nombre de la espada de Fingolfin con la que hirió a Morgoth?", "opciones": ["Aeglos", "Angrist", "Ringil", "Gurthang"], "respuesta": "Ringil", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿A qué reino de los hombres pertenece la región de Pinnath Gelin, conocida por sus Colinas Verdes?", "opciones": ["Rohan", "Gondor", "Arnor", "Rhovanion"], "respuesta": "Gondor", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cómo se llamaba el padre de Galadriel?", "opciones": ["Finarfin", "Fingolfin", "Fëanor", "Finwë"], "respuesta": "Finarfin", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué Ainur descendió a Arda específicamente para dominar las aguas?", "opciones": ["Manwë", "Aulë", "Oromë", "Ulmo"], "respuesta": "Ulmo", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuál fue el nombre del primer Senescal regente de Gondor?", "opciones": ["Húrin", "Pelendur", "Mardil Voronwë", "Denethor I"], "respuesta": "Mardil Voronwë", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Quién mató a Glaurung, el padre de los dragones?", "opciones": ["Beren", "Túrin Turambar", "Eärendil", "Huor"], "respuesta": "Túrin Turambar", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuántos hijos tuvo Fëanor?", "opciones": ["Siete", "Cinco", "Tres", "Nueve"], "respuesta": "Siete", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué nombre reciben las estrellas que formó Varda con el rocío de Telperion?", "opciones": ["Valacirca", "Menelmacar", "Silmarils", "Miriel"], "respuesta": "Valacirca", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿En qué año de la Segunda Edad cayó Númenor?", "opciones": ["3319", "3441", "3262", "3100"], "respuesta": "3319", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuál de los Nueve Nazgûl es el único del que Tolkien reveló su nombre original?", "opciones": ["Khamûl", "Gothmog", "Morgomir", "Talión"], "respuesta": "Khamûl", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué Maia cuidaba de los árboles de Valinor junto a Yavanna y lloró su destrucción?", "opciones": ["Melian", "Arien", "Nienna", "Tilion"], "respuesta": "Nienna", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cómo se llamaba la capital del reino perdido de Arthedain?", "opciones": ["Annúminas", "Fornost Erain", "Amon Sûl", "Bree"], "respuesta": "Fornost Erain", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Quién era el señor de la casa de la Flor Dorada en Gondolin?", "opciones": ["Glorfindel", "Ecthelion", "Tuor", "Maeglin"], "respuesta": "Glorfindel", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué edad exacta tenía Aragorn cuando conoció a Frodo en Bree?", "opciones": ["87 años", "88 años", "86 años", "89 años"], "respuesta": "87 años", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿De qué material estaba hecha la cinta que sostenía el Anillo Único en el cuello de Frodo?", "opciones": ["Cuero", "Seda élfica", "Cadena de plata", "Oro blanco"], "respuesta": "Cadena de plata", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "En LOTRO, ¿cuál es el cap de Mitigación Física (Physical Mitigation) para una clase de armadura ligera al nivel máximo?", "opciones": ["40%", "50%", "60%", "70%"], "respuesta": "40%", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué stat oculto en LOTRO reduce la probabilidad de que los enemigos bloqueen, paren o evadan tus ataques?", "opciones": ["Finesse", "Tactical Mastery", "Critical Defence", "Resistance"], "respuesta": "Finesse", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuál de estas instancias de 6 jugadores pertenece al clúster de 'In Their Absence' en LOTRO?", "opciones": ["Sari-surma", "Sammath Gûl", "Halls of Crafting", "Fornost"], "respuesta": "Sari-surma", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cómo se llama el título que obtienes en LOTRO si llegas al nivel 50 sin morir ni una sola vez?", "opciones": ["The Undying", "The Invincible", "The Immortal", "The Unvanquished"], "respuesta": "The Immortal", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿En la épica de LOTRO Volumen 1, quién traiciona a los Pueblos Libres y revela ser un espectro?", "opciones": ["Sara Oakheart", "Narmeleth", "Laerdan", "Amarthiel"], "respuesta": "Sara Oakheart", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuál es la receta secreta nivel 1 del oficio de cocina que otorga un efecto cosmético de aliento de fuego?", "opciones": ["Dragon-breath Ale", "Fire-roasted Hobbit", "Spicy Spiced Apple", "Pepper-crusted Meat"], "respuesta": "Dragon-breath Ale", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué nombre recibe el servidor de pruebas público (Test Server) de LOTRO?", "opciones": ["Bullroarer", "Brandywine", "Palantir", "Isengard"], "respuesta": "Bullroarer", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Cuál es el título otorgado a los jugadores que pre-compraron la suscripción vitalicia antes del lanzamiento original de LOTRO?", "opciones": ["Founder", "VIP", "Pioneer", "Firstborn"], "respuesta": "Founder", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿Qué instrumento en LOTRO tiene la característica única de emitir un sonido grave similar al de una gaita en ciertos tonos?", "opciones": ["Moor Cowbell", "Horn", "Theorbo", "Pibgorn"], "respuesta": "Pibgorn", "dificultad": "legendaria", "puntos": 40 },
+  { "pregunta": "¿En qué año se introdujo por primera vez el modelo Free-to-Play en LOTRO?", "opciones": ["2009", "2010", "2011", "2012"], "respuesta": "2010", "dificultad": "legendaria", "puntos": 40 }
+]
+
 ]
