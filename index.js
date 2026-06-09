@@ -163,12 +163,13 @@ INSTRUCCIONES SOBRE EL VIAJERO:
 }
 
 const companions = {
-  alteru: { nombre: "Altéru", clase: "Capitán", habilidad: "Liderazgo de Gondor", coste: 500 },
-  cirdil: { nombre: "Círdil", clase: "Guerrero", habilidad: "Coraje Temerario", coste: 250 },
-  duilon: { nombre: "Duilon", clase: "Campeón", habilidad: "Golpe Devastador", coste: 200 },
-  andaer: { nombre: "Andaer", clase: "Guerrero", habilidad: "Veterano Incansable", coste: 150 },
+  alteru: { nombre: "Altéru", clase: "Capitán", habilidad: "Rugido del León", coste: 500 },
+  cirdil: { nombre: "Círdil", clase: "Guerrero", habilidad: "Escudo de Gondor", coste: 250 },
+  duilon: { nombre: "Duilon", clase: "Campeón", habilidad: "Deseo de Lucha", coste: 200 },
+  andaer: { nombre: "Andaer", clase: "Guerrero", habilidad: "Instinto Escudero", coste: 150 },
   nieriel: { nombre: "Nieriel", clase: "Capitán", habilidad: "Sangre Élfica", coste: 150 },
-  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Conocimiento Antiguo", coste: 100 }
+  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Sabiduría Élfica", coste: 100 }
+  montaraces: { nombre: "Montaraces de Arathir", clase: "Cazadores", habilidad: "Exploradores del Norte", coste: 1000 }
 };
 
 const conversationMemory = new Map();
@@ -349,7 +350,7 @@ client.on('messageCreate', async (message) => {
     let texto = "⚔ Grupo actual\n\n";
 
     for (const id of lista) {
-      texto += `• ${companions[id].nombre}\n`;
+      texto += `• ${companions[id]?.nombre || id}\n`;
     }
 
     return message.reply(texto);
@@ -580,7 +581,26 @@ client.on('messageCreate', async (message) => {
   }
 
   const missions = await loadMissions();
+      
+async function loadEncounters() {
+  try {
+    const raw = await readFile(
+      path.join(__dirname, "encuentros.json"),
+      "utf8"
+    );
 
+    return JSON.parse(raw);
+
+  } catch (err) {
+
+    console.error(
+      "Error cargando encuentros.json:",
+      err
+    );
+
+    return [];
+  }
+}
   const mission = missions[numero - 1];
 
   if (!mission) {
@@ -592,13 +612,13 @@ client.on('messageCreate', async (message) => {
   }
 
   expeditions.set(message.author.id, {
-
-    missionId: mission.id,
-    progress: 0,
-    xpEarned: 0,
-    pointsEarned: 0
-
-  });
+  missionId: mission.id,
+  mission,
+  progress: 0,
+  xpEarned: 0,
+  pointsEarned: 0,
+  completedEncounters: []
+});
 
   return message.reply(
 `📜 ${mission.titulo}
