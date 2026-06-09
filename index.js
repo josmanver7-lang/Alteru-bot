@@ -85,6 +85,26 @@ async function loadQuestions() {
   }
 }
 
+async function loadMissions() {
+  try {
+    const raw = await readFile(path.join(__dirname, "misiones.json"), "utf8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Error cargando misiones.json:", err);
+    return [];
+  }
+}
+
+async function loadEncounters() {
+  try {
+    const raw = await readFile(path.join(__dirname, "encuentros.json"), "utf8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Error cargando encuentros.json:", err);
+    return [];
+  }
+}
+
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
@@ -102,7 +122,7 @@ function buildSystemPrompt(lore, profile) {
 # 1. TU NATURALEZA
 * Eres Altéru, Capitán de Gondor y anfitrión del Campamento de Altéru.
 * Consideras el campamento un refugio para viajeros, aventureros, estudiosos y curiosos de la Tierra Media.
-* Tu prioridad no es responder preguntas como un autómata, sino mantener conversaciones interesantes y vivas. 
+* Tu prioridad no es responder preguntas como un autómata, sino mantener conversations interesantes y vivas. 
 * Si alguien simplemente te saluda (ej. "Hola"), no respondas con una única frase fría. Involúcralo. Actúa como un anfitrión que recibe a un recién llegado.
 * En cuanto tengas la oportunidad, habla de tu propia vida, tus memorias o tus campañas pasadas para sacarle conversación al usuario e invitarlo a compartir su historia.
 * Aunque eres amable y hospitalario, mantienes tu personalidad: un líder experimentado, con un humor sutil y algo cínico, veterano de muchas batallas, pero siempre dispuesto a ayudar a quien llega al campamento.
@@ -168,13 +188,14 @@ const companions = {
   duilon: { nombre: "Duilon", clase: "Campeón", habilidad: "Deseo de Lucha", coste: 200 },
   andaer: { nombre: "Andaer", clase: "Guerrero", habilidad: "Instinto Escudero", coste: 150 },
   nieriel: { nombre: "Nieriel", clase: "Capitán", habilidad: "Sangre Élfica", coste: 150 },
-  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Sabiduría Élfica", coste: 100 }
+  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Sabiduría Élfica", coste: 100 }, // <-- Coma corregida aquí
   montaraces: { nombre: "Montaraces de Arathir", clase: "Cazadores", habilidad: "Exploradores del Norte", coste: 1000 }
 };
 
 const conversationMemory = new Map();
 const triviaGames = new Map();
 const dailyTriviaAttempts = new Map(); 
+const expeditions = new Map();
 
 async function askOpenRouter(userId, userMessage, lore) {
   const profile = await db.getProfile(userId);
@@ -370,6 +391,143 @@ client.on('messageCreate', async (message) => {
     return message.reply('🔄 Tus intentos diarios de trivia han sido reiniciados. ¡Tienes 5 oportunidades más!');
   }
 
+  // ==========================================
+  //         SISTEMA DE EXPEDICIONES
+  // ==========================================
+
+  if (command === "!expediciones") {
+    const missions = await loadMissions();
+    let texto = "📜 Tablón de Expediciones\n\n";
+
+    missions.forEach((m, i) => {
+      texto += `${i + 1}. ${m.titulo}\n`;
+      texto += `📍 ${m.destino}\n`;
+      texto += `⚠ Nivel ${m.nivel}\n`;
+      texto += `🎖 ${m.puntos} pts\n`;
+      texto += `📚 ${m.xp} XP\n\n`;
+    });
+
+    texto += "Usa !expedicion <numero>";
+    return message.reply(texto);
+  }
+
+  if (command === "!expedicion") {
+    const numero = parseInt(args[1]);
+    if (isNaN(numero)) {
+      return message.reply("Usa !expedicion <numero>");
+    }
+
+    const missions = await loadMissions();
+    const mission = missions[numero - 1];
+
+    if (!mission) {
+      return message.reply("Esa misión no existe.");
+    }
+
+    if (expeditions.has(message.author.id)) {
+      return message.reply("Ya estás en una expedición.");
+    }
+
+    // Inicialización del estado dinámico (Imagen 1)
+    expeditions.set(message.author.id, {
+      missionId: mission.id,
+      mission,
+      progress: 0,
+      currentEncounter: null,
+      xpEarned: 0,
+      pointsEarned: 0
+    });
+
+    return message.reply(
+`📜 ${mission.titulo}
+
+📍 Destino: ${mission.destino}
+
+${mission.descripcion}
+
+Usa !desafiar para comenzar el viaje.`
+    );
+  }
+
+  if (command === "!volver") {
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en una expedición.");
+    }
+
+    expeditions.delete(message.author.id);
+    return message.reply("Das media vuelta y regresas al Campamento de Altéru.");
+  }
+
+  if (command === "!desafiar") {
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!expediciones`.");
+    }
+
+    const expedition = expeditions.get(message.author.id);
+
+    // CASO 1: No hay encuentro activo (Imagen 2)
+    if (expedition.currentEncounter === null) {
+      const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+
+      if (!encuentroId) {
+        return message.reply("No hay más encuentros registrados en esta expedición.");
+      }
+
+      const encounters = await loadEncounters();
+      const encounter = encounters.find(e => e.id === encuentroId || e.nombre === encuentroId);
+
+      if (!encounter) {
+        return message.reply(`No se encontró el encuentro "${encuentroId}" en encuentros.json.`);
+      }
+
+      // Guardar encuentro activo
+      expedition.currentEncounter = encounter;
+
+      // Mostrar encuentro (Imagen 3)
+      let textoEncuentro = `⚔️ **${encounter.nombre}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
+      return message.reply(textoEncuentro);
+    } 
+    
+    // CASO 2: Ya existe encuentro activo (Imagen 3 y 4)
+    else {
+      const success = Math.random() < 0.7; // Probabilidad de prueba del 70%
+
+      if (success) {
+        // Victoria (Imagen 4)
+        expedition.progress++;
+        const nombreEncuentroAnterior = expedition.currentEncounter.nombre;
+        expedition.currentEncounter = null; // Limpiar tras resolver (Imagen 5)
+
+        let textoVictoria = `✅ **Victoria**\n\nHas derrotado a los enemigos en *${nombreEncuentroAnterior}*.\n\n+10 XP`;
+
+        // Comprobar si la misión terminó (Imagen 6)
+        if (expedition.progress >= (expedition.mission.encuentros?.length || 0)) {
+          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
+          
+          // Otorga los 50 puntos en la DB de forma segura
+          try {
+            await db.addCorrectAnswer(message.author.id, 50);
+          } catch (dbErr) {
+            console.error("Error guardando puntos de expedición:", dbErr);
+          }
+          
+          expeditions.delete(message.author.id); // Elimina estado finalizado
+        }
+
+        return message.reply(textoVictoria);
+
+      } else {
+        // Derrota (Imagen 5)
+        expeditions.delete(message.author.id); // Se termina inmediatamente el viaje
+        return message.reply(`❌ **Derrota**\n\nLa expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
+      }
+    }
+  }
+
+  // ==========================================
+  //           SISTEMA DE TRIVIAS
+  // ==========================================
+
   if (command === '!trivia') {
     if (triviaGames.has(message.author.id)) {
       return message.reply('Ya tienes una trivia activa.');
@@ -498,6 +656,10 @@ client.on('messageCreate', async (message) => {
     }
   }
 
+  // ==========================================
+  //           CHAT CON ALTÉRU (!A)
+  // ==========================================
+
   if (command !== '!a') return;
 
   const prompt = content.slice(args[0].length).trim();
@@ -537,112 +699,6 @@ client.on('messageCreate', async (message) => {
   } catch (err) {
     console.error('ERROR EN CHAT OPENROUTER:', err);
     await message.reply('¿Qué dijiste? No te oí.');
-  }
-  const expeditions = new Map();
-  async function loadMissions() {
-  try {
-    const raw = await readFile(
-      path.join(__dirname, "misiones.json"),
-      "utf8"
-    );
-
-    return JSON.parse(raw);
-
-  } catch (err) {
-    console.error("Error cargando misiones.json:", err);
-    return [];
-  }
-    if (command === "!expediciones") {
-
-  const missions = await loadMissions();
-
-  let texto = "📜 Tablón de Expediciones\n\n";
-
-  missions.forEach((m, i) => {
-
-    texto += `${i + 1}. ${m.titulo}\n`;
-    texto += `📍 ${m.destino}\n`;
-    texto += `⚠ Nivel ${m.nivel}\n`;
-    texto += `🎖 ${m.puntos} pts\n`;
-    texto += `📚 ${m.xp} XP\n\n`;
-
-  });
-
-  texto += "Usa !expedicion <numero>";
-
-  return message.reply(texto);
-    }
-    if (command === "!expedicion") {
-
-  const numero = parseInt(args[1]);
-
-  if (isNaN(numero)) {
-    return message.reply("Usa !expedicion <numero>");
-  }
-
-  const missions = await loadMissions();
-      
-async function loadEncounters() {
-  try {
-    const raw = await readFile(
-      path.join(__dirname, "encuentros.json"),
-      "utf8"
-    );
-
-    return JSON.parse(raw);
-
-  } catch (err) {
-
-    console.error(
-      "Error cargando encuentros.json:",
-      err
-    );
-
-    return [];
-  }
-}
-  const mission = missions[numero - 1];
-
-  if (!mission) {
-    return message.reply("Esa misión no existe.");
-  }
-
-  if (expeditions.has(message.author.id)) {
-    return message.reply("Ya estás en una expedición.");
-  }
-
-  expeditions.set(message.author.id, {
-  missionId: mission.id,
-  mission,
-  progress: 0,
-  xpEarned: 0,
-  pointsEarned: 0,
-  completedEncounters: []
-});
-
-  return message.reply(
-`📜 ${mission.titulo}
-
-📍 Destino: ${mission.destino}
-
-${mission.descripcion}
-
-Usa !desafiar para comenzar el viaje.
-`
-  );
-    }
-    if (command === "!volver") {
-
-  if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en una expedición.");
-  }
-
-  expeditions.delete(message.author.id);
-
-  return message.reply(
-    "Das media vuelta y regresas al Campamento de Altéru."
-  );
-}
   }
 });
 
