@@ -2,7 +2,6 @@
 {
 "nombre": "Nieriel",
 
-```
 "titulo": "La novia de Altéru",
 
 "raza": "Humano",
@@ -36,14 +35,12 @@
   "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
   "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
 }
-```
 
 },
 
 {
 "nombre": "Cirdil",
 
-```
 "titulo": "El Escudo de Gondor",
 
 "raza": "Humano",
@@ -81,14 +78,12 @@
   "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
   "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
 }
-```
 
 },
 
 {
 "nombre": "Duilon",
 
-```
 "titulo": "El paladín",
 
 "raza": "Humano",
@@ -125,14 +120,12 @@
   "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
   "Cirdil": "Algo impulsivo, pero de buen corazón."
 }
-```
   
 },
 
 {
 "nombre": "Faelon",
 
-```
 "titulo": "El Elfo",
 
 "raza": "Humano",
@@ -173,14 +166,12 @@
   "Andaer": "Amigable y servicial, aunque siempre inquieto; de buen corazón, pero no disfruta mucho su compañía.",
   "Cirdil": "Algo impulsivo, pero de buen corazón, a veces le recuerda la corrupción de los Edain."
 }
-```
     
 },
 
 {
 "nombre": "Andaer",
 
-```
 "titulo": "El escudero",
 
 "raza": "Humano",
@@ -217,7 +208,5 @@
   "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, con quien mejor se lleva.",
   "Faelon": "Muy amigable y humilde; una buena compañía aunque algon distante.",
   "Cirdil": "Algo impulsivo, pero de buen corazón, no hay demasiada afinidad."
-}
-```
 }
 ]
