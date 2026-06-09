@@ -5,13 +5,13 @@
   "destino": "Lamedon",
   "objetivo": "recuperar_suministros",
   "xp": 100,
-  "puntos": 50
+  "puntos": 50,
   "descripcion":
     "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf."
   "textoExito":
     "Tras registrar cada rincón del campamento, reuniste mapas, provisiones y documentos abandonados, así como armamento. Con la misión cumplida emprendiste el regreso al Campamento.",
   "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión."
+    "La expedición se vio obligada a retirarse antes de completar la misión.",
   
   "encuentros": [
     "enemigo_numeroso",
@@ -26,13 +26,13 @@
   "destino": "Lamedon",
   "objetivo": "eliminar_enemmigos",
   "xp": 100,
-  "puntos": 50
+  "puntos": 50,
   "descripcion":
     "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
   "textoExito":
     "Desentierras tu arma del cuerpo de ultimo trasgo y suspiras al fin, ves los cadaveres alrededor y te disponer a regresar al campamento e informar tu éxito.",
   "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión."  
+    "La expedición se vio obligada a retirarse antes de completar la misión.",
   "encuentros": [
     "enemigo_numeroso",
     "enemigo_numeroso", 
@@ -46,13 +46,13 @@
   "destino": "Lebennin",
   "objetivo": "rescatar_aliados",
   "xp": 150,
-  "puntos": 100
+  "puntos": 100,
   "descripcion":
     "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, tenemos que liberarlos.",
   "textoExito":
     "Derrotas al último corsario y liberas a los prisioneros que estaban atados cerca de la fogata, ellos te agradecen y vuelven contigo al campamento.",
   "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión."
+    "La expedición se vio obligada a retirarse antes de completar la misión.",
   
   "encuentros": [
     "enemigo_numeroso",
