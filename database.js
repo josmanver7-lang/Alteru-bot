@@ -45,9 +45,7 @@ export async function getRanking() {
     .toArray();
 }
 
-// ==========================================
-//    NUEVAS FUNCIONES PARA ESTADÍSTICAS
-// ==========================================
+// ==========================================\n//    NUEVAS FUNCIONES PARA ESTADÍSTICAS\n// ==========================================
 
 export async function getProfile(userId) {
   const database = await connectDB();
@@ -61,8 +59,7 @@ export async function getProfile(userId) {
     rachaActual: 0, 
     mejorRacha: 0,
     affinity: {},
-    race: null,
-    class: null
+    companions: [] 
   };
 }
 
@@ -113,9 +110,7 @@ export async function updateTravelerData(userId, data) {
   );
 }
 
-// ==========================================
-//    SISTEMA DE AFINIDAD
-// ==========================================
+// ==========================================\n//    SISTEMA DE AFINIDAD\n// ==========================================
 
 export async function addAffinity(userId, companion, amount) {
   const database = await connectDB();
@@ -131,12 +126,40 @@ export async function addAffinity(userId, companion, amount) {
   );
 }
 
-export async function getAffinity(userId) {
+// ==========================================\n//    SISTEMA DE COMPAÑEROS Y ECONOMÍA\n// ==========================================
+
+export async function hireCompanion(userId, companionId) {
   const database = await connectDB();
 
-  const user = await database
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $addToSet: {
+        companions: companionId
+      }
+    }
+  );
+}
+
+export async function getCompanions(userId) {
+  const database = await connectDB();
+
+  const profile = await database
     .collection("puntos")
     .findOne({ userId });
 
-  return user?.affinity || {};
+  return profile?.companions || [];
+}
+
+export async function spendPoints(userId, amount) {
+  const database = await connectDB();
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $inc: {
+        points: -amount
+      }
+    }
+  );
 }
