@@ -457,16 +457,15 @@ Usa !desafiar para comenzar el viaje.`
   }
 
   if (command === "!volver") {
-  if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en una expedición.");
-  }
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en una expedición.");
+    }
 
-  expeditions.delete(message.author.id);
+    expeditions.delete(message.author.id);
 
-  return message.reply(
-    "Das media vuelta y regresas al Campamento de Altéru."
-  );
-}
+    return message.reply(
+      "Das media vuelta y regresas al Campamento de Altéru."
+    );
   }
 
   if (command === "!ignorar") {
@@ -493,16 +492,17 @@ Usa !desafiar para comenzar el viaje.`
   }
 
   if (command === "!desafiar") {
-    if (expedition.failed) {
-  return message.reply(
-    "La expedición ha fracasado. Usa !volver para regresar al campamento."
-  );
-    }
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
     }
 
     const expedition = expeditions.get(message.author.id);
+
+    if (expedition.failed) {
+      return message.reply(
+        "La expedición ha fracasado o concluido. Usa !volver para regresar al campamento."
+      );
+    }
 
     // CASO 1: No hay encuentro activo
     if (expedition.currentEncounter === null) {
@@ -549,16 +549,12 @@ Usa !desafiar para comenzar el viaje.`
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         expedition.currentEncounter = null; // Limpiar tras resolver
 
-        let textoVictoria =`✅ **Victoria**Has derrotado a los enemigos en *${nombreEncuentroAnterior}*.+10 XP`;
+        let textoVictoria = `✅ **Victoria**\n\nHas derrotado a los enemigos en *${nombreEncuentroAnterior}*.\n\n+10 XP`;
 
         // Comprobar si la misión terminó
-        if (expedition.progress < expedition.mission.encuentros.length) {
-        textoVictoria += `
-
-        🛤️ El camino continúa.
-
-        Usa !desafiar para seguir viajando.`;
-        }
+        if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
+          textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
+        } else {
           textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
           
           // Otorga los 50 puntos en la DB de forma segura
@@ -568,7 +564,7 @@ Usa !desafiar para comenzar el viaje.`
             console.error("Error guardando puntos de expedición:", dbErr);
           }
           
-          expedition.failed = true; // Elimina estado finalizado
+          expedition.failed = true; // Bloquea la expedición hasta que use !volver
         }
 
         return message.reply(textoVictoria);
