@@ -488,7 +488,7 @@ Usa !desafiar para comenzar el viaje.`
     expedition.progress++;
     expedition.currentEncounter = null;
 
-    return message.reply(`Decides evitar **${nombre}** y continuar tu viaje.`);
+    return message.reply(`Decides evitar **${nombre}** y continuar tu viaje. 🛤️ El camino continúa. Usa !desafiar para seguir viajando.`);
   }
 
   if (command === "!desafiar") {
@@ -530,7 +530,24 @@ Usa !desafiar para comenzar el viaje.`
       if (encounter.tipo !== "evento_especial") {
         comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
       }
-      
+    
+      const tipo = expedition.currentEncounter.tipo;
+
+      if (tipo === "enemigo_numeroso" || tipo === "enemigo_poderoso") {
+        if (tipo === "obstaculo") {
+          if (encounter.tipo === "evento_especial")
+            expedition.currentEncounter = encounter; expedition.eventMode = true;
+          if (command === "!continuar")
+            expedition.progress++; expedition.currentEncounter = null;
+
+          return message.reply(
+            `Te despides del mercader y continúas tu viaje.
+            Usa !desafiar para seguir viajando.`
+          );
+      const peligroTexto = 
+        encounter.peligro
+          ? getDangerText(encounter.peligro)
+          : "Ninguno";
       // Guardar encuentro activo
       expedition.currentEncounter = encounter;
 
