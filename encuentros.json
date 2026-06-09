@@ -1,9 +1,10 @@
 [
 {
   "id": "pantano_profundo",
-  "tipo": "obstaculo",
+  "categoria": "obstaculo",
+  "tipo": "terreno",
   "titulo": "Pantano Profundo",
-  "region": "Lamedon",
+  "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
   "descripcion":
     "El terreno se vuelve cada vez más inestable y las aguas oscuras ocultan el camino.",
 
@@ -13,9 +14,10 @@
 },
 {
   "id": "puente_roto",
-  "tipo": "obstaculo",
+  "categoria": "obstaculo",
+  "tipo": "terreno",
   "titulo": "Puente Derrumbado",
-  "region": "Andrast",
+  "region": ["andrast"]
   "descripcion":
     "Un antiguo puente de piedra ha colapsado dejando un peligroso vacío.",
 
@@ -26,9 +28,9 @@
 {
   "id": "trasgos_colinas",
   "tipo": "enemigo_numeroso",
-  "categoria": "trasgos",
+  "categoria": "combate",
   "titulo": "Trasgos de las Colinas",
-  "region": "Lamedon",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
   "descripcion":
     "Al seguir unas huellas recientes descubres una pequeña banda de trasgos saqueando provisiones junto al camino.",
 
@@ -39,9 +41,9 @@
 {
   "id": "corsarios_rezagados",
   "tipo": "enemigo_numeroso",
-  "categoria": "corsarios",
+  "categoria": "combate",
   "titulo": "Corsarios Rezagados",
-  "region": "Lebennin",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
   "descripcion":
     "Un grupo de corsarios mal armados conversan distraidos en un pequeño campamento, no se dan cuenta que alguien los observa.",
 
@@ -50,13 +52,13 @@
   "xp": 10
 },
 {
-  "id": "corsarios_rezagados",
+  "id": "corsarios_exploradores",
   "tipo": "enemigo_numeroso",
-  "categoria": "corsarios",
-  "titulo": "Corsarios Rezagados",
-  "region": "Lamedon",
+  "categoria": "combate",
+  "titulo": "Corsarios Exploradores",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
   "descripcion":
-    "Un grupo de corsarios dispersos vigila una antigua ruta comercial. Aún conservan armas y parecen dispuestos a luchar.",
+    "Un grupo de corsarios dispersos vigila el paso principal. Aún conservan armas y parecen dispuestos a luchar.",
 
   "peligro": 3,
 
@@ -65,9 +67,9 @@
 {
   "id": "troll_nocturno",
   "tipo": "enemigo_poderoso",
-  "categoria": "troll",
+  "categoria": "combate",
   "titulo": "Troll Nocturno",
-  "region": "Lamedon",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],,
   "descripcion":
     "Entre la niebla aparece un enorme troll de las colinas. Su tamaño supera con creces al de cualquier hombre.",
 
@@ -78,9 +80,9 @@
 {
   "id": "capitan_orco",
   "tipo": "enemigo_poderoso",
-  "categoria": "orco",
+  "categoria": "combate",
   "titulo": "Capitán Orco",
-  "region": "Lamedon",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
   "descripcion":
     "Un veterano capitán orco dirige a varios exploradores enemigos. Sus cicatrices revelan años de combate.",
 
@@ -91,8 +93,8 @@
 {
   "id": "mercader_enano",
   "tipo": "evento_especial",
-  "categoria": "enano",
-  "region": "lamedon",
+  "categoria": "social",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
   "titulo": "Mercader Enano",
   "nivelMin": 1,
   "nivelMax": 3,
@@ -103,8 +105,8 @@
 {
   "id": "exploradores_elficos",
   "tipo": "evento_especial",
-  "categoria": "elfo",
-  "region": "lamedon",
+  "categoria": "social",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
   "titulo": "Exploradores Élfos",
   "nivelMin": 1,
   "nivelMax": 3,
@@ -115,9 +117,19 @@
 {
   "id": "ruinas_antiguas",
   "tipo": "evento_especial",
-  "categoria": "ruina",
-  "region": "lamedon",
+  "categoria": "exploracion",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
   "titulo": "Ruinas Antiguas",
+  "descripcion":
+    "Los restos de una construcción olvidada emergen entre la maleza.",
+  "xp": 15
+},  
+{
+  "id": "atalaya_abandonada",
+  "tipo": "evento_especial",
+  "categoria": "exploracion",
+  "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
+  "titulo": "Atalaya abandonada",
   "descripcion":
     "Los restos de una construcción olvidada emergen entre la maleza.",
   "xp": 15
