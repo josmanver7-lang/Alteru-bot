@@ -600,13 +600,13 @@ Usa !desafiar para comenzar el viaje.`
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         expedition.currentEncounter = null; // Limpiar tras resolver
 
-        let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+10 XP`;
+        let textoVictoria = `✅ **Éxito** Has superado el desafío de *${nombreEncuentroAnterior}*. 📚 +10 XP`;
 
         // Comprobar si la misión terminó
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
         } else {
-          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
+          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n📚+100 XP\n🏆+50 Puntos`;
           
           // Otorga los 50 puntos en la DB de forma segura
           try {
@@ -620,10 +620,17 @@ Usa !desafiar para comenzar el viaje.`
 
         return message.reply(textoVictoria);
 
-      } else {
-        // Derrota
-        expeditions.delete(message.author.id); // Se termina inmediatamente el viaje
-        return message.reply(`❌ **Fracaso**\n\nNo has podido superar el desafío. La expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
+      else {
+        expedition.failed = true;
+        expedition.currentEncounter = null;
+        
+        return message.reply(
+      `❌ **Fracaso**
+          
+      No has podido superar el desafío.
+
+      Usa !volver para regresar al campamento.`
+         );
       }
     }
   }
