@@ -277,6 +277,10 @@ client.on('messageCreate', async (message) => {
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
 
+  // ==========================================
+  //           COMANDOS DE PERFIL
+  // ==========================================
+
   if (command === '!puntos') {
     const points = await db.getPoints(message.author.id);
     return message.reply(`🏆 Tienes ${points} puntos.`);
@@ -297,10 +301,10 @@ client.on('messageCreate', async (message) => {
     const restantes = 5 - intentosHoy;
     const rango = obtenerRango(perfil.points || 0);
 
+    const salud = perfil.salud !== undefined ? perfil.salud : 100;
+
     const companionsList = perfil.companions || [];
-
     let companionsText = "Ninguno";
-
     if (companionsList.length) {
       companionsText = companionsList
         .map(id => companions[id]?.nombre || id)
@@ -308,8 +312,26 @@ client.on('messageCreate', async (message) => {
     }
 
     return message.reply(
-      `📜 **Perfil de Trivia**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}\n🤝 Compañeros: ${companionsText}`
+      `📜 **Perfil del Viajero**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n❤️ Salud: ${salud}/100\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}\n🤝 Compañeros: ${companionsText}`
     );
+  }
+
+  if (command === "!curar") {
+    const profile = await db.getProfile(message.author.id);
+    const saludActual = profile.salud !== undefined ? profile.salud : 100;
+
+    if (saludActual >= 100) {
+      return message.reply("Ya tienes la salud al máximo (100/100).");
+    }
+
+    if ((profile.points || 0) < 50) {
+      return message.reply(`Necesitas 50 puntos para curarte. (Tienes ${profile.points || 0} pts)`);
+    }
+
+    await db.spendPoints(message.author.id, 50);
+    await db.updateTravelerData(message.author.id, { salud: 100 });
+
+    return message.reply("🌿 Has usado ungüentos y vendajes del campamento. Tu salud ha sido restaurada por completo (100/100). [-50 pts]");
   }
 
   if (command === '!afinidad') {
@@ -404,7 +426,7 @@ client.on('messageCreate', async (message) => {
 
   if (command === "!tablon"){
     const missions = await loadMissions();
-    let texto = "📜 Tablón de Anuncios\n\n";
+    let texto = "📜 Tablón de Expediciones\n\n";
 
     missions.forEach((m, i) => {
       texto += `${i + 1}. ${m.titulo}\n`;
@@ -435,7 +457,6 @@ client.on('messageCreate', async (message) => {
       return message.reply("Ya estás en una expedición.");
     }
 
-    // Inicialización del estado dinámico
     expeditions.set(message.author.id, {
       missionId: mission.id,
       mission,
@@ -480,7 +501,6 @@ Usa !desafiar para comenzar el viaje.`
       return message.reply("No hay ningún encuentro activo.");
     }
 
-    // No se pueden ignorar eventos especiales
     if (expedition.currentEncounter.tipo === "evento_especial") {
       return message.reply("Este encuentro requiere una decisión. No puedes ignorarlo.");
     }
@@ -519,7 +539,6 @@ Usa !desafiar para comenzar el viaje.`
 
     const encounterId = expedition.currentEncounter.id || expedition.currentEncounter.titulo.toLowerCase().replace(/ /g, "_");
     
-    // Lista de NPCs con los que tiene sentido hablar
     const npcsAmigables = ["mercader_enano", "exploradores_elficos", "ruinas_antiguas"];
 
     if (npcsAmigables.some(npc => encounterId.includes(npc))) {
@@ -576,10 +595,8 @@ Usa !desafiar para comenzar el viaje.`
         comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
       }
       
-      // Guardar encuentro activo
       expedition.currentEncounter = encounter;
 
-      // Mostrar encuentro
       const peligroTexto = encounter.peligro ? getDangerText(encounter.peligro) : "Ninguno";
       let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${peligroTexto}${comandos}`;
       return message.reply(textoEncuentro);
@@ -587,50 +604,52 @@ Usa !desafiar para comenzar el viaje.`
     
     // CASO 2: Ya existe encuentro activo
     else {
-      // Si es un evento especial, no se debe resolver con !desafiar (pelear)
       if (expedition.currentEncounter.tipo === "evento_especial") {
         return message.reply("Este es un evento especial. Revisa las opciones anteriores para interactuar (ej. !hablar, !continuar).");
       }
 
-      const success = Math.random() < 0.7; // Probabilidad de prueba del 70% para enemigos y obstáculos
+      const success = Math.random() < 0.7; // Probabilidad de éxito del 70%
 
       if (success) {
         // Victoria
         expedition.progress++;
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
-        expedition.currentEncounter = null; // Limpiar tras resolver
+        expedition.currentEncounter = null; 
 
-        let textoVictoria = `✅ **Éxito** Has superado el desafío de *${nombreEncuentroAnterior}*. 📚 +10 XP`;
+        let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+10 XP`;
 
-        // Comprobar si la misión terminó
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
         } else {
-          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n📚+100 XP\n🏆+50 Puntos`;
+          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
           
-          // Otorga los 50 puntos en la DB de forma segura
           try {
             await db.addCorrectAnswer(message.author.id, 50);
           } catch (dbErr) {
             console.error("Error guardando puntos de expedición:", dbErr);
           }
           
-          expedition.failed = true; // Bloquea la expedición hasta que use !volver
+          expedition.failed = true; 
         }
 
         return message.reply(textoVictoria);
 
-      else {
-        expedition.failed = true;
-        expedition.currentEncounter = null;
+      } else {
+        // Derrota - Sistema de Salud y Daño
+        const profile = await db.getProfile(message.author.id);
+        const saludActual = profile.salud !== undefined ? profile.salud : 100;
         
-        return message.reply(
-      `❌ **Fracaso**
-          
-      No has podido superar el desafío.
+        const danoEnemigo = expedition.currentEncounter.dano || Math.floor(Math.random() * 20) + 10;
+        const nuevaSalud = saludActual - danoEnemigo;
 
-      Usa !volver para regresar al campamento.`
-         );
+        if (nuevaSalud <= 0) {
+          expeditions.delete(message.author.id);
+          await db.updateTravelerData(message.author.id, { salud: 100 });
+          return message.reply(`💀 **Has caído en combate**\n\nEl ataque de *${expedition.currentEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño y tu salud llega a 0.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*`);
+        } else {
+          await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+          return message.reply(`⚠️ **Recibes Daño**\n\nNo lograste superar el desafío de *${expedition.currentEncounter.titulo}* ileso. Recibes ${danoEnemigo} de daño.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo, \`!curar\` si tienes puntos, o \`!volver\` para huir al campamento.`);
+        }
       }
     }
   }
