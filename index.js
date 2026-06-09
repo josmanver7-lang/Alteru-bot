@@ -490,6 +490,35 @@ Usa !desafiar para comenzar el viaje.`
     );
   }
 
+  if (command === "!descansar") {
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en una expedición.");
+    }
+
+    const expedition = expeditions.get(message.author.id);
+
+    if (expedition.currentEncounter) {
+      return message.reply("No puedes descansar mientras estás en un encuentro activo.");
+    }
+
+    const profile = await db.getProfile(message.author.id);
+    const saludActual = profile.salud !== undefined ? profile.salud : 100;
+
+    if (saludActual >= 100) {
+      return message.reply("Tu salud ya está al máximo.");
+    }
+
+    if ((profile.points || 0) < 25) {
+      return message.reply(`Necesitas 25 puntos para descansar. (Tienes ${profile.points || 0} pts)`);
+    }
+
+    await db.spendPoints(message.author.id, 25);
+    const nuevaSalud = Math.min(100, saludActual + 30);
+    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+
+    return message.reply(`⛺ **Descanso en el camino**\n\nEncuentras un lugar seguro para recuperar el aliento. Gastas raciones y suministros.\n\n❤️ Salud: ${nuevaSalud}/100 (+30)\n\nUsa \`!desafiar\` para seguir viajando. [-25 pts]`);
+  }
+
   if (command === "!ignorar") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
@@ -608,7 +637,12 @@ Usa !desafiar para comenzar el viaje.`
         return message.reply("Este es un evento especial. Revisa las opciones anteriores para interactuar (ej. !hablar, !continuar).");
       }
 
-      const success = Math.random() < 0.7; // Probabilidad de éxito del 70%
+      const profile = await db.getProfile(message.author.id);
+
+      // --- SISTEMA DE COMPAÑEROS EN COMBATE ---
+      const bonoCompaneros = (profile.companions && profile.companions.length) ? profile.companions.length * 0.05 : 0;
+      const baseSuccess = 0.7;
+      const success = Math.random() < (baseSuccess + bonoCompaneros);
 
       if (success) {
         // Victoria
@@ -636,10 +670,25 @@ Usa !desafiar para comenzar el viaje.`
 
       } else {
         // Derrota - Sistema de Salud y Daño
-        const profile = await db.getProfile(message.author.id);
         const saludActual = profile.salud !== undefined ? profile.salud : 100;
         
-        const danoEnemigo = expedition.currentEncounter.dano || Math.floor(Math.random() * 20) + 10;
+        // Salvación por compañero
+        if (profile.companions && profile.companions.length > 0) {
+          const companionSaves = Math.random() < 0.3;
+          if (companionSaves) {
+            const salvadorId = profile.companions[Math.floor(Math.random() * profile.companions.length)];
+            const salvador = companions[salvadorId]?.nombre || "Un compañero";
+            return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${expedition.currentEncounter.titulo}* y salvándote de recibir daño.\n\n❤️ Salud intacta: ${saludActual}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir al campamento.`);
+          }
+        }
+
+        let danoEnemigo = expedition.currentEncounter.dano || Math.floor(Math.random() * 20) + 10;
+        
+        // Reducción de daño por compañeros
+        if (profile.companions && profile.companions.length > 0) {
+          danoEnemigo = Math.floor(danoEnemigo * 0.8);
+        }
+
         const nuevaSalud = saludActual - danoEnemigo;
 
         if (nuevaSalud <= 0) {
@@ -648,7 +697,7 @@ Usa !desafiar para comenzar el viaje.`
           return message.reply(`💀 **Has caído en combate**\n\nEl ataque de *${expedition.currentEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño y tu salud llega a 0.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*`);
         } else {
           await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
-          return message.reply(`⚠️ **Recibes Daño**\n\nNo lograste superar el desafío de *${expedition.currentEncounter.titulo}* ileso. Recibes ${danoEnemigo} de daño.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo, \`!curar\` si tienes puntos, o \`!volver\` para huir al campamento.`);
+          return message.reply(`⚠️ **Recibes Daño**\n\nNo lograste superar el desafío de *${expedition.currentEncounter.titulo}* ileso. Recibes ${danoEnemigo} de daño.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo, \`!descansar\` si necesitas recuperarte o \`!volver\` para huir al campamento.`);
         }
       }
     }
