@@ -1,0 +1,110 @@
+{
+  "id": "pantano_profundo",
+  "tipo": "obstaculo",
+  "titulo": "Pantano Profundo",
+  "region": "Lamedon",
+  "descripcion":
+    "El terreno se vuelve cada vez más inestable y las aguas oscuras ocultan el camino.",
+
+  "peligro": 2,
+
+  "xp": 5
+},
+{
+  "id": "puente_roto",
+  "tipo": "obstaculo",
+  "titulo": "Puente Derrumbado",
+  "region": "Andrast",
+  "descripcion":
+    "Un antiguo puente de piedra ha colapsado dejando un peligroso vacío.",
+
+  "peligro": 3,
+
+  "xp": 10
+},
+{
+  "id": "trasgos_colinas",
+  "tipo": "enemigo_numeroso",
+  "categoria": "trasgos",
+  "titulo": "Trasgos de las Colinas",
+  "region": "Lamedon",
+  "descripcion":
+    "Al seguir unas huellas recientes descubres una pequeña banda de trasgos saqueando provisiones junto al camino.",
+
+  "peligro": 2,
+
+  "xp": 10
+},
+{
+  "id": "corsarios_rezagados",
+  "tipo": "enemigo_numeroso",
+  "categoria": "corsarios"
+  "titulo": "Corsarios Rezagados",
+  "region": "Lamedon",
+  "descripcion":
+    "Un grupo de corsarios dispersos vigila una antigua ruta comercial. Aún conservan armas y parecen dispuestos a luchar.",
+
+  "peligro": 3,
+
+  "xp": 15
+},
+{
+  "id": "troll_nocturno",
+  "tipo": "enemigo_poderoso",
+  "categoria": "troll"
+  "titulo": "Troll Nocturno",
+  "region": "Lamedon",
+  "descripcion":
+    "Entre la niebla aparece un enorme troll de las colinas. Su tamaño supera con creces al de cualquier hombre.",
+
+  "peligro": 4,
+
+  "xp": 20
+},
+{
+  "id": "capitan_orco",
+  "tipo": "enemigo_poderoso",
+  "categoria": "orco"
+  "titulo": "Capitán Orco",
+  "region": "Lamedon",
+  "descripcion":
+    "Un veterano capitán orco dirige a varios exploradores enemigos. Sus cicatrices revelan años de combate.",
+
+  "peligro": 5,
+
+  "xp": 25
+},
+{
+  "id": "mercader_enano",
+  "tipo": "evento_especial",
+  "categoria": "enano",
+  "region": "lamedon",
+  "titulo": "Mercader Enano",
+  "nivelMin": 1,
+  "nivelMax": 3,
+  "descripcion":
+    "Una caravana enana parece haber acampado junto al camino.",
+  "xp": 20
+},
+{
+  "id": "exploradores_elficos",
+  "tipo": "evento_especial",
+  "categoria": "elfo",
+  "region": "lamedon",
+  "titulo": "Exploradores Élfos",
+  "nivelMin": 1,
+  "nivelMax": 3,
+  "descripcion":
+    "Un pequeño grupo de elfos observa el bosque desde las sombras.",
+  "xp": 25
+},
+{
+  "id": "ruinas_antiguas",
+  "tipo": "evento_especial",
+  "categoria": "ruina",
+  "region": "lamedon",
+  "titulo": "Ruinas Antiguas",
+  "descripcion":
+    "Los restos de una construcción olvidada emergen entre la maleza.",
+  "xp": 15
+}
