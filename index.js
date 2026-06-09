@@ -56,6 +56,16 @@ async function loadAlteruLore() {
     lore.historia_completa = "Usa la información de la ficha de personaje.";
   }
 
+  // --- NUEVO: Carga de personajes ---
+  try {
+    const personajesPath = path.join(__dirname, 'personajes.json');
+    const personajesRaw = await readFile(personajesPath, 'utf8');
+    lore.personajes = JSON.parse(personajesRaw);
+  } catch (err) {
+    console.log("Aviso: personajes.json no encontrado o tiene un error de sintaxis.");
+  }
+  // ----------------------------------
+
   return lore;
 }
 
