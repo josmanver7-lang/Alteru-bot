@@ -164,11 +164,11 @@ INSTRUCCIONES SOBRE EL VIAJERO:
 
 const companions = {
   alteru: { nombre: "Altéru", clase: "Capitán", habilidad: "Liderazgo de Gondor", coste: 500 },
-  cirdil: { nombre: "Círdil", clase: "Montaraz", habilidad: "Coraje Temerario", coste: 250 },
-  duilon: { nombre: "Duilon", clase: "Guerrero", habilidad: "Golpe Devastador", coste: 200 },
-  andaer: { nombre: "Andaer", clase: "Explorador", habilidad: "Veterano Incansable", coste: 150 },
-  nieriel: { nombre: "Nieriel", clase: "Sanadora", habilidad: "Sangre Élfica", coste: 150 },
-  faelon: { nombre: "Faelon", clase: "Sabio", habilidad: "Conocimiento Antiguo", coste: 100 }
+  cirdil: { nombre: "Círdil", clase: "Guerrero", habilidad: "Coraje Temerario", coste: 250 },
+  duilon: { nombre: "Duilon", clase: "Campeón", habilidad: "Golpe Devastador", coste: 200 },
+  andaer: { nombre: "Andaer", clase: "Guerrero", habilidad: "Veterano Incansable", coste: 150 },
+  nieriel: { nombre: "Nieriel", clase: "Capitán", habilidad: "Sangre Élfica", coste: 150 },
+  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Conocimiento Antiguo", coste: 100 }
 };
 
 const conversationMemory = new Map();
@@ -536,6 +536,93 @@ client.on('messageCreate', async (message) => {
   } catch (err) {
     console.error('ERROR EN CHAT OPENROUTER:', err);
     await message.reply('¿Qué dijiste? No te oí.');
+  }
+  const expeditions = new Map();
+  async function loadMissions() {
+  try {
+    const raw = await readFile(
+      path.join(__dirname, "misiones.json"),
+      "utf8"
+    );
+
+    return JSON.parse(raw);
+
+  } catch (err) {
+    console.error("Error cargando misiones.json:", err);
+    return [];
+  }
+    if (command === "!expediciones") {
+
+  const missions = await loadMissions();
+
+  let texto = "📜 Tablón de Expediciones\n\n";
+
+  missions.forEach((m, i) => {
+
+    texto += `${i + 1}. ${m.titulo}\n`;
+    texto += `📍 ${m.destino}\n`;
+    texto += `⚠ Nivel ${m.nivel}\n`;
+    texto += `🎖 ${m.puntos} pts\n`;
+    texto += `📚 ${m.xp} XP\n\n`;
+
+  });
+
+  texto += "Usa !expedicion <numero>";
+
+  return message.reply(texto);
+    }
+    if (command === "!expedicion") {
+
+  const numero = parseInt(args[1]);
+
+  if (isNaN(numero)) {
+    return message.reply("Usa !expedicion <numero>");
+  }
+
+  const missions = await loadMissions();
+
+  const mission = missions[numero - 1];
+
+  if (!mission) {
+    return message.reply("Esa misión no existe.");
+  }
+
+  if (expeditions.has(message.author.id)) {
+    return message.reply("Ya estás en una expedición.");
+  }
+
+  expeditions.set(message.author.id, {
+
+    missionId: mission.id,
+    progress: 0,
+    xpEarned: 0,
+    pointsEarned: 0
+
+  });
+
+  return message.reply(
+`📜 ${mission.titulo}
+
+📍 Destino: ${mission.destino}
+
+${mission.descripcion}
+
+Usa !desafiar para comenzar el viaje.
+`
+  );
+    }
+    if (command === "!volver") {
+
+  if (!expeditions.has(message.author.id)) {
+    return message.reply("No estás en una expedición.");
+  }
+
+  expeditions.delete(message.author.id);
+
+  return message.reply(
+    "Das media vuelta y regresas al Campamento de Altéru."
+  );
+}
   }
 });
 
