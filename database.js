@@ -53,14 +53,16 @@ export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
   
-  // Retornamos el usuario o un objeto por defecto incluyendo affinity
+  // Retornamos el usuario o un objeto por defecto incluyendo affinity, race y class
   return user || { 
     points: 0, 
     correctas: 0, 
     incorrectas: 0, 
     rachaActual: 0, 
     mejorRacha: 0,
-    affinity: {} 
+    affinity: {},
+    race: null,
+    class: null
   };
 }
 
@@ -127,4 +129,14 @@ export async function addAffinity(userId, companion, amount) {
     },
     { upsert: true }
   );
+}
+
+export async function getAffinity(userId) {
+  const database = await connectDB();
+
+  const user = await database
+    .collection("puntos")
+    .findOne({ userId });
+
+  return user?.affinity || {};
 }
