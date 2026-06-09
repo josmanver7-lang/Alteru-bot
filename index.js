@@ -266,6 +266,24 @@ client.on('messageCreate', async (message) => {
     );
   }
 
+  if (command === '!afinidad') {
+    const perfil = await db.getProfile(message.author.id);
+
+    const affinity = perfil.affinity || {};
+
+    let texto = "🤝 Afinidad con compañeros\n\n";
+
+    for (const [nombre, valor] of Object.entries(affinity)) {
+      texto += `${nombre}: ${valor}% (${getAffinityRank(valor)})\n`;
+    }
+
+    if (Object.keys(affinity).length === 0) {
+      texto += "Aún no tienes afinidad con ningún compañero.";
+    }
+
+    return message.reply(texto);
+  }
+
   if (command === '!ranking') {
     const ranking = await db.getRanking();
     let text = '🏆 Ranking Global\n\n';
