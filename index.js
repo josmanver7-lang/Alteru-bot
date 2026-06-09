@@ -20,27 +20,27 @@ const __dirname = path.dirname(__filename);
 // ==========================================
 
 function normalizeText(text) {
-  if (!text) return '';
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") 
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "") 
-    .trim();
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") 
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "") 
+    .trim();
 }
 
 function obtenerRango(puntos) {
-  if (puntos >= 10000) return "Leyenda de la Tierra Media";
-  if (puntos >= 7000) return "Sabio de Rivendel";
-  if (puntos >= 5000) return "Señor de los Dúnedain";
-  if (puntos >= 3500) return "Mariscal de la Marca";
-  if (puntos >= 2500) return "Capitán de Gondor";
-  if (puntos >= 1750) return "Guardián de Arnor";
-  if (puntos >= 1000) return "Montaraz del Norte";
-  if (puntos >= 500) return "Explorador de Eriador";
-  if (puntos >= 250) return "Viajero de Bree";
+  if (puntos >= 10000) return "Leyenda de la Tierra Media";
+  if (puntos >= 7000) return "Sabio de Rivendel";
+  if (puntos >= 5000) return "Señor de los Dúnedain";
+  if (puntos >= 3500) return "Mariscal de la Marca";
+  if (puntos >= 2500) return "Capitán de Gondor";
+  if (puntos >= 1750) return "Guardián de Arnor";
+  if (puntos >= 1000) return "Montaraz del Norte";
+  if (puntos >= 500) return "Explorador de Eriador";
+  if (puntos >= 250) return "Viajero de Bree";
 
-  return "Hobbit Curioso";
+  return "Hobbit Curioso";
 }
 
 function getAffinityRank(value) {
@@ -64,7 +64,6 @@ async function loadAlteruLore() {
     lore.historia_completa = "Usa la información de la ficha de personaje.";
   }
 
-  // --- NUEVO: Carga de personajes ---
   try {
     const personajesPath = path.join(__dirname, 'personajes.json');
     const personajesRaw = await readFile(personajesPath, 'utf8');
@@ -72,7 +71,6 @@ async function loadAlteruLore() {
   } catch (err) {
     console.log("Aviso: personajes.json no encontrado o tiene un error de sintaxis.");
   }
-  // ----------------------------------
 
   return lore;
 }
@@ -270,8 +268,18 @@ client.on('messageCreate', async (message) => {
     const restantes = 5 - intentosHoy;
     const rango = obtenerRango(perfil.points || 0);
 
+    const companionsList = perfil.companions || [];
+
+    let companionsText = "Ninguno";
+
+    if (companionsList.length) {
+      companionsText = companionsList
+        .map(id => companions[id]?.nombre || id)
+        .join(", ");
+    }
+
     return message.reply(
-      `📜 **Perfil de Trivia**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}`
+      `📜 **Perfil de Trivia**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}\n🤝 Compañeros: ${companionsText}`
     );
   }
 
