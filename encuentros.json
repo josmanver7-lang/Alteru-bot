@@ -25,7 +25,7 @@
 },
 {
   "id": "trasgos_colinas",
-  "tipo": "enemigos_numerosos",
+  "tipo": "enemigo_numeroso",
   "categoria": "trasgos",
   "titulo": "Trasgos de las Colinas",
   "region": "Lamedon",
@@ -38,7 +38,7 @@
 },
 {
   "id": "corsarios_rezagados",
-  "tipo": "enemigos_numerosos",
+  "tipo": "enemigo_numeroso",
   "categoria": "corsarios",
   "titulo": "Corsarios Rezagados",
   "region": "Lebennin",
@@ -51,7 +51,7 @@
 },
 {
   "id": "corsarios_rezagados",
-  "tipo": "enemigos_numerosos",
+  "tipo": "enemigo_numeroso",
   "categoria": "corsarios",
   "titulo": "Corsarios Rezagados",
   "region": "Lamedon",
