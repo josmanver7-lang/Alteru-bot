@@ -474,8 +474,15 @@ Usa !desafiar para comenzar el viaje.`
       }
 
       const encounters = await loadEncounters();
-      const encounter = encounters.find(e => e.id === encuentroId || e.nombre === encuentroId);
+      const lista = encounters.filter(
+  e =>
+    e.tipo === encuentroId &&
+    e.region.toLowerCase() === expedition.mission.destino.toLowerCase()
+);
 
+const encounter =
+  lista[Math.floor(Math.random() * lista.length)];
+      
       if (!encounter) {
         return message.reply(`No se encontró el encuentro "${encuentroId}" en encuentros.json.`);
       }
@@ -484,7 +491,7 @@ Usa !desafiar para comenzar el viaje.`
       expedition.currentEncounter = encounter;
 
       // Mostrar encuentro (Imagen 3)
-      let textoEncuentro = `⚔️ **${encounter.nombre}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
+      let textoEncuentro = `⚔️ **encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
       return message.reply(textoEncuentro);
     } 
     
@@ -495,7 +502,7 @@ Usa !desafiar para comenzar el viaje.`
       if (success) {
         // Victoria (Imagen 4)
         expedition.progress++;
-        const nombreEncuentroAnterior = expedition.currentEncounter.nombre;
+        const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         expedition.currentEncounter = null; // Limpiar tras resolver (Imagen 5)
 
         let textoVictoria = `✅ **Victoria**\n\nHas derrotado a los enemigos en *${nombreEncuentroAnterior}*.\n\n+10 XP`;
