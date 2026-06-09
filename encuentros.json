@@ -65,7 +65,7 @@
 {
   "id": "troll_nocturno",
   "tipo": "enemigo_poderoso",
-  "categoria": "troll"
+  "categoria": "troll",
   "titulo": "Troll Nocturno",
   "region": "Lamedon",
   "descripcion":
