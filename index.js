@@ -104,7 +104,7 @@ async function loadEncounters() {
     return [];
   }
 }
-
+j
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
@@ -395,9 +395,9 @@ client.on('messageCreate', async (message) => {
   //         SISTEMA DE EXPEDICIONES
   // ==========================================
 
-  if (command === "!expediciones") {
+  if (command === "!tablon"){
     const missions = await loadMissions();
-    let texto = "📜 Tablón de Expediciones\n\n";
+    let texto = "📜 Tablón de Anuncios\n\n";
 
     missions.forEach((m, i) => {
       texto += `${i + 1}. ${m.titulo}\n`;
