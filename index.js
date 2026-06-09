@@ -43,6 +43,14 @@ function obtenerRango(puntos) {
   return "Hobbit Curioso";
 }
 
+function getAffinityRank(value) {
+  if (value >= 100) return "Compañero de Confianza";
+  if (value >= 75) return "Amigo Cercano";
+  if (value >= 50) return "Aliado";
+  if (value >= 25) return "Conocido";
+  return "Desconocido";
+}
+
 async function loadAlteruLore() {
   const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
   const lore = JSON.parse(loreRaw);
@@ -245,17 +253,32 @@ client.on('messageCreate', async (message) => {
     const posicion = ranking.findIndex(p => p.userId === message.author.id) + 1;
     const correctas = perfil.correctas || 0;
     const incorrectas = perfil.incorrectas || 0;
-    const total = correctas + incorrectas;
-    const precision = total > 0 ? Math.round((correctas / total) * 100) : 0;
-    
     const racha = perfil.mejorRacha || 0;
-    const intentosHoy = dailyTriviaAttempts.get(message.author.id) || 0;
-    const restantes = 5 - intentosHoy;
     const rango = obtenerRango(perfil.points || 0);
 
-    return message.reply(
-      `📜 **Perfil de Trivia**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}`
-    );
+    let mensaje = `📜 **Perfil de Aventurero**\n\n` +
+      `🏅 Nivel: ${perfil.level || 1}\n` +
+      `⭐ Experiencia: ${perfil.experience || 0}\n\n` +
+      `🏆 Puntos: ${perfil.points || 0}\n` +
+      `🥇 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n` +
+      `✅ Correctas: ${correctas}\n` +
+      `❌ Incorrectas: ${incorrectas}\n` +
+      `🔥 Mejor racha: ${racha}\n\n` +
+      `🤝 **Afinidades**`;
+
+    const afinidades = perfil.affinity || {};
+    const keys = Object.keys(afinidades);
+    
+    if (keys.length > 0) {
+      keys.forEach(comp => {
+        const val = afinidades[comp];
+        mensaje += `\n- ${comp.charAt(0).toUpperCase() + comp.slice(1)}: ${val}% (${getAffinityRank(val)})`;
+      });
+    } else {
+      mensaje += "\n- Ninguna todavía.";
+    }
+
+    return message.reply(mensaje);
   }
 
   if (command === '!ranking') {
