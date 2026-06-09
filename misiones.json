@@ -1,0 +1,23 @@
+{
+  "id": "campamento_corsario_lamedon",
+  "nivel": 1,
+  "titulo": "Campamento Corsario Abandonado",
+  "destino": "Lamedon",
+
+  "objetivo": "recuperar_suministros",
+
+  "descripcion":
+    "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf."
+
+  "textoExito":
+    "Tras registrar cada rincón del campamento, reuniste mapas, provisiones y documentos abandonados, así como armamento. Con la misión cumplida emprendiste el regreso al Campamento.",
+
+  "textoFracaso":
+    "La expedición se vio obligada a retirarse antes de completar la misión."
+  
+  "encuentros": [
+    "enemigo_numeroso",
+    "obstaculo", 
+    "evento_especial"
+  ]
+}
