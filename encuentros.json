@@ -38,7 +38,7 @@
 {
   "id": "corsarios_rezagados",
   "tipo": "enemigo_numeroso",
-  "categoria": "corsarios"
+  "categoria": "corsarios",
   "titulo": "Corsarios Rezagados",
   "region": "Lebennin",
   "descripcion":
@@ -51,7 +51,7 @@
 {
   "id": "corsarios_rezagados",
   "tipo": "enemigo_numeroso",
-  "categoria": "corsarios"
+  "categoria": "corsarios",
   "titulo": "Corsarios Rezagados",
   "region": "Lamedon",
   "descripcion":
@@ -77,7 +77,7 @@
 {
   "id": "capitan_orco",
   "tipo": "enemigo_poderoso",
-  "categoria": "orco"
+  "categoria": "orco",
   "titulo": "Capitán Orco",
   "region": "Lamedon",
   "descripcion":
