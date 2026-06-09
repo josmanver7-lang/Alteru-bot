@@ -104,7 +104,7 @@ async function loadEncounters() {
     return [];
   }
 }
-j
+
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
@@ -188,7 +188,7 @@ const companions = {
   duilon: { nombre: "Duilon", clase: "Campeón", habilidad: "Deseo de Lucha", coste: 200 },
   andaer: { nombre: "Andaer", clase: "Guerrero", habilidad: "Instinto Escudero", coste: 150 },
   nieriel: { nombre: "Nieriel", clase: "Capitán", habilidad: "Sangre Élfica", coste: 150 },
-  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Sabiduría Élfica", coste: 100 }, // <-- Coma corregida aquí
+  faelon: { nombre: "Faelon", clase: "Guardian Rúnico", habilidad: "Sabiduría Élfica", coste: 100 },
   montaraces: { nombre: "Montaraces de Arathir", clase: "Cazadores", habilidad: "Exploradores del Norte", coste: 1000 }
 };
 
@@ -460,7 +460,7 @@ Usa !desafiar para comenzar el viaje.`
 
   if (command === "!desafiar") {
     if (!expeditions.has(message.author.id)) {
-      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!expediciones`.");
+      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
     }
 
     const expedition = expeditions.get(message.author.id);
@@ -475,23 +475,22 @@ Usa !desafiar para comenzar el viaje.`
 
       const encounters = await loadEncounters();
       const lista = encounters.filter(
-  e =>
-    e.tipo === encuentroId &&
-    e.region.toLowerCase() === expedition.mission.destino.toLowerCase()
-);
+        e =>
+          e.tipo === encuentroId &&
+          e.region.toLowerCase() === expedition.mission.destino.toLowerCase()
+      );
 
-const encounter =
-  lista[Math.floor(Math.random() * lista.length)];
+      const encounter = lista[Math.floor(Math.random() * lista.length)];
       
       if (!encounter) {
-        return message.reply(`No se encontró el encuentro "${encuentroId}" en encuentros.json.`);
+        return message.reply(`No se encontró el encuentro "${encuentroId}" en la región "${expedition.mission.destino}" en encuentros.json.`);
       }
 
       // Guardar encuentro activo
       expedition.currentEncounter = encounter;
 
-      // Mostrar encuentro (Imagen 3)
-      let textoEncuentro = `⚔️ **encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
+      // Mostrar encuentro (¡Aquí estaba el error del $!)
+      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
       return message.reply(textoEncuentro);
     } 
     
