@@ -79,7 +79,7 @@
 },
 {
   "id": "capitan_orco",
-  "tipo": "enemigo_poderoso",
+  "tipo": "jefe",
   "categoria": "combate",
   "titulo": "Capitán Orco",
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
