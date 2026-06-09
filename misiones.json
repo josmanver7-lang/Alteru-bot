@@ -7,7 +7,7 @@
   "xp": 100,
   "puntos": 50,
   "descripcion":
-    "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf."
+    "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf.",
   "textoExito":
     "Tras registrar cada rincón del campamento, reuniste mapas, provisiones y documentos abandonados, así como armamento. Con la misión cumplida emprendiste el regreso al Campamento.",
   "textoFracaso":
