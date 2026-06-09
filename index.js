@@ -548,8 +548,46 @@ Usa !desafiar para comenzar el viaje.`
         encounter.peligro
           ? getDangerText(encounter.peligro)
           : "Ninguno";
-      // Guardar encuentro activo
-      expedition.currentEncounter = encounter;
+
+    else {
+      const encounter = expedition.currentEncounter;
+          const tipo = encounter.tipo;
+          if (
+            tipo === "enemigo_numeroso" ||
+            tipo === "enemigo_poderoso"
+          ) {
+            if (tipo === "obstaculo") {
+              const success = Math.random() < 0.8;
+              if (command === "!continuar") {
+                if (!expeditions.has(message.author.id)) {
+                  return message.reply("No estás en una expedición.");
+                }
+                const expedition = expeditions.get(message.author.id);
+                if (!expedition.currentEncounter) {
+                  return message.reply("No hay ningún encuentro activo.");
+                }
+                if (
+                  expedition.currentEncounter.tipo !== "evento_especial"
+                  } {
+                return message.reply(
+                  "Solo puedes usar este comando en eventos especiales."
+                );
+              }
+              expedition.progress++;
+              expedition.currentEncounter = null;
+              return message.reply(
+                `Decides continuar tu camino.
+                🛤️ El viaje continúa.
+                Usa !desafiar para seguir viajando.`
+              );
+              if (command === "!hablar") {
+                const encounter = expedition.currentEncounter;
+                switch (encounter.id) {
+                    case "mercader_enano":
+                    case "exploradores_elficos":
+                    case "ruinas_antiguas":
+                    expedition.xpEarned += encounter.xp || 0;
+            
 
       // Mostrar encuentro
       let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${getDangerText(encounter.peligro)}${comandos}`;
