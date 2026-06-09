@@ -442,7 +442,8 @@ client.on('messageCreate', async (message) => {
       progress: 0,
       currentEncounter: null,
       xpEarned: 0,
-      pointsEarned: 0
+      pointsEarned: 0,
+      failed: false
     });
 
     return message.reply(
@@ -491,6 +492,48 @@ Usa !desafiar para comenzar el viaje.`
     return message.reply(`Decides evitar **${nombre}** y continuar tu viaje. 🛤️ El camino continúa. Usa !desafiar para seguir viajando.`);
   }
 
+  if (command === "!continuar") {
+    if (!expeditions.has(message.author.id)) return message.reply("No estás en una expedición.");
+    const expedition = expeditions.get(message.author.id);
+    
+    if (!expedition.currentEncounter) return message.reply("No hay ningún encuentro activo.");
+    
+    if (expedition.currentEncounter.tipo !== "evento_especial") {
+      return message.reply("Solo puedes usar este comando en eventos especiales.");
+    }
+
+    expedition.progress++;
+    expedition.currentEncounter = null;
+    return message.reply("Decides continuar tu camino.\n\n🛤️ El viaje continúa.\nUsa !desafiar para seguir viajando.");
+  }
+
+  if (command === "!hablar") {
+    if (!expeditions.has(message.author.id)) return message.reply("No estás en una expedición.");
+    const expedition = expeditions.get(message.author.id);
+    
+    if (!expedition.currentEncounter) return message.reply("No hay ningún encuentro activo.");
+    
+    if (expedition.currentEncounter.tipo !== "evento_especial") {
+      return message.reply("No hay nadie con quien hablar de forma civilizada aquí.");
+    }
+
+    const encounterId = expedition.currentEncounter.id || expedition.currentEncounter.titulo.toLowerCase().replace(/ /g, "_");
+    
+    // Lista de NPCs con los que tiene sentido hablar
+    const npcsAmigables = ["mercader_enano", "exploradores_elficos", "ruinas_antiguas"];
+
+    if (npcsAmigables.some(npc => encounterId.includes(npc))) {
+      const extraXp = expedition.currentEncounter.xp || 15;
+      expedition.xpEarned += extraXp;
+      expedition.progress++;
+      expedition.currentEncounter = null;
+      
+      return message.reply(`Te acercas a interactuar y obtienes conocimiento valioso (+${extraXp} XP).\n\nTe despides y continúas tu viaje.\nUsa !desafiar para seguir viajando.`);
+    } else {
+      return message.reply("Intentas hablar, pero no logras sacar nada en claro de esta interacción. Deberías !continuar.");
+    }
+  }
+
   if (command === "!desafiar") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
@@ -527,76 +570,29 @@ Usa !desafiar para comenzar el viaje.`
 
       let comandos = "\n\nComandos:\n!desafiar\n!volver";
 
-      if (encounter.tipo !== "evento_especial") {
+      if (encounter.tipo === "evento_especial") {
+        comandos = "\n\nComandos:\n!hablar\n!continuar\n!volver";
+      } else {
         comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
       }
-    
-      const tipo = expedition.currentEncounter.tipo;
-
-      if (tipo === "enemigo_numeroso" || tipo === "enemigo_poderoso") {
-        if (tipo === "obstaculo") {
-          if (encounter.tipo === "evento_especial")
-            expedition.currentEncounter = encounter; expedition.eventMode = true;
-          if (command === "!continuar")
-            expedition.progress++; expedition.currentEncounter = null;
-
-          return message.reply(
-            `Te despides del mercader y continúas tu viaje.
-            Usa !desafiar para seguir viajando.`
-          );
-      const peligroTexto = 
-        encounter.peligro
-          ? getDangerText(encounter.peligro)
-          : "Ninguno";
-
-    else {
-      const encounter = expedition.currentEncounter;
-          const tipo = encounter.tipo;
-          if (
-            tipo === "enemigo_numeroso" ||
-            tipo === "enemigo_poderoso"
-          ) {
-            if (tipo === "obstaculo") {
-              const success = Math.random() < 0.8;
-              if (command === "!continuar") {
-                if (!expeditions.has(message.author.id)) {
-                  return message.reply("No estás en una expedición.");
-                }
-                const expedition = expeditions.get(message.author.id);
-                if (!expedition.currentEncounter) {
-                  return message.reply("No hay ningún encuentro activo.");
-                }
-                if (
-                  expedition.currentEncounter.tipo !== "evento_especial"
-                  } {
-                return message.reply(
-                  "Solo puedes usar este comando en eventos especiales."
-                );
-              }
-              expedition.progress++;
-              expedition.currentEncounter = null;
-              return message.reply(
-                `Decides continuar tu camino.
-                🛤️ El viaje continúa.
-                Usa !desafiar para seguir viajando.`
-              );
-              if (command === "!hablar") {
-                const encounter = expedition.currentEncounter;
-                switch (encounter.id) {
-                    case "mercader_enano":
-                    case "exploradores_elficos":
-                    case "ruinas_antiguas":
-                    expedition.xpEarned += encounter.xp || 0;
-            
+      
+      // Guardar encuentro activo
+      expedition.currentEncounter = encounter;
 
       // Mostrar encuentro
-      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${getDangerText(encounter.peligro)}${comandos}`;
+      const peligroTexto = encounter.peligro ? getDangerText(encounter.peligro) : "Ninguno";
+      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${peligroTexto}${comandos}`;
       return message.reply(textoEncuentro);
     } 
     
     // CASO 2: Ya existe encuentro activo
     else {
-      const success = Math.random() < 0.7; // Probabilidad de prueba del 70%
+      // Si es un evento especial, no se debe resolver con !desafiar (pelear)
+      if (expedition.currentEncounter.tipo === "evento_especial") {
+        return message.reply("Este es un evento especial. Revisa las opciones anteriores para interactuar (ej. !hablar, !continuar).");
+      }
+
+      const success = Math.random() < 0.7; // Probabilidad de prueba del 70% para enemigos y obstáculos
 
       if (success) {
         // Victoria
@@ -604,7 +600,7 @@ Usa !desafiar para comenzar el viaje.`
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         expedition.currentEncounter = null; // Limpiar tras resolver
 
-        let textoVictoria = `✅ **Victoria**\n\nHas derrotado a los enemigos en *${nombreEncuentroAnterior}*.\n\n+10 XP`;
+        let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+10 XP`;
 
         // Comprobar si la misión terminó
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
@@ -627,7 +623,7 @@ Usa !desafiar para comenzar el viaje.`
       } else {
         // Derrota
         expeditions.delete(message.author.id); // Se termina inmediatamente el viaje
-        return message.reply(`❌ **Derrota**\n\nLa expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
+        return message.reply(`❌ **Fracaso**\n\nNo has podido superar el desafío. La expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
       }
     }
   }
