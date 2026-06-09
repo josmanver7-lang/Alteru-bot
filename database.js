@@ -53,8 +53,15 @@ export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
   
-  // Retornamos el usuario o un objeto por defecto si es nuevo
-  return user || { points: 0, correctas: 0, incorrectas: 0, rachaActual: 0, mejorRacha: 0 };
+  // Retornamos el usuario o un objeto por defecto incluyendo affinity
+  return user || { 
+    points: 0, 
+    correctas: 0, 
+    incorrectas: 0, 
+    rachaActual: 0, 
+    mejorRacha: 0,
+    affinity: {} 
+  };
 }
 
 export async function addCorrectAnswer(userId, points) {
@@ -101,5 +108,23 @@ export async function updateTravelerData(userId, data) {
     {
       upsert: true
     }
+  );
+}
+
+// ==========================================
+//    SISTEMA DE AFINIDAD
+// ==========================================
+
+export async function addAffinity(userId, companion, amount) {
+  const database = await connectDB();
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $inc: {
+        [`affinity.${companion}`]: amount
+      }
+    },
+    { upsert: true }
   );
 }
