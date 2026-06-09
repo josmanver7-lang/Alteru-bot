@@ -462,7 +462,35 @@ Usa !desafiar para comenzar el viaje.`
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
     }
+  
+  if (command === "!ignorar") {
 
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en una expedición.");
+    }
+
+  const expedition = expeditions.get(message.author.id);
+
+  if (!expedition.currentEncounter) {
+    return message.reply("No hay ningún encuentro activo.");
+  }
+
+  // No se pueden ignorar eventos especiales
+  if (expedition.currentEncounter.tipo === "evento_especial") {
+    return message.reply(
+      "Este encuentro requiere una decisión. No puedes ignorarlo."
+    );
+  }
+
+  const nombre = expedition.currentEncounter.titulo;
+
+  expedition.progress++;
+  expedition.currentEncounter = null;
+
+  return message.reply(
+    `Decides evitar **${nombre}** y continuar tu viaje.`
+  );
+}
     const expedition = expeditions.get(message.author.id);
 
     // CASO 1: No hay encuentro activo (Imagen 2)
@@ -485,12 +513,23 @@ Usa !desafiar para comenzar el viaje.`
       if (!encounter) {
         return message.reply(`No se encontró el encuentro "${encuentroId}" en la región "${expedition.mission.destino}" en encuentros.json.`);
       }
+let comandos = "\n\nComandos:\n!desafiar\n!volver";
 
+if (encounter.tipo !== "evento_especial") {
+  comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
+  }
+      let textoEncuentro =
+`⚔️ ${encounter.titulo}
+
+${encounter.descripcion}
+
+Peligro: ${getDangerText(encounter.peligro)}
+${comandos}`;
       // Guardar encuentro activo
       expedition.currentEncounter = encounter;
 
       // Mostrar encuentro (¡Aquí estaba el error del $!)
-      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${encounter.peligro || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
+      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${getDangerText(encounter.peligro)} || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
       return message.reply(textoEncuentro);
     } 
     
@@ -526,6 +565,14 @@ Usa !desafiar para comenzar el viaje.`
         // Derrota (Imagen 5)
         expeditions.delete(message.author.id); // Se termina inmediatamente el viaje
         return message.reply(`❌ **Derrota**\n\nLa expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
+      }
+      function getDangerText(peligro) {
+
+  if (peligro <= 2) return "Bajo";
+  if (peligro <= 4) return "Moderado";
+  if (peligro <= 6) return "Alto";
+
+  return "Extremo";
       }
     }
   }
