@@ -40,6 +40,19 @@
   "tipo": "enemigo_numeroso",
   "categoria": "corsarios"
   "titulo": "Corsarios Rezagados",
+  "region": "Lebennin",
+  "descripcion":
+    "Un grupo de corsarios mal armados conversan distraidos en un pequeño campamento, no se dan cuenta que alguien los observa.",
+
+  "peligro": 2,
+
+  "xp": 10
+},
+{
+  "id": "corsarios_rezagados",
+  "tipo": "enemigo_numeroso",
+  "categoria": "corsarios"
+  "titulo": "Corsarios Rezagados",
   "region": "Lamedon",
   "descripcion":
     "Un grupo de corsarios dispersos vigila una antigua ruta comercial. Aún conservan armas y parecen dispuestos a luchar.",
