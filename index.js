@@ -51,6 +51,13 @@ function getAffinityRank(value) {
   return "Desconocido";
 }
 
+function getDangerText(peligro) {
+  if (peligro <= 2) return "Bajo";
+  if (peligro <= 4) return "Moderado";
+  if (peligro <= 6) return "Alto";
+  return "Extremo";
+}
+
 async function loadAlteruLore() {
   const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
   const lore = JSON.parse(loreRaw);
@@ -428,7 +435,7 @@ client.on('messageCreate', async (message) => {
       return message.reply("Ya estás en una expedición.");
     }
 
-    // Inicialización del estado dinámico (Imagen 1)
+    // Inicialización del estado dinámico
     expeditions.set(message.author.id, {
       missionId: mission.id,
       mission,
@@ -458,42 +465,37 @@ Usa !desafiar para comenzar el viaje.`
     return message.reply("Das media vuelta y regresas al Campamento de Altéru.");
   }
 
-  if (command === "!desafiar") {
-    if (!expeditions.has(message.author.id)) {
-      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
-    }
-  
   if (command === "!ignorar") {
-
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
     }
 
-  const expedition = expeditions.get(message.author.id);
-
-  if (!expedition.currentEncounter) {
-    return message.reply("No hay ningún encuentro activo.");
-  }
-
-  // No se pueden ignorar eventos especiales
-  if (expedition.currentEncounter.tipo === "evento_especial") {
-    return message.reply(
-      "Este encuentro requiere una decisión. No puedes ignorarlo."
-    );
-  }
-
-  const nombre = expedition.currentEncounter.titulo;
-
-  expedition.progress++;
-  expedition.currentEncounter = null;
-
-  return message.reply(
-    `Decides evitar **${nombre}** y continuar tu viaje.`
-  );
-}
     const expedition = expeditions.get(message.author.id);
 
-    // CASO 1: No hay encuentro activo (Imagen 2)
+    if (!expedition.currentEncounter) {
+      return message.reply("No hay ningún encuentro activo.");
+    }
+
+    // No se pueden ignorar eventos especiales
+    if (expedition.currentEncounter.tipo === "evento_especial") {
+      return message.reply("Este encuentro requiere una decisión. No puedes ignorarlo.");
+    }
+
+    const nombre = expedition.currentEncounter.titulo;
+    expedition.progress++;
+    expedition.currentEncounter = null;
+
+    return message.reply(`Decides evitar **${nombre}** y continuar tu viaje.`);
+  }
+
+  if (command === "!desafiar") {
+    if (!expeditions.has(message.author.id)) {
+      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+    }
+
+    const expedition = expeditions.get(message.author.id);
+
+    // CASO 1: No hay encuentro activo
     if (expedition.currentEncounter === null) {
       const encuentroId = expedition.mission.encuentros?.[expedition.progress];
 
@@ -513,39 +515,34 @@ Usa !desafiar para comenzar el viaje.`
       if (!encounter) {
         return message.reply(`No se encontró el encuentro "${encuentroId}" en la región "${expedition.mission.destino}" en encuentros.json.`);
       }
-let comandos = "\n\nComandos:\n!desafiar\n!volver";
 
-if (encounter.tipo !== "evento_especial") {
-  comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
-  }
-      let textoEncuentro =
-`⚔️ ${encounter.titulo}
+      let comandos = "\n\nComandos:\n!desafiar\n!volver";
 
-${encounter.descripcion}
-
-Peligro: ${getDangerText(encounter.peligro)}
-${comandos}`;
+      if (encounter.tipo !== "evento_especial") {
+        comandos = "\n\nComandos:\n!desafiar\n!ignorar\n!volver";
+      }
+      
       // Guardar encuentro activo
       expedition.currentEncounter = encounter;
 
-      // Mostrar encuentro (¡Aquí estaba el error del $!)
-      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${getDangerText(encounter.peligro)} || 'Bajo'}\n\nComandos:\n!desafiar\n!ignorar\n!volver`;
+      // Mostrar encuentro
+      let textoEncuentro = `⚔️ **${encounter.titulo}**\n\n${encounter.descripcion || 'Te adentras en territorio desconocido...'}\n\nPeligro: ${getDangerText(encounter.peligro)}${comandos}`;
       return message.reply(textoEncuentro);
     } 
     
-    // CASO 2: Ya existe encuentro activo (Imagen 3 y 4)
+    // CASO 2: Ya existe encuentro activo
     else {
       const success = Math.random() < 0.7; // Probabilidad de prueba del 70%
 
       if (success) {
-        // Victoria (Imagen 4)
+        // Victoria
         expedition.progress++;
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
-        expedition.currentEncounter = null; // Limpiar tras resolver (Imagen 5)
+        expedition.currentEncounter = null; // Limpiar tras resolver
 
         let textoVictoria = `✅ **Victoria**\n\nHas derrotado a los enemigos en *${nombreEncuentroAnterior}*.\n\n+10 XP`;
 
-        // Comprobar si la misión terminó (Imagen 6)
+        // Comprobar si la misión terminó
         if (expedition.progress >= (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
           
@@ -562,17 +559,9 @@ ${comandos}`;
         return message.reply(textoVictoria);
 
       } else {
-        // Derrota (Imagen 5)
+        // Derrota
         expeditions.delete(message.author.id); // Se termina inmediatamente el viaje
         return message.reply(`❌ **Derrota**\n\nLa expedición fracasa.\n\nUsa !volver para regresar al campamento.`);
-      }
-      function getDangerText(peligro) {
-
-  if (peligro <= 2) return "Bajo";
-  if (peligro <= 4) return "Moderado";
-  if (peligro <= 6) return "Alto";
-
-  return "Extremo";
       }
     }
   }
