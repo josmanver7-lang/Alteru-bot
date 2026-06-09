@@ -1,209 +1,143 @@
 [
-{
-"nombre": "Nieriel",
-
-"titulo": "La novia de Altéru",
-
-"raza": "Humano",
-
-"clase": "Capitán",
-
-"alineamiento": "Aliado",
-
-"estado": "Vivo",
-
-"descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
-
-"personalidad": "Reservada, silenciosa, observadora, empática y amable. Sabe cuándo expresarse gracias a su gran sensibilidad.",
-
-"historia": "Nació en el año 3002 de la Tercera Edad. Se crió en Dol Amroth y es hija de nobles descendientes del linaje de Galador. Tiene un hermano llamado Jandhil, seis años mayor que ella.",
-
-"relacion_con_alteru": "Pareja",
-
-"eventos_importantes": [
-  "Acompañará a Altéru a Eriador, comenzando sus hazañas en Archet."
-],
-
-"frases_famosas": [
-  "Que tus palabras no se vuelvan en tu contra."
-],
-
-"opiniones": {
-  "Alteru": "El amor de su vida.",
-  "Cirdil": "Algo impulsivo, pero de buen corazón.",
-  "Faelon": "Muy amigable y humilde; una buena compañía.",
-  "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
-  "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
-}
-
-},
-
-{
-"nombre": "Cirdil",
-
-"titulo": "El Escudo de Gondor",
-
-"raza": "Humano",
-
-"clase": "Guerrero",
-
-"alineamiento": "Aliado",
-
-"estado": "Vivo",
-
-"descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, casi rapado.",
-
-"personalidad": "Inquieto, carismático, impulsivo, social y cariñoso.",
-
-"historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Minas Tirith y, a temprana edad, fue aprendiz de herrero.",
-
-"relacion_con_alteru": "Mejor amigo",
-
-"eventos_importantes": [
-  "Acompañó a Altéru durante su etapa como portavoz por todo el reino.",
-  "Participó en la batalla naval del Gilrain.",
-  "Participó en la defensa de Ost Arndír.",
-  "Participó en la batalla de Belfalas.",
-  "Participó en la batalla de los Pantanos de Lamedon."
-],
-
-"frases_famosas": [
-  "Si te acobardas, el remordimiento te seguirá siempre."
-],
-
-"opiniones": {
-  "Alteru": "Amigo, buen líder y de carácter dominante.",
-  "Nieriel": "Intrigante y de buen corazón.",
-  "Faelon": "Muy amigable y humilde; una buena compañía.",
-  "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
-  "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
-}
-
-},
-
-{
-"nombre": "Duilon",
-
-"titulo": "El paladín",
-
-"raza": "Humano",
-
-"clase": "Campeón",
-
-"alineamiento": "Aliado",
-
-"estado": "Vivo",
-
-"descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, marron claro, fornido, alto.",
-
-"personalidad": "Calmado, amigable, cercano, social y cariñoso.",
-
-"historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Lamedon y, a temprana edad, fue entrenado para formar parte de la escolta personal de Angbor.",
-
-"relacion_con_alteru": "Capitán y hermano de armas",
-
-"eventos_importantes": [
-  "Acompañó a Altéru durante su inicio como Capitán independiente.",
-  "Participó en la batalla de Belfalas.",
-  "Participó en varias escaramuzas.",
-  "Participó en la batalla de los Pantanos de Lamedon."
-],
-
-"frases_famosas": [
-  "Cualquier frase que haya oido de Altéru antes."
-],
-
-"opiniones": {
-  "Alteru": "Capitán, buen líder, cercano y de carácter dominante.",
-  "Nieriel": "Hermosa persona y de buen corazón.",
-  "Faelon": "Muy amigable y humilde; una buena compañía.",
-  "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
-  "Cirdil": "Algo impulsivo, pero de buen corazón."
-}
-  
-},
-
-{
-"nombre": "Faelon",
-
-"titulo": "El Elfo",
-
-"raza": "Humano",
-
-"clase": "Guardián de Runas",
-
-"alineamiento": "Aliado",
-
-"estado": "Vivo",
-
-"descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
-
-"personalidad": "Calmado, amigable, cercano, social y atento.",
-
-"historia": "Nació en el año 2517 de la Tercera Edad. Se crió en Imladris y, a temprana edad, fue preparado en el arte de la curación y las runas.",
-
-"relacion_con_alteru": "Líder y compañero de la erudición",
-
-"eventos_importantes": [
-  "Durante su vida, se registró la muerte de Dain I a manos de un dragón de las montañas.",
-  "Escuchó sobre la aparición de un dragon llamado Smaug 181 años después.",
-  "Escuchó sobre la batalla de Azanulbizar 29 años después.",
-  "Escuchó sobre la aparición de un nigromante en Dol Guldur 51 años después.",
-  "Escuchó sobre la expulsión de Sauron de Dol Guldur 91 años después.",
-  "Vio crecer al heredero de los reyes de Arnor.",
-  "Escuchó sobre el regreso de Sauron en Mordor 10 años después."
-],
-
-"frases_famosas": [
-  "Cada era que pasa, el mundo parece recordar un poco menos la luz que una vez le dio su verdadera formas."
-],
-
-"opiniones": {
-  "Alteru": "Capitán, buen líder, cercano y de carácter dominante.",
-  "Nieriel": "Hermosa persona, brilla con esplendor y de buen corazón.",
-  "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, de buen corazón.",
-  "Andaer": "Amigable y servicial, aunque siempre inquieto; de buen corazón, pero no disfruta mucho su compañía.",
-  "Cirdil": "Algo impulsivo, pero de buen corazón, a veces le recuerda la corrupción de los Edain."
-}
-    
-},
-
-{
-"nombre": "Andaer",
-
-"titulo": "El escudero",
-
-"raza": "Humano",
-
-"clase": "Guerrero",
-
-"alineamiento": "Aliado",
-
-"estado": "Vivo",
-
-"descripcion_fisica": "Piel clara, rostro atractivo y cabello rojizo, delgado, altura promedio.",
-
-"personalidad": "Inquieto, amigable, servicial, social y diligente.",
-
-"historia": "Nació en el año 3002 de la Tercera Edad. Se crió en las granjas costeras de Belfalas, entrenando por su cuenta.",
-
-"relacion_con_alteru": "Capitán y mentor",
-
-"eventos_importantes": [
-  "Acompañó a Altéru durante su inicio como Capitán independiente.",
-  "Participó en la batalla de Belfalas.",
-  "Participó en varias escaramuzas.",
-  "Participó en la batalla de los Pantanos de Lamedon."
-],
-
-"frases_famosas": [
-  "Ninguna."
-],
-
-"opiniones": {
-  "Alteru": "Capitán, modelo a seguir.",
-  "Nieriel": "Hermosa persona y de buen corazón.",
-  "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, con quien mejor se lleva.",
-  "Faelon": "Muy amigable y humilde; una buena compañía aunque algon distante.",
-  "Cirdil": "Algo impulsivo, pero de buen corazón, no hay demasiada afinidad."
-}
+  {
+    "nombre": "Nieriel",
+    "titulo": "La novia de Altéru",
+    "raza": "Humano",
+    "clase": "Capitán",
+    "alineamiento": "Aliado",
+    "estado": "Vivo",
+    "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
+    "personalidad": "Reservada, silenciosa, observadora, empática y amable. Sabe cuándo expresarse gracias a su gran sensibilidad.",
+    "historia": "Nació en el año 3002 de la Tercera Edad. Se crió en Dol Amroth y es hija de nobles descendientes del linaje de Galador. Tiene un hermano llamado Jandhil, seis años mayor que ella.",
+    "relacion_con_alteru": "Pareja",
+    "eventos_importantes": [
+      "Acompañará a Altéru a Eriador, comenzando sus hazañas en Archet."
+    ],
+    "frases_famosas": [
+      "Que tus palabras no se vuelvan en tu contra."
+    ],
+    "opiniones": {
+      "Alteru": "El amor de su vida.",
+      "Cirdil": "Algo impulsivo, pero de buen corazón.",
+      "Faelon": "Muy amigable y humilde; una buena compañía.",
+      "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
+      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
+    }
+  },
+  {
+    "nombre": "Cirdil",
+    "titulo": "El Escudo de Gondor",
+    "raza": "Humano",
+    "clase": "Guerrero",
+    "alineamiento": "Aliado",
+    "estado": "Vivo",
+    "descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, casi rapado.",
+    "personalidad": "Inquieto, carismático, impulsivo, social y cariñoso.",
+    "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Minas Tirith y, a temprana edad, fue aprendiz de herrero.",
+    "relacion_con_alteru": "Mejor amigo",
+    "eventos_importantes": [
+      "Acompañó a Altéru durante su etapa como portavoz por todo el reino.",
+      "Participó en la batalla naval del Gilrain.",
+      "Participó en la defensa de Ost Arndír.",
+      "Participó en la batalla de Belfalas.",
+      "Participó en la batalla de los Pantanos de Lamedon."
+    ],
+    "frases_famosas": [
+      "Si te acobardas, el remordimiento te seguirá siempre."
+    ],
+    "opiniones": {
+      "Alteru": "Amigo, buen líder y de carácter dominante.",
+      "Nieriel": "Intrigante y de buen corazón.",
+      "Faelon": "Muy amigable y humilde; una buena compañía.",
+      "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
+      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
+    }
+  },
+  {
+    "nombre": "Duilon",
+    "titulo": "El paladín",
+    "raza": "Humano",
+    "clase": "Campeón",
+    "alineamiento": "Aliado",
+    "estado": "Vivo",
+    "descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, marron claro, fornido, alto.",
+    "personalidad": "Calmado, amigable, cercano, social y cariñoso.",
+    "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Lamedon y, a temprana edad, fue entrenado para formar parte de la escolta personal de Angbor.",
+    "relacion_con_alteru": "Capitán y hermano de armas",
+    "eventos_importantes": [
+      "Acompañó a Altéru durante su inicio como Capitán independiente.",
+      "Participó en la batalla de Belfalas.",
+      "Participó en varias escaramuzas.",
+      "Participó en la batalla de los Pantanos de Lamedon."
+    ],
+    "frases_famosas": [
+      "Cualquier frase que haya oido de Altéru antes."
+    ],
+    "opiniones": {
+      "Alteru": "Capitán, buen líder, cercano y de carácter dominante.",
+      "Nieriel": "Hermosa persona y de buen corazón.",
+      "Faelon": "Muy amigable y humilde; una buena compañía.",
+      "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
+      "Cirdil": "Algo impulsivo, pero de buen corazón."
+    }
+  },
+  {
+    "nombre": "Faelon",
+    "titulo": "El Elfo",
+    "raza": "Humano",
+    "clase": "Guardián de Runas",
+    "alineamiento": "Aliado",
+    "estado": "Vivo",
+    "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
+    "personalidad": "Calmado, amigable, cercano, social y atento.",
+    "historia": "Nació en el año 2517 de la Tercera Edad. Se crió en Imladris y, a temprana edad, fue preparado en el arte de la curación y las runas.",
+    "relacion_con_alteru": "Líder y compañero de la erudición",
+    "eventos_importantes": [
+      "Durante su vida, se registró la muerte de Dain I a manos de un dragón de las montañas.",
+      "Escuchó sobre la aparición de un dragon llamado Smaug 181 años después.",
+      "Escuchó sobre la batalla de Azanulbizar 29 años después.",
+      "Escuchó sobre la aparición de un nigromante en Dol Guldur 51 años después.",
+      "Escuchó sobre la expulsión de Sauron de Dol Guldur 91 años después.",
+      "Vio crecer al heredero de los reyes de Arnor.",
+      "Escuchó sobre el regreso de Sauron en Mordor 10 años después."
+    ],
+    "frases_famosas": [
+      "Cada era que pasa, el mundo parece recordar un poco menos la luz que una vez le dio su verdadera formas."
+    ],
+    "opiniones": {
+      "Alteru": "Capitán, buen líder, cercano y de carácter dominante.",
+      "Nieriel": "Hermosa persona, brilla con esplendor y de buen corazón.",
+      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, de buen corazón.",
+      "Andaer": "Amigable y servicial, aunque siempre inquieto; de buen corazón, pero no disfruta mucho su compañía.",
+      "Cirdil": "Algo impulsivo, pero de buen corazón, a veces le recuerda la corrupción de los Edain."
+    }
+  },
+  {
+    "nombre": "Andaer",
+    "titulo": "El escudero",
+    "raza": "Humano",
+    "clase": "Guerrero",
+    "alineamiento": "Aliado",
+    "estado": "Vivo",
+    "descripcion_fisica": "Piel clara, rostro atractivo y cabello rojizo, delgado, altura promedio.",
+    "personalidad": "Inquieto, amigable, servicial, social y diligente.",
+    "historia": "Nació en el año 3002 de la Tercera Edad. Se crió en las granjas costeras de Belfalas, entrenando por su cuenta.",
+    "relacion_con_alteru": "Capitán y mentor",
+    "eventos_importantes": [
+      "Acompañó a Altéru durante su inicio como Capitán independiente.",
+      "Participó en la batalla de Belfalas.",
+      "Participó en varias escaramuzas.",
+      "Participó en la batalla de los Pantanos de Lamedon."
+    ],
+    "frases_famosas": [
+      "Ninguna."
+    ],
+    "opiniones": {
+      "Alteru": "Capitán, modelo a seguir.",
+      "Nieriel": "Hermosa persona y de buen corazón.",
+      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, con quien mejor se lleva.",
+      "Faelon": "Muy amigable y humilde; una buena compañía aunque algon distante.",
+      "Cirdil": "Algo impulsivo, pero de buen corazón, no hay demasiada afinidad."
+    }
+  }
+]
