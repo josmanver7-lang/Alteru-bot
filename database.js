@@ -18,6 +18,11 @@ export async function connectDB() {
   return db;
 }
 
+export async function getProfile(userId) {
+  const database = await connectDB();
+  return await database.collection("puntos").findOne({ userId }) || {};
+}
+
 export async function addPoints(userId, amount) {
   const database = await connectDB();
 
@@ -60,32 +65,11 @@ export async function getPoints(userId) {
 
 export async function getRanking() {
   const database = await connectDB();
-  return await database
-    .collection("puntos")
-    .find({})
+  return await database.collection("puntos")
+    .find()
     .sort({ points: -1 })
     .limit(10)
     .toArray();
-}
-
-export async function getProfile(userId) {
-  const database = await connectDB();
-  const user = await database.collection("puntos").findOne({ userId });
-
-  return user || {
-    points: 0,
-    xp: 0,
-    salud: 100,
-    nivel: 1,
-    correctas: 0,
-    incorrectas: 0,
-    rachaActual: 0,
-    mejorRacha: 0,
-    affinity: {},
-    hiredCompanions: [],
-    activeCompanions: [],
-    companions: []
-  };
 }
 
 export async function addCorrectAnswer(userId, points) {
@@ -157,8 +141,59 @@ export async function hireCompanion(userId, companionId) {
   );
 }
 
-export async function getCompanions(userId) {
+// ================================
+// GESTIÓN DE CUOTAS PERSISTENTES
+// ================================
+
+export async function getQuotaState(userId, kind, windowMs) {
   const database = await connectDB();
-  const profile = await database.collection("puntos").findOne({ userId });
-  return profile?.hiredCompanions || profile?.companions || [];
+  const user = await database.collection("puntos").findOne({ userId });
+
+  const attemptsKey = `${kind}Attempts`;
+  const resetKey = `${kind}ResetAt`;
+
+  const now = Date.now();
+  let attempts = user?.[attemptsKey] || 0;
+  let resetAt = user?.[resetKey] || 0;
+
+  if (!resetAt || now >= resetAt) {
+    attempts = 0;
+    resetAt = now + windowMs;
+
+    await database.collection("puntos").updateOne(
+      { userId },
+      {
+        $set: {
+          [attemptsKey]: 0,
+          [resetKey]: resetAt
+        }
+      },
+      { upsert: true }
+    );
+  }
+
+  return { attempts, resetAt };
+}
+
+export async function setQuotaState(userId, kind, attempts, resetAt) {
+  const database = await connectDB();
+
+  const attemptsKey = `${kind}Attempts`;
+  const resetKey = `${kind}ResetAt`;
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $set: {
+        [attemptsKey]: attempts,
+        [resetKey]: resetAt
+      }
+    },
+    { upsert: true }
+  );
+}
+
+export async function resetQuotaState(userId, kind, windowMs) {
+  const now = Date.now();
+  await setQuotaState(userId, kind, 0, now + windowMs);
 }
