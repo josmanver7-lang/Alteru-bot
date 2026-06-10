@@ -494,7 +494,7 @@ client.on("messageCreate", async (message) => {
   const command = args[0].toLowerCase();
 
   // Control Activo del Juego de Trivia
-  if (triviaGames.has(message.author.id)) {
+if (triviaGames.has(message.author.id)) {
   const game = triviaGames.get(message.author.id);
   const textNormalize = normalizeText(content);
   const correctNormalize = normalizeText(
