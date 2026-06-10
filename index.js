@@ -1,5 +1,3 @@
-Aquí tienes el código completo y actualizado con todas las correcciones integradas. He modificado la carga del personajes.json para que soporte arrays dinámicos, separado el comando !a para Altéru de !al para el campamento, y aplicado las mejoras al descanso, las reacciones y el tablón de información de los compañeros.
-```javascript
 import * as db from "./database.js";
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile, writeFile } from 'node:fs/promises';
