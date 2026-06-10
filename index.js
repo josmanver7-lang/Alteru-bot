@@ -675,7 +675,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
 📚 TRIVIA
 !trivia <facil/normal/dificil/legendario>
-!resetear [usuario]
 
 🔥 ROLEPLAY
 !a <mensaje> (Hablar con Altéru) o directos (!al, !c, !d, !an, !n, !f)`
