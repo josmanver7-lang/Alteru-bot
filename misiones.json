@@ -253,5 +253,22 @@
       "enemigo_numeroso",
       "evento_especial"
     ]
-  }
+  },
+{
+    "id": "investigacion_hierbas_nimrais",
+    "nivel": 1,
+    "titulo": "Investigación en las Ered Nimrais",
+    "destino": "Lamedon",
+    "objetivo": "recuperar_suministros",
+    "xp": 100,
+    "puntos": 50,
+    "descripcion": "Los sanadores del campamento necesitan Athelas y otras raíces raras que solo crecen en las faldas de las Ered Nimrais. Investiga la zona botánica y recolecta las muestras.",
+    "textoExito": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "evento_especial",
+      "evento_especial"
+    ]
+  },
   ]
