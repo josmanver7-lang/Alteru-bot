@@ -1396,5 +1396,3 @@ ${mensaje}
 
 await db.connectDB();
 client.login(DISCORD_TOKEN);
-
-```
