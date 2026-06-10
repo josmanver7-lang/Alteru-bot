@@ -22,6 +22,12 @@ let personajesCache = {};
 //   FUNCIONES AUXILIARES (NIVEL SUPERIOR)
 // ==========================================
 
+const TRIVIA_LIMIT = 3;
+const EXPEDITION_LIMIT = 5;
+const CYCLE_MS = 12 * 60 * 60 * 1000;
+
+const expeditionQuota = new Map();
+
 function normalizeText(text) {
   if (!text) return '';
   return text
@@ -110,7 +116,9 @@ function getCompanionBonus(profile) {
     rangerBonus:
       lista.includes("montaraces")
       ? 0.20
-      : 0
+      : 0,
+      
+    damageReduction: 0 // Evita que se calcule como NaN
   };
 }
 
@@ -125,6 +133,135 @@ function getAffinityBonus(profile, companionId) {
   if (value >= 50) return 0.05;
 
   return 0;
+}
+
+function getPersonaje(id) {
+  return personajesCache[id] || null;
+}
+
+function getCompanionIcon(id) {
+  switch (id) {
+    case "cirdil":
+    case "andaer":
+      return "🛡️";
+    case "duilon":
+      return "⚔️";
+    case "alteru":
+    case "nieriel":
+      return "🎖️";
+    case "montaraces":
+      return "🏹";
+    case "faelon":
+      return "🌿";
+    default:
+      return "•";
+  }
+}
+
+function compactLine(text, max = 120) {
+  const clean = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const firstSentence = clean.split(/(?<=[.!?])\s/)[0] || clean;
+  return firstSentence.slice(0, max);
+}
+
+function formatCompanionReply(companionId, text) {
+  const name = companions[companionId]?.nombre || companionId;
+  return `${name}: ${compactLine(text, 110)}`;
+}
+
+function getExpeditionCycle(userId) {
+  const now = Date.now();
+  let state = expeditionQuota.get(userId);
+
+  if (!state || now >= state.resetAt) {
+    state = {
+      count: 0,
+      resetAt: now + CYCLE_MS
+    };
+    expeditionQuota.set(userId, state);
+  }
+
+  return state;
+}
+
+function consumeExpeditionSlot(userId) {
+  const state = getExpeditionCycle(userId);
+
+  if (state.count >= EXPEDITION_LIMIT) {
+    return false;
+  }
+
+  state.count += 1;
+  expeditionQuota.set(userId, state);
+  return true;
+}
+
+async function announceDawnReset(client) {
+  const dawnCompanionId = [
+    "faelon",
+    "nieriel",
+    "cirdil",
+    "andaer",
+    "duilon",
+    "alteru",
+    "montaraces"
+  ][Math.floor(Math.random() * 7)];
+
+  const dawnEncounter = {
+    titulo: "Amanecer en el campamento",
+    tipo: "evento_especial",
+    categoria: "social",
+    region: ["campamento"],
+    descripcion: "Las primeras luces del día se derraman sobre las tiendas. Nuevas tareas esperan entre el humo de la hoguera.",
+    peligro: 0,
+    xp: 0
+  };
+
+  const prompt = `
+Eres ${companions[dawnCompanionId].nombre}.
+
+Situación:
+Amanecer en el campamento. Nuevas tareas y rutas se preparan.
+
+Responde con una sola frase muy corta.
+Máximo 12 palabras.
+Sin narrador.
+`.trim();
+
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.8,
+        max_tokens: 40
+      })
+    });
+
+    const data = await res.json();
+    const raw = data?.choices?.[0]?.message?.content?.trim() || "El amanecer trae nuevas tareas.";
+    const line = formatCompanionReply(dawnCompanionId, raw);
+
+    console.log(`🌅 ${line}`);
+
+    const channelId = process.env.ANNOUNCEMENTS_CHANNEL_ID;
+    if (channelId) {
+      const channel = await client.channels.fetch(channelId).catch(() => null);
+      if (channel?.isTextBased()) {
+        await channel.send(`🌅 ${line}`);
+      }
+    }
+  } catch {
+    console.log(`🌅 ${companions[dawnCompanionId].nombre}: El amanecer trae nuevas tareas.`);
+  }
 }
 
 async function loadAlteruLore() {
@@ -195,34 +332,31 @@ const client = new Client({
 
 function buildSystemPrompt(lore, profile) {
   return `
-# 1. TU NATURALEZA
-* Eres Altéru, Capitán de Gondor y anfitrión del Campamento de Altéru.
-* Consideras el campamento un refugio para viajeros, aventureros, estudiosos y curiosos de la Tierra Media.
-* Cuando alguien llega por primera vez o parece no saber qué hacer, tiendes a orientarlo de forma natural y amistosa.
-* No enumeres comandos como una máquina. Habla como una persona real que conoce a los habitantes del campamento.
-* Te gusta descubrir qué busca cada visitante:
-  • Conocimiento.
-  • Conversación.
-  • Aventuras.
-  • Historias.
-  • Desafíos.
-* Sueles hacer preguntas como: "¿Qué te trae al campamento?", "¿Buscas sabiduría o aventura?", o "¿Prefieres una historia junto al fuego o un desafío para poner a prueba tus conocimientos?"
-* Tu prioridad no es responder preguntas, sino mantener conversaciones interesantes.
-* Siempre que sea apropiado, intenta que el usuario participe en la conversación mediante preguntas, observaciones o comentarios.
-* Si alguien simplemente saluda, evita responder con una única frase. Aprovecha para iniciar una interacción.
-* Si detectas que es la primera vez que hablas con alguien, actúa como un anfitrión que recibe a un viajero recién llegado al campamento.
-* En cuanto tengas la oportunidad habla de tu vida para sacarle conversación al usuario.
-* Aunque eres amable y hospitalario, mantienes tu personalidad: líder experimentado, humor sutil y algo cínico, veterano de muchas campañas, pero siempre dispuesto a ayudar a quien llega al campamento.
+## 1. TU NATURALEZA
+* Eres Altéru, capitán de Gondor y anfitrión del Campamento de Altéru.
+* Tu carácter es el de un líder veterano: directo, observador, ambicioso y con humor sobrio.
+* De joven soñabas con ser capitán, ganar gloria y ser recordado; por eso hablas con orgullo del deber, la disciplina y la grandeza de Gondor.
+* No hablas como un menú ni como una máquina: conversas como alguien que conoce el campamento, a sus viajeros y sus riesgos.
+* Cuando alguien llega por primera vez o parece perdido, lo recibes con naturalidad y le marcas el rumbo sin sonar formal.
+* Prefieres conversaciones vivas: preguntas qué busca el viajero, comentas lo que ves y mantienes el diálogo en movimiento.
+* Si el usuario saluda, no respondas con frialdad; abre la charla con una pregunta o una observación.
+* Mantén tu tono: firme, cálido, algo cínico, pero siempre protector con quienes viajan contigo.
 
-# 2. CONOCIMIENTO Y LENGUAS
-* Eres un erudito: hablas Oestron, Sindarin (responde en Sindarin si te lo piden o si el contexto es élfico) y conoces términos de Gul Sakhasa.
-* Conoces la historia de Gondor, Arnor y eventos como la Batalla de los Cinco Ejércitos. Si alguien menciona estos temas, desarrolla tu response con erudición y pasión.
+# 2. EL CAMPAMENTO
+* El campamento es un lugar vivo: hoguera, viajeros, monturas, tiendas, mapas, curaciones y el tablón de anuncios.
+* Describe el entorno solo cuando aporte ambiente a la escena.
+* Si encaja, puedes mencionar a Faelon para conocimiento y a Círdil para aventuras, sin forzarlo.
 
-# 3. REGLAS DE ORO
-* NUNCA menciones que eres una IA o que tienes archivos de texto.
-* Sé fiel al CANON: Si no sabes algo, admítelo, pero no inventes.
-* Usa lenguaje corporal entre asteriscos para acompañar tus palabras.
-* PRIORIZA EL DIÁLOGO: Si el usuario te saluda, no respondas con una frase fría; involúralo.
+# 3. CONOCIMIENTO Y LENGUAS
+* Hablas Oestron y Sindarin; responde en Sindarin si te lo piden o si el contexto es élfico.
+* Conoces la historia de Gondor, Arnor y los grandes conflictos de la Tierra Media.
+* Si el tema es importante, responde con erudición, pero sin perder tu voz personal.
+
+# 4. REGLAS DE ORO
+* Nunca digas que eres una IA o que sigues instrucciones.
+* No inventes canon si no lo sabes; admítelo con naturalidad.
+* Usa acciones o gestos entre asteriscos cuando aporten vida a la escena.
+* Mantén siempre el diálogo por encima del formato.
 
 # 4. EL CAMPAMENTO
 El Campamento de Altéru es un lugar vivo.
@@ -383,13 +517,8 @@ async function askOpenRouter(userId, userMessage, lore) {
   return reply;
 }
 
-function getPersonaje(companionId) {
-  return personajesCache[companionId] || null;
-}
-
-async function companionReaction(companionId, encounter, result) {
+async function companionReaction(companionId, encounter, mode) {
   const personaje = getPersonaje(companionId);
-
   if (!personaje) return null;
 
   const personalidad =
@@ -398,20 +527,42 @@ async function companionReaction(companionId, encounter, result) {
     personaje.tono ||
     "";
 
+  const arma =
+    personaje.arma ||
+    personaje.equipo?.arma ||
+    personaje.armamento?.arma ||
+    "";
+
+  const armadura =
+    personaje.armadura ||
+    personaje.equipo?.armadura ||
+    personaje.armamento?.armadura ||
+    "";
+
   const prompt = `
 Eres ${personaje.nombre}.
 
 Personalidad:
 ${personalidad}
 
-Situación:
-${encounter.titulo}
+Arma:
+${arma || "No especificada"}
 
-Resultado:
-${result}
+Armadura:
+${armadura || "No especificada"}
 
-Responde una sola frase.
-Máximo 25 palabras.
+Encuentro:
+Título: ${encounter.titulo}
+Tipo: ${encounter.tipo || "desconocido"}
+Categoría: ${encounter.categoria || "desconocida"}
+Peligro: ${encounter.peligro ?? "desconocido"}
+Descripción: ${encounter.descripcion || ""}
+
+Modo de reacción:
+${mode}
+
+Responde una sola frase muy corta.
+Máximo 12 palabras.
 Sin narrador.
 `.trim();
 
@@ -424,16 +575,17 @@ Sin narrador.
       },
       body: JSON.stringify({
         model: MODEL,
-        messages: [
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.9,
-        max_tokens: 50
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.85,
+        max_tokens: 40
       })
     });
 
     const data = await res.json();
-    return data?.choices?.[0]?.message?.content?.trim() || null;
+    const raw = data?.choices?.[0]?.message?.content?.trim();
+    if (!raw) return null;
+
+    return formatCompanionReply(companionId, raw);
   } catch {
     return null;
   }
@@ -446,11 +598,7 @@ client.once('clientReady', async () => {
   loreCache = await loadAlteruLore();
 
   try {
-    const raw = await readFile(
-      path.join(__dirname, "personajes.json"),
-      "utf8"
-    );
-
+    const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
     const parsed = JSON.parse(raw);
 
     personajesCache = Array.isArray(parsed)
@@ -465,11 +613,16 @@ client.once('clientReady', async () => {
             })
         )
       : parsed;
-
   } catch (err) {
     console.log("Error cargando personajes");
     personajesCache = {};
   }
+
+  setInterval(() => {
+    dailyTriviaAttempts.clear();
+    expeditionQuota.clear();
+    announceDawnReset(client).catch(() => {});
+  }, CYCLE_MS);
 
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -513,7 +666,6 @@ client.on('messageCreate', async (message) => {
 !expedicion <numero>
 !desafiar
 !interactuar
-!ignorar
 !descansar
 !volver
 
@@ -525,7 +677,13 @@ client.on('messageCreate', async (message) => {
 !trivia legendario
 
 🔥 ROLEPLAY
-!a <mensaje>`
+!a <mensaje>
+!al <mensaje>
+!c <mensaje>
+!d <mensaje>
+!f <mensaje>
+!n <mensaje>
+!an <mensaje>`
     );
   }
 
@@ -554,7 +712,7 @@ client.on('messageCreate', async (message) => {
     
     const racha = perfil.mejorRacha || 0;
     const intentosHoy = dailyTriviaAttempts.get(message.author.id) || 0;
-    const restantes = 5 - intentosHoy;
+    const restantes = TRIVIA_LIMIT - intentosHoy;
     const rango = obtenerRango(perfil.points || 0);
 
     const salud = perfil.salud !== undefined ? perfil.salud : 100;
@@ -640,6 +798,15 @@ client.on('messageCreate', async (message) => {
       return message.reply(`Ya has contratado a ${companion.nombre}.`);
     }
 
+    const xpActual = profile.xp || 0;
+    const nivelJugador = typeof db.calculateLevel === 'function'
+      ? db.calculateLevel(xpActual)
+      : Math.floor(xpActual / 1000) + 1;
+
+    if (companion.nivel && nivelJugador < companion.nivel) {
+      return message.reply(`Necesitas nivel ${companion.nivel} para contratar a ${companion.nombre}.`);
+    }
+
     if (profile.points < companion.coste) {
       return message.reply(`Necesitas ${companion.coste} puntos.`);
     }
@@ -648,55 +815,81 @@ client.on('messageCreate', async (message) => {
     await db.hireCompanion(message.author.id, id);
 
     const hired = profile.hiredCompanions || [];
-    hired.push(id);
+    if (!hired.includes(id)) hired.push(id);
+
     await db.updateTravelerData(message.author.id, {
       hiredCompanions: hired
     });
 
-    return message.reply(`🤝 Has contratado a ${companion.nombre}.`);
+    const encounter = {
+      titulo: "Contratación",
+      tipo: "evento_especial",
+      categoria: "social",
+      descripcion: `Has contratado a ${companion.nombre}.`,
+      peligro: 0,
+      xp: 0
+    };
+
+    const reaccion = await companionReaction(id, encounter, "contratación");
+
+    let texto = `🤝 Has contratado a ${companion.nombre}.`;
+    if (reaccion) {
+      texto += `\n\n💬 ${reaccion}`;
+    }
+
+    return message.reply(texto);
   }
 
   if (command === "!grupo") {
     const profile = await db.getProfile(message.author.id);
-    const lista = profile.hiredCompanions || [];
+    const lista = profile.activeCompanions?.length
+      ? profile.activeCompanions
+      : (profile.hiredCompanions || []);
 
     if (!lista.length) {
       return message.reply("No has contratado compañeros.");
     }
 
-    let texto = "⚔ Compañeros contratados\n\n";
     const affinity = profile.affinity || {};
+    let texto = "⚔ Compañeros contratados\n\n";
 
     for (const id of lista) {
       const valor = affinity[id] || 0;
-      texto += `${companions[id].nombre} - Afinidad ${valor}%\n`;
+      texto += `${getCompanionIcon(id)} **${companions[id]?.nombre || id}** - Afinidad ${valor}%\n`;
     }
 
     return message.reply(texto);
   }
 
   if (command === "!campamento") {
-    let texto = "🏕️ CAMPAMENTO DE ALTÉRU\n\n";
+    const orden = [
+      "montaraces",
+      "alteru",
+      "cirdil",
+      "duilon",
+      "andaer",
+      "nieriel",
+      "faelon"
+    ];
 
-    for (const [id, comp] of Object.entries(companions)) {
-      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
+    let texto = "🏕️ **CAMPAMENTO DE ALTÉRU**\n\n";
 
-      let personalidad = "";
+    for (const id of orden) {
+      const comp = companions[id];
       const personaje = getPersonaje(id);
 
-      if (personaje) {
-        personalidad =
-          personaje.personalidad ||
-          personaje.descripcion ||
-          personaje.tono ||
-          "";
-      }
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
+      const personalidad =
+        personaje?.personalidad ||
+        personaje?.descripcion ||
+        personaje?.tono ||
+        "Sin definir";
 
-      texto += `⚔ ${comp.nombre}\n`;
+      texto += `${getCompanionIcon(id)} **${comp.nombre}**\n`;
       texto += `Habilidad: ${comp.habilidad}\n`;
       texto += `Coste: ${comp.coste} pts\n`;
       texto += `Requisito: ${req}\n`;
-      texto += `Personalidad: ${personalidad || "Sin definir"}\n\n`;
+      texto += `Personalidad: ${personalidad}\n\n`;
     }
 
     return message.reply(texto);
@@ -715,11 +908,13 @@ client.on('messageCreate', async (message) => {
   //         SISTEMA DE EXPEDICIONES
   // ==========================================
 
-  if (command === "!tablon"){
+  if (command === "!tablon") {
     const missions = await loadMissions();
-    let texto = "📜 Tablón de Expediciones\n\n";
+    let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
 
-    missions.forEach((m, i) => {
+    const visibles = missions.slice(0, 5);
+
+    visibles.forEach((m, i) => {
       texto += `${i + 1}. ${m.titulo}\n`;
       texto += `📍 ${m.destino}\n`;
       texto += `⚠ Nivel ${m.nivel}\n`;
@@ -730,13 +925,34 @@ client.on('messageCreate', async (message) => {
     texto += "────────────────\n\n";
     texto += "🤝 Compañeros del campamento\n\n";
 
-    for (const [id, comp] of Object.entries(companions)) {
-      texto += `${comp.nombre}\n`;
-      texto += `Clase: ${comp.clase}\n`;
-      texto += `Coste: ${comp.coste} pts\n\n`;
+    const orden = [
+      "montaraces",
+      "alteru",
+      "cirdil",
+      "duilon",
+      "andaer",
+      "nieriel",
+      "faelon"
+    ];
+
+    for (const id of orden) {
+      const comp = companions[id];
+      const personaje = getPersonaje(id);
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
+      const personalidad =
+        personaje?.personalidad ||
+        personaje?.descripcion ||
+        personaje?.tono ||
+        "Sin definir";
+
+      texto += `${getCompanionIcon(id)} **${comp.nombre}**\n`;
+      texto += `Habilidad: ${comp.habilidad}\n`;
+      texto += `Coste: ${comp.coste} pts\n`;
+      texto += `Requisito: ${req}\n`;
+      texto += `Personalidad: ${personalidad}\n\n`;
     }
 
-    texto += "Usa !contratar <nombre>\n\n";
+    texto += "Usa !contratar <nombre>\n";
     texto += "Usa !expedicion <numero>";
     return message.reply(texto);
   }
@@ -745,6 +961,10 @@ client.on('messageCreate', async (message) => {
     const numero = parseInt(args[1]);
     if (isNaN(numero)) {
       return message.reply("Usa !expedicion <numero>");
+    }
+
+    if (!consumeExpeditionSlot(message.author.id)) {
+      return message.reply("⚠️ Has alcanzado el límite de 5 expediciones en este ciclo de 12 horas.");
     }
 
     const missions = await loadMissions();
@@ -756,7 +976,9 @@ client.on('messageCreate', async (message) => {
 
     const profile = await db.getProfile(message.author.id);
     const xpActual = profile.xp || 0;
-    const nivelJugador = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(xpActual / 1000) + 1;
+    const nivelJugador = typeof db.calculateLevel === 'function'
+      ? db.calculateLevel(xpActual)
+      : Math.floor(xpActual / 1000) + 1;
 
     if (mission.nivel && nivelJugador < mission.nivel) {
       return message.reply(`⚠️ Necesitas nivel ${mission.nivel} para realizar esta expedición.\n\nTu nivel actual es ${nivelJugador}.`);
@@ -874,20 +1096,36 @@ Usa !desafiar para comenzar el viaje.`
       return message.reply("No hay nada con lo que interactuar.");
     }
   
+    const profile = await db.getProfile(message.author.id);
+    const activeCompanionId = profile.activeCompanions?.[0] || null;
+  
     const xp = expedition.currentEncounter.xp || 10;
     expedition.xpEarned += xp;
-    expedition.progress++;
+    expedition.progress += 1;
     expedition.currentEncounter = null;
   
-    return message.reply(
-  `Has decidido involucrarte en la situación.
+    let texto = `Has decidido involucrarte en la situación.\n\n📚 +${xp} XP\n\n🛤️ Continúas tu viaje.\n\nUsa !desafiar para seguir avanzando.`;
   
-  📚 +${xp} XP
+    if (activeCompanionId) {
+      const reaccion = await companionReaction(
+        activeCompanionId,
+        expedition.currentEncounter || {
+          titulo: "Interacción",
+          tipo: "evento_especial",
+          categoria: "social",
+          descripcion: "Has intervenido en una escena del camino.",
+          peligro: 0,
+          xp
+        },
+        "interacción"
+      );
   
-  🛤️ Continúas tu viaje.
+      if (reaccion) {
+        texto += `\n\n💬 ${reaccion}`;
+      }
+    }
   
-  Usa !desafiar para seguir avanzando.`
-    );
+    return message.reply(texto);
   }
 
   if (command === "!desafiar") {
@@ -986,29 +1224,18 @@ Usa !desafiar para comenzar el viaje.`
       }
 
       const bonuses = getCompanionBonus(profile);
-      
-      let affinityBonus = 0;
 
-      for (
-        const comp of (
-          profile.activeCompanions ||
-          profile.companions ||
-          []
-        )
-      ){
-        affinityBonus +=
-        getAffinityBonus(
-          profile,
-          comp
-        );
+      let affinityBonus = 0;
+      for (const comp of (profile.activeCompanions || profile.companions || [])) {
+        affinityBonus += getAffinityBonus(profile, comp);
       }
 
       let successChance =
-      0.65 +
-      bonuses.combatBonus +
-      bonuses.captainBonus +
-      bonuses.rangerBonus +
-      affinityBonus;
+        0.65 +
+        bonuses.combatBonus +
+        bonuses.captainBonus +
+        bonuses.rangerBonus +
+        affinityBonus;
 
       if (expedition.currentEncounter.peligro >= 5) {
         successChance += bonuses.strongEnemyBonus;
@@ -1021,17 +1248,16 @@ Usa !desafiar para comenzar el viaje.`
       const success = Math.random() < successChance;
 
       if (success) {
-        // Victoria
         const xpGanada = expedition.currentEncounter.xp || 10;
-        const puntosGanados = expedition.currentEncounter.puntos || 5; 
-        
+        const puntosGanados = expedition.currentEncounter.puntos || 5;
+
         expedition.xpEarned += xpGanada;
         expedition.pointsEarned += puntosGanados;
-        expedition.progress++;
+        expedition.progress += 1;
 
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         const activeEncounterRef = expedition.currentEncounter;
-        expedition.currentEncounter = null; 
+        expedition.currentEncounter = null;
 
         let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+${xpGanada} XP`;
         if (puntosGanados > 0) textoVictoria += `\n+${puntosGanados} Puntos`;
@@ -1040,34 +1266,23 @@ Usa !desafiar para comenzar el viaje.`
           const saludActual = profile.salud ?? 100;
           const nuevaSalud = Math.min(100, saludActual + bonuses.healOnVictory);
 
-          await db.updateTravelerData(
-            message.author.id,
-            {
-              salud: nuevaSalud
-            }
-          );
-
+          await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
           textoVictoria += `\n❤️ Faelon cura ${bonuses.healOnVictory} puntos de salud.`;
         }
 
-        const companionId = (profile.companions || [])[0];
-
+        const companionId = (profile.activeCompanions || [])[0];
         if (companionId) {
-          const reaccion = await companionReaction(
-            companionId,
-            activeEncounterRef,
-            "victoria"
-          );
-
+          const reaccion = await companionReaction(companionId, activeEncounterRef, "victoria");
           if (reaccion) {
-            textoVictoria += `\n\n💬 ${companions[companionId].nombre}: "${reaccion}"`;
+            textoVictoria += `\n\n💬 ${reaccion}`;
           }
         }
+
+        expedition.threat += 1;
 
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
         } else {
-          // Finalizar la Misión y otorgar recompensas completas (Fin por Combate exitoso)
           const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
           const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
 
@@ -1075,66 +1290,57 @@ Usa !desafiar para comenzar el viaje.`
             if (typeof db.addXP === 'function') {
               await db.addXP(message.author.id, xpTotal);
             }
-            await db.addExpeditionReward(message.author.id, puntosTotal); 
+            await db.addExpeditionReward(message.author.id, puntosTotal);
           } catch (dbErr) {
             console.error("Error guardando progreso de expedición:", dbErr);
           }
 
-          const lista = profile.companions || [];
+          const lista = profile.activeCompanions || profile.companions || [];
           for (const comp of lista) {
             await increaseAffinity(message.author.id, comp, 5);
           }
 
           textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`;
-          
-          await db.updateTravelerData(message.author.id, { companions: [], activeCompanions: [] });
+
+          await db.updateTravelerData(message.author.id, { hiredCompanions: profile.hiredCompanions || [], activeCompanions: [] });
           expeditions.delete(message.author.id);
         }
 
         return message.reply(textoVictoria);
-
       } else {
-        // Derrota - Sistema de Salud y Daño
         expedition.threat += 2;
+
         const saludActual = profile.salud !== undefined ? profile.salud : 100;
-        
-        // Salvación por compañero
-        if (profile.companions && profile.companions.length > 0) {
+
+        if ((profile.activeCompanions || profile.companions || []).length > 0) {
           const companionSaves = Math.random() < 0.15;
           if (companionSaves) {
-            const salvadorId = profile.companions[Math.floor(Math.random() * profile.companions.length)];
+            const salvadorId = (profile.activeCompanions || profile.companions)[Math.floor(Math.random() * (profile.activeCompanions || profile.companions).length)];
             const salvador = companions[salvadorId]?.nombre || "Un compañero";
             return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${expedition.currentEncounter.titulo}* y salvándote de recibir daño.\n\n❤️ Salud intacta: ${saludActual}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir al campamento.`);
           }
         }
 
         let danoEnemigo = expedition.currentEncounter.dano || Math.floor(Math.random() * 25) + 20;
-        
-        // Reducción de daño por companions
-        danoEnemigo = Math.floor(danoEnemigo * (1 - bonuses.damageReduction));
+        danoEnemigo = Math.floor(danoEnemigo * (1 - (bonuses.damageReduction || 0)));
 
         const nuevaSalud = saludActual - danoEnemigo;
 
         let dialogoCompanion = "";
-        const companionId = (profile.companions || [])[0];
-
+        const companionId = (profile.activeCompanions || profile.companions || [])[0];
         if (companionId) {
-          const reaccion = await companionReaction(
-            companionId,
-            expedition.currentEncounter,
-            "derrota"
-          );
-
+          const reaccion = await companionReaction(companionId, expedition.currentEncounter, "derrota");
           if (reaccion) {
-            dialogoCompanion = `\n\n💬 ${companions[companionId].nombre}: "${reaccion}"`;
+            dialogoCompanion = `\n\n💬 ${reaccion}`;
           }
         }
 
         if (nuevaSalud <= 0) {
-          await db.updateTravelerData(message.author.id, { companions: [], activeCompanions: [] });
+          await db.updateTravelerData(message.author.id, { hiredCompanions: profile.hiredCompanions || [], activeCompanions: [] });
           expeditions.delete(message.author.id);
           await db.updateTravelerData(message.author.id, { salud: 100 });
-          return message.reply(`💀 **Has caído en combate**\n\nEl ataque de *${expedition.currentEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño y tu salud llega a 0.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*`);
+
+          return message.reply(`💀 **Has caído en combate**\n\nEl ataque de *${expedition.currentEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño y tu salud llega a 0.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*${dialogoCompanion}`);
         } else {
           await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
           return message.reply(`⚠️ **Recibes Daño**\n\nNo lograste superar el desafío de *${expedition.currentEncounter.titulo}* ileso. Recibes ${danoEnemigo} de daño.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\nUsa \`!desafiar\` para intentarlo de nuevo, \`!descansar\` si necesitas recuperarte o \`!volver\` para huir al campamento.${dialogoCompanion}`);
@@ -1153,8 +1359,8 @@ Usa !desafiar para comenzar el viaje.`
     }
 
     const intentos = dailyTriviaAttempts.get(message.author.id) || 0;
-    if (intentos >= 5) {
-      return message.reply('⚠️ Has alcanzado el límite máximo de 5 trivias por día. Vuelve mañana.');
+    if (intentos >= TRIVIA_LIMIT) {
+      return message.reply(`⚠️ Has alcanzado el límite máximo de ${TRIVIA_LIMIT} trivias por ciclo. Vuelve al siguiente amanecer.`);
     }
 
     let dificultad = args[1]?.toLowerCase();
@@ -1195,7 +1401,7 @@ Usa !desafiar para comenzar el viaje.`
       timeout
     });
 
-    let textoPregunta = `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/5)\n\n${question.pregunta}\n\n`;
+    let textoPregunta = `📜 Trivia ${dificultadMostrada} (Intento ${intentos + 1}/${TRIVIA_LIMIT})\n\n${question.pregunta}\n\n`;
 
     if (question.opciones && Array.isArray(question.opciones)) {
       textoPregunta += question.opciones
@@ -1310,7 +1516,11 @@ Usa !desafiar para comenzar el viaje.`
 Eres ${personaje.nombre}.
 
 Personalidad:
-${personaje.personalidad || personaje.descripcion || ""}
+${personaje.personalidad || personaje.descripcion || personaje.tono || ""}
+
+Equipo:
+Arma: ${personaje.arma || personaje.equipo?.arma || "No especificada"}
+Armadura: ${personaje.armadura || personaje.equipo?.armadura || "No especificada"}
 
 Afinidad con el viajero:
 ${afinidad}
@@ -1321,7 +1531,9 @@ ${afinidad}
 75-99 amigo cercano
 100 compañero de confianza
 
-Responde como ese personaje.
+Responde como ese personaje con una sola frase corta.
+Máximo 12 palabras.
+Sin narrador.
 
 Mensaje del viajero:
 ${mensaje}
@@ -1338,7 +1550,7 @@ ${mensaje}
           model: MODEL,
           messages: [{ role: "user", content: prompt }],
           temperature: 0.9,
-          max_tokens: 300
+          max_tokens: 40
         })
       });
 
@@ -1346,7 +1558,7 @@ ${mensaje}
       const respuesta = data?.choices?.[0]?.message?.content?.trim() || "No tengo nada que decir.";
 
       await increaseAffinity(message.author.id, id, 1);
-      return message.reply(respuesta);
+      return message.reply(formatCompanionReply(id, respuesta));
     } catch {
       return message.reply("No puedo responder ahora.");
     }
