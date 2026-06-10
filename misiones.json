@@ -49,9 +49,9 @@
   "xp": 80,
   "puntos": 50,
   "descripcion":
-    "Viajeron informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab, vigilar el camino principal e informar al Capitán.",
+    "Viajeros informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab. Vigilar el camino principal e informar al Capitán.",
   "textoExito":
-    "Luegon de tres dias de vigilancia, recorres la vía hacia el norte hasta que decides regresar al campamento e informar lo sucedido.",
+    "Luegon de tres dias de vigilancia, recorres la vía hacia el norte hasta que decides regresar al campamento y entregar el informe.",
   "textoFracaso":
     "La expedición se vio obligada a retirarse antes de completar la misión.",
   "encuentros": [
