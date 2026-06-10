@@ -1,3 +1,7 @@
+// ==========================================
+// database.js
+// ==========================================
+
 import { MongoClient } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI);
@@ -24,19 +28,38 @@ export async function addPoints(userId, amount) {
   );
 }
 
-export async function getPoints(userId) {
+export async function spendPoints(userId, amount) {
   const database = await connectDB();
 
-  const user = await database
-    .collection("puntos")
-    .findOne({ userId });
+  await database.collection("puntos").updateOne(
+    { userId },
+    { $inc: { points: -amount } },
+    { upsert: true }
+  );
+}
 
+export async function addXP(userId, amount) {
+  const database = await connectDB();
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    { $inc: { xp: amount } },
+    { upsert: true }
+  );
+}
+
+export function calculateLevel(xp = 0) {
+  return Math.floor(xp / 1000) + 1;
+}
+
+export async function getPoints(userId) {
+  const database = await connectDB();
+  const user = await database.collection("puntos").findOne({ userId });
   return user?.points || 0;
 }
 
 export async function getRanking() {
   const database = await connectDB();
-
   return await database
     .collection("puntos")
     .find({})
@@ -45,24 +68,23 @@ export async function getRanking() {
     .toArray();
 }
 
-// ==========================================
-//    NUEVAS FUNCIONES PARA ESTADÍSTICAS
-// ==========================================
-
 export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
-  
-  // Retornamos el usuario o un objeto por defecto incluyendo XP (sin nivel estático)
-  return user || { 
+
+  return user || {
     points: 0,
     xp: 0,
-    correctas: 0, 
-    incorrectas: 0, 
-    rachaActual: 0, 
+    salud: 100,
+    nivel: 1,
+    correctas: 0,
+    incorrectas: 0,
+    rachaActual: 0,
     mejorRacha: 0,
     affinity: {},
-    companions: [] 
+    hiredCompanions: [],
+    activeCompanions: [],
+    companions: []
   };
 }
 
@@ -70,16 +92,14 @@ export async function addCorrectAnswer(userId, points) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
 
-  // Calculamos la nueva racha
   const currentRacha = (user?.rachaActual || 0) + 1;
   const mejorRacha = Math.max(currentRacha, user?.mejorRacha || 0);
 
-  // Actualizamos puntos, correctas, y rachas
   await database.collection("puntos").updateOne(
     { userId },
-    { 
-      $inc: { points: points, correctas: 1 },
-      $set: { rachaActual: currentRacha, mejorRacha: mejorRacha }
+    {
+      $inc: { points, correctas: 1 },
+      $set: { rachaActual: currentRacha, mejorRacha }
     },
     { upsert: true }
   );
@@ -87,30 +107,12 @@ export async function addCorrectAnswer(userId, points) {
 
 export async function addWrongAnswer(userId) {
   const database = await connectDB();
-  
-  // Sumamos 1 a incorrectas y rompemos la racha poniéndola en 0
+
   await database.collection("puntos").updateOne(
     { userId },
-    { 
+    {
       $inc: { incorrectas: 1 },
       $set: { rachaActual: 0 }
-    },
-    { upsert: true }
-  );
-}
-
-// ==========================================
-//    RECOMPENSAS DE EXPEDICIÓN
-// ==========================================
-
-export async function addExpeditionReward(userId, points) {
-  const database = await connectDB();
-
-  // Sumamos únicamente los puntos, sin afectar las rachas ni aciertos de trivia
-  await database.collection("puntos").updateOne(
-    { userId },
-    { 
-      $inc: { points: points }
     },
     { upsert: true }
   );
@@ -121,42 +123,10 @@ export async function updateTravelerData(userId, data) {
 
   await database.collection("puntos").updateOne(
     { userId },
-    {
-      $set: data
-    },
-    {
-      upsert: true
-    }
+    { $set: data },
+    { upsert: true }
   );
 }
-
-// ==========================================
-//    SISTEMA DE XP Y NIVELES
-// ==========================================
-
-export async function addXP(userId, amount) {
-  const database = await connectDB();
-
-  await database.collection("puntos").updateOne(
-    { userId },
-    {
-      $inc: {
-        xp: amount
-      }
-    },
-    {
-      upsert: true
-    }
-  );
-}
-
-export function calculateLevel(xp = 0) {
-  return Math.floor(xp / 1000) + 1;
-}
-
-// ==========================================
-//    SISTEMA DE AFINIDAD
-// ==========================================
 
 export async function addAffinity(userId, companion, amount) {
   const database = await connectDB();
@@ -172,10 +142,6 @@ export async function addAffinity(userId, companion, amount) {
   );
 }
 
-// ==========================================
-//    SISTEMA DE COMPAÑEROS Y ECONOMÍA
-// ==========================================
-
 export async function hireCompanion(userId, companionId) {
   const database = await connectDB();
 
@@ -183,31 +149,16 @@ export async function hireCompanion(userId, companionId) {
     { userId },
     {
       $addToSet: {
+        hiredCompanions: companionId,
         companions: companionId
       }
-    }
+    },
+    { upsert: true }
   );
 }
 
 export async function getCompanions(userId) {
   const database = await connectDB();
-
-  const profile = await database
-    .collection("puntos")
-    .findOne({ userId });
-
-  return profile?.companions || [];
-}
-
-export async function spendPoints(userId, amount) {
-  const database = await connectDB();
-
-  await database.collection("puntos").updateOne(
-    { userId },
-    {
-      $inc: {
-        points: -amount
-      }
-    }
-  );
+  const profile = await database.collection("puntos").findOne({ userId });
+  return profile?.hiredCompanions || profile?.companions || [];
 }
