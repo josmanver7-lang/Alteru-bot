@@ -80,6 +80,179 @@
     "evento_especial", 
     "enemigo_numeroso"
   ]
-}
+},
+  {
+    "id": "rastreo_dinadab",
+    "nivel": 1,
+    "titulo": "Rastreo en Dínadab",
+    "destino": "Lamedon",
+    "objetivo": "investigar",
+    "xp": 80,
+    "puntos": 40,
+    "descripcion": "Se han visto huellas y señales extrañas en los alrededores de Dínadab. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
+    "textoExito": "Tras seguir las huellas alrededor de Dínadab, confirmas que la ruta sigue segura y entregas el informe al capitán.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "enemigo_numeroso",
+      "obstaculo"
+    ]
+  },
+  {
+    "id": "reliquia_calembel",
+    "nivel": 1,
+    "titulo": "Reliquia perdida cerca de Calembel",
+    "destino": "Lamedon",
+    "objetivo": "recuperar_artefacto",
+    "xp": 90,
+    "puntos": 45,
+    "descripcion": "Un objeto antiguo fue visto por última vez en un sendero cercano a Calembel. Debes localizarlo antes de que quede enterrado bajo barro y maleza.",
+    "textoExito": "Recuperas la reliquia perdida cerca de Calembel y la entregas intacta al campamento.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "evento_especial",
+      "obstaculo"
+    ]
+  },
+  {
+    "id": "vigilia_camino_calembel",
+    "nivel": 1,
+    "titulo": "Vigilia del Camino de Calembel",
+    "destino": "Lamedon",
+    "objetivo": "vigilar",
+    "xp": 80,
+    "puntos": 50,
+    "descripcion": "Los viajeros hablan de merodeadores en la ruta de Calembel. Mantén la vigilancia y confirma si hay riesgo real.",
+    "textoExito": "Tras varias horas de vigilancia, concluyes que la ruta necesita patrullas ligeras, no una campaña completa.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "evento_especial",
+      "enemigo_numeroso",
+      "obstaculo"
+    ]
+  },
+  {
+    "id": "huellas_lebennin",
+    "nivel": 1,
+    "titulo": "Huellas en Lebennin",
+    "destino": "Lebennin",
+    "objetivo": "investigar",
+    "xp": 85,
+    "puntos": 45,
+    "descripcion": "En los caminos de Lebennin han aparecido huellas y restos de carga. Debes seguirlos hasta entender qué sucedió.",
+    "textoExito": "Sigues las marcas hasta su origen y entregas un informe útil sobre lo ocurrido en Lebennin.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "enemigo_numeroso",
+      "obstaculo"
+    ]
+  },
+  {
+    "id": "custodia_tarlangs_neck",
+    "nivel": 2,
+    "titulo": "Custodia de Tarlang's Neck",
+    "destino": "Lamedon",
+    "objetivo": "vigilar",
+    "xp": 140,
+    "puntos": 80,
+    "descripcion": "Tarlang's Neck es un paso útil y peligroso; hay señales de bandidos y viejos restos de combate. Custodia el paso y elimina la amenaza si aparece.",
+    "textoExito": "Mantienes el paso bajo control y la vigilancia confirma que la ruta puede seguir usándose con cautela.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "evento_especial",
+      "enemigo_numeroso",
+      "enemigo_poderoso"
+    ]
+  },
+  {
+    "id": "sombras_sardol",
+    "nivel": 2,
+    "titulo": "Sombras en Sardol",
+    "destino": "Blackroot Vale",
+    "objetivo": "eliminar_enemigos",
+    "xp": 150,
+    "puntos": 95,
+    "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos y neutraliza al jefe menor si aparece.",
+    "textoExito": "Derrotas la amenaza que pesaba sobre Sardol y dejas el valle en mejores condiciones que al llegar.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "enemigo_numeroso",
+      "obstaculo",
+      "enemigo_poderoso"
+    ]
+  },
+  {
+    "id": "rastrear_celos",
+    "nivel": 2,
+    "titulo": "Rastro junto al Celos",
+    "destino": "Lebennin",
+    "objetivo": "investigar",
+    "xp": 145,
+    "puntos": 90,
+    "descripcion": "La ribera del Celos guarda rastros de un campamento reciente. Averigua quién pasó por allí y si quedan prisioneros o botín.",
+    "textoExito": "Sigues el rastro junto al Celos hasta resolver el misterio y devuelves noticias valiosas al campamento.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "enemigo_numeroso",
+      "evento_especial"
+    ]
+  },
+  {
+    "id": "escolta_tadrent",
+    "nivel": 3,
+    "titulo": "Escolta hacia Tadrent",
+    "destino": "Belfalas",
+    "objetivo": "vigilar_ruta",
+    "xp": 200,
+    "puntos": 120,
+    "descripcion": "Una caravana debe llegar hasta Tadrent por una ruta inquieta. La escolta puede acabar en emboscada, negociación o combate abierto.",
+    "textoExito": "La caravana llega a Tadrent y tu escolta evita que el viaje se convierta en tragedia.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "enemigo_numeroso",
+      "obstaculo",
+      "evento_especial",
+      "enemigo_poderoso"
+    ]
+  },
+  {
+    "id": "eco_stone_erech",
+    "nivel": 3,
+    "titulo": "Eco de la Stone of Erech",
+    "destino": "Blackroot Vale",
+    "objetivo": "investigar",
+    "xp": 210,
+    "puntos": 130,
+    "descripcion": "Al pie de la Stone of Erech circulan rumores de un eco antiguo. Investiga las ruinas, soporta la amenaza y resuelve la situación.",
+    "textoExito": "Descifras el origen del eco y regresas con pruebas claras de lo que acecha en Blackroot Vale.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "obstaculo",
+      "evento_especial",
+      "enemigo_numeroso",
+      "enemigo_poderoso"
+    ]
+  },
+  {
+    "id": "frontera_belfalas_vigilia",
+    "nivel": 3,
+    "titulo": "Vigilia en la frontera de Belfalas",
+    "destino": "Belfalas",
+    "objetivo": "explorar",
+    "xp": 220,
+    "puntos": 140,
+    "descripcion": "En la frontera de Belfalas, algunos días basta con vigilar; otros, una amenaza se manifiesta y obliga a actuar. Completa la misión incluso si el peligro nunca da la cara.",
+    "textoExito": "La frontera queda clara, segura y bien observada; aun sin combate, la misión queda cumplida.",
+    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "encuentros": [
+      "evento_especial",
+      "obstaculo",
+      "enemigo_numeroso",
+      "evento_especial"
+    ]
+  }
+  ]
 ]
-
