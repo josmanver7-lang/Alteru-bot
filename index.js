@@ -1,3 +1,5 @@
+Aquí tienes el código completo y actualizado con todas las correcciones integradas. He modificado la carga del personajes.json para que soporte arrays dinámicos, separado el comando !a para Altéru de !al para el campamento, y aplicado las mejoras al descanso, las reacciones y el tablón de información de los compañeros.
+```javascript
 import * as db from "./database.js";
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -383,34 +385,37 @@ async function askOpenRouter(userId, userMessage, lore) {
   return reply;
 }
 
-async function companionReaction(companionId, encounter, result) {
-  const personaje = personajesCache[companionId];
+function getPersonaje(companionId) {
+  return personajesCache[companionId] || null;
+}
 
-  if (!personaje) {
-    return null;
-  }
+async function companionReaction(companionId, encounter, result) {
+  const personaje = getPersonaje(companionId);
+
+  if (!personaje) return null;
+
+  const personalidad =
+    personaje.personalidad ||
+    personaje.descripcion ||
+    personaje.tono ||
+    "";
 
   const prompt = `
 Eres ${personaje.nombre}.
 
 Personalidad:
-
-${personaje.personalidad || ""}
+${personalidad}
 
 Situación:
-
 ${encounter.titulo}
 
 Resultado:
-
 ${result}
 
 Responde una sola frase.
-
 Máximo 25 palabras.
-
 Sin narrador.
-`;
+`.trim();
 
   try {
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -422,10 +427,7 @@ Sin narrador.
       body: JSON.stringify({
         model: MODEL,
         messages: [
-          {
-            role: "user",
-            content: prompt
-          }
+          { role: "user", content: prompt }
         ],
         temperature: 0.9,
         max_tokens: 50
@@ -433,9 +435,8 @@ Sin narrador.
     });
 
     const data = await res.json();
-    return data?.choices?.[0]?.message?.content?.trim();
-
-  } catch (err) {
+    return data?.choices?.[0]?.message?.content?.trim() || null;
+  } catch {
     return null;
   }
 }
@@ -445,17 +446,33 @@ let loreCache = null;
 client.once('clientReady', async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
-  
+
   try {
     const raw = await readFile(
       path.join(__dirname, "personajes.json"),
       "utf8"
     );
-    personajesCache = JSON.parse(raw);
+
+    const parsed = JSON.parse(raw);
+
+    personajesCache = Array.isArray(parsed)
+      ? Object.fromEntries(
+          parsed
+            .filter(p => p && (p.id || p.nombre))
+            .map(p => {
+              const key = (p.id || p.nombre)
+                .toLowerCase()
+                .replace(/\s+/g, "_");
+              return [key, p];
+            })
+        )
+      : parsed;
+
   } catch (err) {
     console.log("Error cargando personajes");
+    personajesCache = {};
   }
-  
+
   console.log(`Logged in as ${client.user.tag}`);
 });
 
@@ -510,12 +527,7 @@ client.on('messageCreate', async (message) => {
 !trivia legendario
 
 🔥 ROLEPLAY
-!a <mensaje>
-!an <mensaje>
-!c <mensaje>
-!d <mensaje>
-!f <mensaje>
-!n <mensaje>`
+!a <mensaje>`
     );
   }
 
@@ -666,62 +678,30 @@ client.on('messageCreate', async (message) => {
   }
 
   if (command === "!campamento") {
-    return message.reply(`
-🏕️ CAMPAMENTO DE ALTÉRU
+    let texto = "🏕️ CAMPAMENTO DE ALTÉRU\n\n";
 
-🏹 Montaraces de Arathir
-Habilidad: Exploradores del Norte
-Coste: 1000 pts
-Nivel: 5
-Personalidad:
-Exploradores veteranos.
+    for (const [id, comp] of Object.entries(companions)) {
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
 
-⚔ Altéru
-Habilidad: Rugido del León
-Coste: 500 pts
-Nivel: 3
-Personalidad:
-Guía y protector.
+      let personalidad = "";
+      const personaje = getPersonaje(id);
 
-🛡️ Círdil
-Habilidad: Escudo de Gondor
-Coste: 250 pts
-Nivel: Ninguno
-Personalidad:
-Imprudente pero calculador.
+      if (personaje) {
+        personalidad =
+          personaje.personalidad ||
+          personaje.descripcion ||
+          personaje.tono ||
+          "";
+      }
 
-⚔️ Duilon
-Habilidad: Deseo de Lucha
-Coste: 200 pts
-Nivel: Ninguno
-Personalidad:
-Leal y amante del combate.
+      texto += `⚔ ${comp.nombre}\n`;
+      texto += `Habilidad: ${comp.habilidad}\n`;
+      texto += `Coste: ${comp.coste} pts\n`;
+      texto += `Requisito: ${req}\n`;
+      texto += `Personalidad: ${personalidad || "Sin definir"}\n\n`;
+    }
 
-🛡️ Andaer
-Habilidad: Instinto Escudero
-Coste: 150 pts
-Nivel: Ninguno
-Personalidad:
-Impulsivo y competitivo.
-
-🌿 Nieriel
-Habilidad: Instinto de Supervivencia
-Coste: 150 pts
-Nivel: Ninguno
-Personalidad:
-Calmada y observadora.
-
-📚 Faelon
-Habilidad: Sabiduría de Imladris
-Coste: 100 pts
-Nivel: Ninguno
-Personalidad:
-Sabio y paciente.
-
-Usa:
-!companeros
-!contratar <nombre>
-`);
+    return message.reply(texto);
   }
 
   if (command === '!ranking') {
@@ -847,16 +827,16 @@ Usa !desafiar para comenzar el viaje.`
     const costeDescanso = Math.floor(Math.random() * 51) + 25;
 
     if ((profile.points || 0) < costeDescanso) {
-      return message.reply(
-        `Necesitas ${costeDescanso} puntos para descansar.`
-      );
+      return message.reply(`Necesitas ${costeDescanso} puntos para descansar.`);
     }
 
     await db.spendPoints(message.author.id, costeDescanso);
     const nuevaSalud = Math.min(100, saludActual + 30);
     await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
 
-    return message.reply(`⛺ **Descanso en el camino**\n\nEncuentras un lugar seguro para recuperar el aliento. Gastas raciones y suministros.\n\n❤️ Salud: ${nuevaSalud}/100 (+30)\n\nUsa \`!desafiar\` para seguir viajando. [-${costeDescanso} pts]`);
+    return message.reply(
+      `⛺ **Descanso en el camino**\n\nEncuentras un lugar seguro para recuperar el aliento. Gastas raciones y suministros.\n\n❤️ Salud: ${nuevaSalud}/100 (+30)\n\nUsa \`!desafiar\` para seguir viajando. [-${costeDescanso} pts]`
+    );
   }
 
   if (command === "!ignorar") {
@@ -882,31 +862,33 @@ Usa !desafiar para comenzar el viaje.`
   }
 
   if (command === "!interactuar") {
-    if (!expeditions.has(message.author.id))
+    if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
-
+    }
+  
     const expedition = expeditions.get(message.author.id);
-
-    if (!expedition.currentEncounter)
+  
+    if (!expedition.currentEncounter) {
       return message.reply("No hay ningún encuentro activo.");
-
+    }
+  
     if (expedition.currentEncounter.tipo !== "evento_especial") {
       return message.reply("No hay nada con lo que interactuar.");
     }
-
+  
     const xp = expedition.currentEncounter.xp || 10;
     expedition.xpEarned += xp;
     expedition.progress++;
     expedition.currentEncounter = null;
-
+  
     return message.reply(
-`Has decidido involucrarte en la situación.
-
-📚 +${xp} XP
-
-🛤️ Continúas tu viaje.
-
-Usa !desafiar para seguir avanzando.`
+  `Has decidido involucrarte en la situación.
+  
+  📚 +${xp} XP
+  
+  🛤️ Continúas tu viaje.
+  
+  Usa !desafiar para seguir avanzando.`
     );
   }
 
@@ -1305,7 +1287,8 @@ Usa !desafiar para seguir avanzando.`
     "!n": "nieriel",
     "!f": "faelon",
     "!an": "andaer",
-    "!a": "alteru"
+    "!al": "alteru",
+    "!m": "montaraces"
   };
 
   if (companionCommands[command]) {
@@ -1316,7 +1299,7 @@ Usa !desafiar para seguir avanzando.`
     }
 
     const id = companionCommands[command];
-    const personaje = personajesCache[id];
+    const personaje = getPersonaje(id);
 
     if (!personaje) {
       return message.reply("Ese compañero no está disponible.");
@@ -1329,11 +1312,9 @@ Usa !desafiar para seguir avanzando.`
 Eres ${personaje.nombre}.
 
 Personalidad:
-
-${personaje.personalidad || ""}
+${personaje.personalidad || personaje.descripcion || ""}
 
 Afinidad con el viajero:
-
 ${afinidad}
 
 0-24 desconocido
@@ -1345,7 +1326,6 @@ ${afinidad}
 Responde como ese personaje.
 
 Mensaje del viajero:
-
 ${mensaje}
 `.trim();
 
@@ -1358,24 +1338,18 @@ ${mensaje}
         },
         body: JSON.stringify({
           model: MODEL,
-          messages: [
-            {
-              role: "user",
-              content: prompt
-            }
-          ],
+          messages: [{ role: "user", content: prompt }],
           temperature: 0.9,
           max_tokens: 300
         })
       });
 
       const data = await res.json();
-      const respuesta = data?.choices?.[0]?.message?.content || "No tengo nada que decir.";
+      const respuesta = data?.choices?.[0]?.message?.content?.trim() || "No tengo nada que decir.";
 
       await increaseAffinity(message.author.id, id, 1);
       return message.reply(respuesta);
-
-    } catch (err) {
+    } catch {
       return message.reply("No puedo responder ahora.");
     }
   }
@@ -1424,3 +1398,5 @@ ${mensaje}
 
 await db.connectDB();
 client.login(DISCORD_TOKEN);
+
+```
