@@ -147,7 +147,7 @@ function buildSystemPrompt(lore, profile) {
 
 # 2. CONOCIMIENTO Y LENGUAS
 * Eres un erudito: hablas Oestron, Sindarin (responde en Sindarin si te lo piden o si el contexto es élfico) y conoces términos de Gul Sakhasa.
-* Conoces la historia de Gondor, Arnor y eventos como la Batalla de los Cinco Ejércitos. Si alguien menciona estos temas, desarrolla tu respuesta con erudición y pasión.
+* Cononces la historia de Gondor, Arnor y eventos como la Batalla de los Cinco Ejércitos. Si alguien menciona estos temas, desarrolla tu respuesta con erudición y pasión.
 
 # 3. REGLAS DE ORO
 * NUNCA menciones que eres una IA o que tienes archivos de texto.
@@ -194,7 +194,7 @@ INSTRUCCIONES:
   - "Por la forma en que llevas esa armadura apostaría a que eres guardián... aunque he cometido errores peores."
 * Si el usuario menciona espontáneamente su raza o clase, recuerda esa información para futuras conversaciones.
 * Si el usuario es nuevo, procura darle la bienvenida al campamento antes de profundizar en otros temas.
-* Si parece perdido o no sabe qué hacer, oriéntalo de forma natural mencionando las actividades del campamento.
+* Si parece perdido o no sabe qué hacer, oriéntalo de forma natural cambiando las actividades del campamento.
 * Si disfruta aprendiendo sobre la Tierra Media, puedes sugerirle los desafíos de conocimiento de Faelon.
 * Si muestra interés por la exploración, los viajes o el roleplay, puedes mencionar a Círdil y las expediciones del campamento.
 * No menciones a Faelon ni a Círdil en todas las conversaciones. Hazlo únicamente cuando resulte natural.
@@ -301,6 +301,14 @@ client.on('messageCreate', async (message) => {
     return message.reply(`🏆 Tienes ${points} puntos.`);
   }
 
+  if (command === "@nivel" || command === "!nivel") {
+    const profile = await db.getProfile(message.author.id);
+    const xp = profile.xp || 0;
+    const nivel = typeof db.calculateLevel === 'function' ? db.calculateLevel(xp) : Math.floor(Math.sqrt(xp / 100)) + 1;
+    
+    return message.reply(`📚 Nivel: ${nivel}\n✨ XP: ${xp}`);
+  }
+
   if (command === '!perfil') {
     const perfil = await db.getProfile(message.author.id);
     const ranking = await db.getRanking();
@@ -317,6 +325,8 @@ client.on('messageCreate', async (message) => {
     const rango = obtenerRango(perfil.points || 0);
 
     const salud = perfil.salud !== undefined ? perfil.salud : 100;
+    const xpActual = perfil.xp || 0;
+    const nivelActual = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(Math.sqrt(xpActual / 100)) + 1;
 
     const companionsList = perfil.companions || [];
     let companionsText = "Ninguno";
@@ -327,7 +337,7 @@ client.on('messageCreate', async (message) => {
     }
 
     return message.reply(
-      `📜 **Perfil del Viajero**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n❤️ Salud: ${salud}/100\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}\n🤝 Compañeros: ${companionsText}`
+      `📜 **Perfil del Viajero**\n\n👤 Usuario: ${message.author.username}\n🥇 Rango: ${rango}\n📚 Nivel: ${nivelActual} (XP: ${xpActual})\n❤️ Salud: ${salud}/100\n\n🏆 Puntos: ${perfil.points || 0}\n🏅 Posición: #${posicion > 0 ? posicion : 'N/A'}\n\n✅ Correctas: ${correctas}\n❌ Incorrectas: ${incorrectas}\n📊 Precisión: ${precision}%\n\n🔥 Mejor racha: ${racha}\n🎟️ Trivias restantes hoy: ${restantes}\n🤝 Compañeros: ${companionsText}`
     );
   }
 
@@ -351,7 +361,6 @@ client.on('messageCreate', async (message) => {
 
   if (command === '!afinidad') {
     const perfil = await db.getProfile(message.author.id);
-
     const affinity = perfil.affinity || {};
 
     let texto = "🤝 Afinidad con compañeros\n\n";
@@ -367,7 +376,7 @@ client.on('messageCreate', async (message) => {
     return message.reply(texto);
   }
 
-  if (command === "!companeros") {
+  if (command === "@companeros" || command === "!companeros") {
     let texto = "🤝 Compañeros disponibles\n\n";
 
     for (const [id, comp] of Object.entries(companions)) {
@@ -381,9 +390,13 @@ client.on('messageCreate', async (message) => {
   }
 
   if (command === "!contratar") {
-    const id = args[1]?.toLowerCase();
+    if (!args[1]) {
+      return message.reply("Usa !contratar <nombre>\n\nEjemplo:\n!contratar faelon");
+    }
 
-    if (!id || !companions[id]) {
+    const id = args[1].toLowerCase();
+
+    if (!companions[id]) {
       return message.reply("Ese compañero no existe.");
     }
 
@@ -466,6 +479,14 @@ client.on('messageCreate', async (message) => {
 
     if (!mission) {
       return message.reply("Esa misión no existe.");
+    }
+
+    const profile = await db.getProfile(message.author.id);
+    const xpActual = profile.xp || 0;
+    const nivelJugador = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(Math.sqrt(xpActual / 100)) + 1;
+
+    if (mission.nivel && nivelJugador < mission.nivel) {
+      return message.reply(`⚠️ Necesitas nivel ${mission.nivel} para realizar esta expedición.\n\nTu nivel actual es ${nivelJugador}.`);
     }
 
     if (expeditions.has(message.author.id)) {
@@ -566,9 +587,11 @@ Usa !desafiar para comenzar el viaje.`
       return message.reply("Solo puedes usar este comando en eventos especiales.");
     }
 
+    const xp = expedition.currentEncounter.xp || 0;
+    expedition.xpEarned += xp;
     expedition.progress++;
     expedition.currentEncounter = null;
-    return message.reply("Decides continuar tu camino.\n\n🛤️ El viaje continúa.\nUsa !desafiar para seguir viajando.");
+    return message.reply(`Decides continuar tu camino. (+${xp} XP)\n\n🛤️ El viaje continúa.\nUsa !desafiar para seguir viajando.`);
   }
 
   if (command === "!hablar") {
@@ -583,7 +606,7 @@ Usa !desafiar para comenzar el viaje.`
 
     const encounterId = expedition.currentEncounter.id || expedition.currentEncounter.titulo.toLowerCase().replace(/ /g, "_");
     
-    const npcsAmigables = ["mercader_enano", "exploradores_elficos", "ruinas_antiguas"];
+    const npcsAmigables = ["mercader_enano", "exploradores_elficos", "ruinas_antiguas", "atalaya_abandonada"];
 
     if (npcsAmigables.some(npc => encounterId.includes(npc))) {
       const extraXp = expedition.currentEncounter.xp || 15;
@@ -621,25 +644,26 @@ Usa !desafiar para comenzar el viaje.`
       const encounters = await loadEncounters();
       const destino = expedition.mission.destino.toLowerCase();
 
-const lista = encounters.filter(e => {
-  const coincideEncuentro =
-    e.tipo === encuentroId ||
-    e.categoria === encuentroId;
+      const lista = encounters.filter(e => {
+        const coincideEncuentro =
+          e.tipo === encuentroId ||
+          e.categoria === encuentroId;
 
-  const coincideRegion =
-    Array.isArray(e.region) &&
-    e.region.some(
-      r => r.toLowerCase() === destino
-    );
+        const coincideRegion =
+          Array.isArray(e.region) &&
+          e.region.some(
+            r => r.toLowerCase() === destino
+          );
 
-  return coincideEncuentro && coincideRegion;
-});
+        return coincideEncuentro && coincideRegion;
+      });
+
+      if (!lista.length) {
+        expedition.failed = true;
+        return message.reply("⚠️ No se encontraron encuentros válidos para esta misión. La expedición ha sido cancelada.");
+      }
 
       const encounter = lista[Math.floor(Math.random() * lista.length)];
-      
-      if (!encounter) {
-        return message.reply(`No se encontró el encuentro "${encuentroId}" en la región "${expedition.mission.destino}" en encuentros.json.`);
-      }
 
       let comandos = "\n\nComandos:\n!desafiar\n!volver";
 
@@ -664,29 +688,44 @@ const lista = encounters.filter(e => {
 
       const profile = await db.getProfile(message.author.id);
 
-      // --- SISTEMA DE COMPAÑEROS EN COMBATE ---
-      const bonoCompaneros = (profile.companions && profile.companions.length) ? profile.companions.length * 0.05 : 0;
+      // --- SISTEMA DE COMPAÑEROS EN COMBATE (Limitado a un máximo de +15%) ---
+      const bonoCompaneros = profile.companions ? Math.min(profile.companions.length * 0.03, 0.15) : 0;
       const baseSuccess = 0.7;
       const success = Math.random() < (baseSuccess + bonoCompaneros);
 
       if (success) {
         // Victoria
+        const xpGanada = expedition.currentEncounter.xp || 10;
+        const puntosGanados = expedition.currentEncounter.puntos || 5; 
+        
+        expedition.xpEarned += xpGanada;
+        expedition.pointsEarned += puntosGanados;
         expedition.progress++;
+
         const nombreEncuentroAnterior = expedition.currentEncounter.titulo;
         expedition.currentEncounter = null; 
 
-        let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+10 XP`;
+        let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${nombreEncuentroAnterior}*.\n\n+${xpGanada} XP`;
+        if (puntosGanados > 0) textoVictoria += `\n+${puntosGanados} Puntos`;
 
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
         } else {
-          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n+100 XP\n+50 Puntos`;
-          
+          // Finalizar la Misión y otorgar recompensas completas
+          const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+          const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
           try {
-            await db.addCorrectAnswer(message.author.id, 50);
+            if (typeof db.addXP === 'function') {
+              await db.addXP(message.author.id, xpTotal);
+            }
+            // Nueva función limpia para otorgar la recompensa sin alterar estadísticas de trivias
+            await db.addExpeditionReward(message.author.id, puntosTotal); 
           } catch (dbErr) {
-            console.error("Error guardando puntos de expedición:", dbErr);
+            console.error("Error guardando progreso de expedición:", dbErr);
           }
+
+          textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`;
           
           expedition.failed = true; 
         }
@@ -709,7 +748,7 @@ const lista = encounters.filter(e => {
 
         let danoEnemigo = expedition.currentEncounter.dano || Math.floor(Math.random() * 20) + 10;
         
-        // Reducción de daño por compañeros
+        // Reducción de daño por companions
         if (profile.companions && profile.companions.length > 0) {
           danoEnemigo = Math.floor(danoEnemigo * 0.8);
         }
@@ -831,11 +870,15 @@ const lista = encounters.filter(e => {
           const rangoAnterior = obtenerRango(puntosAntes);
 
           await db.addCorrectAnswer(message.author.id, game.points);
+          // Otorga XP en trivias en función de los puntos de la pregunta
+          if (typeof db.addXP === 'function') {
+            await db.addXP(message.author.id, game.points);
+          }
 
           const total = await db.getPoints(message.author.id);
           const rangoNuevo = obtenerRango(total);
 
-          let texto = `✅ Correcto.\n\n+${game.points} puntos.\n\n🏆 Total: ${total}`;
+          let texto = `✅ Correcto.\n\n+${game.points} puntos y +${game.points} XP.\n\n🏆 Total: ${total}`;
 
           if (rangoAnterior !== rangoNuevo) {
             texto += `\n\n🎉 ¡Felicidades! Has ascendido al rango de **${rangoNuevo}**.`;
@@ -908,4 +951,3 @@ const lista = encounters.filter(e => {
 
 await db.connectDB();
 client.login(DISCORD_TOKEN);
-
