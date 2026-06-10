@@ -304,7 +304,7 @@ client.on('messageCreate', async (message) => {
   if (command === "@nivel" || command === "!nivel") {
     const profile = await db.getProfile(message.author.id);
     const xp = profile.xp || 0;
-    const nivel = typeof db.calculateLevel === 'function' ? db.calculateLevel(xp) : Math.floor(Math.sqrt(xp / 100)) + 1;
+    const nivel = typeof db.calculateLevel === 'function' ? db.calculateLevel(xp) : Math.floor(xp / 1000) + 1;
     
     return message.reply(`📚 Nivel: ${nivel}\n✨ XP: ${xp}`);
   }
@@ -326,7 +326,7 @@ client.on('messageCreate', async (message) => {
 
     const salud = perfil.salud !== undefined ? perfil.salud : 100;
     const xpActual = perfil.xp || 0;
-    const nivelActual = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(Math.sqrt(xpActual / 100)) + 1;
+    const nivelActual = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(xpActual / 1000) + 1;
 
     const companionsList = perfil.companions || [];
     let companionsText = "Ninguno";
@@ -483,7 +483,7 @@ client.on('messageCreate', async (message) => {
 
     const profile = await db.getProfile(message.author.id);
     const xpActual = profile.xp || 0;
-    const nivelJugador = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(Math.sqrt(xpActual / 100)) + 1;
+    const nivelJugador = typeof db.calculateLevel === 'function' ? db.calculateLevel(xpActual) : Math.floor(xpActual / 1000) + 1;
 
     if (mission.nivel && nivelJugador < mission.nivel) {
       return message.reply(`⚠️ Necesitas nivel ${mission.nivel} para realizar esta expedición.\n\nTu nivel actual es ${nivelJugador}.`);
@@ -637,8 +637,25 @@ Usa !desafiar para comenzar el viaje.`
     if (expedition.currentEncounter === null) {
       const encuentroId = expedition.mission.encuentros?.[expedition.progress];
 
+      // --- FIX #1: FINALIZAR EXPEDICIÓN CUANDO NO HAY MÁS ENCUENTROS ---
       if (!encuentroId) {
-        return message.reply("No hay más encuentros registrados en esta expedición.");
+        const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+        const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
+        try {
+          if (typeof db.addXP === 'function') {
+            await db.addXP(message.author.id, xpTotal);
+          }
+          await db.addExpeditionReward(message.author.id, puntosTotal); 
+        } catch (dbErr) {
+          console.error("Error guardando progreso de expedición al finalizar:", dbErr);
+        }
+
+        expeditions.delete(message.author.id); // Eliminamos del mapa activo para limpiar el estado
+
+        return message.reply(
+          `🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || '¡Has completado con éxito tu viaje!'}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`
+        );
       }
 
       const encounters = await loadEncounters();
@@ -711,7 +728,7 @@ Usa !desafiar para comenzar el viaje.`
         if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
           textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
         } else {
-          // Finalizar la Misión y otorgar recompensas completas
+          // Finalizar la Misión y otorgar recompensas completas (Fin por Combate exitoso)
           const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
           const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
 
@@ -719,7 +736,6 @@ Usa !desafiar para comenzar el viaje.`
             if (typeof db.addXP === 'function') {
               await db.addXP(message.author.id, xpTotal);
             }
-            // Nueva función limpia para otorgar la recompensa sin alterar estadísticas de trivias
             await db.addExpeditionReward(message.author.id, puntosTotal); 
           } catch (dbErr) {
             console.error("Error guardando progreso de expedición:", dbErr);
@@ -727,7 +743,7 @@ Usa !desafiar para comenzar el viaje.`
 
           textoVictoria += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || '¡Has completado con éxito la expedición!'}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`;
           
-          expedition.failed = true; 
+          expeditions.delete(message.author.id); // Eliminamos del mapa activo directamente
         }
 
         return message.reply(textoVictoria);
