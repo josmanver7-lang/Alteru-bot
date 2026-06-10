@@ -13,6 +13,19 @@
   "xp": 5
 },
 {
+  "id": "ataque_bandido",
+  "categoria": "evento_especial",
+  "tipo": "combate",
+  "titulo": "Asalto de Bandidos",
+  "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
+  "descripcion":
+    "Mientras viajas tres bandidos se interponen en tu camino, uno de ellos rie con malicia mientras se acercan cada vez mas, llevando machetes y ropas andrajosas.",
+
+  "peligro": 3,
+
+  "xp": 10
+},
+{
   "id": "puente_roto",
   "categoria": "obstaculo",
   "tipo": "terreno",
