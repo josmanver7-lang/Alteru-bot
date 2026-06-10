@@ -45,15 +45,19 @@ export async function getRanking() {
     .toArray();
 }
 
-// ==========================================\n//    NUEVAS FUNCIONES PARA ESTADÍSTICAS\n// ==========================================
+// ==========================================
+//    NUEVAS FUNCIONES PARA ESTADÍSTICAS
+// ==========================================
 
 export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
   
-  // Retornamos el usuario o un objeto por defecto incluyendo affinity, race y class
+  // Retornamos el usuario o un objeto por defecto incluyendo XP y nivel
   return user || { 
-    points: 0, 
+    points: 0,
+    xp: 0,
+    nivel: 1,
     correctas: 0, 
     incorrectas: 0, 
     rachaActual: 0, 
@@ -110,7 +114,33 @@ export async function updateTravelerData(userId, data) {
   );
 }
 
-// ==========================================\n//    SISTEMA DE AFINIDAD\n// ==========================================
+// ==========================================
+//    SISTEMA DE XP Y NIVELES
+// ==========================================
+
+export async function addXP(userId, amount) {
+  const database = await connectDB();
+
+  await database.collection("puntos").updateOne(
+    { userId },
+    {
+      $inc: {
+        xp: amount
+      }
+    },
+    {
+      upsert: true
+    }
+  );
+}
+
+export function calculateLevel(xp = 0) {
+  return Math.floor(xp / 1000) + 1;
+}
+
+// ==========================================
+//    SISTEMA DE AFINIDAD
+// ==========================================
 
 export async function addAffinity(userId, companion, amount) {
   const database = await connectDB();
@@ -126,7 +156,9 @@ export async function addAffinity(userId, companion, amount) {
   );
 }
 
-// ==========================================\n//    SISTEMA DE COMPAÑEROS Y ECONOMÍA\n// ==========================================
+// ==========================================
+//    SISTEMA DE COMPAÑEROS Y ECONOMÍA
+// ==========================================
 
 export async function hireCompanion(userId, companionId) {
   const database = await connectDB();
