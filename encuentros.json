@@ -306,5 +306,38 @@
     "descripcion": "Un capitán orco reúne a sus merodeadores cerca de las colinas. Sus cicatrices y su mando feroz lo convierten en una amenaza seria.",
     "peligro": 4,
     "xp": 26
+  },
+  {
+    "id": "perdido",
+    "tipo": "obstaculo",
+    "categoria": "exploracion",
+    "titulo": "Perdido",
+    "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
+    "descripcion": "Mientras viajas sientes una extraña sensacion y sin darte cuenta has perdido el sentido de la orientación, alejandote del camino y sin saber a donde dirigirte.",
+    "subencuentros": [
+    {
+      "id": "claro_misterioso",
+      "titulo": "Piedra en medio del claro",
+      "descripcion": "Llegas a un claro rodeado de árboles enfermos y ves una piedra justo en medio, te acercas cautelosamente y al inspeccionarlas vez entre sangre reseca una inscripción apenas legible 'Thûlazar' y sientes un terrible escalofrios y una punzada en el pecho, luego varios orcos encapuchados emergen entre los arboles.",
+      "peligro": 3,
+      "xp": 10
+    },
+    {
+      "id": "regresas",
+      "titulo": "Regresas al camino",
+      "descripcion": "La dirección que tomaste resultó ser la acertada y vuelves al camino recuperando tu orientación y el ánimo.",
+      "peligro": 0,
+      "xp": 0
+    },     
+    {
+      "id": "pantano_oscuro",
+      "titulo": "Borde del pantano",
+      "descripcion": "Terminas junto a una zona de agua negra, motivado por sobrevivir decides cruzarlo pero resultó ser mas complicado de lo que te esperabas.",
+      "peligro": 2,
+      "xp": 5
+    }
+    ]
+    "peligro": 0,
+    "xp": 0
   }
 ]
