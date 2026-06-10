@@ -14,18 +14,11 @@ export async function connectDB() {
     db = client.db("alteru");
     console.log("✅ MongoDB conectado");
   }
-
   return db;
-}
-
-export async function getProfile(userId) {
-  const database = await connectDB();
-  return await database.collection("puntos").findOne({ userId }) || {};
 }
 
 export async function addPoints(userId, amount) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     { $inc: { points: amount } },
@@ -35,7 +28,6 @@ export async function addPoints(userId, amount) {
 
 export async function spendPoints(userId, amount) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     { $inc: { points: -amount } },
@@ -45,7 +37,6 @@ export async function spendPoints(userId, amount) {
 
 export async function addXP(userId, amount) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     { $inc: { xp: amount } },
@@ -72,6 +63,27 @@ export async function getRanking() {
     .toArray();
 }
 
+export async function getProfile(userId) {
+  const database = await connectDB();
+  const user = await database.collection("puntos").findOne({ userId });
+  return user || {
+    userId,
+    points: 0,
+    xp: 0,
+    race: "",
+    class: "",
+    salud: 100,
+    correctas: 0,
+    incorrectas: 0,
+    rachaActual: 0,
+    mejorRacha: 0,
+    hiredCompanions: [],
+    companions: [],
+    activeCompanions: [],
+    affinity: {}
+  };
+}
+
 export async function addCorrectAnswer(userId, points) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
@@ -91,7 +103,6 @@ export async function addCorrectAnswer(userId, points) {
 
 export async function addWrongAnswer(userId) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     {
@@ -104,7 +115,6 @@ export async function addWrongAnswer(userId) {
 
 export async function updateTravelerData(userId, data) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     { $set: data },
@@ -114,7 +124,6 @@ export async function updateTravelerData(userId, data) {
 
 export async function addAffinity(userId, companion, amount) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     {
@@ -128,7 +137,6 @@ export async function addAffinity(userId, companion, amount) {
 
 export async function hireCompanion(userId, companionId) {
   const database = await connectDB();
-
   await database.collection("puntos").updateOne(
     { userId },
     {
@@ -142,7 +150,7 @@ export async function hireCompanion(userId, companionId) {
 }
 
 // ================================
-// GESTIÓN DE CUOTAS PERSISTENTES
+// CUOTAS PERSISTENTES BASE DE DATOS
 // ================================
 
 export async function getQuotaState(userId, kind, windowMs) {
