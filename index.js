@@ -273,14 +273,10 @@ async function askOpenRouter(userId, userMessage, lore) {
 
 let loreCache = null;
 
-client.once('ready', async () => {
-  try {
-    await db.connectDB();
-    loreCache = await loadAlteruLore();
-    console.log(`Logged in as ${client.user.tag}`);
-  } catch (err) {
-    console.error('Error cargando el lore inicial:', err);
-  }
+client.once('clientReady', async () => {
+  await db.connectDB();
+  loreCache = await loadAlteruLore();
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
 const processedMessages = new Set();
@@ -623,11 +619,21 @@ Usa !desafiar para comenzar el viaje.`
       }
 
       const encounters = await loadEncounters();
-      const lista = encounters.filter(
-        e =>
-          e.tipo === encuentroId &&
-          e.region.toLowerCase() === expedition.mission.destino.toLowerCase()
-      );
+      const destino = expedition.mission.destino.toLowerCase();
+
+const lista = encounters.filter(e => {
+  const coincideEncuentro =
+    e.tipo === encuentroId ||
+    e.categoria === encuentroId;
+
+  const coincideRegion =
+    Array.isArray(e.region) &&
+    e.region.some(
+      r => r.toLowerCase() === destino
+    );
+
+  return coincideEncuentro && coincideRegion;
+});
 
       const encounter = lista[Math.floor(Math.random() * lista.length)];
       
@@ -902,3 +908,4 @@ Usa !desafiar para comenzar el viaje.`
 
 await db.connectDB();
 client.login(DISCORD_TOKEN);
+
