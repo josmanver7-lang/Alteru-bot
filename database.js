@@ -53,11 +53,10 @@ export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
   
-  // Retornamos el usuario o un objeto por defecto incluyendo XP y nivel
+  // Retornamos el usuario o un objeto por defecto incluyendo XP (sin nivel estático)
   return user || { 
     points: 0,
     xp: 0,
-    nivel: 1,
     correctas: 0, 
     incorrectas: 0, 
     rachaActual: 0, 
@@ -95,6 +94,23 @@ export async function addWrongAnswer(userId) {
     { 
       $inc: { incorrectas: 1 },
       $set: { rachaActual: 0 }
+    },
+    { upsert: true }
+  );
+}
+
+// ==========================================
+//    RECOMPENSAS DE EXPEDICIÓN
+// ==========================================
+
+export async function addExpeditionReward(userId, points) {
+  const database = await connectDB();
+
+  // Sumamos únicamente los puntos, sin afectar las rachas ni aciertos de trivia
+  await database.collection("puntos").updateOne(
+    { userId },
+    { 
+      $inc: { points: points }
     },
     { upsert: true }
   );
