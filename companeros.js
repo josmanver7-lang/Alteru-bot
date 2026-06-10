@@ -4,7 +4,7 @@ export const companions = {
     coste: 500,
     clase: "Capitán",
     afinidadMax: 100,
-    habilidad: "Capitán de las Colinas"
+    habilidad: "Rugido de León"
   },
 
   nieriel: {
@@ -12,7 +12,7 @@ export const companions = {
     coste: 150,
     clase: "Capitán",
     afinidadMax: 100,
-    habilidad: "Sangre Élfica"
+    habilidad: "Sangre Elfica"
   },
 
   faelon: {
@@ -20,7 +20,7 @@ export const companions = {
     coste: 100,
     clase: "Guardián Rúnico",
     afinidadMax: 100,
-    habilidad: "Sabiduría de Rivendel"
+    habilidad: "Sabiduría de Imladris"
   },
 
   cirdil: {
