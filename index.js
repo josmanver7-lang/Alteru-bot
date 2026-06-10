@@ -468,7 +468,8 @@ const client = new Client({
   ]
 });
 
-client.once("clientReady", async () => {
+// CORREGIDO: Cambiado de "clientReady" al evento estándar de discord.js: "ready"
+client.once("ready", async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
   personajesCache = buildPersonajesCache(loreCache.personajes || {});
@@ -494,34 +495,34 @@ client.on("messageCreate", async (message) => {
   const command = args[0].toLowerCase();
 
   // Control Activo del Juego de Trivia
-if (triviaGames.has(message.author.id)) {
-  const game = triviaGames.get(message.author.id);
-  const textNormalize = normalizeText(content);
-  const correctNormalize = normalizeText(
-    game.question.respuestaCorrecta || game.question.respuesta || ""
-  );
-
-  if (textNormalize === correctNormalize) {
-    triviaGames.delete(message.author.id);
-
-    const points =
-      game.difficulty === "facil" ? 10 :
-      game.difficulty === "normal" ? 20 :
-      game.difficulty === "dificil" ? 40 :
-      game.difficulty === "legendario" ? 80 :
-      80;
-
-    await db.addCorrectAnswer(message.author.id, points);
-
-    return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
-  } else if (!command.startsWith("!")) {
-    triviaGames.delete(message.author.id);
-    await db.addWrongAnswer(message.author.id);
-    return message.reply(
-      `❌ Incorrecto. La respuesta correcta era: **${game.question.respuestaCorrecta || game.question.respuesta}**.`
+  if (triviaGames.has(message.author.id)) {
+    const game = triviaGames.get(message.author.id);
+    const textNormalize = normalizeText(content);
+    const correctNormalize = normalizeText(
+      game.question.respuestaCorrecta || game.question.respuesta || ""
     );
+
+    if (textNormalize === correctNormalize) {
+      triviaGames.delete(message.author.id);
+
+      const points =
+        game.difficulty === "facil" ? 10 :
+        game.difficulty === "normal" ? 20 :
+        game.difficulty === "dificil" ? 40 :
+        game.difficulty === "legendario" ? 80 :
+        80;
+
+      await db.addCorrectAnswer(message.author.id, points);
+
+      return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
+    } else if (!command.startsWith("!")) {
+      triviaGames.delete(message.author.id);
+      await db.addWrongAnswer(message.author.id);
+      return message.reply(
+        `❌ Incorrecto. La respuesta correcta era: **${game.question.respuestaCorrecta || game.question.respuesta}**.`
+      );
+    }
   }
-}
 
   // Comandos de Perfil y Sistema de Estadísticas
   if (command === "!perfil") {
@@ -906,47 +907,47 @@ ${finalReactions ? `\n${finalReactions}` : ""}`.trim()
   }
 
   // Comandos del Sistema de Trivia
-if (command === "!trivia") {
-  let attempts = dailyTriviaAttempts.get(message.author.id) || 0;
-  if (attempts >= TRIVIA_LIMIT) {
-    return message.reply(`⚠️ Límite de ${TRIVIA_LIMIT} trivias alcanzado para este ciclo.`);
-  }
+  if (command === "!trivia") {
+    let attempts = dailyTriviaAttempts.get(message.author.id) || 0;
+    if (attempts >= TRIVIA_LIMIT) {
+      return message.reply(`⚠️ Límite de ${TRIVIA_LIMIT} trivias alcanzado para este ciclo.`);
+    }
 
-  const difficulty = (args[1]?.toLowerCase() || "normal").trim();
-  const allowedDifficulties = ["facil", "normal", "dificil", "legendario"];
+    const difficulty = (args[1]?.toLowerCase() || "normal").trim();
+    const allowedDifficulties = ["facil", "normal", "dificil", "legendario"];
 
-  if (!allowedDifficulties.includes(difficulty)) {
-    return message.reply(
-      "⚠️ Dificultad inválida. Usa: `!trivia facil`, `!trivia normal`, `!trivia dificil` o `!trivia legendario`."
-    );
-  }
+    if (!allowedDifficulties.includes(difficulty)) {
+      return message.reply(
+        "⚠️ Dificultad inválida. Usa: `!trivia facil`, `!trivia normal`, `!trivia dificil` o `!trivia legendario`."
+      );
+    }
 
-  const questions = await loadQuestions();
-  const filtered = questions.filter(q => {
-    const qDiff = (q.dificultad || q.difficulty || "normal").toLowerCase();
-    return qDiff === difficulty;
-  });
-
-  if (!filtered.length) {
-    return message.reply(`No hay preguntas de dificultad: **${difficulty}**.`);
-  }
-
-  const question = filtered[Math.floor(Math.random() * filtered.length)];
-
-  triviaGames.set(message.author.id, { question, difficulty });
-  dailyTriviaAttempts.set(message.author.id, attempts + 1);
-
-  let promptText = `📚 **Pregunta de Trivia (${difficulty.toUpperCase()})**\n\n${question.pregunta || question.question}`;
-
-  const opciones = question.opciones || question.options;
-  if (Array.isArray(opciones)) {
-    opciones.forEach((op, index) => {
-      promptText += `\n${index + 1}️⃣ ${op}`;
+    const questions = await loadQuestions();
+    const filtered = questions.filter(q => {
+      const qDiff = (q.dificultad || q.difficulty || "normal").toLowerCase();
+      return qDiff === difficulty;
     });
-  }
 
-  return message.reply(promptText);
-}
+    if (!filtered.length) {
+      return message.reply(`No hay preguntas de dificultad: **${difficulty}**.`);
+    }
+
+    const question = filtered[Math.floor(Math.random() * filtered.length)];
+
+    triviaGames.set(message.author.id, { question, difficulty });
+    dailyTriviaAttempts.set(message.author.id, attempts + 1);
+
+    let promptText = `📚 **Pregunta de Trivia (${difficulty.toUpperCase()})**\n\n${question.pregunta || question.question}`;
+
+    const opciones = question.opciones || question.options;
+    if (Array.isArray(opciones)) {
+      opciones.forEach((op, index) => {
+        promptText += `\n${index + 1}️⃣ ${op}`;
+      });
+    }
+
+    return message.reply(promptText);
+  }
 
   // Comandos de Roleplay Directo con los Compañeros
   const companionCommands = {
