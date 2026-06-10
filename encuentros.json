@@ -146,5 +146,165 @@
   "descripcion":
     "Los restos de una construcción olvidada emergen entre la maleza.",
   "xp": 15
-}
+}, 
+  {
+    "id": "mercader_belfalas",
+    "tipo": "evento_especial",
+    "categoria": "social",
+    "titulo": "Mercader de Belfalas",
+    "region": ["belfalas", "lamedon"],
+    "descripcion": "Una caravana mercante avanza despacio por la costa, cargada de telas, sal y barriles de vino. El mercader te invita a acercarte antes de seguir rumbo al puerto.",
+    "peligro": 0,
+    "xp": 15
+  },
+  {
+    "id": "exploradores_rio_celos",
+    "tipo": "evento_especial",
+    "categoria": "exploracion",
+    "titulo": "Exploradores del Celos",
+    "region": ["lebennin", "lamedon"],
+    "descripcion": "Un pequeño grupo de exploradores descansa junto al río, marcando mapas y revisando el paso. Su ruta coincide con la tuya y el encuentro parece inevitable.",
+    "peligro": 1,
+    "xp": 20
+  },
+  {
+    "id": "ruinas_tarlangs_neck",
+    "tipo": "evento_especial",
+    "categoria": "exploracion",
+    "titulo": "Ruinas de Tarlang's Neck",
+    "region": ["lamedon", "blackroot vale"],
+    "descripcion": "Entre la roca y la maleza aparecen restos de un viejo puesto de guardia. La estructura obliga a detenerse y examinar su historia.",
+    "peligro": 1,
+    "xp": 18
+  },
+  {
+    "id": "campamento_costero_belfalas",
+    "tipo": "evento_especial",
+    "categoria": "social",
+    "titulo": "Campamento Costero",
+    "region": ["belfalas"],
+    "descripcion": "Un grupo de viajeros ha levantado un campamento junto a la costa para pasar la noche. El humo de la hoguera y las voces bajas te atraen sin remedio.",
+    "peligro": 0,
+    "xp": 12
+  },
+  {
+    "id": "camino_encharcado_lamedon",
+    "tipo": "obstaculo",
+    "categoria": "terreno",
+    "titulo": "Camino Encharcado",
+    "region": ["lamedon"],
+    "descripcion": "La ruta queda cubierta por barro espeso y pequeños charcos ocultos bajo la hierba alta. Cada paso exige cuidado para no quedar atrapado.",
+    "peligro": 1,
+    "xp": 5
+  },
+  {
+    "id": "sendero_rocoso_blackroot",
+    "tipo": "obstaculo",
+    "categoria": "terreno",
+    "titulo": "Sendero Rocoso",
+    "region": ["blackroot vale"],
+    "descripcion": "El sendero se estrecha entre piedras húmedas y raíces expuestas. Un mal apoyo puede hacerte perder el equilibrio en la pendiente.",
+    "peligro": 2,
+    "xp": 8
+  },
+  {
+    "id": "marea_baja_belfalas",
+    "tipo": "obstaculo",
+    "categoria": "terreno",
+    "titulo": "Marea Baja",
+    "region": ["belfalas"],
+    "descripcion": "La costa se vuelve difícil de cruzar cuando la marea deja al descubierto rocas resbaladizas y pozas profundas entre la arena.",
+    "peligro": 1,
+    "xp": 6
+  },
+  {
+    "id": "arboleda_densa_lebennin",
+    "tipo": "obstaculo",
+    "categoria": "exploracion",
+    "titulo": "Arboleda Densa",
+    "region": ["lebennin"],
+    "descripcion": "La vegetación del valle se espesa tanto que el camino apenas se distingue. Tendrás que abrirte paso con paciencia y sin hacer ruido.",
+    "peligro": 2,
+    "xp": 7
+  },
+  {
+    "id": "bandidos_camino_lamedon",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Bandidos del Camino",
+    "region": ["lamedon", "lebennin"],
+    "descripcion": "Un pequeño grupo de bandidos sale de detrás de una curva con armas viejas y malas intenciones. No parecen muchos, pero sí lo bastante molestos.",
+    "peligro": 2,
+    "xp": 10
+  },
+  {
+    "id": "corsarios_rezagados_belfalas",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Corsarios Rezagados",
+    "region": ["belfalas"],
+    "descripcion": "Unos corsarios mal organizados descansan lejos de la costa principal. Han dejado sus armas cerca, pero aún pueden reaccionar si los descubren.",
+    "peligro": 2,
+    "xp": 12
+  },
+  {
+    "id": "trasgos_paso_blackroot",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Trasgos del Paso",
+    "region": ["blackroot vale", "lamedon"],
+    "descripcion": "Una banda de trasgos baja en tropel desde un desfiladero poco vigilado. El ruido de sus pasos delata que llevan rato saqueando la zona.",
+    "peligro": 3,
+    "xp": 15
+  },
+  {
+    "id": "exploradores_hostiles_lebennin",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Exploradores Hostiles",
+    "region": ["lebennin", "blackroot vale"],
+    "descripcion": "Un grupo de exploradores enemigos avanza disperso por el camino, observando el terreno y buscando un punto débil para atacar.",
+    "peligro": 3,
+    "xp": 16
+  },
+  {
+    "id": "capitan_bandido_lamedon",
+    "tipo": "enemigo_poderoso",
+    "categoria": "combate",
+    "titulo": "Capitán Bandido",
+    "region": ["lamedon"],
+    "descripcion": "Un bandido veterano dirige a sus hombres desde una colina baja. Su postura y su armamento muestran que no será fácil derribarlo.",
+    "peligro": 3,
+    "xp": 20
+  },
+  {
+    "id": "troll_solitario_blackroot",
+    "tipo": "enemigo_poderoso",
+    "categoria": "combate",
+    "titulo": "Troll Solitario",
+    "region": ["blackroot vale"],
+    "descripcion": "Entre la niebla del valle aparece un troll que bloquea el paso. Su presencia basta para volver el camino mucho más peligroso.",
+    "peligro": 4,
+    "xp": 24
+  },
+  {
+    "id": "corsario_veterano_belfalas",
+    "tipo": "enemigo_poderoso",
+    "categoria": "combate",
+    "titulo": "Corsario Veterano",
+    "region": ["belfalas", "lamedon"],
+    "descripcion": "Un corsario veterano protege un cruce costero con la calma de quien ha sobrevivido demasiadas batallas. Su experiencia lo vuelve más peligroso que un grupo entero.",
+    "peligro": 4,
+    "xp": 25
+  },
+  {
+    "id": "capitan_orco_blackroot",
+    "tipo": "enemigo_poderoso",
+    "categoria": "combate",
+    "titulo": "Capitán Orco",
+    "region": ["blackroot vale", "lebennin"],
+    "descripcion": "Un capitán orco reúne a sus merodeadores cerca de las colinas. Sus cicatrices y su mando feroz lo convierten en una amenaza seria.",
+    "peligro": 4,
+    "xp": 26
+  }
 ]
