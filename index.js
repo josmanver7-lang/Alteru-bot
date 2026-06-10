@@ -14,18 +14,25 @@ if (!OPENROUTER_API_KEY) throw new Error('Missing OPENROUTER_API_KEY');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Variables de entorno complementarias y constantes de cuota
+// Variables de entorno complementarias y constantes
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID;
+
+// ================================
+// CUOTAS + TIEMPOS
+// ================================
 const TRIVIA_LIMIT = 3;
+const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
+
 const EXPEDITION_LIMIT = 2;
 const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
+
+const dailyTriviaAttempts = new Map(); // { count, resetAt }
+const expeditionQuota = new Map();     // { count, resetAt }
 
 // Caches y mapas globales de control de juego
 let personajesCache = {};
 let loreCache = null;
-const expeditionQuota = new Map();
 const triviaGames = new Map();
-const dailyTriviaAttempts = new Map();
 const expeditions = new Map();
 const conversationMemory = new Map();
 
@@ -61,6 +68,43 @@ function normalizeKey(text) {
     .replace(/[^\p{L}\p{N}\s_-]/gu, "")
     .trim()
     .replace(/\s+/g, "_");
+}
+
+function formatRemainingTime(ms) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const parts = [];
+  if (hours) parts.push(`${hours}h`);
+  if (minutes) parts.push(`${minutes}m`);
+  if (!hours && !minutes) parts.push(`${seconds}s`);
+  else if (seconds && !hours) parts.push(`${seconds}s`);
+
+  return parts.join(" ");
+}
+
+function getQuotaState(map, userId, windowMs) {
+  const now = Date.now();
+  let state = map.get(userId);
+
+  if (!state || now >= state.resetAt) {
+    state = {
+      count: 0,
+      resetAt: now + windowMs
+    };
+    map.set(userId, state);
+  }
+
+  return state;
+}
+
+function consumeQuota(map, userId, windowMs) {
+  const state = getQuotaState(map, userId, windowMs);
+  state.count += 1;
+  map.set(userId, state);
+  return state;
 }
 
 function buildPersonajesCache(input) {
@@ -187,33 +231,6 @@ function pickCompanionForScene(profile, encounter) {
   }
 
   return list[0];
-}
-
-function canStartExpedition(userId) {
-  const now = Date.now();
-  let state = expeditionQuota.get(userId);
-
-  if (!state || now >= state.resetAt) {
-    state = { count: 0, resetAt: now + EXPEDITION_WINDOW_MS };
-    expeditionQuota.set(userId, state);
-  }
-
-  return state.count < EXPEDITION_LIMIT;
-}
-
-function consumeExpeditionSlot(userId) {
-  const now = Date.now();
-  let state = expeditionQuota.get(userId);
-
-  if (!state || now >= state.resetAt) {
-    state = { count: 0, resetAt: now + EXPEDITION_WINDOW_MS };
-  }
-
-  if (state.count >= EXPEDITION_LIMIT) return false;
-
-  state.count += 1;
-  expeditionQuota.set(userId, state);
-  return true;
 }
 
 function obtenerRango(puntos) {
@@ -468,7 +485,6 @@ const client = new Client({
   ]
 });
 
-// CORREGIDO: Cambiado de "clientReady" al evento estándar de discord.js: "ready"
 client.once("ready", async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
@@ -494,15 +510,42 @@ client.on("messageCreate", async (message) => {
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
 
-  // Control Activo del Juego de Trivia
+  // ================================
+  // CONTROL ACTIVO DE RESPUESTA DE TRIVIA
+  // ================================
   if (triviaGames.has(message.author.id)) {
     const game = triviaGames.get(message.author.id);
     const textNormalize = normalizeText(content);
-    const correctNormalize = normalizeText(
-      game.question.respuestaCorrecta || game.question.respuesta || ""
-    );
 
-    if (textNormalize === correctNormalize) {
+    const correctRaw =
+      game.question.respuestaCorrecta ||
+      game.question.respuesta ||
+      game.question.answer ||
+      "";
+
+    const correctNormalize = normalizeText(correctRaw);
+
+    let isCorrect = textNormalize === correctNormalize;
+
+    if (!isCorrect && Array.isArray(game.options) && game.options.length) {
+      const indexMap = {
+        a: 0, b: 1, c: 2, d: 3,
+        1: 0, 2: 1, 3: 2, 4: 3
+      };
+
+      const selectedIndex = indexMap[textNormalize];
+      if (selectedIndex !== undefined && game.options[selectedIndex]) {
+        const selectedAnswer = normalizeText(game.options[selectedIndex]);
+        isCorrect = selectedAnswer === correctNormalize;
+      }
+    }
+
+    if (!isCorrect && textNormalize.includes(correctNormalize)) {
+      isCorrect = true;
+    }
+
+    if (isCorrect) {
+      clearTimeout(game.timeout);
       triviaGames.delete(message.author.id);
 
       const points =
@@ -510,16 +553,20 @@ client.on("messageCreate", async (message) => {
         game.difficulty === "normal" ? 20 :
         game.difficulty === "dificil" ? 40 :
         game.difficulty === "legendario" ? 80 :
-        80;
+        20;
 
       await db.addCorrectAnswer(message.author.id, points);
 
       return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
-    } else if (!command.startsWith("!")) {
+    }
+
+    if (!command.startsWith("!")) {
+      clearTimeout(game.timeout);
       triviaGames.delete(message.author.id);
       await db.addWrongAnswer(message.author.id);
+
       return message.reply(
-        `❌ Incorrecto. La respuesta correcta era: **${game.question.respuestaCorrecta || game.question.respuesta}**.`
+        `❌ Incorrecto. La respuesta correcta era: ||${correctRaw}||.`
       );
     }
   }
@@ -589,12 +636,17 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     );
   }
 
+  // ================================
+  // REINICIAR INTENTOS SOLO ADMIN
+  // ================================
   if (command === "!reiniciar") {
     if (message.author.id !== ADMIN_USER_ID) {
       return message.reply("No tienes permiso para usar ese comando.");
     }
+
     dailyTriviaAttempts.clear();
     expeditionQuota.clear();
+
     return message.reply("🔄 Reinicio completado.");
   }
 
@@ -665,37 +717,70 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(`🤝 **Tus Compañeros:** ${list.map(id => companions[id]?.nombre || id).join(", ")}`);
   }
 
-  // Sistema Core de Misiones y Expediciones en Curso
+  // ================================
+  // EXPEDICIÓN: LÍMITE DE 2 CADA 12H
+  // ================================
   if (command === "!expedicion") {
+    const state = getQuotaState(expeditionQuota, message.author.id, EXPEDITION_WINDOW_MS);
+
+    if (state.count >= EXPEDITION_LIMIT) {
+      return message.reply(
+        `⚠️ Agotaste tus expediciones. Vuelve en ${formatRemainingTime(state.resetAt - Date.now())}.`
+      );
+    }
+
     const numero = parseInt(args[1]);
-    if (isNaN(numero)) return message.reply("Usa !expedicion <numero>");
+    if (isNaN(numero)) {
+      return message.reply("Usa !expedicion <numero>");
+    }
 
     const missions = await loadMissions();
     const mission = missions[numero - 1];
-    if (!mission) return message.reply("Esa misión no existe.");
+
+    if (!mission) {
+      return message.reply("Esa misión no existe.");
+    }
 
     const profile = await db.getProfile(message.author.id);
-    const nivelJugador = db.calculateLevel(profile.xp || 0);
+    const xpActual = profile.xp || 0;
+    const nivelJugador = typeof db.calculateLevel === "function"
+      ? db.calculateLevel(xpActual)
+      : Math.floor(xpActual / 1000) + 1;
 
     if (mission.nivel && nivelJugador < mission.nivel) {
       return message.reply(`⚠️ Necesitas nivel ${mission.nivel} para realizar esta expedición.\n\nTu nivel actual es ${nivelJugador}.`);
     }
 
-    if (expeditions.has(message.author.id)) return message.reply("Ya estás en una expedición.");
-    if (!canStartExpedition(message.author.id)) {
-      return message.reply("⚠️ Has alcanzado el límite de 2 expediciones para este ciclo de 12 horas.");
+    if (expeditions.has(message.author.id)) {
+      return message.reply("Ya estás en una expedición.");
     }
 
-    consumeExpeditionSlot(message.author.id);
-    const activeCompanions = getOwnedCompanions(profile);
+    consumeQuota(expeditionQuota, message.author.id, EXPEDITION_WINDOW_MS);
 
     expeditions.set(message.author.id, {
-      missionId: mission.id, mission, progress: 0, currentEncounter: null, xpEarned: 0, pointsEarned: 0, failed: false, threat: 0
+      missionId: mission.id,
+      mission,
+      progress: 0,
+      currentEncounter: null,
+      xpEarned: 0,
+      pointsEarned: 0,
+      failed: false,
+      threat: 0
     });
 
-    await db.updateTravelerData(message.author.id, { activeCompanions });
+    await db.updateTravelerData(message.author.id, {
+      activeCompanions: profile.hiredCompanions || profile.companions || []
+    });
 
-    return message.reply(`📜 ${mission.titulo}\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa !desafiar para comenzar el viaje.`);
+    return message.reply(
+`📜 ${mission.titulo}
+
+📍 Destino: ${mission.destino}
+
+${mission.descripcion}
+
+Usa !desafiar para comenzar el viaje.`
+    );
   }
 
   if (command === "!interactuar") {
@@ -757,32 +842,55 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
 
     if (expedition.currentEncounter === null) {
-      const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+      const encounterId = expedition.mission.encuentros?.[expedition.progress];
 
-      if (!encuentroId) {
-        const finalReactions = await companionReactions(profile, expedition.mission, "mision_completada", 3);
-        await db.addXP(message.author.id, expedition.xpEarned + (expedition.mission.xp || 0));
-        await db.addPoints(message.author.id, expedition.pointsEarned + (expedition.mission.puntos || 0));
-        await db.updateTravelerData(message.author.id, { activeCompanions: [] });
+      // ================================
+      // RECOMPENSA FINAL DE EXPEDICIÓN
+      // ================================
+      if (!encounterId) {
+        const activeIds = profile.activeCompanions || profile.hiredCompanions || profile.companions || [];
+        let affinityGained = 0;
+
+        for (const comp of activeIds) {
+          await db.addAffinity(message.author.id, comp, 5);
+          affinityGained += 5;
+        }
+
+        const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+        const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
+        await db.addXP(message.author.id, xpTotal);
+        await db.addPoints(message.author.id, puntosTotal);
+
+        await db.updateTravelerData(message.author.id, {
+          activeCompanions: []
+        });
+
         expeditions.delete(message.author.id);
 
-        return message.reply(
-`🎉 **Misión completada con éxito**
+        // ================================
+        // REACCIÓN AL FINAL DE MISIÓN
+        // ================================
+        const reactions = [];
+        for (const cid of activeIds.slice(0, 3)) {
+          const line = await companionReaction(cid, expedition.mission, "mision_completada");
+          if (line) reactions.push(`💬 ${line}`);
+        }
 
-${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}
+        let replyMsg = `🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n🤝 Afinidad adquirida: +${affinityGained}`;
+        
+        if (reactions.length > 0) {
+          replyMsg += `\n\n${reactions.join("\n")}`;
+        }
 
-🏆 Puntos obtenidos: +${expedition.pointsEarned + (expedition.mission.puntos || 0)}
-📚 XP obtenida: +${expedition.xpEarned + (expedition.mission.xp || 0)}
-
-${finalReactions ? `\n${finalReactions}` : ""}`.trim()
-        );
+        return message.reply(replyMsg);
       }
 
       const encounters = await loadEncounters();
       const destino = normalizeKey(expedition.mission.destino);
 
       let lista = encounters.filter(e => {
-        const coincideEncuentro = e.tipo === encuentroId || e.categoria === encuentroId;
+        const coincideEncuentro = e.tipo === encounterId || e.categoria === encounterId;
         const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
         return coincideEncuentro && coincideRegion;
       });
@@ -906,11 +1014,16 @@ ${finalReactions ? `\n${finalReactions}` : ""}`.trim()
     return message.reply(`⚠️ **Recibes Daño**\n\nRecibes ${danoEnemigo} de daño en *${activeEncounter.titulo}*.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
   }
 
-  // Comandos del Sistema de Trivia
+  // ================================
+  // TRIVIA
+  // ================================
   if (command === "!trivia") {
-    let attempts = dailyTriviaAttempts.get(message.author.id) || 0;
-    if (attempts >= TRIVIA_LIMIT) {
-      return message.reply(`⚠️ Límite de ${TRIVIA_LIMIT} trivias alcanzado para este ciclo.`);
+    const state = getQuotaState(dailyTriviaAttempts, message.author.id, TRIVIA_WINDOW_MS);
+
+    if (state.count >= TRIVIA_LIMIT) {
+      return message.reply(
+        `⚠️ Agotaste tus intentos. Vuelve en ${formatRemainingTime(state.resetAt - Date.now())}.`
+      );
     }
 
     const difficulty = (args[1]?.toLowerCase() || "normal").trim();
@@ -933,19 +1046,51 @@ ${finalReactions ? `\n${finalReactions}` : ""}`.trim()
     }
 
     const question = filtered[Math.floor(Math.random() * filtered.length)];
+    const attemptNumber = state.count + 1;
 
-    triviaGames.set(message.author.id, { question, difficulty });
-    dailyTriviaAttempts.set(message.author.id, attempts + 1);
+    const correctAnswer = question.respuestaCorrecta || question.respuesta || question.answer || "";
+    // ================================
+    // PREGUNTAS FÁCILES SIN OPCIONES
+    // ================================
+    const opciones = difficulty === "facil" ? [] : (question.opciones || question.options || []);
+    const showOptions = difficulty !== "facil" && Array.isArray(opciones) && opciones.length > 0;
 
-    let promptText = `📚 **Pregunta de Trivia (${difficulty.toUpperCase()})**\n\n${question.pregunta || question.question}`;
+    const timeout = setTimeout(async () => {
+      const active = triviaGames.get(message.author.id);
+      if (!active) return;
 
-    const opciones = question.opciones || question.options;
-    if (Array.isArray(opciones)) {
+      triviaGames.delete(message.author.id);
+
+      try {
+        await db.addWrongAnswer(message.author.id);
+      } catch {}
+
+      await message.channel.send(
+        `⌛ Tiempo agotado para <@${message.author.id}>.\n\nLa respuesta correcta era: ||${correctAnswer}||`
+      );
+    }, 15000);
+
+    triviaGames.set(message.author.id, {
+      question,
+      difficulty,
+      options: showOptions ? opciones : [],
+      timeout
+    });
+
+    consumeQuota(dailyTriviaAttempts, message.author.id, TRIVIA_WINDOW_MS);
+
+    let promptText =
+      `📚 **Pregunta de Trivia (${difficulty.toUpperCase()})**\n` +
+      `**Intento ${attemptNumber}/${TRIVIA_LIMIT}**\n\n` +
+      `${question.pregunta || question.question}`;
+
+    if (showOptions) {
       opciones.forEach((op, index) => {
         promptText += `\n${index + 1}️⃣ ${op}`;
       });
     }
 
+    promptText += `\n\n⏳ Tienes 15 segundos`;
     return message.reply(promptText);
   }
 
