@@ -446,3 +446,8 @@ export function startSchedulers(client, loreCache) {
   startMerchantCycle(client).catch(console.error);
   startDialogueCycle(client, loreCache).catch(console.error);
 }
+
+    await db.rerollMarketPrices("tienda", tiendaItems);
+    await db.rerollMarketPrices("armeria", armeriaItems);
+    await db.rerollMarketPrices("mercader", mercaderItems);
+}
