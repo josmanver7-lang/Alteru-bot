@@ -1026,40 +1026,53 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto);
   }
 
-  if (command === "!tablon") {
-    const missions = await getCurrentTablonSelection();
-    let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+if (command === "!tablon") {
+  const state = await db.getEventState("tablon");
+  let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
 
-    missions.forEach((m, i) => {
-      texto += `${i + 1}. ${m.titulo}\n`;
-      texto += `📍 ${m.destino}\n`;
-      texto += `⚠ Nivel ${m.nivel}\n`;
-      texto += `🎖 ${m.puntos} pts\n`;
-      texto += `📚 ${m.xp} XP\n\n`;
+  if (!selection) {
+    const missions = await loadMissions();
+    selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
+
+    await db.setEventState("tablon", {
+      lastAt: Date.now(),
+      nextAt: Date.now() + (12 * 60 * 60 * 1000),
+      selection
     });
-
-    texto += "────────────────\n\n";
-    texto += "🤝 Compañeros del campamento\n\n";
-
-    const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
-
-    for (const id of orden) {
-      const comp = companions[id];
-      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
-
-      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-      texto += `Habilidad: ${comp.habilidad}\n`;
-      texto += `Efecto: ${comp.efecto}\n`;
-      texto += `Coste: ${comp.coste} pts\n`;
-      texto += `Requisito: ${req}\n`;
-      texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
-    }
-
-    texto += "Usa !contratar <nombre>\nUsa !expedicion <numero>";
-    return message.reply(texto);
   }
 
-  if (command === "!tienda") {
+  let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+
+  selection.forEach((m, i) => {
+    texto += `${i + 1}. ${m.titulo}\n`;
+    texto += `📍 ${m.destino}\n`;
+    texto += `⚠ Nivel ${m.nivel}\n`;
+    texto += `🎖 ${m.puntos} pts\n`;
+    texto += `📚 ${m.xp} XP\n\n`;
+  });
+
+  texto += "────────────────\n\n";
+  texto += "🤝 Compañeros del campamento\n\n";
+
+  const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
+
+  for (const id of orden) {
+    const comp = companions[id];
+    const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
+
+    texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
+    texto += `Habilidad: ${comp.habilidad}\n`;
+    texto += `Efecto: ${comp.efecto}\n`;
+    texto += `Coste: ${comp.coste} pts\n`;
+    texto += `Requisito: ${req}\n`;
+    texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
+  }
+
+  texto += "Usa !contratar <nombre>\nUsa !expedicion <numero>";
+  return message.reply(texto);
+}
+
+ if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
     if (!data?.items?.length) return message.reply("La tienda está cerrada o vacía.");
 
