@@ -1,0 +1,78 @@
+{
+  "nombre": "Tienda del Campamento",
+  "descripcion": "Suministros básicos, regalos y útiles de viaje.",
+  "items": [
+    {
+      "id": "vendaje_simple",
+      "nombre": "Vendaje simple",
+      "tipo": "consumible",
+      "precioBase": 25,
+      "descripcion": "Recupera 20 de salud.",
+      "efecto": { "salud": 20 }
+    },
+    {
+      "id": "raciones_viaje",
+      "nombre": "Raciones de viaje",
+      "tipo": "consumible",
+      "precioBase": 35,
+      "descripcion": "Recupera 30 de salud.",
+      "efecto": { "salud": 30 }
+    },
+    {
+      "id": "tonico_hierbas",
+      "nombre": "Tónico de hierbas",
+      "tipo": "consumible",
+      "precioBase": 55,
+      "descripcion": "Recupera 50 de salud.",
+      "efecto": { "salud": 50 }
+    },
+    {
+      "id": "kit_campana",
+      "nombre": "Kit de campaña",
+      "tipo": "consumible",
+      "precioBase": 80,
+      "descripcion": "Recupera 70 de salud.",
+      "efecto": { "salud": 70 }
+    },
+    {
+      "id": "libro_antiguo",
+      "nombre": "Libro antiguo",
+      "tipo": "regalo",
+      "precioBase": 70,
+      "descripcion": "Regalo útil para compañeros estudiosos.",
+      "efecto": { "afinidad": 3 }
+    },
+    {
+      "id": "vino_dorwinion",
+      "nombre": "Vino de Dorwinion",
+      "tipo": "regalo",
+      "precioBase": 80,
+      "descripcion": "Regalo apreciado por compañeros sociables.",
+      "efecto": { "afinidad": 3 }
+    },
+    {
+      "id": "hierbas_curativas",
+      "nombre": "Hierbas curativas",
+      "tipo": "regalo",
+      "precioBase": 75,
+      "descripcion": "Regalo sencillo y útil para sanar.",
+      "efecto": { "afinidad": 3 }
+    },
+    {
+      "id": "mapa_region",
+      "nombre": "Mapa de región",
+      "tipo": "utilidad",
+      "precioBase": 120,
+      "descripcion": "Aumenta ligeramente el éxito en el próximo encuentro.",
+      "efecto": { "successBonus": 0.05, "soloProximoEncuentro": true }
+    },
+    {
+      "id": "antorcha_viajera",
+      "nombre": "Antorcha viajera",
+      "tipo": "utilidad",
+      "precioBase": 95,
+      "descripcion": "Reduce el riesgo de perderse.",
+      "efecto": { "successBonus": 0.03, "soloProximoEncuentro": true }
+    }
+  ]
+}
