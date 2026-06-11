@@ -761,6 +761,10 @@ client.once("ready", async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
 
+  startSchedulers(client, loreCache);
+
+  console.log(`Logged in as ${client.user.tag}`);
+});
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
     const parsed = JSON.parse(raw);
