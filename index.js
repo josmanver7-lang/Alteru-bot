@@ -35,6 +35,10 @@ const triviaGames = new Map();
 const expeditions = new Map();
 const conversationMemory = new Map();
 
+let tiendaCache = null;
+let armeriaCache = null;
+let mercaderCache = null;
+
 // ================================
 // COMPAÑEROS
 // ================================
@@ -96,6 +100,48 @@ const companions = {
 // ==========================================
 //          FUNCIONES AUXILIARES
 // ==========================================
+
+async function loadCatalog(filename) {
+  try {
+    const raw = await readFile(path.join(__dirname, filename), "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function formatEffect(effect = {}) {
+  const parts = [];
+
+  if (effect.salud) parts.push(`Salud +${effect.salud}`);
+  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
+  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
+  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
+  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
+  if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
+  if (effect.soloProximaExpedicion) parts.push(`Duración: próxima expedición`);
+  if (effect.soloProximoEncuentro) parts.push(`Duración: próximo encuentro`);
+
+  return parts.length ? parts.join(" | ") : "Sin efecto definido";
+}
+
+function formatPrice(value) {
+  return `${Number(value || 0)} pts`;
+}
+
+async function getCurrentTablonSelection() {
+  const state = await db.getEventState("tablon");
+  if (Array.isArray(state?.selection) && state.selection.length) return state.selection;
+
+  const missions = await loadMissions();
+  const shuffled = [...missions].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 5);
+}
+
+async function getCurrentMerchantState() {
+  const state = await db.getEventState("merchant");
+  return state || null;
+}
 
 function normalizeText(text) {
   if (!text) return '';
@@ -761,10 +807,10 @@ client.once("ready", async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
 
-  startSchedulers(client, loreCache);
+  tiendaCache = await loadCatalog("tienda.json");
+  armeriaCache = await loadCatalog("armeria.json");
+  mercaderCache = await loadCatalog("mercader.json");
 
-  console.log(`Logged in as ${client.user.tag}`);
-});
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
     const parsed = JSON.parse(raw);
@@ -783,6 +829,7 @@ client.once("ready", async () => {
   }
 
   await refreshTablonSelection();
+  startSchedulers(client, loreCache);
 
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -980,11 +1027,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   if (command === "!tablon") {
-    if (!tablonSelection.length) {
-      await refreshTablonSelection();
-    }
-
-    const missions = tablonSelection.length ? tablonSelection : await loadMissions();
+    const missions = await getCurrentTablonSelection();
     let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
 
     missions.forEach((m, i) => {
@@ -1012,8 +1055,76 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
     }
 
-    texto += "Usa !contratar <nombre>\n";
-    texto += "Usa !expedicion <numero>";
+    texto += "Usa !contratar <nombre>\nUsa !expedicion <numero>";
+    return message.reply(texto);
+  }
+
+  if (command === "!tienda") {
+    const data = tiendaCache || await loadCatalog("tienda.json");
+    if (!data?.items?.length) return message.reply("La tienda está cerrada o vacía.");
+
+    let texto = "🏪 **TIENDA DEL CAMPAMENTO**\n\n";
+
+    for (const item of data.items) {
+      texto += `• **${item.nombre}**\n`;
+      texto += `ID: ${item.id}\n`;
+      texto += `Precio: ${formatPrice(item.precio)}\n`;
+      texto += `Tipo: ${item.tipo || item.categoria || "general"}\n`;
+      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+      texto += `Descripción: ${item.descripcion}\n\n`;
+    }
+
+    texto += "Más adelante podrás usar `!comprar <id>`.";
+    return message.reply(texto);
+  }
+
+  if (command === "!armeria") {
+    const data = armeriaCache || await loadCatalog("armeria.json");
+    if (!data?.equipo?.length) return message.reply("La armería no tiene artículos disponibles.");
+
+    let texto = "⚔️ **ARMERÍA DEL CAMPAMENTO**\n\n";
+
+    for (const item of data.equipo) {
+      texto += `• **${item.nombre}**\n`;
+      texto += `ID: ${item.id}\n`;
+      texto += `Slot: ${item.slot}\n`;
+      texto += `Precio: ${formatPrice(item.precio)}\n`;
+      texto += `Requisito: ${item.requisitos?.nivel ? `Nivel ${item.requisitos.nivel}` : "Ninguno"}\n`;
+      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+      texto += `Descripción: ${item.descripcion}\n\n`;
+    }
+
+    texto += "Más adelante podrás usar `!equipar <id>`.";
+    return message.reply(texto);
+  }
+
+  if (command === "!mercader") {
+    const state = await getCurrentMerchantState();
+
+    if (!state?.active) {
+      return message.reply("El mercader ambulante no está en el campamento en este momento.");
+    }
+
+    const data = mercaderCache || await loadCatalog("mercader.json");
+    const stock = Array.isArray(state.stock) && state.stock.length
+      ? state.stock
+      : (data?.items || []);
+
+    let texto = `🚚 **MERCADER AMBULANTE**\n\n`;
+    texto += `Nombre: **${state.name || "Desconocido"}**\n`;
+    texto += `Destino próximo: ${state.destination || "Desconocido"}\n`;
+    texto += `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
+    texto += `**Mercancía disponible:**\n\n`;
+
+    for (const item of stock) {
+      texto += `• **${item.nombre}**\n`;
+      texto += `ID: ${item.id}\n`;
+      texto += `Precio: ${formatPrice(item.precio)}\n`;
+      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+      texto += `Descripción: ${item.descripcion}\n\n`;
+    }
+
+    texto += "Más adelante podrás usar `!comprar <id>`.";
     return message.reply(texto);
   }
 
