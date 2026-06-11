@@ -1434,11 +1434,11 @@ Usa !desafiar para comenzar el viaje.`
       textoVictoria += `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${finalAffinityText}`;
   
       if (afterLevel > beforeLevel) {
-        textoVictoria += `\n\n📚 **Ascenso de nivel**\nHas subido al nivel **${afterLevel}**.`;
+        textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
       }
   
       if (afterRank !== beforeRank) {
-        textoVictoria += `\n🏅 **Ascenso de rango**\nHas ascendido al rango **${afterRank}**.`;
+        textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
       }
   
       if (finalReactions.length) {
