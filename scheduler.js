@@ -16,11 +16,21 @@ const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
 
 const companionIds = ["alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon", "montaraces"];
 
+const companionNames = {
+  alteru: "Altéru",
+  cirdil: "Círdil",
+  duilon: "Duilon",
+  andaer: "Andaer",
+  nieriel: "Nieriel",
+  faelon: "Faelon",
+  montaraces: "Montaraces de Arathir"
+};
+
 const merchantNames = [
-  "Barahir",
+  "El Chavo del 8",
   "Mablung",
-  "Haldir",
-  "Beregond",
+  "Cristiano Ronaldo",
+  "Speed",
   "Galdor",
   "Rúmil",
   "Thalion",
@@ -38,6 +48,12 @@ function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function truncate(text, max = 1800) {
+  const clean = String(text || "").trim();
+  if (clean.length <= max) return clean;
+  return clean.slice(0, max - 1).trimEnd() + "…";
+}
+
 async function loadJson(filename) {
   const raw = await readFile(path.join(__dirname, filename), "utf8");
   return JSON.parse(raw);
@@ -51,16 +67,13 @@ async function loadText(filename) {
   }
 }
 
-function truncate(text, max = 1800) {
-  const clean = String(text || "").trim();
-  if (clean.length <= max) return clean;
-  return clean.slice(0, max - 1).trimEnd() + "…";
+async function fetchChannel(client) {
+  const channel = await client.channels.fetch(EVENT_CHANNEL_ID).catch(() => null);
+  return channel?.isTextBased() ? channel : null;
 }
 
 async function generateAIText(prompt) {
-  if (!OPENROUTER_API_KEY) {
-    return "";
-  }
+  if (!OPENROUTER_API_KEY) return "";
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -79,7 +92,7 @@ async function generateAIText(prompt) {
         { role: "user", content: prompt }
       ],
       temperature: 0.9,
-      max_tokens: 220
+      max_tokens: 240
     })
   });
 
@@ -92,53 +105,75 @@ async function generateAIText(prompt) {
   return data?.choices?.[0]?.message?.content?.trim() || "";
 }
 
-async function fetchChannel(client) {
-  const channel = await client.channels.fetch(EVENT_CHANNEL_ID).catch(() => null);
-  return channel?.isTextBased() ? channel : null;
+async function loadPersonajes(loreCache) {
+  if (loreCache?.personajes) return loreCache.personajes;
+
+  try {
+    const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
 }
 
-async function sendTablonUpdate(client, loreCache) {
+function getPersonaje(personajes, id) {
+  if (Array.isArray(personajes)) {
+    return personajes.find(p => String(p.id || p.nombre || "").toLowerCase() === id) || {};
+  }
+  return personajes?.[id] || {};
+}
+
+async function ensureTablonSelection() {
+  const current = await db.getEventState("tablon");
+  if (Array.isArray(current?.selection) && current.selection.length === 5) {
+    return current.selection;
+  }
+
+  const missions = await loadJson("misiones.json").catch(() => []);
+  const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  await db.setEventState("tablon", {
+    lastAt: Date.now(),
+    nextAt: Date.now() + TWELVE_HOURS,
+    selection
+  });
+
+  return selection;
+}
+
+async function refreshTablonSelection(client, loreCache) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
-  const announcer = pick(companionIds);
-  const personajes = loreCache?.personajes || {};
-  const personaje = Array.isArray(personajes)
-    ? personajes.find(p => String(p.id || p.nombre || "").toLowerCase() === announcer) || {}
-    : personajes[announcer] || {};
-
-  const nombre = personaje.nombre || {
-    alteru: "Altéru",
-    cirdil: "Círdil",
-    duilon: "Duilon",
-    andaer: "Andaer",
-    nieriel: "Nieriel",
-    faelon: "Faelon",
-    montaraces: "Montaraces de Arathir"
-  }[announcer];
+  const personajes = await loadPersonajes(loreCache);
+  const announcerId = pick(companionIds);
+  const announcer = getPersonaje(personajes, announcerId);
 
   const prompt = `
-Escribe un mensaje de ambientación en español, de entre 80 y 130 palabras.
+Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.
 
-Debe sonar como un compañero del Campamento de Altéru.
-El personaje que habla es: ${nombre}.
-Tiene que narrar cómo se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones, luego se retira a continuar con sus tareas.
-Debe sentirse natural, vivo y con tono de rol.
+El personaje es ${announcer.nombre || companionNames[announcerId]}.
+Debe acercarse al tablón de anuncios, martillear un par de veces y clavar cinco nuevas expediciones.
+Luego se retira para continuar con sus tareas.
+Tono natural, de rol y con vida de campamento.
 No menciones que es una IA.
-No uses viñetas.
 `.trim();
 
   let text = await generateAIText(prompt).catch(() => "");
   if (!text) {
-    text = `Amanece un nuevo día. ${nombre} se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
+    text = `${announcer.nombre || companionNames[announcerId]} se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
   }
 
-  await channel.send(`🌅 **Actualización del tablón**\n\n${truncate(text)}`);
+  const missions = await loadJson("misiones.json").catch(() => []);
+  const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
 
   await db.setEventState("tablon", {
     lastAt: Date.now(),
-    nextAt: Date.now() + TWELVE_HOURS
+    nextAt: Date.now() + TWELVE_HOURS,
+    selection
   });
+
+  await channel.send(`🌅 **Actualización del tablón**\n\n${truncate(text)}`);
 }
 
 async function openMerchant(client) {
@@ -178,7 +213,9 @@ No menciones que es una IA.
     .join("\n");
 
   await channel.send(
-`🚚 **Llega el mercader ambulante**\n\n${truncate(intro)}\n\n${stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""}`.trim()
+    `🚚 **Llega el mercader ambulante**\n\n${truncate(intro)}\n\n${
+      stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""
+    }`.trim()
   );
 
   const closesAt = Date.now() + MERCHANT_OPEN_MS;
@@ -189,7 +226,7 @@ No menciones que es una IA.
     destination,
     openedAt: Date.now(),
     closesAt,
-    stock
+    stock: items
   });
 
   setTimeout(async () => {
@@ -230,38 +267,35 @@ async function companionDialogue(client, loreCache) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
-  const personajes = loreCache?.personajes || {};
+  const personajes = await loadPersonajes(loreCache);
   const history = String(loreCache?.historia_completa || "").slice(0, 5000);
 
   const a = pick(companionIds);
   let b = pick(companionIds);
   while (b === a) b = pick(companionIds);
 
-  const personaA = Array.isArray(personajes)
-    ? personajes.find(p => String(p.id || p.nombre || "").toLowerCase() === a) || {}
-    : personajes[a] || {};
-
-  const personaB = Array.isArray(personajes)
-    ? personajes.find(p => String(p.id || p.nombre || "").toLowerCase() === b) || {}
-    : personajes[b] || {};
+  const personaA = getPersonaje(personajes, a);
+  const personaB = getPersonaje(personajes, b);
 
   const themes = [
     "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros",
     "una vieja batalla del pasado",
-    "una discusión amistosa de entrenamiento",
+    "un entrenamiento entre compañeros",
     "un recuerdo del campamento al amanecer",
     "una historia sobre una expedición peligrosa"
   ];
 
-  const theme = Math.random() < 0.5 ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros" : pick(themes);
+  const theme = Math.random() < 0.45
+    ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros"
+    : pick(themes);
 
   const prompt = `
 Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.
 
-Compañero A: ${personaA.nombre || a}
+Compañero A: ${personaA.nombre || companionNames[a]}
 Personalidad A: ${personaA.personalidad || personaA.descripcion || personaA.tono || "sin definir"}
 
-Compañero B: ${personaB.nombre || b}
+Compañero B: ${personaB.nombre || companionNames[b]}
 Personalidad B: ${personaB.personalidad || personaB.descripcion || personaB.tono || "sin definir"}
 
 Tema:
@@ -274,7 +308,7 @@ Reglas:
 - Entre 220 y 320 palabras.
 - Debe parecer una escena de rol natural.
 - Cada intervención debe llevar el nombre del personaje al inicio.
-- Uno cuenta o responde y el otro reacciona o pregunta.
+- Uno habla y el otro responde o pregunta.
 - Si aparece Altéru, puede contar una hazaña o hablar de Thûlazar.
 - Español.
 - No menciones que es una IA.
@@ -283,8 +317,8 @@ Reglas:
   let text = await generateAIText(prompt).catch(() => "");
   if (!text) {
     text =
-`💬 ${personaA.nombre || a}: Thûlazar vuelve a rondar los caminos; lo noto en el viento.
-💬 ${personaB.nombre || b}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
+`💬 ${personaA.nombre || companionNames[a]}: Thûlazar sigue dejando su rastro en los caminos; lo noto en el viento.
+💬 ${personaB.nombre || companionNames[b]}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
   }
 
   await channel.send(`💬 **Conversación entre compañeros**\n\n${truncate(text, 1900)}`);
@@ -294,29 +328,19 @@ async function resumeMerchantIfNeeded(client) {
   const state = await db.getEventState("merchant");
   if (!state?.active) return;
 
+  const remaining = Math.max(0, state.closesAt - Date.now());
+  if (remaining <= 0) return;
+
   const channel = await fetchChannel(client);
   if (!channel) return;
-
-  const remaining = Math.max(0, state.closesAt - Date.now());
-
-  if (remaining <= 0) {
-    await channel.send(`🧳 **El mercader se retira**\n\n${state.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
-
-    await db.setEventState("merchant", {
-      active: false,
-      name: state.name,
-      destination: state.destination,
-      openedAt: state.openedAt,
-      closedAt: Date.now()
-    });
-    return;
-  }
 
   setTimeout(async () => {
     const latest = await db.getEventState("merchant");
     if (!latest?.active) return;
 
-    await channel.send(`🧳 **El mercader se retira**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
+    await channel.send(
+      `🧳 **El mercader se retira**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`
+    );
 
     await db.setEventState("merchant", {
       active: false,
@@ -330,7 +354,7 @@ async function resumeMerchantIfNeeded(client) {
 
 export function startSchedulers(client, loreCache) {
   cron.schedule("0 */12 * * *", async () => {
-    await sendTablonUpdate(client, loreCache);
+    await refreshTablonSelection(client, loreCache);
   });
 
   cron.schedule("15 */12 * * *", async () => {
@@ -341,5 +365,6 @@ export function startSchedulers(client, loreCache) {
     await companionDialogue(client, loreCache);
   });
 
+  ensureTablonSelection().catch(console.error);
   resumeMerchantIfNeeded(client).catch(console.error);
 }
