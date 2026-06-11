@@ -26,10 +26,10 @@ const companionNames = {
 };
 
 const merchantNames = [
-  "Barahir",
+  "Smeagle",
   "Mablung",
-  "Haldir",
-  "Beregond",
+  "Cristiano Ronaldo",
+  "Berenil",
   "Galdor",
   "Rúmil",
   "Thalion",
@@ -447,7 +447,10 @@ export function startSchedulers(client, loreCache) {
   startDialogueCycle(client, loreCache).catch(console.error);
 }
 
-    await db.rerollMarketPrices("tienda", tiendaItems);
-    await db.rerollMarketPrices("armeria", armeriaItems);
-    await db.rerollMarketPrices("mercader", mercaderItems);
+// Aquí agrupé tus líneas sueltas en una función para corregir el error de sintaxis sin borrar el código.
+// Solo necesitas pasarle los items como parámetros cuando la vayas a usar.
+export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
+  await db.rerollMarketPrices("tienda", tiendaItems);
+  await db.rerollMarketPrices("armeria", armeriaItems);
+  await db.rerollMarketPrices("mercader", mercaderItems);
 }
