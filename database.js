@@ -258,3 +258,86 @@ export async function setTablonState(value) {
 export async function clearTablonState() {
   return await clearEventState("tablon");
 }
+
+const MARKET_MIN_MULTIPLIER = 0.25; // -75%
+const MARKET_MAX_MULTIPLIER = 1.75;  // +75%
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function randomStep() {
+  return (Math.random() * 0.12) + 0.03; // 3% a 15% por ajuste
+}
+
+function getMarketKey(catalogName, itemId) {
+  return `${catalogName}:${itemId}`;
+}
+
+export async function getMarketSnapshot(catalogName) {
+  const database = await connectDB();
+  const docs = await database.collection("market_prices").find({ catalogName }).toArray();
+
+  return Object.fromEntries(
+    docs.map(doc => [doc.itemId, doc.currentPrice])
+  );
+}
+
+export async function rerollMarketPrices(catalogName, items = []) {
+  const database = await connectDB();
+  const col = database.collection("market_prices");
+  const now = new Date();
+
+  for (const item of items) {
+    if (!item?.id) continue;
+
+    const key = getMarketKey(catalogName, item.id);
+    const doc = await col.findOne({ _id: key });
+
+    const basePrice = Number(item.precioBase || item.precio || 0);
+    const oldMultiplier = Number(doc?.multiplier || 1);
+    const lastDirection = Number(doc?.lastDirection || 0);
+
+    let direction;
+    if (lastDirection !== 0 && Math.random() < 0.62) {
+      direction = lastDirection;
+    } else {
+      direction = Math.random() < 0.5 ? -1 : 1;
+    }
+
+    const nextMultiplier = clamp(
+      oldMultiplier + (direction * randomStep()),
+      MARKET_MIN_MULTIPLIER,
+      MARKET_MAX_MULTIPLIER
+    );
+
+    const currentPrice = Math.max(1, Math.round(basePrice * nextMultiplier));
+
+    await col.updateOne(
+      { _id: key },
+      {
+        $set: {
+          catalogName,
+          itemId: item.id,
+          basePrice,
+          currentPrice,
+          multiplier: nextMultiplier,
+          lastDirection: direction,
+          updatedAt: now
+        }
+      },
+      { upsert: true }
+    );
+  }
+}
+
+export async function getDynamicPrice(catalogName, item) {
+  const database = await connectDB();
+  const key = getMarketKey(catalogName, item.id);
+  const doc = await database.collection("market_prices").findOne({ _id: key });
+
+  if (doc?.currentPrice) return doc.currentPrice;
+
+  return Number(item.precioBase || item.precio || 0);
+                           
+}
