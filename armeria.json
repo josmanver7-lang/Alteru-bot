@@ -8,7 +8,7 @@
       "slot": "arma",
       "raza": "general",
       "rareza": "comun",
-      "precioBase": 45,
+      "precioBase": 85,
       "descripcion": "Una hoja simple para empezar.",
       "efecto": { "damageBonus": 1, "successBonus": 0.01 }
     },
@@ -18,7 +18,7 @@
       "slot": "arma",
       "raza": "general",
       "rareza": "comun",
-      "precioBase": 55,
+      "precioBase": 95,
       "descripcion": "Ligera y útil para viajes menores.",
       "efecto": { "damageBonus": 1, "successBonus": 0.02 }
     },
@@ -28,7 +28,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "forjado",
-      "precioBase": 120,
+      "precioBase": 240,
       "descripcion": "Arma larga y resistente de manufactura norteña.",
       "efecto": { "damageBonus": 2, "successBonus": 0.03 }
     },
@@ -38,7 +38,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "superior",
-      "precioBase": 220,
+      "precioBase": 480,
       "descripcion": "Hoja precisa y elegante de Gondor.",
       "efecto": { "damageBonus": 3, "successBonus": 0.05 }
     },
@@ -48,7 +48,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "forjado",
-      "precioBase": 140,
+      "precioBase": 280,
       "descripcion": "Ligera y refinada, pensada para la precisión.",
       "efecto": { "damageBonus": 2, "successBonus": 0.03 }
     },
@@ -58,7 +58,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "superior",
-      "precioBase": 260,
+      "precioBase": 840,
       "descripcion": "Una hoja de gran equilibrio, casi ceremonial.",
       "efecto": { "damageBonus": 4, "successBonus": 0.06 }
     },
@@ -68,7 +68,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "legendario",
-      "precioBase": 480,
+      "precioBase": 1640,
       "descripcion": "Filo antiguo, fino y muy difícil de conseguir.",
       "efecto": { "damageBonus": 5, "successBonus": 0.08, "damageReduction": 0.01 }
     },
@@ -78,7 +78,7 @@
       "slot": "arma",
       "raza": "hobbit",
       "rareza": "comun",
-      "precioBase": 25,
+      "precioBase": 70,
       "descripcion": "Más práctica que heroica, pero cumple su función.",
       "efecto": { "damageBonus": 1, "successBonus": 0.01 }
     },
@@ -88,7 +88,7 @@
       "slot": "arma",
       "raza": "hobbit",
       "rareza": "superior",
-      "precioBase": 190,
+      "precioBase": 420,
       "descripcion": "Una pieza inquietante con un aire antiguo.",
       "efecto": { "damageBonus": 3, "successBonus": 0.05 }
     },
@@ -98,7 +98,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "comun",
-      "precioBase": 60,
+      "precioBase": 100,
       "descripcion": "Sólida, simple y de fabricación dura.",
       "efecto": { "damageBonus": 1, "successBonus": 0.01 }
     },
@@ -108,7 +108,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "legendario",
-      "precioBase": 500,
+      "precioBase": 1800,
       "descripcion": "Arma rúnica forjada para expediciones exigentes.",
       "efecto": { "damageBonus": 5, "successBonus": 0.08 }
     },
@@ -118,7 +118,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "comun",
-      "precioBase": 55,
+      "precioBase": 120,
       "descripcion": "Corta y fiable, aunque algo vieja.",
       "efecto": { "damageBonus": 1, "successBonus": 0.01 }
     },
@@ -128,7 +128,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "forjado",
-      "precioBase": 120,
+      "precioBase": 280,
       "descripcion": "Diseñada para el combate rápido en campo abierto.",
       "efecto": { "damageBonus": 2, "successBonus": 0.03 }
     },
@@ -138,7 +138,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "forjado",
-      "precioBase": 150,
+      "precioBase": 340,
       "descripcion": "Ligera y silenciosa, ideal para moverse con sigilo.",
       "efecto": { "damageBonus": 2, "successBonus": 0.04 }
     },
@@ -148,7 +148,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "superior",
-      "precioBase": 280,
+      "precioBase": 750,
       "descripcion": "Una hoja noble y exquisitamente terminada.",
       "efecto": { "damageBonus": 3, "successBonus": 0.06 }
     },
@@ -158,7 +158,7 @@
       "slot": "arma",
       "raza": "hobbit",
       "rareza": "comun",
-      "precioBase": 40,
+      "precioBase": 60,
       "descripcion": "Más robusta de lo que parece.",
       "efecto": { "damageBonus": 1, "successBonus": 0.02 }
     },
@@ -168,7 +168,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "forjado",
-      "precioBase": 130,
+      "precioBase": 280,
       "descripcion": "Compacta y muy resistente.",
       "efecto": { "damageBonus": 2, "successBonus": 0.03 }
     },
@@ -178,7 +178,7 @@
       "slot": "arma",
       "raza": "beornida",
       "rareza": "forjado",
-      "precioBase": 140,
+      "precioBase": 300,
       "descripcion": "Pensada para cazar y sobrevivir.",
       "efecto": { "damageBonus": 2, "successBonus": 0.03 }
     },
@@ -188,17 +188,17 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "comun",
-      "precioBase": 90,
+      "precioBase": 210,
       "descripcion": "Una espada común, sólida y útil.",
       "efecto": { "damageBonus": 2, "successBonus": 0.02 }
     },
     {
-      "id": "espada_jinete_normando",
+      "id": "espada_jinete",
       "nombre": "Espada de Jinete",
       "slot": "arma",
       "raza": "hombre",
       "rareza": "forjado",
-      "precioBase": 170,
+      "precioBase": 710,
       "descripcion": "Diseñada para la carga y el combate a caballo.",
       "efecto": { "damageBonus": 3, "successBonus": 0.04 }
     },
@@ -208,7 +208,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "superior",
-      "precioBase": 320,
+      "precioBase": 1200,
       "descripcion": "Forjada para servir a la guardia de la ciudad.",
       "efecto": { "damageBonus": 4, "successBonus": 0.06 }
     },
@@ -218,7 +218,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "superior",
-      "precioBase": 350,
+      "precioBase": 1400,
       "descripcion": "Elegante, silenciosa y de gran calidad.",
       "efecto": { "damageBonus": 4, "successBonus": 0.07 }
     },
@@ -228,7 +228,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "legendario",
-      "precioBase": 620,
+      "precioBase": 2200,
       "descripcion": "Una hoja de alto linaje y enorme refinamiento.",
       "efecto": { "damageBonus": 5, "successBonus": 0.09 }
     },
@@ -238,7 +238,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "superior",
-      "precioBase": 300,
+      "precioBase": 1300,
       "descripcion": "Hecha para aguantar golpes y devolverlos con fuerza.",
       "efecto": { "damageBonus": 4, "successBonus": 0.05 }
     },
@@ -248,7 +248,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "superior",
-      "precioBase": 340,
+      "precioBase": 1440,
       "descripcion": "Rudo y pesado, con agarre firme.",
       "efecto": { "damageBonus": 4, "successBonus": 0.05 }
     },
@@ -258,7 +258,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "forjado",
-      "precioBase": 180,
+      "precioBase": 680,
       "descripcion": "Más pesada y contundente.",
       "efecto": { "damageBonus": 3, "successBonus": 0.03 }
     },
@@ -268,7 +268,7 @@
       "slot": "arma",
       "raza": "hombre",
       "rareza": "superior",
-      "precioBase": 360,
+      "precioBase": 1530,
       "descripcion": "Una gran hoja de guerra para romper líneas.",
       "efecto": { "damageBonus": 4, "successBonus": 0.05 }
     },
@@ -278,7 +278,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "comun",
-      "precioBase": 100,
+      "precioBase": 340,
       "descripcion": "Más de entrenamiento que de guerra.",
       "efecto": { "damageBonus": 2, "successBonus": 0.02 }
     },
@@ -288,7 +288,7 @@
       "slot": "arma",
       "raza": "elfo",
       "rareza": "superior",
-      "precioBase": 420,
+      "precioBase": 1650,
       "descripcion": "Una pieza de gran equilibrio y belleza.",
       "efecto": { "damageBonus": 4, "successBonus": 0.07 }
     },
@@ -298,7 +298,7 @@
       "slot": "arma",
       "raza": "enano",
       "rareza": "legendario",
-      "precioBase": 650,
+      "precioBase": 2260,
       "descripcion": "Tan brutal como una puerta de forja.",
       "efecto": { "damageBonus": 5, "successBonus": 0.08 }
     },
@@ -308,17 +308,17 @@
       "slot": "arma",
       "raza": "beornida",
       "rareza": "legendario",
-      "precioBase": 700,
+      "precioBase": 3100,
       "descripcion": "Pensado para pelear como una bestia.",
       "efecto": { "damageBonus": 5, "successBonus": 0.08 }
     },
     {
-      "id": "armadura_placas_guardia_manzano_blanco",
-      "nombre": "Armadura de Placas de la Guardia del Manzano Blanco",
+      "id": "armadura_placas_guardia_arbol_blanco",
+      "nombre": "Armadura de Placas de la Guardia del Arbol Blanco",
       "slot": "pecho",
       "raza": "hombre",
       "rareza": "legendario",
-      "precioBase": 1700,
+      "precioBase": 5360,
       "descripcion": "Una armadura propia de veteranos de Gondor.",
       "efecto": { "damageReduction": 0.12, "successBonus": 0.02 }
     },
@@ -328,7 +328,7 @@
       "slot": "pecho",
       "raza": "elfo",
       "rareza": "legendario",
-      "precioBase": 1900,
+      "precioBase": 5450,
       "descripcion": "Una pieza digna de un gran señor élfico.",
       "efecto": { "damageReduction": 0.14, "successBonus": 0.03 }
     },
@@ -338,7 +338,7 @@
       "slot": "pecho",
       "raza": "enano",
       "rareza": "legendario",
-      "precioBase": 2000,
+      "precioBase": 6320,
       "descripcion": "Forjada para resistir guerras enteras.",
       "efecto": { "damageReduction": 0.15, "successBonus": 0.03 }
     },
@@ -348,7 +348,7 @@
       "slot": "capa",
       "raza": "elfo",
       "rareza": "legendario",
-      "precioBase": 1200,
+      "precioBase": 3500,
       "descripcion": "Camuflaje y protección espiritual.",
       "efecto": { "successBonus": 0.08, "damageReduction": 0.03 }
     },
@@ -358,7 +358,7 @@
       "slot": "capa",
       "raza": "hombre",
       "rareza": "legendario",
-      "precioBase": 1100,
+      "precioBase": 3240,
       "descripcion": "Capucha profunda y utilidad extrema.",
       "efecto": { "successBonus": 0.07, "damageReduction": 0.03 }
     },
@@ -368,7 +368,7 @@
       "slot": "capa",
       "raza": "general",
       "rareza": "legendario",
-      "precioBase": 1300,
+      "precioBase": 3780,
       "descripcion": "Protección frente al frío y la dureza del viaje.",
       "efecto": { "damageReduction": 0.04, "successBonus": 0.06 }
     },
@@ -378,7 +378,7 @@
       "slot": "capa",
       "raza": "general",
       "rareza": "legendario",
-      "precioBase": 900,
+      "precioBase": 2980,
       "descripcion": "Resiste miedo y terrores antiguos.",
       "efecto": { "damageReduction": 0.05, "successBonus": 0.04 }
     },
@@ -388,7 +388,7 @@
       "slot": "anillo",
       "raza": "elfo",
       "rareza": "legendario",
-      "precioBase": 1400,
+      "precioBase": 3530,
       "descripcion": "Inspira paz y estabilidad.",
       "efecto": { "successBonus": 0.05, "damageReduction": 0.03 }
     },
@@ -398,7 +398,7 @@
       "slot": "anillo",
       "raza": "enano",
       "rareza": "legendario",
-      "precioBase": 1500,
+      "precioBase": 3200,
       "descripcion": "Anillo de fortaleza inquebrantable.",
       "efecto": { "successBonus": 0.05, "damageReduction": 0.04 }
     }
