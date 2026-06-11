@@ -1,0 +1,406 @@
+{
+  "nombre": "Armería del Campamento",
+  "descripcion": "Armas, armaduras y piezas permanentes de alto valor.",
+  "items": [
+    {
+      "id": "daga_hierro_romo",
+      "nombre": "Daga de Hierro Romo",
+      "slot": "arma",
+      "raza": "general",
+      "rareza": "comun",
+      "precioBase": 45,
+      "descripcion": "Una hoja simple para empezar.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
+    },
+    {
+      "id": "daga_practica",
+      "nombre": "Daga de Práctica",
+      "slot": "arma",
+      "raza": "general",
+      "rareza": "comun",
+      "precioBase": 55,
+      "descripcion": "Ligera y útil para viajes menores.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.02 }
+    },
+    {
+      "id": "pica_acero_bree",
+      "nombre": "Pica de Acero de Bree",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "forjado",
+      "precioBase": 120,
+      "descripcion": "Arma larga y resistente de manufactura norteña.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.03 }
+    },
+    {
+      "id": "estilete_guardia_ciudadela",
+      "nombre": "Estilete de la Guardia de la Ciudadela",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "superior",
+      "precioBase": 220,
+      "descripcion": "Hoja precisa y elegante de Gondor.",
+      "efecto": { "damageBonus": 3, "successBonus": 0.05 }
+    },
+    {
+      "id": "daga_curva_mallorn",
+      "nombre": "Daga Curva de hoja de Mallorn",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "forjado",
+      "precioBase": 140,
+      "descripcion": "Ligera y refinada, pensada para la precisión.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.03 }
+    },
+    {
+      "id": "daga_elfica_rivendel",
+      "nombre": "Daga Élfica de Rivendel",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "superior",
+      "precioBase": 260,
+      "descripcion": "Una hoja de gran equilibrio, casi ceremonial.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.06 }
+    },
+    {
+      "id": "daga_elfica_beleriand",
+      "nombre": "Daga Élfica de Beleriand",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "legendario",
+      "precioBase": 480,
+      "descripcion": "Filo antiguo, fino y muy difícil de conseguir.",
+      "efecto": { "damageBonus": 5, "successBonus": 0.08, "damageReduction": 0.01 }
+    },
+    {
+      "id": "daga_corta_hobbit",
+      "nombre": "Daga Corta de Cocina o Huerto",
+      "slot": "arma",
+      "raza": "hobbit",
+      "rareza": "comun",
+      "precioBase": 25,
+      "descripcion": "Más práctica que heroica, pero cumple su función.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
+    },
+    {
+      "id": "daga_tumulos",
+      "nombre": "Daga de los Túmulos",
+      "slot": "arma",
+      "raza": "hobbit",
+      "rareza": "superior",
+      "precioBase": 190,
+      "descripcion": "Una pieza inquietante con un aire antiguo.",
+      "efecto": { "damageBonus": 3, "successBonus": 0.05 }
+    },
+    {
+      "id": "daga_hierro_montanas_azules",
+      "nombre": "Daga Recta de Hierro de las Montañas Azules",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "comun",
+      "precioBase": 60,
+      "descripcion": "Sólida, simple y de fabricación dura.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
+    },
+    {
+      "id": "pua_acero_runico_erebor",
+      "nombre": "Púa de Acero Rúnico de Erebor",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "legendario",
+      "precioBase": 500,
+      "descripcion": "Arma rúnica forjada para expediciones exigentes.",
+      "efecto": { "damageBonus": 5, "successBonus": 0.08 }
+    },
+    {
+      "id": "gladius_bronce_antiguo",
+      "nombre": "Gladius de Bronce Antiguo",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "comun",
+      "precioBase": 55,
+      "descripcion": "Corta y fiable, aunque algo vieja.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
+    },
+    {
+      "id": "espada_corta_guardian_rohan",
+      "nombre": "Espada Corta de Guardián de Rohan",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "forjado",
+      "precioBase": 120,
+      "descripcion": "Diseñada para el combate rápido en campo abierto.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.03 }
+    },
+    {
+      "id": "espada_corta_explorador_lothlorien",
+      "nombre": "Espada Corta de Explorador de Lothlórien",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "forjado",
+      "precioBase": 150,
+      "descripcion": "Ligera y silenciosa, ideal para moverse con sigilo.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.04 }
+    },
+    {
+      "id": "espada_corta_altos_elfos",
+      "nombre": "Hoja Estilizada de los Altos Elfos",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "superior",
+      "precioBase": 280,
+      "descripcion": "Una hoja noble y exquisitamente terminada.",
+      "efecto": { "damageBonus": 3, "successBonus": 0.06 }
+    },
+    {
+      "id": "espada_corta_fronterizos_comarca",
+      "nombre": "Espada Corta de los Fronterizos de la Comarca",
+      "slot": "arma",
+      "raza": "hobbit",
+      "rareza": "comun",
+      "precioBase": 40,
+      "descripcion": "Más robusta de lo que parece.",
+      "efecto": { "damageBonus": 1, "successBonus": 0.02 }
+    },
+    {
+      "id": "espada_corta_othrikar",
+      "nombre": "Espada Corta de Hierro de Othrikar",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "forjado",
+      "precioBase": 130,
+      "descripcion": "Compacta y muy resistente.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.03 }
+    },
+    {
+      "id": "espada_corta_anduin",
+      "nombre": "Espada Corta de Hierro del Anduin",
+      "slot": "arma",
+      "raza": "beornida",
+      "rareza": "forjado",
+      "precioBase": 140,
+      "descripcion": "Pensada para cazar y sobrevivir.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.03 }
+    },
+    {
+      "id": "espada_larga_acero_rustico",
+      "nombre": "Espada Larga de Acero Rústico",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "comun",
+      "precioBase": 90,
+      "descripcion": "Una espada común, sólida y útil.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.02 }
+    },
+    {
+      "id": "espada_jinete_normando",
+      "nombre": "Espada de Jinete",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "forjado",
+      "precioBase": 170,
+      "descripcion": "Diseñada para la carga y el combate a caballo.",
+      "efecto": { "damageBonus": 3, "successBonus": 0.04 }
+    },
+    {
+      "id": "espada_infanteria_ciudadela_gondor",
+      "nombre": "Espada de Infantería de la Ciudadela de Gondor",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "superior",
+      "precioBase": 320,
+      "descripcion": "Forjada para servir a la guardia de la ciudad.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.06 }
+    },
+    {
+      "id": "espada_larga_rivendel",
+      "nombre": "Espada Larga de Rivendel",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "superior",
+      "precioBase": 350,
+      "descripcion": "Elegante, silenciosa y de gran calidad.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.07 }
+    },
+    {
+      "id": "espada_elfica_lindon",
+      "nombre": "Espada Élfica de Lindon",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "legendario",
+      "precioBase": 620,
+      "descripcion": "Una hoja de alto linaje y enorme refinamiento.",
+      "efecto": { "damageBonus": 5, "successBonus": 0.09 }
+    },
+    {
+      "id": "espada_guerra_colinas_hierro",
+      "nombre": "Espada de Guerra de las Colinas de Hierro",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "superior",
+      "precioBase": 300,
+      "descripcion": "Hecha para aguantar golpes y devolverlos con fuerza.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.05 }
+    },
+    {
+      "id": "mandoble_una_mano_erebor",
+      "nombre": "Mandoble de una mano de Erebor",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "superior",
+      "precioBase": 340,
+      "descripcion": "Rudo y pesado, con agarre firme.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.05 }
+    },
+    {
+      "id": "gran_espada_hierro_bree",
+      "nombre": "Gran Espada de Hierro de Bree",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "forjado",
+      "precioBase": 180,
+      "descripcion": "Más pesada y contundente.",
+      "efecto": { "damageBonus": 3, "successBonus": 0.03 }
+    },
+    {
+      "id": "mandoble_jinetes_marca",
+      "nombre": "Mandoble de los Jinetes de la Marca",
+      "slot": "arma",
+      "raza": "hombre",
+      "rareza": "superior",
+      "precioBase": 360,
+      "descripcion": "Una gran hoja de guerra para romper líneas.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.05 }
+    },
+    {
+      "id": "mandoble_practica_elfico",
+      "nombre": "Mandoble de Práctica Élfico",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "comun",
+      "precioBase": 100,
+      "descripcion": "Más de entrenamiento que de guerra.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.02 }
+    },
+    {
+      "id": "mandoble_estilizado_alto_elfo",
+      "nombre": "Mandoble Estilizado del Alto Elfo",
+      "slot": "arma",
+      "raza": "elfo",
+      "rareza": "superior",
+      "precioBase": 420,
+      "descripcion": "Una pieza de gran equilibrio y belleza.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.07 }
+    },
+    {
+      "id": "gran_espada_tajo_moria",
+      "nombre": "Gran Espada de Tajo de Moria",
+      "slot": "arma",
+      "raza": "enano",
+      "rareza": "legendario",
+      "precioBase": 650,
+      "descripcion": "Tan brutal como una puerta de forja.",
+      "efecto": { "damageBonus": 5, "successBonus": 0.08 }
+    },
+    {
+      "id": "mandoble_pesado_vales",
+      "nombre": "Mandoble Pesado de Batalla de los Vales",
+      "slot": "arma",
+      "raza": "beornida",
+      "rareza": "legendario",
+      "precioBase": 700,
+      "descripcion": "Pensado para pelear como una bestia.",
+      "efecto": { "damageBonus": 5, "successBonus": 0.08 }
+    },
+    {
+      "id": "armadura_placas_guardia_manzano_blanco",
+      "nombre": "Armadura de Placas de la Guardia del Manzano Blanco",
+      "slot": "pecho",
+      "raza": "hombre",
+      "rareza": "legendario",
+      "precioBase": 1700,
+      "descripcion": "Una armadura propia de veteranos de Gondor.",
+      "efecto": { "damageReduction": 0.12, "successBonus": 0.02 }
+    },
+    {
+      "id": "armadura_laminar_alto_elfo",
+      "nombre": "Armadura Laminar de Oro Bruñido del Alto Elfo",
+      "slot": "pecho",
+      "raza": "elfo",
+      "rareza": "legendario",
+      "precioBase": 1900,
+      "descripcion": "Una pieza digna de un gran señor élfico.",
+      "efecto": { "damageReduction": 0.14, "successBonus": 0.03 }
+    },
+    {
+      "id": "armadura_placas_acero_runico_erebor",
+      "nombre": "Armadura de Placas de Acero Rúnico de Erebor",
+      "slot": "pecho",
+      "raza": "enano",
+      "rareza": "legendario",
+      "precioBase": 2000,
+      "descripcion": "Forjada para resistir guerras enteras.",
+      "efecto": { "damageReduction": 0.15, "successBonus": 0.03 }
+    },
+    {
+      "id": "capa_galadhrim",
+      "nombre": "Capa de los Galadhrim",
+      "slot": "capa",
+      "raza": "elfo",
+      "rareza": "legendario",
+      "precioBase": 1200,
+      "descripcion": "Camuflaje y protección espiritual.",
+      "efecto": { "successBonus": 0.08, "damageReduction": 0.03 }
+    },
+    {
+      "id": "manto_montaraces_ithilien",
+      "nombre": "Manto de los Montaraces de Ithilien",
+      "slot": "capa",
+      "raza": "hombre",
+      "rareza": "legendario",
+      "precioBase": 1100,
+      "descripcion": "Capucha profunda y utilidad extrema.",
+      "efecto": { "successBonus": 0.07, "damageReduction": 0.03 }
+    },
+    {
+      "id": "capa_augur_forochel",
+      "nombre": "Capa del Augur de Forochel",
+      "slot": "capa",
+      "raza": "general",
+      "rareza": "legendario",
+      "precioBase": 1300,
+      "descripcion": "Protección frente al frío y la dureza del viaje.",
+      "efecto": { "damageReduction": 0.04, "successBonus": 0.06 }
+    },
+    {
+      "id": "capa_antigua_colina",
+      "nombre": "Capa de la Antigua Colina",
+      "slot": "capa",
+      "raza": "general",
+      "rareza": "legendario",
+      "precioBase": 900,
+      "descripcion": "Resiste miedo y terrores antiguos.",
+      "efecto": { "damageReduction": 0.05, "successBonus": 0.04 }
+    },
+    {
+      "id": "anillo_calcedonia_rivendel",
+      "nombre": "Anillo de Calcedonia de Rivendel",
+      "slot": "anillo",
+      "raza": "elfo",
+      "rareza": "legendario",
+      "precioBase": 1400,
+      "descripcion": "Inspira paz y estabilidad.",
+      "efecto": { "successBonus": 0.05, "damageReduction": 0.03 }
+    },
+    {
+      "id": "banda_oro_erebor",
+      "nombre": "Banda de Oro de Erebor",
+      "slot": "anillo",
+      "raza": "enano",
+      "rareza": "legendario",
+      "precioBase": 1500,
+      "descripcion": "Anillo de fortaleza inquebrantable.",
+      "efecto": { "successBonus": 0.05, "damageReduction": 0.04 }
+    }
+  ]
+    }
