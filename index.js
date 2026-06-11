@@ -426,11 +426,11 @@ async function awardMissionCompletion(userId, profile, xpAmount, pointAmount) {
   const lines = [];
 
   if (afterLevel > beforeLevel) {
-    lines.push(`📚 Has ascendido al nivel **${afterLevel}**.`);
+    lines.push(`📚 ¡Felicidades! Has ascendido al nivel **${afterLevel}**.`);
   }
 
   if (afterRank !== beforeRank) {
-    lines.push(`🏅 Has ascendido al rango **${afterRank}**.`);
+    lines.push(`🏅 ¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`);
   }
 
   return lines.join("\n");
