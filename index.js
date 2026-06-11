@@ -97,6 +97,8 @@ const companions = {
   }
 };
 
+const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "regalos"];
+
 // ==========================================
 //          FUNCIONES AUXILIARES
 // ==========================================
@@ -127,6 +129,176 @@ function formatEffect(effect = {}) {
 
 function formatPrice(value) {
   return `${Number(value || 0)} pts`;
+}
+
+// INVENTARIO HELPER
+function normalizeInventory(inventory = {}) {
+  const base = Object.fromEntries(INVENTORY_CATEGORIES.map(c => [c, []]));
+  const raw = inventory && typeof inventory === "object" ? inventory : {};
+
+  for (const cat of INVENTORY_CATEGORIES) {
+    const arr = Array.isArray(raw[cat]) ? raw[cat] : [];
+    base[cat] = arr
+      .filter(Boolean)
+      .map(item => ({
+        ...item,
+        cantidad: Math.max(1, Number(item.cantidad || 1))
+      }));
+  }
+
+  return base;
+}
+
+function normalizeItemEntry(item, extra = {}) {
+  return {
+    id: item.id,
+    nombre: item.nombre,
+    tipo: item.tipo || item.slot || "general",
+    slot: item.slot || null,
+    raza: item.raza || "general",
+    rareza: item.rareza || "comun",
+    precioBase: Number(item.precioBase ?? item.precio ?? 0),
+    efecto: item.efecto || {},
+    descripcion: item.descripcion || "",
+    cantidad: 1,
+    ...extra
+  };
+}
+
+function getInventoryCategoryForItem(item) {
+  const tipo = normalizeKey(item?.tipo || "");
+  const slot = normalizeKey(item?.slot || "");
+
+  if (tipo === "consumible" || tipo === "regalo") return tipo === "regalo" ? "regalos" : "consumibles";
+  if (slot === "arma") return "armas";
+  if (["pecho", "armadura", "casco", "hombros", "brazos", "piernas", "pies"].includes(slot)) return "armaduras";
+  if (["capa", "anillo", "reliquia", "amuleto", "accesorio"].includes(slot)) return "permanentes";
+
+  return "permanentes";
+}
+
+function findInventoryItem(inventory, query) {
+  const q = normalizeKey(query);
+
+  for (const cat of INVENTORY_CATEGORIES) {
+    const found = (inventory?.[cat] || []).find(item =>
+      normalizeKey(item.id) === q || normalizeKey(item.nombre) === q
+    );
+    if (found) return { category: cat, item: found };
+  }
+
+  return null;
+}
+
+function isStackableItem(item) {
+  const tipo = normalizeKey(item?.tipo || "");
+  return tipo === "consumible" || tipo === "regalo";
+}
+
+function getEquipSlotForItem(item, currentEquipment = {}) {
+  const slot = normalizeKey(item?.slot || item?.tipo || "");
+
+  if (slot === "arma") return "arma";
+  if (slot === "pecho" || slot === "armadura") return "armadura";
+  if (slot === "casco") return "casco";
+  if (slot === "hombros") return "hombros";
+  if (slot === "brazos") return "brazos";
+  if (slot === "piernas") return "piernas";
+  if (slot === "pies") return "pies";
+  if (slot === "capa") return "capa";
+  if (slot === "amuleto") return "amuleto";
+  if (slot === "accesorio") return currentEquipment.accesorio ? "amuleto" : "accesorio";
+
+  if (slot === "anillo") {
+    if (!currentEquipment.anillo1) return "anillo1";
+    if (!currentEquipment.anillo2) return "anillo2";
+    return null;
+  }
+
+  if (slot === "reliquia") {
+    if (!currentEquipment.amuleto) return "amuleto";
+    if (!currentEquipment.accesorio) return "accesorio";
+    return null;
+  }
+
+  return null;
+}
+
+function getItemPower(effect = {}) {
+  const damageBonus = Number(effect.damageBonus || 0);
+  const successBonus = Number(effect.successBonus || 0);
+  const damageReduction = Number(effect.damageReduction || 0);
+
+  return { damageBonus, successBonus, damageReduction };
+}
+
+function sumEquipmentTotals(equipment = {}) {
+  const totals = {
+    damageBonus: 0,
+    successBonus: 0,
+    damageReduction: 0
+  };
+
+  for (const item of Object.values(equipment || {})) {
+    if (!item) continue;
+    const effect = item.efecto || item.effect || {};
+    const stats = getItemPower(effect);
+    totals.damageBonus += stats.damageBonus;
+    totals.successBonus += stats.successBonus;
+    totals.damageReduction += stats.damageReduction;
+  }
+
+  return totals;
+}
+
+function formatEquipmentTotals(totals) {
+  const daño = totals.damageBonus ? `+${totals.damageBonus} daño` : "+0 daño";
+  const exito = totals.successBonus ? `+${Math.round(totals.successBonus * 100)}% éxito` : "+0% éxito";
+  const defensa = totals.damageReduction ? `-${Math.round(totals.damageReduction * 100)}% daño recibido` : "-0% daño recibido";
+  return `${daño} | ${exito} | ${defensa}`;
+}
+
+function formatInventoryLine(item) {
+  const qty = Math.max(1, Number(item.cantidad || 1));
+  return `• **${item.nombre}**${qty > 1 ? ` x${qty}` : ""}`;
+}
+
+async function getCatalogPool() {
+  const pool = [];
+
+  if (Array.isArray(tiendaCache?.items)) {
+    for (const item of tiendaCache.items) pool.push({ ...item, catalogName: "tienda" });
+  }
+
+  if (Array.isArray(armeriaCache?.items)) {
+    for (const item of armeriaCache.items) pool.push({ ...item, catalogName: "armeria" });
+  }
+
+  const merchantState = await db.getEventState("merchant");
+  if (merchantState?.active && Array.isArray(merchantState.stock)) {
+    for (const item of merchantState.stock) pool.push({ ...item, catalogName: "mercader" });
+  }
+
+  return pool;
+}
+
+async function findCatalogItemByQuery(query) {
+  const q = normalizeKey(query);
+  const pool = await getCatalogPool();
+
+  return pool.find(item =>
+    normalizeKey(item.id) === q ||
+    normalizeKey(item.nombre) === q ||
+    normalizeKey(item.nombre).includes(q)
+  ) || null;
+}
+
+async function getCurrentPriceForItem(item) {
+  const catalogName = item.catalogName || "tienda";
+  if (typeof db.getDynamicPrice === "function") {
+    return await db.getDynamicPrice(catalogName, item);
+  }
+  return Number(item.precioBase ?? item.precio ?? 0);
 }
 
 async function getCurrentTablonSelection() {
@@ -582,48 +754,102 @@ function chooseEncounterVariant(encounter, encountersPool = []) {
 //        LLAMADAS API E INTERACCIONES IA
 // ==========================================
 
-async function companionReaction(companionId, context, mode = "encounter") {
-  const personaje = getPersonaje(companionId);
-  const nombre = personaje?.nombre || companions[companionId]?.nombre || companionId;
+function getEncounterReactionStyle(encounter = {}) {
+  const tipo = normalizeKey(encounter?.tipo || "");
+  const categoria = normalizeKey(encounter?.categoria || "");
+  const titulo = normalizeKey(encounter?.titulo || "");
+  const desc = String(encounter?.descripcion || "").toLowerCase();
 
-  const personalidad = personaje?.personalidad || personaje?.descripcion || personaje?.tono || "";
-  const arma = personaje?.arma || personaje?.equipo?.arma || personaje?.armamento?.arma || "";
-  const armadura = personaje?.armadura || personaje?.equipo?.armadura || personaje?.armamento?.armadura || "";
+  if (tipo === "enemigo_poderoso" || tipo === "jefe" || (encounter?.peligro || 0) >= 4) {
+    return "combate tenso, golpe a golpe, con riesgo real";
+  }
+
+  if (tipo === "enemigo_numeroso" || categoria === "combate") {
+    return "choque contra varios enemigos, presión constante y ritmo rápido";
+  }
+
+  if (tipo === "obstaculo" || categoria === "terreno") {
+    return "avance difícil, terreno hostil y cuidado en cada paso";
+  }
+
+  if (tipo === "evento_especial" || categoria === "social" || categoria === "exploracion") {
+    return "encuentro inesperado, ambiente de viaje y reacción natural";
+  }
+
+  if (titulo.includes("perdido") || desc.includes("desorient") || desc.includes("camino")) {
+    return "desorientación, tensión y búsqueda de orientación";
+  }
+
+  return "situación de viaje, reacción breve y natural";
+}
+
+function getCompanionWeaponText(companionId) {
+  const p = getPersonaje(companionId);
+  return (
+    p?.arma ||
+    p?.equipo?.arma ||
+    p?.armamento?.arma ||
+    companions[companionId]?.arma ||
+    "su arma habitual"
+  );
+}
+
+function getCompanionLore(companionId) {
+  const personaje = getPersonaje(companionId);
+
+  return {
+    nombre: personaje?.nombre || companions[companionId]?.nombre || companionId,
+    personalidad: personaje?.personalidad || personaje?.descripcion || personaje?.tono || "",
+    arma: personaje?.arma || personaje?.equipo?.arma || personaje?.armamento?.arma || "",
+    armadura: personaje?.armadura || personaje?.equipo?.armadura || personaje?.armamento?.armadura || "",
+    clase: personaje?.clase || companions[companionId]?.clase || ""
+  };
+}
+
+async function companionReaction(companionId, context, mode = "encounter") {
+  const lore = getCompanionLore(companionId);
+  const nombre = lore.nombre;
+
+  if (!nombre) return `*asiente en silencio*`;
 
   const titulo = context?.titulo || "sin título";
   const tipo = context?.tipo || "desconocido";
   const categoria = context?.categoria || "desconocida";
   const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
-
-  if (!personaje) return `${nombre}: *asiente en silencio*`;
-
-  if (normalizeKey(nombre) === "faelon" && (normalizeKey(titulo).includes("elf") || normalizeKey(context?.id || "").includes("elf"))) {
-    return `Faelon: Mira, amigos.`;
-  }
+  const peligro = context?.peligro ?? 0;
 
   const prompt = `
 Eres ${nombre}.
 
 Personalidad:
-${personalidad || "reservado y expresivo a su manera"}
+${lore.personalidad || "reservado y expresivo a su manera"}
+
+Clase:
+${lore.clase || "desconocida"}
 
 Arma:
-${arma || "No especificada"}
+${lore.arma || "No especificada"}
 
 Armadura:
-${armadura || "No especificada"}
+${lore.armadura || "No especificada"}
 
 Situación:
 Modo: ${mode}
 Título: ${titulo}
 Tipo: ${tipo}
 Categoría: ${categoria}
-Descripción: ${descripcion}
+Peligro: ${peligro}
+Descripción:
+${descripcion}
 
-Responde con una sola línea muy corta.
-Máximo 40 palabras.
-Puede ser frase o gesto entre asteriscos.
-Coloca el nombre una sola vez al inicio.
+Instrucciones:
+- Responde con una sola línea corta.
+- Máximo 40 palabras.
+- El nombre debe aparecer solo una vez al inicio.
+- Si es combate, menciona el arma o la postura.
+- Si es obstáculo, reacciona al terreno o al riesgo.
+- Si es evento especial, comenta la escena de forma natural.
+- Español.
 `.trim();
 
   try {
@@ -637,19 +863,19 @@ Coloca el nombre una sola vez al inicio.
         model: MODEL,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.85,
-        max_tokens: 120
+        max_tokens: 90
       })
     });
 
-    if (!res.ok) return `${nombre}: *asiente en silencio*`;
+    if (!res.ok) return `${nombre}: *observa en silencio*`;
 
     const data = await res.json();
-    const raw = data?.choices?.[0]?.message?.content?.trim() || "*asiente en silencio*";
+    const raw = data?.choices?.[0]?.message?.content?.trim() || "*observa en silencio*";
     const clean = stripCompanionPrefix(raw, nombre);
 
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch {
-    return `${nombre}: *asiente en silencio*`;
+    return `${nombre}: *observa en silencio*`;
   }
 }
 
@@ -944,19 +1170,141 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(txt);
   }
 
+  if (command === "!inventario") {
+    const profile = await db.getProfile(message.author.id);
+    const inventory = normalizeInventory(profile.inventory);
+
+    let texto = "🎒 **INVENTARIO**\n\n";
+
+    for (const cat of INVENTORY_CATEGORIES) {
+      const items = inventory[cat] || [];
+      texto += `__${cat.toUpperCase()}__\n`;
+
+      if (!items.length) {
+        texto += "• Vacío\n\n";
+        continue;
+      }
+
+      for (const item of items) {
+        texto += `${formatInventoryLine(item)}\n`;
+      }
+
+      texto += "\n";
+    }
+
+    return message.reply(texto.trim());
+  }
+
+  if (command === "!equipo") {
+    const profile = await db.getProfile(message.author.id);
+    const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
+    const totals = sumEquipmentTotals(equipment);
+
+    let texto = "🛡️ **EQUIPO EQUIIPADO**\n\n";
+
+    const slots = [
+      ["arma", "Arma"],
+      ["armadura", "Armadura"],
+      ["casco", "Casco"],
+      ["hombros", "Hombros"],
+      ["brazos", "Brazos"],
+      ["piernas", "Piernas"],
+      ["pies", "Pies"],
+      ["capa", "Capa"],
+      ["anillo1", "Anillo 1"],
+      ["anillo2", "Anillo 2"],
+      ["amuleto", "Amuleto"],
+      ["accesorio", "Accesorio"]
+    ];
+
+    for (const [slotKey, label] of slots) {
+      const item = equipment?.[slotKey];
+      texto += `${label}: ${item?.nombre || "—"}\n`;
+    }
+
+    texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
+
+    return message.reply(texto);
+  }
+
+  if (command === "!equipar") {
+    const query = args.slice(1).join(" ").trim();
+    if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
+
+    const profile = await db.getProfile(message.author.id);
+    const inventory = normalizeInventory(profile.inventory);
+    const found = findInventoryItem(inventory, query);
+
+    if (!found) {
+      return message.reply("No tienes ese objeto en el inventario.");
+    }
+
+    const { category, item } = found;
+    const equipSlot = getEquipSlotForItem(item, await db.getEquipment(message.author.id).catch(() => ({})));
+
+    if (!equipSlot) {
+      return message.reply(`**${item.nombre}** no se puede equipar.`);
+    }
+
+    const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
+    const equippedBefore = equipment[equipSlot] || null;
+
+    if (item.cantidad > 1 && !isStackableItem(item)) {
+      return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
+    }
+
+    if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
+      return message.reply(`**${item.nombre}** ya está equipado.`);
+    }
+
+    if (equipSlot === "anillo1" || equipSlot === "anillo2") {
+      equipment[equipSlot] = item;
+    } else {
+      equipment[equipSlot] = item;
+    }
+
+    const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
+    if (idx !== -1) {
+      if (isStackableItem(inventory[category][idx])) {
+        inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
+        if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
+      } else {
+        inventory[category].splice(idx, 1);
+      }
+    }
+
+    if (equippedBefore) {
+      const oldCategory = getInventoryCategoryForItem(equippedBefore);
+      inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
+        cantidad: 1,
+        recuperadoPor: "equipar"
+      }));
+    }
+
+    await db.setEquipment(message.author.id, equipment);
+    await db.updateTravelerData(message.author.id, {
+      inventory: normalizeInventory(inventory)
+    });
+
+    return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
+  }
+
   // Comandos de Utilidades Generales y Gestión Base
   if (command === "!info" || command === "!ayuda") {
     return message.reply(
 `📜 Campamento de Altéru
 
 👤 PERFIL
-!perfil, !puntos, !nivel, !ranking, !afinidad
+!perfil, !puntos, !nivel, !ranking, !afinidad, !inventario, !equipo
 
 🤝 COMPAÑEROS
 !campamento, !companeros, !contratar <nombre>, !grupo
 
 🗺️ EXPEDICIONES
 !tablon, !expedicion <numero>, !desafiar, !interactuar, !volver
+
+🛍️ COMERCIO
+!tienda, !armeria, !mercader, !comprar <item>, !vender <item>, !equipar <item>
 
 📚 TRIVIA
 !trivia <facil/normal/dificil/legendario>
@@ -1026,53 +1374,53 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto);
   }
 
-if (command === "!tablon") {
-  const state = await db.getEventState("tablon");
-  let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
+  if (command === "!tablon") {
+    const state = await db.getEventState("tablon");
+    let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
 
-  if (!selection) {
-    const missions = await loadMissions();
-    selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
+    if (!selection) {
+      const missions = await loadMissions();
+      selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
 
-    await db.setEventState("tablon", {
-      lastAt: Date.now(),
-      nextAt: Date.now() + (12 * 60 * 60 * 1000),
-      selection
+      await db.setEventState("tablon", {
+        lastAt: Date.now(),
+        nextAt: Date.now() + (12 * 60 * 60 * 1000),
+        selection
+      });
+    }
+
+    let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+
+    selection.forEach((m, i) => {
+      texto += `${i + 1}. ${m.titulo}\n`;
+      texto += `📍 ${m.destino}\n`;
+      texto += `⚠ Nivel ${m.nivel}\n`;
+      texto += `🎖 ${m.puntos} pts\n`;
+      texto += `📚 ${m.xp} XP\n\n`;
     });
+
+    texto += "────────────────\n\n";
+    texto += "🤝 Compañeros del campamento\n\n";
+
+    const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
+
+    for (const id of orden) {
+      const comp = companions[id];
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
+
+      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
+      texto += `Habilidad: ${comp.habilidad}\n`;
+      texto += `Efecto: ${comp.efecto}\n`;
+      texto += `Coste: ${comp.coste} pts\n`;
+      texto += `Requisito: ${req}\n`;
+      texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
+    }
+
+    texto += "Usa !contratar <nombre>\nUsa !expedicion <numero>";
+    return message.reply(texto);
   }
 
-  let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
-
-  selection.forEach((m, i) => {
-    texto += `${i + 1}. ${m.titulo}\n`;
-    texto += `📍 ${m.destino}\n`;
-    texto += `⚠ Nivel ${m.nivel}\n`;
-    texto += `🎖 ${m.puntos} pts\n`;
-    texto += `📚 ${m.xp} XP\n\n`;
-  });
-
-  texto += "────────────────\n\n";
-  texto += "🤝 Compañeros del campamento\n\n";
-
-  const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
-
-  for (const id of orden) {
-    const comp = companions[id];
-    const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
-
-    texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-    texto += `Habilidad: ${comp.habilidad}\n`;
-    texto += `Efecto: ${comp.efecto}\n`;
-    texto += `Coste: ${comp.coste} pts\n`;
-    texto += `Requisito: ${req}\n`;
-    texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
-  }
-
-  texto += "Usa !contratar <nombre>\nUsa !expedicion <numero>";
-  return message.reply(texto);
-}
-
- if (command === "!tienda") {
+  if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
     if (!data?.items?.length) return message.reply("La tienda está cerrada o vacía.");
 
@@ -1139,6 +1487,95 @@ if (command === "!tablon") {
 
     texto += "Más adelante podrás usar `!comprar <id>`.";
     return message.reply(texto);
+  }
+
+  if (command === "!comprar") {
+    const query = args.slice(1).join(" ").trim();
+    if (!query) return message.reply("Usa `!comprar <nombre o id>`.");
+
+    const profile = await db.getProfile(message.author.id);
+    const inventory = normalizeInventory(profile.inventory);
+    const found = await findCatalogItemByQuery(query);
+
+    if (!found) {
+      return message.reply("No encuentro ese objeto en la tienda, la armería o el mercader.");
+    }
+
+    const price = await getCurrentPriceForItem(found);
+    const category = getInventoryCategoryForItem(found);
+
+    const stackable = isStackableItem(found);
+    const existing = inventory[category].find(item =>
+      normalizeKey(item.id) === normalizeKey(found.id)
+    );
+
+    if (!stackable && existing) {
+      return message.reply(`Ya posees **${found.nombre}**.`);
+    }
+
+    if ((profile.points || 0) < price) {
+      return message.reply(`Necesitas **${price}** puntos para comprar **${found.nombre}**.`);
+    }
+
+    await db.spendPoints(message.author.id, price);
+
+    const newEntry = normalizeItemEntry(found, {
+      precioCompra: price,
+      catalogo: found.catalogName || "tienda"
+    });
+
+    if (stackable && existing) {
+      existing.cantidad = Math.max(1, Number(existing.cantidad || 1)) + 1;
+    } else {
+      inventory[category].push(newEntry);
+    }
+
+    await db.updateTravelerData(message.author.id, {
+      inventory: normalizeInventory(inventory)
+    });
+
+    return message.reply(`🛒 Has comprado **${found.nombre}** por **${price}** puntos.`);
+  }
+
+  if (command === "!vender") {
+    const query = args.slice(1).join(" ").trim();
+    if (!query) return message.reply("Usa `!vender <nombre del objeto>`.");
+
+    const profile = await db.getProfile(message.author.id);
+    const inventory = normalizeInventory(profile.inventory);
+    const found = findInventoryItem(inventory, query);
+
+    if (!found) {
+      return message.reply("No tienes ese objeto en el inventario.");
+    }
+
+    const { category, item } = found;
+    const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
+
+    const equippedIds = Object.values(equipment)
+      .filter(Boolean)
+      .map(x => normalizeKey(x.id));
+
+    if (equippedIds.includes(normalizeKey(item.id))) {
+      return message.reply(`No puedes vender **${item.nombre}** porque lo llevas equipado.`);
+    }
+
+    const basePrice = Number(item.precioBase ?? item.precioCompra ?? item.precio ?? 0);
+    const sellPrice = Math.max(1, Math.floor(basePrice * 0.6));
+
+    if (isStackableItem(item) && Number(item.cantidad || 1) > 1) {
+      item.cantidad -= 1;
+    } else {
+      const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
+      if (idx !== -1) inventory[category].splice(idx, 1);
+    }
+
+    await db.addPoints(message.author.id, sellPrice);
+    await db.updateTravelerData(message.author.id, {
+      inventory: normalizeInventory(inventory)
+    });
+
+    return message.reply(`💰 Has vendido **${item.nombre}** por **${sellPrice}** puntos.`);
   }
 
   if (command === "!contratar") {
