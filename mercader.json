@@ -1,27 +1,54 @@
 {
+  "nombre": "Mercader Ambulante",
   "items": [
     {
-      "id": "daga_simple",
-      "nombre": "Daga simple",
-      "precio": 30,
+      "id": "daga_hierro_romo",
+      "nombre": "Daga de Hierro Romo",
       "tipo": "arma",
-      "slot": "arma",
-      "efecto": {
-        "damageBonus": 1,
-        "successBonus": 0.01
-      },
-      "descripcion": "Una hoja corta y práctica para viajeros."
+      "precioBase": 60,
+      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
     },
     {
-      "id": "amuleto_ruta",
-      "nombre": "Amuleto de ruta",
-      "precio": 120,
-      "tipo": "utilidad",
-      "efecto": {
-        "successBonus": 0.03,
-        "soloProximaExpedicion": true
-      },
-      "descripcion": "Favorece el rumbo del viajero en caminos inciertos."
+      "id": "daga_elfica_rivendel",
+      "nombre": "Daga Élfica de Rivendel",
+      "tipo": "arma",
+      "precioBase": 320,
+      "efecto": { "damageBonus": 4, "successBonus": 0.06 }
+    },
+    {
+      "id": "cota_malla_enana_doble_anillo",
+      "nombre": "Cota de Malla Enana Remachada de Doble Anillo",
+      "tipo": "armadura",
+      "precioBase": 550,
+      "efecto": { "damageReduction": 0.1 }
+    },
+    {
+      "id": "capa_galadhrim",
+      "nombre": "Capa de los Galadhrim",
+      "tipo": "capa",
+      "precioBase": 1400,
+      "efecto": { "successBonus": 0.08, "damageReduction": 0.03 }
+    },
+    {
+      "id": "anillo_calcedonia_rivendel",
+      "nombre": "Anillo de Calcedonia de Rivendel",
+      "tipo": "reliquia",
+      "precioBase": 1600,
+      "efecto": { "successBonus": 0.05, "damageReduction": 0.03 }
+    },
+    {
+      "id": "vendaje_simple",
+      "nombre": "Vendaje simple",
+      "tipo": "consumible",
+      "precioBase": 40,
+      "efecto": { "salud": 20 }
+    },
+    {
+      "id": "tonico_hierbas",
+      "nombre": "Tónico de hierbas",
+      "tipo": "consumible",
+      "precioBase": 85,
+      "efecto": { "salud": 50 }
     }
   ]
 }
