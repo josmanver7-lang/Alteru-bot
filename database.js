@@ -205,3 +205,56 @@ export async function resetQuotaState(userId, kind, windowMs) {
   const now = Date.now();
   await setQuotaState(userId, kind, 0, now + windowMs);
 }
+
+// ================================
+// ESTADO DE EVENTOS PROGRAMADOS
+// ================================
+
+export async function getEventState(key) {
+  const database = await connectDB();
+  const state = await database.collection("bot_state").findOne({ key });
+  return state?.value || null;
+}
+
+export async function setEventState(key, value) {
+  const database = await connectDB();
+  await database.collection("bot_state").updateOne(
+    { key },
+    {
+      $set: {
+        value,
+        updatedAt: new Date()
+      }
+    },
+    { upsert: true }
+  );
+}
+
+export async function clearEventState(key) {
+  const database = await connectDB();
+  await database.collection("bot_state").deleteOne({ key });
+}
+
+export async function getMerchantState() {
+  return await getEventState("merchant");
+}
+
+export async function setMerchantState(value) {
+  return await setEventState("merchant", value);
+}
+
+export async function clearMerchantState() {
+  return await clearEventState("merchant");
+}
+
+export async function getTablonState() {
+  return await getEventState("tablon");
+}
+
+export async function setTablonState(value) {
+  return await setEventState("tablon", value);
+}
+
+export async function clearTablonState() {
+  return await clearEventState("tablon");
+}
