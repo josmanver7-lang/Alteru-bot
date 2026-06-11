@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "id": "daga_simple",
+      "nombre": "Daga simple",
+      "precio": 30,
+      "tipo": "arma",
+      "slot": "arma",
+      "efecto": {
+        "damageBonus": 1,
+        "successBonus": 0.01
+      },
+      "descripcion": "Una hoja corta y práctica para viajeros."
+    },
+    {
+      "id": "amuleto_ruta",
+      "nombre": "Amuleto de ruta",
+      "precio": 120,
+      "tipo": "utilidad",
+      "efecto": {
+        "successBonus": 0.03,
+        "soloProximaExpedicion": true
+      },
+      "descripcion": "Favorece el rumbo del viajero en caminos inciertos."
+    }
+  ]
+}
