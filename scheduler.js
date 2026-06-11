@@ -26,10 +26,10 @@ const companionNames = {
 };
 
 const merchantNames = [
-  "Simón Bolívar",
+  "Barahir",
   "Mablung",
-  "Bifur",
-  "Cristiano Ronaldo",
+  "Haldir",
+  "Beregond",
   "Galdor",
   "Rúmil",
   "Thalion",
@@ -47,47 +47,81 @@ function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function randomBetween(minMs, maxMs) {
+  return Math.floor(minMs + Math.random() * (maxMs - minMs));
+}
+
 function truncate(text, max = 1800) {
   const clean = String(text || "").trim();
   if (clean.length <= max) return clean;
   return clean.slice(0, max - 1).trimEnd() + "…";
 }
 
-function scheduleLoop(getDelay, task) {
+function scheduleRepeating(intervalMs, task, initialDelayMs = intervalMs) {
   let stopped = false;
-  let timeoutId = null;
+  let timer = null;
 
   const run = async () => {
     if (stopped) return;
 
-    let delay = 0;
     try {
-      delay = await getDelay();
+      await task();
     } catch (err) {
-      console.error("Scheduler delay error:", err);
-      delay = TWELVE_HOURS;
+      console.error("Scheduler error:", err);
     }
 
-    timeoutId = setTimeout(async () => {
-      if (stopped) return;
-
-      try {
-        await task();
-      } catch (err) {
-        console.error("Scheduler task error:", err);
-      }
-
-      if (!stopped) {
-        run();
-      }
-    }, Math.max(0, delay));
+    if (stopped) return;
+    timer = setTimeout(run, intervalMs);
   };
 
-  run();
+  timer = setTimeout(run, initialDelayMs);
 
   return () => {
     stopped = true;
-    if (timeoutId) clearTimeout(timeoutId);
+    if (timer) clearTimeout(timer);
+  };
+}
+
+function scheduleTwoPerPeriod(firstRange, secondRange, taskOne, taskTwo) {
+  let stopped = false;
+  let cycleTimer = null;
+  let t1 = null;
+  let t2 = null;
+
+  const startCycle = () => {
+    if (stopped) return;
+
+    const delay1 = randomBetween(firstRange[0], firstRange[1]);
+    const delay2 = randomBetween(secondRange[0], secondRange[1]);
+
+    t1 = setTimeout(async () => {
+      if (stopped) return;
+      try {
+        await taskOne();
+      } catch (err) {
+        console.error("Scheduler task 1 error:", err);
+      }
+    }, delay1);
+
+    t2 = setTimeout(async () => {
+      if (stopped) return;
+      try {
+        await taskTwo();
+      } catch (err) {
+        console.error("Scheduler task 2 error:", err);
+      }
+    }, delay2);
+
+    cycleTimer = setTimeout(startCycle, TWELVE_HOURS);
+  };
+
+  startCycle();
+
+  return () => {
+    stopped = true;
+    if (cycleTimer) clearTimeout(cycleTimer);
+    if (t1) clearTimeout(t1);
+    if (t2) clearTimeout(t2);
   };
 }
 
@@ -353,6 +387,28 @@ Reglas:
   await channel.send(`💬 **Conversación entre compañeros**\n\n${truncate(text, 1900)}`);
 }
 
+async function startTablonCycle(client, loreCache) {
+  await refreshTablonSelection(client, loreCache);
+}
+
+async function startMerchantCycle(client) {
+  scheduleTwoPerPeriod(
+    [60 * 60 * 1000, 4 * 60 * 60 * 1000],
+    [6 * 60 * 60 * 1000, 10 * 60 * 60 * 1000],
+    async () => openMerchant(client),
+    async () => openMerchant(client)
+  );
+}
+
+async function startDialogueCycle(client, loreCache) {
+  scheduleTwoPerPeriod(
+    [2 * 60 * 60 * 1000, 5 * 60 * 60 * 1000],
+    [7 * 60 * 60 * 1000, 11 * 60 * 60 * 1000],
+    async () => companionDialogue(client, loreCache),
+    async () => companionDialogue(client, loreCache)
+  );
+}
+
 async function resumeMerchantIfNeeded(client) {
   const state = await db.getEventState("merchant");
   if (!state?.active) return;
@@ -382,39 +438,11 @@ async function resumeMerchantIfNeeded(client) {
   }, remaining);
 }
 
-function startSchedulers(client, loreCache) {
+export function startSchedulers(client, loreCache) {
   ensureTablonSelection().catch(console.error);
   resumeMerchantIfNeeded(client).catch(console.error);
 
-  scheduleLoop(
-    async () => {
-      const state = await db.getEventState("tablon");
-      return state?.nextAt ? Math.max(0, state.nextAt - Date.now()) : TWELVE_HOURS;
-    },
-    () => refreshTablonSelection(client, loreCache)
-  );
-
-  scheduleLoop(
-    async () => {
-      const state = await db.getEventState("merchant");
-      return state?.nextAt ? Math.max(0, state.nextAt - Date.now()) : TWELVE_HOURS;
-    },
-    () => openMerchant(client)
-  );
-
-  scheduleLoop(
-    async () => {
-      const state = await db.getEventState("dialogue");
-      return state?.nextAt ? Math.max(0, state.nextAt - Date.now()) : TWELVE_HOURS;
-    },
-    async () => {
-      await companionDialogue(client, loreCache);
-      await db.setEventState("dialogue", {
-        lastAt: Date.now(),
-        nextAt: Date.now() + TWELVE_HOURS
-      });
-    }
-  );
+  scheduleRepeating(TWELVE_HOURS, () => startTablonCycle(client, loreCache), TWELVE_HOURS);
+  startMerchantCycle(client).catch(console.error);
+  startDialogueCycle(client, loreCache).catch(console.error);
 }
-
-export { startSchedulers };
