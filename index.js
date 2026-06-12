@@ -201,7 +201,7 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   if (slot === "arma") return "arma";
   if (slot === "pecho" || slot === "armadura") return "armadura";
   if (slot === "casco") return "casco";
-  if (slot === "hombros") return "hombros";
+  if (slot === "hombros") return "brazos";
   if (slot === "brazos") return "brazos";
   if (slot === "piernas") return "piernas";
   if (slot === "pies") return "pies";
@@ -270,8 +270,9 @@ async function getCatalogPool() {
     for (const item of tiendaCache.items) pool.push({ ...item, catalogName: "tienda" });
   }
 
-  if (Array.isArray(armeriaCache?.items)) {
-    for (const item of armeriaCache.items) pool.push({ ...item, catalogName: "armeria" });
+  if (Array.isArray(armeriaCache?.items) || Array.isArray(armeriaCache?.equipo)) {
+    const arr = armeriaCache.items || armeriaCache.equipo;
+    for (const item of arr) pool.push({ ...item, catalogName: "armeria" });
   }
 
   const merchantState = await db.getEventState("merchant");
@@ -1018,6 +1019,35 @@ async function loadEncounters() {
 }
 
 // ==========================================
+//   FUNCIONES DE SELECCIÓN DE CATÁLOGO
+// ==========================================
+
+async function getCatalogSelection(key, fallbackItems, limit = 12) {
+  const state = await db.getEventState(key);
+  if (Array.isArray(state?.selection) && state.selection.length) {
+    return state.selection.slice(0, limit);
+  }
+  return [...(fallbackItems || [])].slice(0, limit);
+}
+
+async function renderCatalog(catalogName, items, title) {
+  let texto = `🏪 **${title}**\n\n`;
+  for (const item of items) {
+    const price = await db.getDynamicPrice(catalogName, item);
+    texto += `• **${item.nombre}**\n`;
+    texto += `ID: ${item.id}\n`;
+    texto += `Precio: ${formatPrice(price)}\n`;
+    if (item.tipo) texto += `Tipo: ${item.tipo}\n`;
+    if (item.slot) texto += `Slot: ${item.slot}\n`;
+    texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+    if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
+    texto += `\n`;
+  }
+  texto += `Más adelante podrás usar \`!comprar <id>\` o \`!equipar <id>\`.`;
+  return texto;
+}
+
+// ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
 
@@ -1422,54 +1452,40 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
-    if (!data?.items?.length) return message.reply("La tienda está cerrada o vacía.");
+    if (!data?.items?.length) return message.reply("La tienda está vacía o no está disponible.");
 
-    let texto = "🏪 **TIENDA DEL CAMPAMENTO**\n\n";
-
-    for (const item of data.items) {
-      texto += `• **${item.nombre}**\n`;
-      texto += `ID: ${item.id}\n`;
-      texto += `Precio: ${formatPrice(item.precio)}\n`;
-      texto += `Tipo: ${item.tipo || item.categoria || "general"}\n`;
-      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-      texto += `Descripción: ${item.descripcion}\n\n`;
-    }
-
-    texto += "Más adelante podrás usar `!comprar <id>`.";
+    const items = await getCatalogSelection("tienda", data.items, 12);
+    const texto = await renderCatalog("tienda", items, "TIENDA DEL CAMPAMENTO");
     return message.reply(texto);
   }
 
   if (command === "!armeria") {
     const data = armeriaCache || await loadCatalog("armeria.json");
-    if (!data?.equipo?.length) return message.reply("La armería no tiene artículos disponibles.");
+    const armeriaItems = data?.items || data?.equipo || [];
+    if (!armeriaItems.length) return message.reply("La armería está vacía o no está disponible.");
 
-    let texto = "⚔️ **ARMERÍA DEL CAMPAMENTO**\n\n";
-
-    for (const item of data.equipo) {
-      texto += `• **${item.nombre}**\n`;
-      texto += `ID: ${item.id}\n`;
-      texto += `Slot: ${item.slot}\n`;
-      texto += `Precio: ${formatPrice(item.precio)}\n`;
-      texto += `Requisito: ${item.requisitos?.nivel ? `Nivel ${item.requisitos.nivel}` : "Ninguno"}\n`;
-      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-      texto += `Descripción: ${item.descripcion}\n\n`;
-    }
-
-    texto += "Más adelante podrás usar `!equipar <id>`.";
+    const items = await getCatalogSelection("armeria", armeriaItems, 12);
+    const texto = await renderCatalog("armeria", items, "ARMERÍA DEL CAMPAMENTO");
     return message.reply(texto);
   }
 
   if (command === "!mercader") {
-    const state = await getCurrentMerchantState();
+    const state = await db.getEventState("merchant");
 
     if (!state?.active) {
       return message.reply("El mercader ambulante no está en el campamento en este momento.");
     }
 
-    const data = mercaderCache || await loadCatalog("mercader.json");
+    const catalog = mercaderCache || await loadCatalog("mercader.json");
+    if (!catalog?.items?.length) {
+      return message.reply("El mercader no tiene mercancía disponible.");
+    }
+
     const stock = Array.isArray(state.stock) && state.stock.length
       ? state.stock
-      : (data?.items || []);
+      : catalog.items;
+
+    const items = stock.slice(0, 12);
 
     let texto = `🚚 **MERCADER AMBULANTE**\n\n`;
     texto += `Nombre: **${state.name || "Desconocido"}**\n`;
@@ -1477,16 +1493,19 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     texto += `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
     texto += `**Mercancía disponible:**\n\n`;
 
-    for (const item of stock) {
+    for (const item of items) {
+      const price = await db.getDynamicPrice("mercader", item);
+
       texto += `• **${item.nombre}**\n`;
       texto += `ID: ${item.id}\n`;
-      texto += `Precio: ${formatPrice(item.precio)}\n`;
+      texto += `Precio: ${formatPrice(price)}\n`;
       texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-      texto += `Descripción: ${item.descripcion}\n\n`;
+      if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
+      texto += `\n`;
     }
 
     texto += "Más adelante podrás usar `!comprar <id>`.";
-    return message.reply(texto);
+    return message.reply(texto.trim());
   }
 
   if (command === "!comprar") {
