@@ -12,6 +12,8 @@ const MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.5-flash";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
+const CARACAS_OFFSET_MS = -4 * 60 * 60 * 1000;
+const CYCLE_HOURS = [11, 23];
 
 const companionIds = ["alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon", "montaraces"];
 
@@ -25,16 +27,7 @@ const companionNames = {
   montaraces: "Montaraces de Arathir"
 };
 
-const merchantNames = [
-  "Smeagle",
-  "Mablung",
-  "Cristiano Ronaldo",
-  "Berenil",
-  "Galdor",
-  "Rúmil",
-  "Thalion",
-  "Ithron"
-];
+const merchantNames = ["Barahir", "Mablung", "Berenil", "Galdor", "Rúmil", "Thalion", "Ithron", "Haldir"];
 
 const merchantCities = [
   "Calembel", "Linhir", "Pelargir", "Morlad", "Sardol", "Ost Ardnír", "Dínadab",
@@ -42,6 +35,11 @@ const merchantCities = [
   "Minas Tirith", "Ost Rimmon", "Folde Este", "Andrast", "Edoras", "Folde Oeste",
   "Bree", "Esteldín", "Combe", "Cair Andros", "Ciudad de Valle", "Ost Guruth"
 ];
+
+let schedulerPersonajesCache = {};
+let merchantCloseTimer = null;
+let boundaryTimer = null;
+let cycleEventTimers = [];
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -57,72 +55,99 @@ function truncate(text, max = 1800) {
   return clean.slice(0, max - 1).trimEnd() + "…";
 }
 
-function scheduleRepeating(intervalMs, task, initialDelayMs = intervalMs) {
-  let stopped = false;
-  let timer = null;
-
-  const run = async () => {
-    if (stopped) return;
-
-    try {
-      await task();
-    } catch (err) {
-      console.error("Scheduler error:", err);
-    }
-
-    if (stopped) return;
-    timer = setTimeout(run, intervalMs);
-  };
-
-  timer = setTimeout(run, initialDelayMs);
-
-  return () => {
-    stopped = true;
-    if (timer) clearTimeout(timer);
-  };
+function normalizeKey(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s_-]/gu, "")
+    .trim()
+    .replace(/\s+/g, "_");
 }
 
-function scheduleTwoPerPeriod(firstRange, secondRange, taskOne, taskTwo) {
-  let stopped = false;
-  let cycleTimer = null;
-  let t1 = null;
-  let t2 = null;
+function formatRemainingTime(ms) {
+  const total = Math.max(0, Math.ceil(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
 
-  const startCycle = () => {
-    if (stopped) return;
+function formatPrice(value) {
+  return `${Math.max(1, Math.round(Number(value || 0)))} pts`;
+}
 
-    const delay1 = randomBetween(firstRange[0], firstRange[1]);
-    const delay2 = randomBetween(secondRange[0], secondRange[1]);
+function formatEffect(effect = {}) {
+  const parts = [];
+  if (effect.salud) parts.push(`Salud +${effect.salud}`);
+  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
+  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
+  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
+  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
+  if (effect.soloProximaExpedicion) parts.push("Solo próxima expedición");
+  if (effect.soloProximoEncuentro) parts.push("Solo próximo encuentro");
+  return parts.length ? parts.join(" | ") : "Sin efecto definido";
+}
 
-    t1 = setTimeout(async () => {
-      if (stopped) return;
-      try {
-        await taskOne();
-      } catch (err) {
-        console.error("Scheduler task 1 error:", err);
-      }
-    }, delay1);
+function stripCompanionPrefix(text, companionName) {
+  const raw = String(text || "").trim();
+  const re = new RegExp(`^${companionName}\\s*:\\s*`, "i");
+  return raw.replace(re, "").trim();
+}
 
-    t2 = setTimeout(async () => {
-      if (stopped) return;
-      try {
-        await taskTwo();
-      } catch (err) {
-        console.error("Scheduler task 2 error:", err);
-      }
-    }, delay2);
+function compactLine(text, maxWords = 40) {
+  const words = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+  if (words.length <= maxWords) return words.join(" ");
+  return `${words.slice(0, maxWords).join(" ")}…`;
+}
 
-    cycleTimer = setTimeout(startCycle, TWELVE_HOURS);
-  };
+function getPersonaje(personajes, id) {
+  if (Array.isArray(personajes)) {
+    return personajes.find(p => normalizeKey(p.id || p.nombre || "") === normalizeKey(id)) || {};
+  }
+  return personajes?.[normalizeKey(id)] || {};
+}
 
-  startCycle();
+function getPersonalityText(id) {
+  const p = getPersonaje(schedulerPersonajesCache, id);
+  if (!p) return "Sin definir";
+  const raw =
+    p.personalidadCorta ||
+    p.personalidadBreve ||
+    p.personalidad ||
+    p.rasgos ||
+    p.caracter ||
+    p.descripcionCorta ||
+    p.descripcion ||
+    p.tono ||
+    "";
+  const text = String(raw).trim();
+  return text || "Sin definir";
+}
 
-  return () => {
-    stopped = true;
-    if (cycleTimer) clearTimeout(cycleTimer);
-    if (t1) clearTimeout(t1);
-    if (t2) clearTimeout(t2);
-  };
+function getCompanionIcon(id) {
+  switch (normalizeKey(id)) {
+    case "cirdil":
+    case "andaer":
+      return "🛡️";
+    case "duilon":
+      return "⚔️";
+    case "alteru":
+    case "nieriel":
+      return "🎖️";
+    case "montaraces":
+      return "🏹";
+    case "faelon":
+      return "🌿";
+    default:
+      return "•";
+  }
 }
 
 async function loadJson(filename) {
@@ -132,7 +157,6 @@ async function loadJson(filename) {
 
 async function loadPersonajes(loreCache) {
   if (loreCache?.personajes) return loreCache.personajes;
-
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
     return JSON.parse(raw);
@@ -141,11 +165,9 @@ async function loadPersonajes(loreCache) {
   }
 }
 
-function getPersonaje(personajes, id) {
-  if (Array.isArray(personajes)) {
-    return personajes.find(p => String(p.id || p.nombre || "").toLowerCase() === id) || {};
-  }
-  return personajes?.[id] || {};
+async function hydrateSchedulerPersonajesCache(loreCache) {
+  const loaded = await loadPersonajes(loreCache).catch(() => ({}));
+  schedulerPersonajesCache = loaded || {};
 }
 
 async function fetchChannel(client) {
@@ -167,8 +189,7 @@ async function generateAIText(prompt) {
       messages: [
         {
           role: "system",
-          content:
-            "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones."
+          content: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones."
         },
         { role: "user", content: prompt }
       ],
@@ -186,21 +207,173 @@ async function generateAIText(prompt) {
   return data?.choices?.[0]?.message?.content?.trim() || "";
 }
 
-async function ensureTablonSelection() {
-  const current = await db.getEventState("tablon");
-  if (Array.isArray(current?.selection) && current.selection.length === 5) {
-    return current.selection;
+function getNextCaracasBoundaryMs(ms = Date.now()) {
+  const nowLocal = new Date(ms + CARACAS_OFFSET_MS);
+
+  const candidates = CYCLE_HOURS.map(hour => {
+    const d = new Date(nowLocal);
+    d.setUTCHours(hour, 0, 0, 0);
+    if (d.getTime() <= nowLocal.getTime()) d.setUTCDate(d.getUTCDate() + 1);
+    return d.getTime() - CARACAS_OFFSET_MS;
+  });
+
+  return Math.min(...candidates);
+}
+
+function scheduleAt(ms, fn) {
+  const delay = Math.max(0, ms - Date.now());
+  return setTimeout(() => {
+    Promise.resolve(fn()).catch(err => console.error(err));
+  }, delay);
+}
+
+function clearCycleTimers() {
+  for (const t of cycleEventTimers) clearTimeout(t);
+  cycleEventTimers = [];
+}
+
+function scheduleCycleRandomEvents(cycleStartMs, plans) {
+  for (const plan of plans) {
+    const when = cycleStartMs + randomBetween(plan.minOffsetMs, plan.maxOffsetMs);
+    cycleEventTimers.push(scheduleAt(when, plan.task));
   }
+}
+
+function getCompanionLore(companionId) {
+  const personaje = getPersonaje(schedulerPersonajesCache, companionId);
+  return {
+    nombre: personaje?.nombre || companionNames[companionId] || companionId,
+    personalidad: personaje?.personalidad || personaje?.descripcion || personaje?.tono || "",
+    arma: personaje?.arma || personaje?.equipo?.arma || personaje?.armamento?.arma || "",
+    armadura: personaje?.armadura || personaje?.equipo?.armadura || personaje?.armamento?.armadura || "",
+    clase: personaje?.clase || ""
+  };
+}
+
+function getEncounterReactionStyle(encounter = {}) {
+  const tipo = normalizeKey(encounter?.tipo || "");
+  const categoria = normalizeKey(encounter?.categoria || "");
+  const titulo = normalizeKey(encounter?.titulo || "");
+  const desc = String(encounter?.descripcion || "").toLowerCase();
+
+  if (tipo === "enemigo_poderoso" || tipo === "jefe" || (encounter?.peligro || 0) >= 4) return "combate tenso, golpe a golpe, con riesgo real";
+  if (tipo === "enemigo_numeroso" || categoria === "combate") return "choque contra varios enemigos, presión constante y ritmo rápido";
+  if (tipo === "obstaculo" || categoria === "terreno") return "avance difícil, terreno hostil y cuidado en cada paso";
+  if (tipo === "evento_especial" || categoria === "social" || categoria === "exploracion") return "encuentro inesperado, ambiente de viaje y reacción natural";
+  if (titulo.includes("perdido") || desc.includes("desorient") || desc.includes("camino")) return "desorientación, tensión y búsqueda de orientación";
+  return "situación de viaje, reacción breve y natural";
+}
+
+async function companionReaction(companionId, context, mode = "encounter") {
+  const lore = getCompanionLore(companionId);
+  const nombre = lore.nombre;
+  const titulo = context?.titulo || "sin título";
+  const tipo = context?.tipo || "desconocido";
+  const categoria = context?.categoria || "desconocida";
+  const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
+  const peligro = context?.peligro ?? 0;
+  const estiloEncuentro = getEncounterReactionStyle(context);
+
+  if (!nombre) return `*asiente en silencio*`;
+
+  const prompt = `
+Eres ${nombre}.
+
+Personalidad:
+${lore.personalidad || "reservado y expresivo a su manera"}
+
+Clase:
+${lore.clase || "desconocida"}
+
+Arma:
+${lore.arma || "No especificada"}
+
+Armadura:
+${lore.armadura || "No especificada"}
+
+Situación:
+Modo: ${mode}
+Título: ${titulo}
+Tipo: ${tipo}
+Categoría: ${categoria}
+Peligro: ${peligro}
+Estilo del encuentro: ${estiloEncuentro}
+Descripción:
+${descripcion}
+
+Instrucciones:
+- Responde con una sola línea corta.
+- Máximo 40 palabras.
+- El nombre debe aparecer solo una vez al inicio.
+- Si es combate, menciona el arma o la postura.
+- Si es obstáculo, reacciona al terreno o al riesgo.
+- Si es evento especial, comenta la escena de forma natural.
+- Español.
+`.trim();
+
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.85,
+        max_tokens: 90
+      })
+    });
+
+    if (!res.ok) return `${nombre}: *observa el camino de regreso en silencio*`;
+    const data = await res.json();
+    const raw = data?.choices?.[0]?.message?.content?.trim() || "*observa el camino de regreso en silencio*";
+    const clean = stripCompanionPrefix(raw, nombre);
+    return `${nombre}: ${compactLine(clean, 40)}`;
+  } catch {
+    return `${nombre}: *observa el camino de regreso en silencio*`;
+  }
+}
+
+async function getMissionClosingReactions(owned, expedition) {
+  const reactions = [];
+  for (const cid of [...new Set(owned)].slice(0, 3)) {
+    const line = await companionReaction(
+      cid,
+      {
+        titulo: expedition.mission.titulo,
+        tipo: expedition.mission.encuentros?.at(-1) || "evento_especial",
+        categoria: "mision_completada",
+        descripcion: `${expedition.mission.descripcion || ""}\n\n${expedition.mission.textoExito || ""}`
+      },
+      "mision_completada"
+    );
+    if (line) reactions.push(`💬 ${line}`);
+  }
+  return reactions;
+}
+
+async function ensureTablonSelection() {
+  const current = await db.getEventState("tablon").catch(() => null);
+  if (Array.isArray(current?.selection) && current.selection.length === 5) return current.selection;
 
   const missions = await loadJson("misiones.json").catch(() => []);
   const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
 
   await db.setEventState("tablon", {
+    cycleId: Date.now(),
     lastAt: Date.now(),
     nextAt: Date.now() + TWELVE_HOURS,
     selection
-  });
+  }).catch(() => {});
 
+  return selection;
+}
+
+async function rollCatalogSelection(key, items, limit = 12) {
+  const selection = [...items].sort(() => Math.random() - 0.5).slice(0, Math.min(limit, items.length));
+  await db.setEventState(key, { selection, lastAt: Date.now(), nextAt: Date.now() + TWELVE_HOURS, cycleId: Date.now() }).catch(() => {});
   return selection;
 }
 
@@ -229,18 +402,32 @@ No menciones que es una IA.
 
   const missions = await loadJson("misiones.json").catch(() => []);
   const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
-
-  await db.setEventState("tablon", {
-    lastAt: Date.now(),
-    nextAt: Date.now() + TWELVE_HOURS,
-    selection
-  });
-
+  await db.setEventState("tablon", { cycleId: Date.now(), lastAt: Date.now(), nextAt: Date.now() + TWELVE_HOURS, selection }).catch(() => {});
   await channel.send(`🌅 **Actualización del tablón**\n\n${truncate(text)}`);
 }
 
+async function refreshCatalogPricesAndSelections() {
+  const tienda = await loadJson("tienda.json").catch(() => ({}));
+  const armeria = await loadJson("armeria.json").catch(() => ({}));
+  const mercader = await loadJson("mercader.json").catch(() => ({}));
+
+  const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : [];
+  const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : (Array.isArray(armeria?.equipo) ? armeria.equipo : []);
+  const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : [];
+
+  await rollCatalogSelection("tienda", tiendaItems, 12);
+  await rollCatalogSelection("armeria", armeriaItems, 12);
+  await rollCatalogSelection("mercader", mercaderItems, 12);
+
+  if (typeof db.rerollMarketPrices === "function") {
+    await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
+    await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
+    await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
+  }
+}
+
 async function openMerchant(client) {
-  const existing = await db.getEventState("merchant");
+  const existing = await db.getEventState("merchant").catch(() => null);
   if (existing?.active) return;
 
   const channel = await fetchChannel(client);
@@ -248,9 +435,10 @@ async function openMerchant(client) {
 
   const merchantName = pick(merchantNames);
   const destination = pick(merchantCities);
-
-  const stock = await loadJson("mercader.json").catch(() => ({ items: [] }));
-  const items = Array.isArray(stock.items) ? stock.items : [];
+  const stockCatalog = await loadJson("mercader.json").catch(() => ({ items: [] }));
+  const catalogItems = Array.isArray(stockCatalog.items) ? stockCatalog.items : [];
+  const catalogState = await db.getEventState("mercader").catch(() => null);
+  const items = Array.isArray(catalogState?.selection) && catalogState.selection.length ? catalogState.selection : catalogItems;
 
   const prompt = `
 Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
@@ -270,16 +458,8 @@ No menciones que es una IA.
     intro = `${merchantName}: ¡Bienvenidos a mi negocio! Tengo mercancías que podrían interesarles, pero solo puedo quedarme dos horas. Después partiré hacia ${destination}.`;
   }
 
-  const stockLines = items
-    .slice(0, 6)
-    .map(item => `• ${item.nombre} — ${item.precio} pts`)
-    .join("\n");
-
-  await channel.send(
-    `🚚 **Llega el mercader ambulante**\n\n${truncate(intro)}\n\n${
-      stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""
-    }`.trim()
-  );
+  const stockLines = items.slice(0, 6).map(item => `• ${item.nombre} — ${item.precioBase ?? item.precio ?? 0} pts`).join("\n");
+  await channel.send(`🚚 **Llega el mercader ambulante**\n\n${truncate(intro)}\n\n${stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""}`.trim());
 
   await db.setEventState("merchant", {
     active: true,
@@ -288,11 +468,12 @@ No menciones que es una IA.
     openedAt: Date.now(),
     closesAt: Date.now() + MERCHANT_OPEN_MS,
     nextAt: Date.now() + TWELVE_HOURS,
-    stock: items
-  });
+    stock: items.slice(0, 12)
+  }).catch(() => {});
 
-  setTimeout(async () => {
-    const state = await db.getEventState("merchant");
+  if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
+  merchantCloseTimer = setTimeout(async () => {
+    const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return;
 
     const closePrompt = `
@@ -322,7 +503,7 @@ No menciones que es una IA.
       openedAt: state.openedAt,
       closedAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS
-    });
+    }).catch(() => {});
   }, MERCHANT_OPEN_MS);
 }
 
@@ -348,9 +529,7 @@ async function companionDialogue(client, loreCache) {
     "una historia sobre una expedición peligrosa"
   ];
 
-  const theme = Math.random() < 0.45
-    ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros"
-    : pick(themes);
+  const theme = Math.random() < 0.45 ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros" : pick(themes);
 
   const prompt = `
 Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.
@@ -379,64 +558,30 @@ Reglas:
 
   let text = await generateAIText(prompt).catch(() => "");
   if (!text) {
-    text =
-`💬 ${personaA.nombre || companionNames[a]}: Thûlazar sigue dejando su rastro en los caminos; lo noto en el viento.
-💬 ${personaB.nombre || companionNames[b]}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
+    text = `💬 ${personaA.nombre || companionNames[a]}: Thûlazar sigue dejando su rastro en los caminos; lo noto en el viento.\n💬 ${personaB.nombre || companionNames[b]}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
   }
 
   await channel.send(`💬 **Conversación entre compañeros**\n\n${truncate(text, 1900)}`);
 }
 
-async function rollCatalogSelection(key, items, limit = 12) {
-  const selection = [...items]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, Math.min(limit, items.length));
+async function openCycleEvents(cycleStartMs, client, loreCache) {
+  clearCycleTimers();
+  await refreshTablonSelection(client, loreCache).catch(console.error);
+  await refreshCatalogPricesAndSelections().catch(console.error);
 
-  await db.setEventState(key, {
-    selection,
-    lastAt: Date.now(),
-    nextAt: Date.now() + (12 * 60 * 60 * 1000)
-  });
+  scheduleCycleRandomEvents(cycleStartMs, [
+    { minOffsetMs: 60 * 60 * 1000, maxOffsetMs: 4 * 60 * 60 * 1000, task: () => openMerchant(client) },
+    { minOffsetMs: 6 * 60 * 60 * 1000, maxOffsetMs: 10 * 60 * 60 * 1000, task: () => openMerchant(client) }
+  ]);
 
-  return selection;
-}
-
-async function startTablonCycle(client, loreCache) {
-  await refreshTablonSelection(client, loreCache);
-
-  try {
-    const tiendaCache = await loadJson("tienda.json").catch(() => null);
-    const armeriaCache = await loadJson("armeria.json").catch(() => null);
-
-    await rollCatalogSelection("tienda", tiendaCache?.items || [], 12);
-    
-    const armeriaItems = armeriaCache?.items || armeriaCache?.equipo || [];
-    await rollCatalogSelection("armeria", armeriaItems, 12);
-  } catch (e) {
-    console.error("Error al rotar selecciones de catálogo:", e);
-  }
-}
-
-async function startMerchantCycle(client) {
-  scheduleTwoPerPeriod(
-    [60 * 60 * 1000, 4 * 60 * 60 * 1000],
-    [6 * 60 * 60 * 1000, 10 * 60 * 60 * 1000],
-    async () => openMerchant(client),
-    async () => openMerchant(client)
-  );
-}
-
-async function startDialogueCycle(client, loreCache) {
-  scheduleTwoPerPeriod(
-    [2 * 60 * 60 * 1000, 5 * 60 * 60 * 1000],
-    [7 * 60 * 60 * 1000, 11 * 60 * 60 * 1000],
-    async () => companionDialogue(client, loreCache),
-    async () => companionDialogue(client, loreCache)
-  );
+  scheduleCycleRandomEvents(cycleStartMs, [
+    { minOffsetMs: 2 * 60 * 60 * 1000, maxOffsetMs: 5 * 60 * 60 * 1000, task: () => companionDialogue(client, loreCache) },
+    { minOffsetMs: 7 * 60 * 60 * 1000, maxOffsetMs: 11 * 60 * 60 * 1000, task: () => companionDialogue(client, loreCache) }
+  ]);
 }
 
 async function resumeMerchantIfNeeded(client) {
-  const state = await db.getEventState("merchant");
+  const state = await db.getEventState("merchant").catch(() => null);
   if (!state?.active) return;
 
   const remaining = Math.max(0, state.closesAt - Date.now());
@@ -445,14 +590,12 @@ async function resumeMerchantIfNeeded(client) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
-  setTimeout(async () => {
-    const latest = await db.getEventState("merchant");
+  if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
+  merchantCloseTimer = setTimeout(async () => {
+    const latest = await db.getEventState("merchant").catch(() => null);
     if (!latest?.active) return;
 
-    await channel.send(
-      `🧳 **El mercader se retira**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`
-    );
-
+    await channel.send(`🧳 **El mercader se retira**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
     await db.setEventState("merchant", {
       active: false,
       name: latest.name,
@@ -460,28 +603,51 @@ async function resumeMerchantIfNeeded(client) {
       openedAt: latest.openedAt,
       closedAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS
-    });
+    }).catch(() => {});
   }, remaining);
 }
 
-export function startSchedulers(client, loreCache) {
-  ensureTablonSelection().catch(console.error);
-  resumeMerchantIfNeeded(client).catch(console.error);
+function scheduleCaracasCycle(client, loreCache) {
+  let stopped = false;
 
-  // Carga inicial de rotaciones de catálogo si no existen
-  loadJson("tienda.json").then(t => rollCatalogSelection("tienda", t?.items || [], 12)).catch(console.error);
-  loadJson("armeria.json").then(a => {
-    const armeriaItems = a?.items || a?.equipo || [];
-    rollCatalogSelection("armeria", armeriaItems, 12);
-  }).catch(console.error);
+  const scheduleNext = () => {
+    if (stopped) return;
+    const nextMs = getNextCaracasBoundaryMs();
+    const delay = Math.max(0, nextMs - Date.now());
 
-  scheduleRepeating(TWELVE_HOURS, () => startTablonCycle(client, loreCache), TWELVE_HOURS);
-  startMerchantCycle(client).catch(console.error);
-  startDialogueCycle(client, loreCache).catch(console.error);
+    boundaryTimer = setTimeout(async () => {
+      if (stopped) return;
+      try {
+        await openCycleEvents(Date.now(), client, loreCache);
+      } catch (err) {
+        console.error("Scheduler boundary error:", err);
+      }
+      scheduleNext();
+    }, delay);
+  };
+
+  scheduleNext();
+
+  return () => {
+    stopped = true;
+    if (boundaryTimer) clearTimeout(boundaryTimer);
+    if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
+    clearCycleTimers();
+  };
+}
+
+export async function startSchedulers(client, loreCache) {
+  await hydrateSchedulerPersonajesCache(loreCache).catch(() => {});
+  await ensureTablonSelection().catch(console.error);
+  await refreshCatalogPricesAndSelections().catch(console.error);
+  await resumeMerchantIfNeeded(client).catch(console.error);
+  scheduleCaracasCycle(client, loreCache);
 }
 
 export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
-  await db.rerollMarketPrices("tienda", tiendaItems);
-  await db.rerollMarketPrices("armeria", armeriaItems);
-  await db.rerollMarketPrices("mercader", mercaderItems);
+  if (typeof db.rerollMarketPrices === "function") {
+    await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
+    await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
+    await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
+  }
 }
