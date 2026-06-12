@@ -1095,52 +1095,69 @@ function getCatalogItems(data) {
   return data?.items || data?.equipo || [];
 }
 
-async function getCatalogStateItems(stateKey, fallbackItems) {
-  const state = await db.getEventState(stateKey).catch(() => null);
-  const selection = Array.isArray(state?.selection) && state.selection.length
-    ? state.selection
-    : [];
+if (command === "!tienda") {
+  const data = tiendaCache || await loadCatalog("tienda.json");
+  const catalogItems = getCatalogItems(data);
 
-  return {
-    state,
-    items: selection.length ? selection : fallbackItems
-  };
+  if (!catalogItems.length) {
+    return message.reply("La tienda está vacía o no está disponible.");
+  }
+
+  const profile = await db.getProfile(message.author.id);
+  const { state, items } = await getCatalogStateItems("tienda", catalogItems);
+  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+  const limitedItems = items.slice(0, 12);
+
+  let texto = "🏪 **TIENDA DEL CAMPAMENTO**\n\n";
+
+  for (const item of limitedItems) {
+    const price = await getDynamicPrice("tienda", item);
+    const remaining = getItemRemainingSlots(profile, "tienda", item, cycleId);
+
+    texto += `• **${item.nombre}**\n`;
+    texto += `ID: ${item.id}\n`;
+    texto += `Tipo: ${item.tipo || "—"}\n`;
+    texto += `Precio: ${formatPrice(price)}\n`;
+    texto += `Slots: ${remaining}/${getDefaultSlots("tienda", item)}\n`;
+    texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+    if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
+    texto += "\n";
+  }
+
+  return message.reply(texto.trim());
 }
 
-function getDefaultSlots(catalogName, item) {
-  const tipo = normalizeKey(item?.tipo || "");
-  const slot = normalizeKey(item?.slot || "");
+if (command === "!armeria") {
+  const data = armeriaCache || await loadCatalog("armeria.json");
+  const catalogItems = getCatalogItems(data);
 
-  if (typeof item?.slots === "number") return Math.max(1, item.slots);
-
-  if (catalogName === "tienda") {
-    if (tipo === "consumible") return 3;
-    if (tipo === "regalo") return 1;
-    return 1;
+  if (!catalogItems.length) {
+    return message.reply("La armería está vacía o no está disponible.");
   }
 
-  if (catalogName === "armeria") return 1;
+  const profile = await db.getProfile(message.author.id);
+  const { state, items } = await getCatalogStateItems("armeria", catalogItems);
+  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+  const limitedItems = items.slice(0, 12);
 
-  if (catalogName === "mercader") {
-    if (tipo === "consumible") return 3;
-    if (tipo === "regalo") return 1;
-    if (["arma", "armadura", "capa", "anillo", "amuleto", "reliquia"].includes(slot)) return 1;
-    return 1;
+  let texto = "⚔️ **ARMERÍA DEL CAMPAMENTO**\n\n";
+
+  for (const item of limitedItems) {
+    const price = await getDynamicPrice("armeria", item);
+    const remaining = getItemRemainingSlots(profile, "armeria", item, cycleId);
+
+    texto += `• **${item.nombre}**\n`;
+    texto += `ID: ${item.id}\n`;
+    texto += `Slot: ${item.slot || "—"}\n`;
+    texto += `Rareza: ${item.rareza || "—"}\n`;
+    texto += `Precio: ${formatPrice(price)}\n`;
+    texto += `Slots: ${remaining}/${getDefaultSlots("armeria", item)}\n`;
+    texto += `Efecto: ${formatEffect(item.efecto)}\n`;
+    if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
+    texto += "\n";
   }
 
-  return 1;
-}
-
-function ensureCatalogUsage(profile, catalogName, cycleId) {
-  const usage = profile.catalogUsage && typeof profile.catalogUsage === "object"
-    ? profile.catalogUsage
-    : {};
-
-  const current = usage[catalogName] || { cycleId: null, items: {} };
-  if (current.cycleId !== cycleId) {
-    usage[catalogName] = { cycleId, items: {} };
-  }
-  return usage;
+  return message.reply(texto.trim());
 }
 
 function getItemRemainingSlots(profile, catalogName, item, cycleId) {
@@ -2391,3 +2408,4 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
 });
 
 client.login(DISCORD_TOKEN);
+
