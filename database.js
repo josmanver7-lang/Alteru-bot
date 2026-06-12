@@ -247,18 +247,6 @@ export async function clearMerchantState() {
   return await clearEventState("merchant");
 }
 
-export async function getTablonState() {
-  return await getEventState("tablon");
-}
-
-export async function setTablonState(value) {
-  return await setEventState("tablon", value);
-}
-
-export async function clearTablonState() {
-  return await clearEventState("tablon");
-}
-
 const MARKET_MIN_MULTIPLIER = 0.25; // -75%
 const MARKET_MAX_MULTIPLIER = 1.75;  // +75%
 
@@ -267,7 +255,7 @@ function clamp(value, min, max) {
 }
 
 function randomStep() {
-  return (Math.random() * 0.12) + 0.03; // 3% a 15% por ajuste
+  return (Math.random() * 0.12) + 0.03;
 }
 
 function getMarketKey(catalogName, itemId) {
@@ -339,5 +327,4 @@ export async function getDynamicPrice(catalogName, item) {
   if (doc?.currentPrice) return doc.currentPrice;
 
   return Number(item.precioBase || item.precio || 0);
-                           
 }
