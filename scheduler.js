@@ -156,7 +156,6 @@ async function generateAITextStrict(prompt) {
   if (!text) throw new Error("OpenRouter devolvió texto vacío");
   return text;
 }
-}
 
 // scheduler.js — helper para IA sin texto manual
 async function generateAITextStrict(prompt) {
