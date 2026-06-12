@@ -1460,13 +1460,19 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   if (command === "!armeria") {
-    const data = armeriaCache || await loadCatalog("armeria.json");
-    const armeriaItems = data?.items || data?.equipo || [];
-    if (!armeriaItems.length) return message.reply("La armería está vacía o no está disponible.");
+  const data = armeriaCache || await loadCatalog("armeria.json");
 
-    const items = await getCatalogSelection("armeria", armeriaItems, 12);
-    const texto = await renderCatalog("armeria", items, "ARMERÍA DEL CAMPAMENTO");
-    return message.reply(texto);
+  const armeriaItems = Array.isArray(data)
+    ? data
+    : (data?.items || data?.equipo || []);
+
+  if (!armeriaItems.length) {
+    return message.reply("La armería está vacía o no está disponible.");
+  }
+   
+     const items = await getCatalogSelection("armeria", armeriaItems, 12);
+     const texto = await renderCatalog("armeria", items, "ARMERÍA DEL CAMPAMENTO");
+     return message.reply(texto);
   }
 
   if (command === "!mercader") {
