@@ -401,6 +401,279 @@
       "precioBase": 3200,
       "descripcion": "Anillo de fortaleza inquebrantable.",
       "efecto": { "successBonus": 0.05, "damageReduction": 0.04 }
-    }
+    },
+    [
+  {
+    "id": "coraza_cuero_hervido_hombre",
+    "nombre": "Coraza de Cuero Hervido",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 540,
+    "descripcion": "Protección firme sin perder demasiada movilidad.",
+    "efecto": { "damageReduction": 0.05 }
+  },
+  {
+    "id": "coraza_cuero_hervido_elfo",
+    "nombre": "Coraza de Cuero Repujado Élfico",
+    "slot": "pecho",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 680,
+    "descripcion": "Ligera, elegante y trabajada con precisión.",
+    "efecto": { "damageReduction": 0.06 }
+  },
+  {
+    "id": "coraza_cuero_hervido_enano",
+    "nombre": "Coraza de Cuero Reforzado Enana",
+    "slot": "pecho",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 640,
+    "descripcion": "Cuero endurecido sobre una base muy sólida.",
+    "efecto": { "damageReduction": 0.06 }
+  },
+  {
+    "id": "coraza_cuero_hervido_hobbit",
+    "nombre": "Coraza de Cuero de Viaje Hobbit",
+    "slot": "pecho",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 320,
+    "descripcion": "Protección ligera y cómoda para rutas largas.",
+    "efecto": { "damageReduction": 0.03 }
+  },
+  {
+    "id": "guantes_cuero_tachonado",
+    "nombre": "Guantes de Cuero Tachonado",
+    "slot": "brazos",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 110,
+    "descripcion": "Mejoran el agarre y protegen las manos.",
+    "efecto": { "damageReduction": 0.02 }
+  },
+  {
+    "id": "guanteletes_acero_gondor",
+    "nombre": "Guanteletes Articulados de Acero de Gondor",
+    "slot": "brazos",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 630,
+    "descripcion": "Pesados, precisos y muy resistentes.",
+    "efecto": { "damageReduction": 0.05 }
+  },
+  {
+    "id": "guantes_seda_lothlorien",
+    "nombre": "Guantes de Lino y Seda de Lothlórien",
+    "slot": "brazos",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 360,
+    "descripcion": "Finos y elegantes, más útiles de lo que parecen.",
+    "efecto": { "damageReduction": 0.03 }
+  },
+  {
+    "id": "guanteletes_runicos_erebor",
+    "nombre": "Guanteletes Rúnicos de Erebor",
+    "slot": "brazos",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 820,
+    "descripcion": "Forja enana reforzada con runas de firmeza.",
+    "efecto": { "damageReduction": 0.06 }
+  },
+  {
+    "id": "mitones_hobbit_michel_delving",
+    "nombre": "Mitones Reforzados de Michel Delving",
+    "slot": "brazos",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 85,
+    "descripcion": "Abrigan y dan algo de protección.",
+    "efecto": { "damageReduction": 0.01 }
+  },
+
+  {
+    "id": "hombreras_cuero_hervido_hombre",
+    "nombre": "Hombreras de Cuero Hervido",
+    "slot": "hombros",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 380,
+    "descripcion": "Sencillas y funcionales.",
+    "efecto": { "damageReduction": 0.02 }
+  },
+  {
+    "id": "hombreras_bordadas_elficas",
+    "nombre": "Hombreras Bordadas Élfica",
+    "slot": "hombros",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 830,
+    "descripcion": "Protección ligera con adornos de plata.",
+    "efecto": { "damageReduction": 0.03 }
+  },
+  {
+    "id": "hombreras_angulares_enanas",
+    "nombre": "Hombreras de Placas Angulares de Erebor",
+    "slot": "hombros",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 840,
+    "descripcion": "Robustas y de líneas duras.",
+    "efecto": { "damageReduction": 0.05 }
+  },
+  {
+    "id": "hombreras_hobbit_acolchadas",
+    "nombre": "Hombreras Acolchadas Hobbit",
+    "slot": "hombros",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 150,
+    "descripcion": "Muy ligeras, pensadas para viajes tranquilos.",
+    "efecto": { "damageReduction": 0.02 }
+  },
+
+  {
+    "id": "grebas_normandas_hombre",
+    "nombre": "Grebas Ornamentadas Reforzadas",
+    "slot": "piernas",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 900,
+    "descripcion": "Protección sólida para largas marchas.",
+    "efecto": { "damageReduction": 0.04 }
+  },
+  {
+    "id": "grebas_ligeras_elficas",
+    "nombre": "Grebas Ligeras de Lothlórien",
+    "slot": "piernas",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 710,
+    "descripcion": "Apenas pesan y siguen protegiendo bien.",
+    "efecto": { "damageReduction": 0.04 }
+  },
+  {
+    "id": "grebas_runic_enanas",
+    "nombre": "Grebas Rúnicas de Erebor",
+    "slot": "piernas",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 1630,
+    "descripcion": "Diseñadas para resistir impactos fuertes.",
+    "efecto": { "damageReduction": 0.06 }
+  },
+  {
+    "id": "grebas_cortas_hobbit",
+    "nombre": "Grebas Cortas Hobbit",
+    "slot": "piernas",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 110,
+    "descripcion": "Adaptadas para una zancada corta y segura.",
+    "efecto": { "damageReduction": 0.02 }
+  },
+  {
+    "id": "casco_nasal",
+    "nombre": "Casco Nasal",
+    "slot": "casco",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 560,
+    "descripcion": "Protección clásica, simple y efectiva.",
+    "efecto": { "damageReduction": 0.04 }
+  },
+  {
+    "id": "yelmo_ornamentado_crestas",
+    "nombre": "Yelmo Ornamentado con Crestas",
+    "slot": "casco",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1320,
+    "descripcion": "Pieza de élite de Gondor.",
+    "efecto": { "damageReduction": 0.07 }
+  },
+  {
+    "id": "casco_elfico_lindon",
+    "nombre": "Casco Élfico de Lindon",
+    "slot": "casco",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 1640,
+    "descripcion": "Ligero, elegante y muy bien equilibrado.",
+    "efecto": { "damageReduction": 0.08 }
+  },
+  {
+    "id": "yelmo_caballero_rivendel",
+    "nombre": "Yelmo de Caballero de Rivendel",
+    "slot": "casco",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 2950,
+    "descripcion": "Una pieza de gran prestigio y defensa.",
+    "efecto": { "damageReduction": 0.12, "successBonus": 0.02 }
+  },
+  {
+    "id": "yelmo_cerrado_erebor",
+    "nombre": "Yelmo Cerrado de Erebor",
+    "slot": "casco",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 3400,
+    "descripcion": "Pesado, imponente y muy difícil de perforar.",
+    "efecto": { "damageReduction": 0.13, "successBonus": 0.02 }
+  },
+  {
+    "id": "capucha_reforzada_hobbit",
+    "nombre": "Capucha Reforzada Hobbit",
+    "slot": "casco",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 95,
+    "descripcion": "Protección discreta para el camino.",
+    "efecto": { "damageReduction": 0.02 }
+  },
+
+  {
+    "id": "anillo_cobre_simple",
+    "nombre": "Anillo de Cobre Simple",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 90,
+    "descripcion": "Una pieza modesta pero útil.",
+    "efecto": { "successBonus": 0.01 }
+  },
+  {
+    "id": "anillo_hierro_runo",
+    "nombre": "Anillo de Hierro Rúnico",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 180,
+    "descripcion": "Refuerza la voluntad y la firmeza.",
+    "efecto": { "successBonus": 0.02, "damageReduction": 0.01 }
+  },
+  {
+    "id": "anillo_plata_rivendel",
+    "nombre": "Anillo de Plata de Rivendel",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 360,
+    "descripcion": "Ligero, fino y de gran calidad.",
+    "efecto": { "successBonus": 0.04 }
+  },
+  {
+    "id": "anillo_bronce_erebor",
+    "nombre": "Anillo de Bronce de Erebor",
+    "slot": "anillo",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 420,
+    "descripcion": "Sólido y grabado con runas de resistencia.",
+    "efecto": { "successBonus": 0.04, "damageReduction": 0.02 }
+  }
   ]
-    }
