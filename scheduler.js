@@ -141,7 +141,7 @@ async function generateAITextStrict(prompt) {
         { role: "user", content: prompt }
       ],
       temperature: 0.9,
-      max_tokens: 240
+      max_tokens: 60
     })
   });
 
@@ -305,7 +305,7 @@ Instrucciones:
         model: MODEL,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.85,
-        max_tokens: 90
+        max_tokens: 60
       })
     });
 
