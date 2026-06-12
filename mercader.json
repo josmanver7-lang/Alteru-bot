@@ -12,7 +12,7 @@
       "id": "daga_elfica_rivendel",
       "nombre": "Daga Élfica de Rivendel",
       "tipo": "arma",
-      "precioBase": 320,
+      "precioBase": "880",
       "efecto": { "damageBonus": 4, "successBonus": 0.06 }
     },
     {
