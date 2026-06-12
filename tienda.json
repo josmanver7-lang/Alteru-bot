@@ -11,8 +11,8 @@
       "efecto": { "salud": 20 }
     },
     {
-      "id": "raciones_viaje",
-      "nombre": "Raciones de viaje",
+      "id": "Estofado",
+      "nombre": "Estofado de Carne con Cebolla",
       "tipo": "consumible",
       "precioBase": 35,
       "descripcion": "Recupera 30 de salud.",
@@ -20,7 +20,7 @@
     },
     {
       "id": "tonico_hierbas",
-      "nombre": "Tónico de hierbas",
+      "nombre": "Tónico de hierbas de Rhudaur",
       "tipo": "consumible",
       "precioBase": 55,
       "descripcion": "Recupera 50 de salud.",
@@ -67,8 +67,8 @@
       "efecto": { "successBonus": 0.05, "soloProximoEncuentro": true }
     },
     {
-      "id": "antorcha_viajera",
-      "nombre": "Antorcha viajera",
+      "id": "aceite_antorcha",
+      "nombre": "Aceite para Antorcha viajera",
       "tipo": "utilidad",
       "precioBase": 95,
       "descripcion": "Reduce el riesgo de perderse.",
