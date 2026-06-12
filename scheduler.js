@@ -387,8 +387,34 @@ Reglas:
   await channel.send(`💬 **Conversación entre compañeros**\n\n${truncate(text, 1900)}`);
 }
 
+async function rollCatalogSelection(key, items, limit = 12) {
+  const selection = [...items]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, Math.min(limit, items.length));
+
+  await db.setEventState(key, {
+    selection,
+    lastAt: Date.now(),
+    nextAt: Date.now() + (12 * 60 * 60 * 1000)
+  });
+
+  return selection;
+}
+
 async function startTablonCycle(client, loreCache) {
   await refreshTablonSelection(client, loreCache);
+
+  try {
+    const tiendaCache = await loadJson("tienda.json").catch(() => null);
+    const armeriaCache = await loadJson("armeria.json").catch(() => null);
+
+    await rollCatalogSelection("tienda", tiendaCache?.items || [], 12);
+    
+    const armeriaItems = armeriaCache?.items || armeriaCache?.equipo || [];
+    await rollCatalogSelection("armeria", armeriaItems, 12);
+  } catch (e) {
+    console.error("Error al rotar selecciones de catálogo:", e);
+  }
 }
 
 async function startMerchantCycle(client) {
@@ -442,13 +468,18 @@ export function startSchedulers(client, loreCache) {
   ensureTablonSelection().catch(console.error);
   resumeMerchantIfNeeded(client).catch(console.error);
 
+  // Carga inicial de rotaciones de catálogo si no existen
+  loadJson("tienda.json").then(t => rollCatalogSelection("tienda", t?.items || [], 12)).catch(console.error);
+  loadJson("armeria.json").then(a => {
+    const armeriaItems = a?.items || a?.equipo || [];
+    rollCatalogSelection("armeria", armeriaItems, 12);
+  }).catch(console.error);
+
   scheduleRepeating(TWELVE_HOURS, () => startTablonCycle(client, loreCache), TWELVE_HOURS);
   startMerchantCycle(client).catch(console.error);
   startDialogueCycle(client, loreCache).catch(console.error);
 }
 
-// Aquí agrupé tus líneas sueltas en una función para corregir el error de sintaxis sin borrar el código.
-// Solo necesitas pasarle los items como parámetros cuando la vayas a usar.
 export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
   await db.rerollMarketPrices("tienda", tiendaItems);
   await db.rerollMarketPrices("armeria", armeriaItems);
