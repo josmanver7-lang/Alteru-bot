@@ -560,16 +560,16 @@ async function companionDialogue(client, loreCache, slotId = null) {
   const personaB = getPersonaje(personajes, b);
 
   const themes = [
-    "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros",
-    "una vieja batalla del pasado",
-    "un entrenamiento entre compañeros",
-    "un recuerdo del campamento al amanecer",
-    "una historia sobre una expedición peligrosa"
-  ];
+  "una vieja batalla del pasado",
+  "un entrenamiento entre compañeros",
+  "un recuerdo del campamento al amanecer",
+  "una historia sobre una expedición peligrosa"
+];
 
-  const theme = Math.random() < 0.45
-    ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros"
-    : pick(themes);
+const theme = pick(themes);
+
+...
+max_tokens: 200
 
   let text = "";
   try {
@@ -595,9 +595,9 @@ async function companionDialogue(client, loreCache, slotId = null) {
   }
 
   if (!text) {
-    text = `💬 ${personaA.nombre || companionNames[a]}: Thûlazar sigue dejando su rastro en los caminos; lo noto en el viento.\n💬 ${personaB.nombre || companionNames[b]}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
+  text = `💬 ${personaA.nombre || companionNames[a]}: ...`;
   }
-
+  
   await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
 
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
