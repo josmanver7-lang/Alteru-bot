@@ -13,7 +13,7 @@ const MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.5-flash";
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
 const CARACAS_OFFSET_MS = -4 * 60 * 60 * 1000;
-const CYCLE_HOURS = [11, 23];
+const CYCLE_HOURS = [11:05, 23:05];
 
 const companionIds = ["alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon", "montaraces"];
 
