@@ -650,3 +650,4 @@ export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) 
     await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
   }
+}
