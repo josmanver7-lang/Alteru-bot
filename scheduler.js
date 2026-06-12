@@ -559,11 +559,16 @@ while (b === a) b = pick(companionIds);
 const personaA = getPersonaje(personajes, a);
 const personaB = getPersonaje(personajes, b);
 
+const nombreA = personaA.nombre || companionNames[a];
+const nombreB = personaB.nombre || companionNames[b];
+
 const themes = [
-  "una vieja batalla del pasado",
-  "un entrenamiento entre compañeros",
-  "un recuerdo del campamento al amanecer",
-  "una historia sobre una expedición peligrosa"
+  { type: "battle", text: "una vieja batalla del pasado" },
+  { type: "companions", text: "una conversación tranquila entre compañeros" },
+  { type: "camp", text: "un recuerdo del campamento al amanecer" },
+  { type: "expedition", text: "una historia sobre una expedición peligrosa" },
+  { type: "training_swords", text: "un entrenamiento con espadas de madera en el patio central del campamento" },
+  { type: "thulazar", text: "Altéru hablando sobre Thûlazar, el enemigo principal del campamento, y cómo afecta a los viajeros haciéndoles perder el sentido de la orientación" }
 ];
 
 const theme = pick(themes);
@@ -574,18 +579,18 @@ try {
     max_tokens: 200,
     prompt:
       `Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.\n\n` +
-      `Compañero A: ${personaA.nombre || companionNames[a]}\n` +
+      `Compañero A: ${nombreA}\n` +
       `Personalidad A: ${personaA.personalidad || personaA.descripcion || personaA.tono || "sin definir"}\n\n` +
-      `Compañero B: ${personaB.nombre || companionNames[b]}\n` +
+      `Compañero B: ${nombreB}\n` +
       `Personalidad B: ${personaB.personalidad || personaB.descripcion || personaB.tono || "sin definir"}\n\n` +
-      `Tema:\n${theme}\n\n` +
+      `Tema:\n${theme.text}\n\n` +
       `Contexto de historia útil:\n${history}\n\n` +
       `Reglas:\n` +
       `- Entre 220 y 320 palabras.\n` +
       `- Debe parecer una escena de rol natural.\n` +
       `- Cada intervención debe llevar el nombre del personaje al inicio.\n` +
       `- Uno habla y el otro responde o pregunta.\n` +
-      `- Si aparece Altéru, puede contar una hazaña o hablar de Thûlazar.\n` +
+      `- Si el tema es entrenamiento, debe sentirse como un combate amistoso con espadas de madera.\n` +
       `- Español.\n` +
       `- No menciones que es una IA.`
   });
@@ -594,7 +599,18 @@ try {
 }
 
 if (!text) {
-  text = `💬 ${personaA.nombre || companionNames[a]}: ...`;
+  const winnerName = Math.random() < 0.5 ? nombreA : nombreB;
+
+  text =
+    `💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n` +
+    `${nombreA}: Vamos. Hoy quiero ver si sigues tan rápido como ayer.\n` +
+    `${nombreB}: En el patio central, con espadas de madera, no pienso dejarme ganar tan fácil.\n` +
+    `${nombreA}: Entonces mueve esos pies. No voy a darte tregua.\n` +
+    `${nombreB}: Mejor. Así el entrenamiento vale la pena.\n` +
+    `${nombreA}: Cuidado con ese golpe.\n` +
+    `${nombreB}: Demasiado tarde. Ese choque me abrió la guardia.\n` +
+    `${nombreA}: Bien. Aun así, no pienso bajar el ritmo.\n` +
+    `${nombreB}: Y con ese último cruce, el vencedor del entrenamiento fue **${winnerName}**.\n`;
 }
 
 await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
