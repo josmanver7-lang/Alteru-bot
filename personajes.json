@@ -1,5 +1,4 @@
 [
- {
   {
     "nombre": "Altéru",
     "titulo": "Capitán de Gondor",
@@ -9,7 +8,7 @@
     "estado": "Vivo",
     "Armas": ["Espada larga templada", "Escudo de gota", "Daga ornamentada Haradrim"],
     "Armadura": ["Capa con Capucha morada", "Placa metálica", "Brazaletes metalicos", "Grebas doradas", "Hombreras metálicas"],
-    "Objetos": ["Cuerno de Gondor", "Laúd Viejo", "Copa de Bronce"]
+    "Objetos": ["Cuerno de Gondor", "Laúd Viejo", "Copa de Bronce"],
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
     "personalidad": "Desafiante,  ambicioso, apasionado,  cariñoso, guía, irónico, serio, observador,  estoico.",
     "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Ost Ardnír, trabajó en la tienda de especias de su padre, se alistó a la milicia, estudió un año en el colegio de Eruditos de Minas Tirith, fue nombrado como portavoz de Gondor y recorrió todo el reino con la compañia de su amigo Cirdil y otros compañeros. Fue nombrado Capitán y lo demás son hazañas..",
@@ -136,8 +135,8 @@
     "estado": "Vivo",
     "Armas": ["Arco de Rivendel", "Daga elfica simple"],
     "Armadura": ["Gambeson ligero azul", "Brazaletes de cuero", "Botas de cuero", "Cinturón de pociones"],
-    "Objetos": ["Pergamino de curación", "Ingredientes curativos"]
-      "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
+    "Objetos": ["Pergamino de curación", "Ingredientes curativos"],
+    "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
     "personalidad": "Calmado, amigable, cercano, social y atento.",
     "historia": "Nació en el año 2517 de la Tercera Edad. Se crió en Imladris y, a temprana edad, fue preparado en el arte de la curación y las runas.",
     "relacion_con_alteru": "Líder y compañero de la erudición",
