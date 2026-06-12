@@ -156,6 +156,44 @@ async function generateAITextStrict(prompt) {
   if (!text) throw new Error("OpenRouter devolvió texto vacío");
   return text;
 }
+}
+
+// scheduler.js — helper para IA sin texto manual
+async function generateAITextStrict(prompt) {
+  if (!OPENROUTER_API_KEY) {
+    throw new Error("OPENROUTER_API_KEY no está configurada");
+  }
+
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones."
+        },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.9,
+      max_tokens: 240
+    })
+  });
+
+  if (!res.ok) {
+    const details = await res.text().catch(() => "");
+    throw new Error(`OpenRouter ${res.status}: ${details}`);
+  }
+
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error("OpenRouter devolvió texto vacío");
+  return text;
+}
 
 function shiftCaracas(ms = Date.now()) {
   return new Date(ms + CARACAS_OFFSET_MS);
@@ -620,16 +658,6 @@ async function openCycleEvents(cycleStartMs, client, loreCache) {
     }
   ]);
 
-  scheduleCycleRandomEvents(cycleStartMs, [
-    {
-      minOffsetMs: 6 * 60 * 60 * 1000,
-      maxOffsetMs: 11 * 60 * 60 * 1000,
-      task: () => companionDialogue(client, loreCache)
-    }
-  ]);
-}
-
-  // Un solo diálogo por ciclo, en otra ventana distinta
   scheduleCycleRandomEvents(cycleStartMs, [
     {
       minOffsetMs: 6 * 60 * 60 * 1000,
