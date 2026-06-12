@@ -864,7 +864,7 @@ Instrucciones:
         model: MODEL,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.85,
-        max_tokens: 90
+        max_tokens: 60
       })
     });
 
@@ -1184,9 +1184,6 @@ if (command === "!tienda") {
   return message.reply(texto.trim());
   }
   
-  const content = message.content.trim();
-  const args = content.split(/\s+/);
-  const command = args[0].toLowerCase();
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
