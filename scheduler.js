@@ -117,6 +117,11 @@ async function fetchChannel(client) {
 
 async function ai(prompt) {
   if (!OPENROUTER_API_KEY) return "";
+// scheduler.js — helper para IA sin texto manual
+async function generateAITextStrict(prompt) {
+  if (!OPENROUTER_API_KEY) {
+    throw new Error("OPENROUTER_API_KEY no está configurada");
+  }
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -139,12 +144,14 @@ async function ai(prompt) {
   });
 
   if (!res.ok) {
-    const fallback = await res.text().catch(() => "");
-    throw new Error(`OpenRouter ${res.status}: ${fallback}`);
+    const details = await res.text().catch(() => "");
+    throw new Error(`OpenRouter ${res.status}: ${details}`);
   }
 
   const data = await res.json();
-  return data?.choices?.[0]?.message?.content?.trim() || "";
+  const text = data?.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error("OpenRouter devolvió texto vacío");
+  return text;
 }
 
 function shiftCaracas(ms = Date.now()) {
@@ -408,7 +415,8 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   }
 }
 
-async function refreshTablonSelection(client, loreCache, cyclePlan) {
+// scheduler.js — tablón sin fallback manual
+async function refreshTablonSelection(client, loreCache) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
@@ -417,44 +425,41 @@ async function refreshTablonSelection(client, loreCache, cyclePlan) {
   const announcer = getPersonaje(personajes, announcerId);
   const announcerName = announcer?.nombre || companionNames[announcerId] || announcerId;
 
-  let text = "";
+  const prompt = `
+Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.
+
+El personaje es ${announcerName}.
+Debe acercarse al tablón de anuncios, martillear algunas veces y clavar cinco nuevas expediciones.
+Luego se retira para continuar con sus tareas.
+Tono natural, de rol y con vida de campamento.
+No menciones que es una IA.
+`.trim();
+
+  let text;
   try {
-    text = await ai(
-      `Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.\n\n` +
-      `El personaje es ${announcerName}.\n` +
-      `Debe acercarse al tablón de anuncios, martillear un par de veces y clavar cinco nuevas expediciones.\n` +
-      `Luego se retira para continuar con sus tareas.\n` +
-      `Tono natural, de rol y con vida de campamento.\n` +
-      `No menciones que es una IA.`
-    );
+    text = await generateAITextStrict(prompt);
   } catch (err) {
     console.error("Error generando texto IA del tablón:", err);
-  }
-
-  if (!text) {
-    text = `Amanece un nuevo día y ${announcerName} se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
+    return;
   }
 
   const missions = await loadJson("misiones.json").catch(() => []);
   const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
 
   await db.setEventState("tablon", {
-    cycleId: cyclePlan?.cycleStartAt || Date.now(),
+    cycleId: Date.now(),
     lastAt: Date.now(),
-    nextAt: cyclePlan?.cycleEndAt || Date.now() + TWELVE_HOURS,
-    tablonDone: true,
+    nextAt: Date.now() + TWELVE_HOURS,
     selection
   }).catch(() => {});
 
   await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
 }
 
-async function openMerchant(client, slotId = null) {
+// scheduler.js — mercader sin fallback manual
+async function openMerchant(client) {
   const existing = await db.getEventState("merchant").catch(() => null);
-  if (existing?.active) {
-    if (slotId) await markSlotDone("merchant", slotId).catch(() => {});
-    return;
-  }
+  if (existing?.active) return;
 
   const channel = await fetchChannel(client);
   if (!channel) return;
@@ -466,25 +471,25 @@ async function openMerchant(client, slotId = null) {
   const catalogState = await db.getEventState("mercader").catch(() => null);
   const items = Array.isArray(catalogState?.selection) && catalogState.selection.length ? catalogState.selection : catalogItems;
 
-  let intro = "";
+  const prompt = `
+Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+
+Debe incluir:
+- Su nombre: ${merchantName}
+- Que pide permiso para instalarse junto a la tienda
+- Que dice que solo permanecerá 2 horas
+- Que después seguirá hacia ${destination}
+- Tono de rol medieval/Tierra Media
+- Natural, cálido y convincente
+No menciones que es una IA.
+`.trim();
+
+  let intro;
   try {
-    intro = await ai(
-      `Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.\n\n` +
-      `Debe incluir:\n` +
-      `- Su nombre: ${merchantName}\n` +
-      `- Que pide permiso para instalarse junto a la tienda\n` +
-      `- Que dice que solo permanecerá 2 horas\n` +
-      `- Que después seguirá hacia ${destination}\n` +
-      `- Tono de rol medieval/Tierra Media\n` +
-      `- Natural, cálido y convincente\n` +
-      `No menciones que es una IA.`
-    );
+    intro = await generateAITextStrict(prompt);
   } catch (err) {
     console.error("Error generando llegada del mercader:", err);
-  }
-
-  if (!intro) {
-    intro = `${merchantName}: ¡Bienvenidos a mi negocio! Tengo mercancías que podrían interesarles, pero solo puedo quedarme dos horas. Después partiré hacia ${destination}.`;
+    return;
   }
 
   const stockLines = items.slice(0, 6).map(item => `• ${item.nombre} — ${item.precioBase ?? item.precio ?? 0} pts`).join("\n");
@@ -501,32 +506,30 @@ async function openMerchant(client, slotId = null) {
     stock: items.slice(0, 12)
   }).catch(() => {});
 
-  if (slotId) await markSlotDone("merchant", slotId).catch(() => {});
-
   if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
   merchantCloseTimer = setTimeout(async () => {
     const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return;
 
-    let farewell = "";
+    const closePrompt = `
+Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+
+Debe incluir:
+- Su nombre: ${state.name}
+- Que agradece a Capitán Altéru por dejarle el espacio
+- Que debe recoger y partir
+- Que su próximo destino es ${state.destination}
+- Que se aleja del campamento con su animal de carga o sus bultos
+- Tono de rol medieval/Tierra Media
+No menciones que es una IA.
+`.trim();
+
+    let farewell;
     try {
-      farewell = await ai(
-        `Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.\n\n` +
-        `Debe incluir:\n` +
-        `- Su nombre: ${state.name}\n` +
-        `- Que agradece a Capitán Altéru por dejarle el espacio\n` +
-        `- Que debe recoger y partir\n` +
-        `- Que su próximo destino es ${state.destination}\n` +
-        `- Que se aleja del campamento con su animal de carga o sus bultos\n` +
-        `- Tono de rol medieval/Tierra Media\n` +
-        `No menciones que es una IA.`
-      );
+      farewell = await generateAITextStrict(closePrompt);
     } catch (err) {
       console.error("Error generando despedida del mercader:", err);
-    }
-
-    if (!farewell) {
-      farewell = `${state.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`;
+      return;
     }
 
     await channel.send(`🧳 **EL MERCADER SE RETIRA**\n\n${truncate(farewell)}`);
@@ -600,12 +603,12 @@ async function companionDialogue(client, loreCache, slotId = null) {
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
+// scheduler.js — un solo mercader y un solo diálogo por ciclo
 async function openCycleEvents(cycleStartMs, client, loreCache) {
   clearCycleTimers();
   await refreshTablonSelection(client, loreCache).catch(console.error);
-  await refreshCatalogPricesAndSelections(cycleStartMs).catch(console.error);
+  await refreshCatalogPricesAndSelections().catch(console.error);
 
-  // Un solo mercader por ciclo, en una ventana aleatoria que no choque con el diálogo
   scheduleCycleRandomEvents(cycleStartMs, [
     {
       minOffsetMs: 1 * 60 * 60 * 1000,
@@ -613,6 +616,15 @@ async function openCycleEvents(cycleStartMs, client, loreCache) {
       task: () => openMerchant(client)
     }
   ]);
+
+  scheduleCycleRandomEvents(cycleStartMs, [
+    {
+      minOffsetMs: 6 * 60 * 60 * 1000,
+      maxOffsetMs: 11 * 60 * 60 * 1000,
+      task: () => companionDialogue(client, loreCache)
+    }
+  ]);
+}
 
   // Un solo diálogo por ciclo, en otra ventana distinta
   scheduleCycleRandomEvents(cycleStartMs, [
