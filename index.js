@@ -1107,6 +1107,57 @@ async function getCatalogStateItems(stateKey, fallbackItems) {
   };
 }
 
+function getDefaultSlots(catalogName, item) {
+  const tipo = normalizeKey(item?.tipo || "");
+  const slot = normalizeKey(item?.slot || "");
+
+  if (typeof item?.slots === "number") return Math.max(1, item.slots);
+
+  if (catalogName === "tienda") {
+    if (tipo === "consumible") return 3;
+    if (tipo === "regalo") return 1;
+    return 1;
+  }
+
+  if (catalogName === "armeria") return 1;
+
+  if (catalogName === "mercader") {
+    if (tipo === "consumible") return 3;
+    if (tipo === "regalo") return 1;
+    if (["arma", "armadura", "capa", "anillo", "amuleto", "reliquia"].includes(slot)) return 1;
+    return 1;
+  }
+
+  return 1;
+}
+
+function ensureCatalogUsage(profile, catalogName, cycleId) {
+  const usage = profile.catalogUsage && typeof profile.catalogUsage === "object"
+    ? profile.catalogUsage
+    : {};
+
+  const current = usage[catalogName] || { cycleId: null, items: {} };
+  if (current.cycleId !== cycleId) {
+    usage[catalogName] = { cycleId, items: {} };
+  }
+  return usage;
+}
+
+function getItemRemainingSlots(profile, catalogName, item, cycleId) {
+  const currentUsage = profile.catalogUsage?.[catalogName];
+  const used = currentUsage?.cycleId === cycleId
+    ? Number(currentUsage?.items?.[item.id] || 0)
+    : 0;
+
+  return Math.max(0, getDefaultSlots(catalogName, item) - used);
+}
+
+function consumeCatalogSlot(profile, catalogName, item, cycleId) {
+  const usage = ensureCatalogUsage(profile, catalogName, cycleId);
+  usage[catalogName].items[item.id] = Number(usage[catalogName].items[item.id] || 0) + 1;
+  return usage;
+}
+
 // ==========================================
 //          MANEJO DE MENSAJES Y COMANDOS
 // ==========================================
@@ -1483,13 +1534,13 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     let texto = "🏪 **TIENDA DEL CAMPAMENTO**\n\n";
 
     for (const item of limitedItems) {
-      const price = await getDynamicPrice("tienda", item);
+      const price = await db.getDynamicPrice("tienda", item);
       const remaining = getItemRemainingSlots(profile, "tienda", item, cycleId);
 
       texto += `• **${item.nombre}**\n`;
       texto += `ID: ${item.id}\n`;
       texto += `Tipo: ${item.tipo || "—"}\n`;
-      texto += `Precio: ${formatPrice(price)}\n`;
+      texto += `Precio: ${price} pts\n`;
       texto += `Slots: ${remaining}/${getDefaultSlots("tienda", item)}\n`;
       texto += `Efecto: ${formatEffect(item.efecto)}\n`;
       if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
@@ -1515,14 +1566,14 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     let texto = "⚔️ **ARMERÍA DEL CAMPAMENTO**\n\n";
 
     for (const item of limitedItems) {
-      const price = await getDynamicPrice("armeria", item);
+      const price = await db.getDynamicPrice("armeria", item);
       const remaining = getItemRemainingSlots(profile, "armeria", item, cycleId);
 
       texto += `• **${item.nombre}**\n`;
       texto += `ID: ${item.id}\n`;
       texto += `Slot: ${item.slot || "—"}\n`;
       texto += `Rareza: ${item.rareza || "—"}\n`;
-      texto += `Precio: ${formatPrice(price)}\n`;
+      texto += `Precio: ${price} pts\n`;
       texto += `Slots: ${remaining}/${getDefaultSlots("armeria", item)}\n`;
       texto += `Efecto: ${formatEffect(item.efecto)}\n`;
       if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
@@ -1562,7 +1613,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     texto += "**Mercancía disponible:**\n\n";
 
     for (const item of items) {
-      const price = await getDynamicPrice("mercader", item);
+      const price = await db.getDynamicPrice("mercader", item);
       const remaining = getItemRemainingSlots(profile, "mercader", item, cycleId);
 
       texto += `• **${item.nombre}**\n`;
@@ -1589,13 +1640,18 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       return message.reply("No encuentro ese objeto en la tienda, la armería o el mercader.");
     }
 
-    const price = await getCurrentPriceForItem(found);
-    const category = getInventoryCategoryForItem(found);
+    const price = await db.getDynamicPrice(found.catalogName || "tienda", found);
+    const cycleState = await db.getEventState(found.catalogName || "tienda").catch(() => null);
+    const cycleId = cycleState?.cycleId || cycleState?.nextAt || cycleState?.lastAt || 0;
 
+    const remaining = getItemRemainingSlots(profile, found.catalogName || "tienda", found, cycleId);
+    if (remaining <= 0) {
+      return message.reply(`⚠️ No te quedan slots disponibles para **${found.nombre}** en este ciclo.`);
+    }
+
+    const category = getInventoryCategoryForItem(found);
     const stackable = isStackableItem(found);
-    const existing = inventory[category].find(item =>
-      normalizeKey(item.id) === normalizeKey(found.id)
-    );
+    const existing = inventory[category].find(item => normalizeKey(item.id) === normalizeKey(found.id));
 
     if (!stackable && existing) {
       return message.reply(`Ya posees **${found.nombre}**.`);
@@ -1618,8 +1674,11 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       inventory[category].push(newEntry);
     }
 
+    const catalogUsage = consumeCatalogSlot(profile, found.catalogName || "tienda", found, cycleId);
+
     await db.updateTravelerData(message.author.id, {
-      inventory: normalizeInventory(inventory)
+      inventory: normalizeInventory(inventory),
+      catalogUsage
     });
 
     return message.reply(`🛒 Has comprado **${found.nombre}** por **${price}** puntos.`);
