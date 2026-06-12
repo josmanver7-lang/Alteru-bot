@@ -1,3 +1,4 @@
+[
 {
   "nombre": "Tienda del Campamento",
   "descripcion": "Suministros básicos, regalos y útiles de viaje.",
@@ -74,5 +75,5 @@
       "descripcion": "Reduce el riesgo de perderse.",
       "efecto": { "successBonus": 0.03, "soloProximoEncuentro": true }
     }
-  ]
-}
+ }
+ ]
