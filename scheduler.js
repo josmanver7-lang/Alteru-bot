@@ -28,7 +28,7 @@ const companionNames = {
   montaraces: "Montaraces de Arathir"
 };
 
-const merchantNames = ["Barahir", "Mablung", "Berenil", "Galdor", "Rúmil", "Thalion", "Ithron", "Haldir"];
+const merchantNames = ["Smeagle", "Mablung", "Berenil", "Galdor", "Rúmil", "Thalion", "Ithron", "Cristiano Ronaldo"];
 
 const merchantCities = [
   "Calembel", "Linhir", "Pelargir", "Morlad", "Sardol", "Ost Ardnír", "Dínadab",
