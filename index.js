@@ -1100,7 +1100,7 @@ if (command === "!tienda") {
   const catalogItems = getCatalogItems(data);
 
   if (!catalogItems.length) {
-    return message.reply("La tienda está vacía o no está disponible.");
+  return message.reply("La tienda está vacía o no está disponible.");
 }
 
   const profile = await db.getProfile(message.author.id);
