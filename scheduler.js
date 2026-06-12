@@ -417,7 +417,7 @@ No menciones que es una IA.
     selection
   }).catch(() => {});
 
-  await channel.send(`🌅 **Actualización del tablón**\n\n${truncate(text)}`);
+  await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
 }
 
 async function refreshCatalogPricesAndSelections() {
