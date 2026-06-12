@@ -1095,7 +1095,7 @@ function getCatalogItems(data) {
   return data?.items || data?.equipo || [];
 }
 
-if (command === "!tienda") {
+    if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
     const catalogItems = getCatalogItems(data);
 
