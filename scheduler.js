@@ -66,9 +66,22 @@ function normalizeKey(text) {
     .replace(/\s+/g, "_");
 }
 
-function clearTimers(list) {
-  for (const t of list) clearTimeout(t);
-  list.length = 0;
+function clearCycleTimers() {
+  for (const t of cycleEventTimers) clearTimeout(t);
+  cycleEventTimers.length = 0;
+}
+
+function scheduleCycleRandomEvents(cycleStartMs, events) {
+  for (const ev of events) {
+    const offset = randomBetween(ev.minOffsetMs, ev.maxOffsetMs);
+    const targetMs = cycleStartMs + offset;
+    const delay = targetMs - Date.now();
+    if (delay <= 0) {
+      setTimeout(ev.task, 0);
+    } else {
+      cycleEventTimers.push(setTimeout(ev.task, delay));
+    }
+  }
 }
 
 async function loadJson(filename) {
@@ -314,24 +327,6 @@ async function getMissionClosingReactions(owned, expedition) {
     if (line) reactions.push(`💬 ${line}`);
   }
   return reactions;
-}
-
-function getCyclePlan(cycleStartAt) {
-  return {
-    cycleStartAt,
-    cycleEndAt: cycleStartAt + TWELVE_HOURS,
-    tablonDone: false,
-    merchantSlots: [
-      { id: "merchant_1", at: cycleStartAt + randomBetween(1 * 60 * 60 * 1000, 4 * 60 * 60 * 1000), done: false },
-      { id: "merchant_2", at: cycleStartAt + randomBetween(6 * 60 * 60 * 1000, 10 * 60 * 60 * 1000), done: false }
-    ],
-    dialogueSlots: [
-      { id: "dialogue_1", at: cycleStartAt + randomBetween(2 * 60 * 60 * 1000, 5 * 60 * 60 * 1000), done: false },
-      { id: "dialogue_2", at: cycleStartAt + randomBetween(7 * 60 * 60 * 1000, 11 * 60 * 60 * 1000), done: false }
-    ],
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
 }
 
 async function ensureCatalogStates() {
@@ -605,66 +600,28 @@ async function companionDialogue(client, loreCache, slotId = null) {
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
-function scheduleSlotExecution(group, slot, client, loreCache) {
-  const run = async () => {
-    try {
-      if (group === "merchant") await openMerchant(client, slot.id);
-      else await companionDialogue(client, loreCache, slot.id);
-      await markSlotDone(group, slot.id);
-    } catch (err) {
-      console.error(`Error ejecutando slot ${group}/${slot.id}:`, err);
+async function openCycleEvents(cycleStartMs, client, loreCache) {
+  clearCycleTimers();
+  await refreshTablonSelection(client, loreCache).catch(console.error);
+  await refreshCatalogPricesAndSelections(cycleStartMs).catch(console.error);
+
+  // Un solo mercader por ciclo, en una ventana aleatoria que no choque con el diálogo
+  scheduleCycleRandomEvents(cycleStartMs, [
+    {
+      minOffsetMs: 1 * 60 * 60 * 1000,
+      maxOffsetMs: 5 * 60 * 60 * 1000,
+      task: () => openMerchant(client)
     }
-  };
+  ]);
 
-  const delay = slot.at - Date.now();
-  if (delay <= 0) {
-    setTimeout(run, 0);
-    return;
-  }
-
-  const timer = setTimeout(run, delay);
-  cycleEventTimers.push(timer);
-}
-
-function scheduleCycleSlots(client, loreCache, cycleState) {
-  clearTimers(cycleEventTimers);
-
-  for (const slot of cycleState?.merchantSlots || []) {
-    if (!slot.done) scheduleSlotExecution("merchant", slot, client, loreCache);
-  }
-
-  for (const slot of cycleState?.dialogueSlots || []) {
-    if (!slot.done) scheduleSlotExecution("dialogue", slot, client, loreCache);
-  }
-}
-
-async function createNewCycle(client, loreCache, cycleStartAt, announceTablon = true) {
-  const cycleState = getCyclePlan(cycleStartAt);
-  await setCycleState(cycleState);
-  await refreshCatalogPricesAndSelections(cycleStartAt).catch(console.error);
-  if (announceTablon) await refreshTablonSelection(client, loreCache, cycleState).catch(console.error);
-  scheduleCycleSlots(client, loreCache, cycleState);
-  return cycleState;
-}
-
-async function rehydrateOrCreateCurrentCycle(client, loreCache) {
-  const bounds = getCycleBounds();
-  const existing = await getCycleState();
-
-  if (
-    existing &&
-    existing.cycleStartAt === bounds.cycleStartAt &&
-    existing.cycleEndAt === bounds.cycleEndAt
-  ) {
-    await ensureCatalogStates().catch(console.error);
-    if (!existing.tablonDone) {
-      await refreshTablonSelection(client, loreCache, existing).catch(console.error);
+  // Un solo diálogo por ciclo, en otra ventana distinta
+  scheduleCycleRandomEvents(cycleStartMs, [
+    {
+      minOffsetMs: 6 * 60 * 60 * 1000,
+      maxOffsetMs: 11 * 60 * 60 * 1000,
+      task: () => companionDialogue(client, loreCache)
     }
-    scheduleCycleSlots(client, loreCache, existing);
-    return existing;
-  }
-
-  return await createNewCycle(client, loreCache, bounds.cycleStartAt, true);
+  ]);
 }
 
 async function resumeMerchantIfNeeded(client) {
@@ -705,7 +662,8 @@ function scheduleNextBoundary(client, loreCache) {
   const nextMs = getNextBoundaryMs();
   boundaryTimer = setTimeout(async () => {
     try {
-      await createNewCycle(client, loreCache, nextMs, true);
+      const bounds = getCycleBounds(nextMs);
+      await openCycleEvents(bounds.cycleStartAt, client, loreCache);
     } catch (err) {
       console.error("Scheduler boundary error:", err);
     }
@@ -717,7 +675,10 @@ export async function startSchedulers(client, loreCache) {
   await hydrateSchedulerPersonajesCache(loreCache).catch(() => {});
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
-  await rehydrateOrCreateCurrentCycle(client, loreCache).catch(console.error);
+  
+  const bounds = getCycleBounds();
+  await openCycleEvents(bounds.cycleStartAt, client, loreCache).catch(console.error);
+
   scheduleNextBoundary(client, loreCache);
 }
 
