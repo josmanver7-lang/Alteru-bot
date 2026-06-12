@@ -117,6 +117,9 @@ async function fetchChannel(client) {
 
 async function ai(prompt) {
   if (!OPENROUTER_API_KEY) return "";
+  return await generateAITextStrict(prompt);
+}
+
 // scheduler.js — helper para IA sin texto manual
 async function generateAITextStrict(prompt) {
   if (!OPENROUTER_API_KEY) {
