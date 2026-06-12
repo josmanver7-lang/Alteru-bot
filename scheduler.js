@@ -14,6 +14,7 @@ const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
 const CARACAS_OFFSET_MS = -4 * 60 * 60 * 1000;
 const CYCLE_HOURS = [0, 12];
+const CYCLE_STATE_KEY = "scheduler_cycle";
 
 const companionIds = ["alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon", "montaraces"];
 
@@ -37,8 +38,8 @@ const merchantCities = [
 ];
 
 let schedulerPersonajesCache = {};
-let merchantCloseTimer = null;
 let boundaryTimer = null;
+let merchantCloseTimer = null;
 let cycleEventTimers = [];
 
 function pick(arr) {
@@ -65,89 +66,9 @@ function normalizeKey(text) {
     .replace(/\s+/g, "_");
 }
 
-function formatRemainingTime(ms) {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-
-function formatPrice(value) {
-  return `${Math.max(1, Math.round(Number(value || 0)))} pts`;
-}
-
-function formatEffect(effect = {}) {
-  const parts = [];
-  if (effect.salud) parts.push(`Salud +${effect.salud}`);
-  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
-  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
-  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
-  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
-  if (effect.soloProximaExpedicion) parts.push("Solo próxima expedición");
-  if (effect.soloProximoEncuentro) parts.push("Solo próximo encuentro");
-  return parts.length ? parts.join(" | ") : "Sin efecto definido";
-}
-
-function stripCompanionPrefix(text, companionName) {
-  const raw = String(text || "").trim();
-  const re = new RegExp(`^${companionName}\\s*:\\s*`, "i");
-  return raw.replace(re, "").trim();
-}
-
-function compactLine(text, maxWords = 40) {
-  const words = String(text || "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .split(" ")
-    .filter(Boolean);
-  if (words.length <= maxWords) return words.join(" ");
-  return `${words.slice(0, maxWords).join(" ")}…`;
-}
-
-function getPersonaje(personajes, id) {
-  if (Array.isArray(personajes)) {
-    return personajes.find(p => normalizeKey(p.id || p.nombre || "") === normalizeKey(id)) || {};
-  }
-  return personajes?.[normalizeKey(id)] || {};
-}
-
-function getPersonalityText(id) {
-  const p = getPersonaje(schedulerPersonajesCache, id);
-  if (!p) return "Sin definir";
-  const raw =
-    p.personalidadCorta ||
-    p.personalidadBreve ||
-    p.personalidad ||
-    p.rasgos ||
-    p.caracter ||
-    p.descripcionCorta ||
-    p.descripcion ||
-    p.tono ||
-    "";
-  const text = String(raw).trim();
-  return text || "Sin definir";
-}
-
-function getCompanionIcon(id) {
-  switch (normalizeKey(id)) {
-    case "cirdil":
-    case "andaer":
-      return "🛡️";
-    case "duilon":
-      return "⚔️";
-    case "alteru":
-    case "nieriel":
-      return "🎖️";
-    case "montaraces":
-      return "🏹";
-    case "faelon":
-      return "🌿";
-    default:
-      return "•";
-  }
+function clearTimers(list) {
+  for (const t of list) clearTimeout(t);
+  list.length = 0;
 }
 
 async function loadJson(filename) {
@@ -165,9 +86,15 @@ async function loadPersonajes(loreCache) {
   }
 }
 
+function getPersonaje(personajes, id) {
+  if (Array.isArray(personajes)) {
+    return personajes.find(p => normalizeKey(p.id || p.nombre || "") === normalizeKey(id)) || {};
+  }
+  return personajes?.[normalizeKey(id)] || {};
+}
+
 async function hydrateSchedulerPersonajesCache(loreCache) {
-  const loaded = await loadPersonajes(loreCache).catch(() => ({}));
-  schedulerPersonajesCache = loaded || {};
+  schedulerPersonajesCache = await loadPersonajes(loreCache).catch(() => ({}));
 }
 
 async function fetchChannel(client) {
@@ -175,7 +102,7 @@ async function fetchChannel(client) {
   return channel?.isTextBased() ? channel : null;
 }
 
-async function generateAIText(prompt) {
+async function ai(prompt) {
   if (!OPENROUTER_API_KEY) return "";
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -207,40 +134,63 @@ async function generateAIText(prompt) {
   return data?.choices?.[0]?.message?.content?.trim() || "";
 }
 
-function getNextCaracasBoundaryMs(ms = Date.now()) {
-  const nowLocal = new Date(ms + CARACAS_OFFSET_MS);
+function shiftCaracas(ms = Date.now()) {
+  return new Date(ms + CARACAS_OFFSET_MS);
+}
 
+function getCycleBounds(ms = Date.now()) {
+  const local = shiftCaracas(ms);
+  const hour = local.getUTCHours();
+  const startLocal = new Date(local);
+  startLocal.setUTCHours(hour < 12 ? 0 : 12, 0, 0, 0);
+  const endLocal = new Date(startLocal);
+  endLocal.setUTCHours(startLocal.getUTCHours() + 12, 0, 0, 0);
+
+  return {
+    cycleStartAt: startLocal.getTime() - CARACAS_OFFSET_MS,
+    cycleEndAt: endLocal.getTime() - CARACAS_OFFSET_MS
+  };
+}
+
+function getNextBoundaryMs(ms = Date.now()) {
+  const local = shiftCaracas(ms);
   const candidates = CYCLE_HOURS.map(hour => {
-    const d = new Date(nowLocal);
+    const d = new Date(local);
     d.setUTCHours(hour, 0, 0, 0);
-    if (d.getTime() <= nowLocal.getTime()) d.setUTCDate(d.getUTCDate() + 1);
+    if (d.getTime() <= local.getTime()) d.setUTCDate(d.getUTCDate() + 1);
     return d.getTime() - CARACAS_OFFSET_MS;
   });
-
   return Math.min(...candidates);
 }
 
-function scheduleAt(ms, fn) {
-  const delay = Math.max(0, ms - Date.now());
-  return setTimeout(() => {
-    Promise.resolve(fn()).catch(err => console.error(err));
-  }, delay);
+async function getCycleState() {
+  return await db.getEventState(CYCLE_STATE_KEY).catch(() => null);
 }
 
-function clearCycleTimers() {
-  for (const t of cycleEventTimers) clearTimeout(t);
-  cycleEventTimers = [];
+async function setCycleState(value) {
+  await db.setEventState(CYCLE_STATE_KEY, value).catch(() => {});
 }
 
-function scheduleCycleRandomEvents(cycleStartMs, plans) {
-  for (const plan of plans) {
-    const when = cycleStartMs + randomBetween(plan.minOffsetMs, plan.maxOffsetMs);
-    cycleEventTimers.push(scheduleAt(when, plan.task));
-  }
+async function markSlotDone(group, slotId) {
+  const state = await getCycleState();
+  if (!state) return;
+
+  const key = group === "merchant" ? "merchantSlots" : "dialogueSlots";
+  const slots = Array.isArray(state[key]) ? state[key] : [];
+  let changed = false;
+
+  const updated = slots.map(slot => {
+    if (slot.id !== slotId || slot.done) return slot;
+    changed = true;
+    return { ...slot, done: true, doneAt: Date.now() };
+  });
+
+  if (!changed) return;
+  await setCycleState({ ...state, [key]: updated, updatedAt: Date.now() });
 }
 
 function getCompanionLore(companionId) {
-  const personaje = getPersonaje(schedulerPersonajesCache, companionId);
+  const personaje = schedulerPersonajesCache?.[normalizeKey(companionId)] || null;
   return {
     nombre: personaje?.nombre || companionNames[companionId] || companionId,
     personalidad: personaje?.personalidad || personaje?.descripcion || personaje?.tono || "",
@@ -248,6 +198,23 @@ function getCompanionLore(companionId) {
     armadura: personaje?.armadura || personaje?.equipo?.armadura || personaje?.armamento?.armadura || "",
     clase: personaje?.clase || ""
   };
+}
+
+function stripCompanionPrefix(text, companionName) {
+  const raw = String(text || "").trim();
+  const re = new RegExp(`^${companionName}\\s*:\\s*`, "i");
+  return raw.replace(re, "").trim();
+}
+
+function compactLine(text, maxWords = 40) {
+  const words = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+
+  if (words.length <= maxWords) return words.join(" ");
+  return `${words.slice(0, maxWords).join(" ")}…`;
 }
 
 function getEncounterReactionStyle(encounter = {}) {
@@ -267,12 +234,6 @@ function getEncounterReactionStyle(encounter = {}) {
 async function companionReaction(companionId, context, mode = "encounter") {
   const lore = getCompanionLore(companionId);
   const nombre = lore.nombre;
-  const titulo = context?.titulo || "sin título";
-  const tipo = context?.tipo || "desconocido";
-  const categoria = context?.categoria || "desconocida";
-  const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
-  const peligro = context?.peligro ?? 0;
-  const estiloEncuentro = getEncounterReactionStyle(context);
 
   if (!nombre) return `*asiente en silencio*`;
 
@@ -293,13 +254,13 @@ ${lore.armadura || "No especificada"}
 
 Situación:
 Modo: ${mode}
-Título: ${titulo}
-Tipo: ${tipo}
-Categoría: ${categoria}
-Peligro: ${peligro}
-Estilo del encuentro: ${estiloEncuentro}
+Título: ${context?.titulo || "sin título"}
+Tipo: ${context?.tipo || "desconocido"}
+Categoría: ${context?.categoria || "desconocida"}
+Peligro: ${context?.peligro ?? 0}
+Estilo del encuentro: ${getEncounterReactionStyle(context)}
 Descripción:
-${descripcion}
+${context?.descripcion || context?.textoExito || context?.textoFracaso || ""}
 
 Instrucciones:
 - Responde con una sola línea corta.
@@ -327,6 +288,7 @@ Instrucciones:
     });
 
     if (!res.ok) return `${nombre}: *observa el camino de regreso en silencio*`;
+
     const data = await res.json();
     const raw = data?.choices?.[0]?.message?.content?.trim() || "*observa el camino de regreso en silencio*";
     const clean = stripCompanionPrefix(raw, nombre);
@@ -354,84 +316,95 @@ async function getMissionClosingReactions(owned, expedition) {
   return reactions;
 }
 
-async function ensureTablonSelection() {
-  const current = await db.getEventState("tablon").catch(() => null);
-  if (Array.isArray(current?.selection) && current.selection.length === 5) return current.selection;
-
-  const missions = await loadJson("misiones.json").catch(() => []);
-  const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
-
-  await db.setEventState("tablon", {
-    cycleId: Date.now(),
-    lastAt: Date.now(),
-    nextAt: Date.now() + TWELVE_HOURS,
-    selection
-  }).catch(() => {});
-
-  return selection;
+function getCyclePlan(cycleStartAt) {
+  return {
+    cycleStartAt,
+    cycleEndAt: cycleStartAt + TWELVE_HOURS,
+    tablonDone: false,
+    merchantSlots: [
+      { id: "merchant_1", at: cycleStartAt + randomBetween(1 * 60 * 60 * 1000, 4 * 60 * 60 * 1000), done: false },
+      { id: "merchant_2", at: cycleStartAt + randomBetween(6 * 60 * 60 * 1000, 10 * 60 * 60 * 1000), done: false }
+    ],
+    dialogueSlots: [
+      { id: "dialogue_1", at: cycleStartAt + randomBetween(2 * 60 * 60 * 1000, 5 * 60 * 60 * 1000), done: false },
+      { id: "dialogue_2", at: cycleStartAt + randomBetween(7 * 60 * 60 * 1000, 11 * 60 * 60 * 1000), done: false }
+    ],
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
 }
 
-async function rollCatalogSelection(key, items, limit = 12) {
-  const selection = [...items].sort(() => Math.random() - 0.5).slice(0, Math.min(limit, items.length));
-  await db.setEventState(key, { selection, lastAt: Date.now(), nextAt: Date.now() + TWELVE_HOURS, cycleId: Date.now() }).catch(() => {});
-  return selection;
-}
+async function ensureCatalogStates() {
+  const [tienda, armeria, mercader] = await Promise.all([
+    loadJson("tienda.json").catch(() => ({})),
+    loadJson("armeria.json").catch(() => ({})),
+    loadJson("mercader.json").catch(() => ({}))
+  ]);
 
-async function refreshTablonSelection(client, loreCache) {
-  const channel = await fetchChannel(client);
-  if (!channel) return;
+  const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
+  const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
+  const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
 
-  const personajes = await loadPersonajes(loreCache);
-  const announcerId = pick(companionIds);
-  const announcer = getPersonaje(personajes, announcerId);
-  const announcerName = announcer?.nombre || companionNames[announcerId] || announcerId;
-
-  const prompt = `
-Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.
-
-El personaje es ${announcerName}.
-Debe acercarse al tablón de anuncios, martillear un par de veces y clavar cinco nuevas expediciones.
-Luego se retira para continuar con sus tareas.
-Tono natural, de rol y con vida de campamento.
-No menciones que es una IA.
-`.trim();
-
-  let text = "";
-  try {
-    text = await generateAIText(prompt);
-  } catch (err) {
-    console.error("Error generando texto IA del tablón:", err);
+  const existingTienda = await db.getEventState("tienda").catch(() => null);
+  if (!existingTienda?.selection?.length) {
+    await db.setEventState("tienda", {
+      selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
   }
 
-  if (!text) {
-    text = `Amanece un nuevo día, los gallos cantan y ${announcerName} sale de su tienda, se acerca al tablón de anuncios, martillea unas cuantas de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
+  const existingArmeria = await db.getEventState("armeria").catch(() => null);
+  if (!existingArmeria?.selection?.length) {
+    await db.setEventState("armeria", {
+      selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
   }
 
-  const missions = await loadJson("misiones.json").catch(() => []);
-  const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
-
-  await db.setEventState("tablon", {
-    cycleId: Date.now(),
-    lastAt: Date.now(),
-    nextAt: Date.now() + TWELVE_HOURS,
-    selection
-  }).catch(() => {});
-
-  await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
+  const existingMercader = await db.getEventState("mercader").catch(() => null);
+  if (!existingMercader?.selection?.length) {
+    await db.setEventState("mercader", {
+      selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
+  }
 }
 
-async function refreshCatalogPricesAndSelections() {
+async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const tienda = await loadJson("tienda.json").catch(() => ({}));
   const armeria = await loadJson("armeria.json").catch(() => ({}));
   const mercader = await loadJson("mercader.json").catch(() => ({}));
 
-  const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : [];
-  const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : (Array.isArray(armeria?.equipo) ? armeria.equipo : []);
-  const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : [];
+  const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
+  const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
+  const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
 
-  await rollCatalogSelection("tienda", tiendaItems, 12);
-  await rollCatalogSelection("armeria", armeriaItems, 12);
-  await rollCatalogSelection("mercader", mercaderItems, 12);
+  await db.setEventState("tienda", {
+    selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+
+  await db.setEventState("armeria", {
+    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+
+  await db.setEventState("mercader", {
+    selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
 
   if (typeof db.rerollMarketPrices === "function") {
     await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
@@ -440,9 +413,53 @@ async function refreshCatalogPricesAndSelections() {
   }
 }
 
-async function openMerchant(client) {
+async function refreshTablonSelection(client, loreCache, cyclePlan) {
+  const channel = await fetchChannel(client);
+  if (!channel) return;
+
+  const personajes = await loadPersonajes(loreCache);
+  const announcerId = pick(companionIds);
+  const announcer = getPersonaje(personajes, announcerId);
+  const announcerName = announcer?.nombre || companionNames[announcerId] || announcerId;
+
+  let text = "";
+  try {
+    text = await ai(
+      `Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.\n\n` +
+      `El personaje es ${announcerName}.\n` +
+      `Debe acercarse al tablón de anuncios, martillear un par de veces y clavar cinco nuevas expediciones.\n` +
+      `Luego se retira para continuar con sus tareas.\n` +
+      `Tono natural, de rol y con vida de campamento.\n` +
+      `No menciones que es una IA.`
+    );
+  } catch (err) {
+    console.error("Error generando texto IA del tablón:", err);
+  }
+
+  if (!text) {
+    text = `Amanece un nuevo día y ${announcerName} se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
+  }
+
+  const missions = await loadJson("misiones.json").catch(() => []);
+  const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  await db.setEventState("tablon", {
+    cycleId: cyclePlan?.cycleStartAt || Date.now(),
+    lastAt: Date.now(),
+    nextAt: cyclePlan?.cycleEndAt || Date.now() + TWELVE_HOURS,
+    tablonDone: true,
+    selection
+  }).catch(() => {});
+
+  await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
+}
+
+async function openMerchant(client, slotId = null) {
   const existing = await db.getEventState("merchant").catch(() => null);
-  if (existing?.active) return;
+  if (existing?.active) {
+    if (slotId) await markSlotDone("merchant", slotId).catch(() => {});
+    return;
+  }
 
   const channel = await fetchChannel(client);
   if (!channel) return;
@@ -450,30 +467,34 @@ async function openMerchant(client) {
   const merchantName = pick(merchantNames);
   const destination = pick(merchantCities);
   const stockCatalog = await loadJson("mercader.json").catch(() => ({ items: [] }));
-  const catalogItems = Array.isArray(stockCatalog.items) ? stockCatalog.items : [];
+  const catalogItems = Array.isArray(stockCatalog.items) ? stockCatalog.items : Array.isArray(stockCatalog) ? stockCatalog : [];
   const catalogState = await db.getEventState("mercader").catch(() => null);
   const items = Array.isArray(catalogState?.selection) && catalogState.selection.length ? catalogState.selection : catalogItems;
 
-  const prompt = `
-Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+  let intro = "";
+  try {
+    intro = await ai(
+      `Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.\n\n` +
+      `Debe incluir:\n` +
+      `- Su nombre: ${merchantName}\n` +
+      `- Que pide permiso para instalarse junto a la tienda\n` +
+      `- Que dice que solo permanecerá 2 horas\n` +
+      `- Que después seguirá hacia ${destination}\n` +
+      `- Tono de rol medieval/Tierra Media\n` +
+      `- Natural, cálido y convincente\n` +
+      `No menciones que es una IA.`
+    );
+  } catch (err) {
+    console.error("Error generando llegada del mercader:", err);
+  }
 
-Debe incluir:
-- Su nombre: ${merchantName}
-- Que pide permiso para instalarse junto a la tienda
-- Que dice que solo permanecerá 2 horas
-- Que después seguirá hacia ${destination}
-- Tono de rol medieval/Tierra Media
-- Natural, cálido y convincente
-No menciones que es una IA.
-`.trim();
-
-  let intro = await generateAIText(prompt).catch(() => "");
   if (!intro) {
     intro = `${merchantName}: ¡Bienvenidos a mi negocio! Tengo mercancías que podrían interesarles, pero solo puedo quedarme dos horas. Después partiré hacia ${destination}.`;
   }
 
   const stockLines = items.slice(0, 6).map(item => `• ${item.nombre} — ${item.precioBase ?? item.precio ?? 0} pts`).join("\n");
-  await channel.send(`🚚 **Llega el mercader ambulante**\n\n${truncate(intro)}\n\n${stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""}`.trim());
+
+  await channel.send(`🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${truncate(intro)}\n\n${stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""}`.trim());
 
   await db.setEventState("merchant", {
     active: true,
@@ -485,30 +506,35 @@ No menciones que es una IA.
     stock: items.slice(0, 12)
   }).catch(() => {});
 
+  if (slotId) await markSlotDone("merchant", slotId).catch(() => {});
+
   if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
   merchantCloseTimer = setTimeout(async () => {
     const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return;
 
-    const closePrompt = `
-Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+    let farewell = "";
+    try {
+      farewell = await ai(
+        `Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.\n\n` +
+        `Debe incluir:\n` +
+        `- Su nombre: ${state.name}\n` +
+        `- Que agradece a Capitán Altéru por dejarle el espacio\n` +
+        `- Que debe recoger y partir\n` +
+        `- Que su próximo destino es ${state.destination}\n` +
+        `- Que se aleja del campamento con su animal de carga o sus bultos\n` +
+        `- Tono de rol medieval/Tierra Media\n` +
+        `No menciones que es una IA.`
+      );
+    } catch (err) {
+      console.error("Error generando despedida del mercader:", err);
+    }
 
-Debe incluir:
-- Su nombre: ${state.name}
-- Que agradece a Capitán Altéru por dejarle el espacio
-- Que debe recoger y partir
-- Que su próximo destino es ${state.destination}
-- Que se aleja del campamento con su animal de carga o sus bultos
-- Tono de rol medieval/Tierra Media
-No menciones que es una IA.
-`.trim();
-
-    let farewell = await generateAIText(closePrompt).catch(() => "");
     if (!farewell) {
       farewell = `${state.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`;
     }
 
-    await channel.send(`🧳 **El mercader se retira**\n\n${truncate(farewell)}`);
+    await channel.send(`🧳 **EL MERCADER SE RETIRA**\n\n${truncate(farewell)}`);
 
     await db.setEventState("merchant", {
       active: false,
@@ -521,7 +547,7 @@ No menciones que es una IA.
   }, MERCHANT_OPEN_MS);
 }
 
-async function companionDialogue(client, loreCache) {
+async function companionDialogue(client, loreCache, slotId = null) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
@@ -543,55 +569,102 @@ async function companionDialogue(client, loreCache) {
     "una historia sobre una expedición peligrosa"
   ];
 
-  const theme = Math.random() < 0.45 ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros" : pick(themes);
+  const theme = Math.random() < 0.45
+    ? "Thûlazar, el enemigo principal del campamento, y cómo desorienta a los viajeros"
+    : pick(themes);
 
-  const prompt = `
-Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.
+  let text = "";
+  try {
+    text = await ai(
+      `Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.\n\n` +
+      `Compañero A: ${personaA.nombre || companionNames[a]}\n` +
+      `Personalidad A: ${personaA.personalidad || personaA.descripcion || personaA.tono || "sin definir"}\n\n` +
+      `Compañero B: ${personaB.nombre || companionNames[b]}\n` +
+      `Personalidad B: ${personaB.personalidad || personaB.descripcion || personaB.tono || "sin definir"}\n\n` +
+      `Tema:\n${theme}\n\n` +
+      `Contexto de historia útil:\n${history}\n\n` +
+      `Reglas:\n` +
+      `- Entre 220 y 320 palabras.\n` +
+      `- Debe parecer una escena de rol natural.\n` +
+      `- Cada intervención debe llevar el nombre del personaje al inicio.\n` +
+      `- Uno habla y el otro responde o pregunta.\n` +
+      `- Si aparece Altéru, puede contar una hazaña o hablar de Thûlazar.\n` +
+      `- Español.\n` +
+      `- No menciones que es una IA.`
+    );
+  } catch (err) {
+    console.error("Error generando diálogo entre compañeros:", err);
+  }
 
-Compañero A: ${personaA.nombre || companionNames[a]}
-Personalidad A: ${personaA.personalidad || personaA.descripcion || personaA.tono || "sin definir"}
-
-Compañero B: ${personaB.nombre || companionNames[b]}
-Personalidad B: ${personaB.personalidad || personaB.descripcion || personaB.tono || "sin definir"}
-
-Tema:
-${theme}
-
-Contexto de historia útil:
-${history}
-
-Reglas:
-- Entre 220 y 320 palabras.
-- Debe parecer una escena de rol natural.
-- Cada intervención debe llevar el nombre del personaje al inicio.
-- Uno habla y el otro responde o pregunta.
-- Si aparece Altéru, puede contar una hazaña o hablar de Thûlazar.
-- Español.
-- No menciones que es una IA.
-`.trim();
-
-  let text = await generateAIText(prompt).catch(() => "");
   if (!text) {
     text = `💬 ${personaA.nombre || companionNames[a]}: Thûlazar sigue dejando su rastro en los caminos; lo noto en el viento.\n💬 ${personaB.nombre || companionNames[b]}: Entonces habrá que vigilar mejor. ¿Dónde lo viste esta vez?`;
   }
 
-  await channel.send(`💬 **Conversación entre compañeros**\n\n${truncate(text, 1900)}`);
+  await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
+
+  if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
-async function openCycleEvents(cycleStartMs, client, loreCache) {
-  clearCycleTimers();
-  await refreshTablonSelection(client, loreCache).catch(console.error);
-  await refreshCatalogPricesAndSelections().catch(console.error);
+function scheduleSlotExecution(group, slot, client, loreCache) {
+  const run = async () => {
+    try {
+      if (group === "merchant") await openMerchant(client, slot.id);
+      else await companionDialogue(client, loreCache, slot.id);
+      await markSlotDone(group, slot.id);
+    } catch (err) {
+      console.error(`Error ejecutando slot ${group}/${slot.id}:`, err);
+    }
+  };
 
-  scheduleCycleRandomEvents(cycleStartMs, [
-    { minOffsetMs: 60 * 60 * 1000, maxOffsetMs: 4 * 60 * 60 * 1000, task: () => openMerchant(client) },
-    { minOffsetMs: 6 * 60 * 60 * 1000, maxOffsetMs: 10 * 60 * 60 * 1000, task: () => openMerchant(client) }
-  ]);
+  const delay = slot.at - Date.now();
+  if (delay <= 0) {
+    setTimeout(run, 0);
+    return;
+  }
 
-  scheduleCycleRandomEvents(cycleStartMs, [
-    { minOffsetMs: 2 * 60 * 60 * 1000, maxOffsetMs: 5 * 60 * 60 * 1000, task: () => companionDialogue(client, loreCache) },
-    { minOffsetMs: 7 * 60 * 60 * 1000, maxOffsetMs: 11 * 60 * 60 * 1000, task: () => companionDialogue(client, loreCache) }
-  ]);
+  const timer = setTimeout(run, delay);
+  cycleEventTimers.push(timer);
+}
+
+function scheduleCycleSlots(client, loreCache, cycleState) {
+  clearTimers(cycleEventTimers);
+
+  for (const slot of cycleState?.merchantSlots || []) {
+    if (!slot.done) scheduleSlotExecution("merchant", slot, client, loreCache);
+  }
+
+  for (const slot of cycleState?.dialogueSlots || []) {
+    if (!slot.done) scheduleSlotExecution("dialogue", slot, client, loreCache);
+  }
+}
+
+async function createNewCycle(client, loreCache, cycleStartAt, announceTablon = true) {
+  const cycleState = getCyclePlan(cycleStartAt);
+  await setCycleState(cycleState);
+  await refreshCatalogPricesAndSelections(cycleStartAt).catch(console.error);
+  if (announceTablon) await refreshTablonSelection(client, loreCache, cycleState).catch(console.error);
+  scheduleCycleSlots(client, loreCache, cycleState);
+  return cycleState;
+}
+
+async function rehydrateOrCreateCurrentCycle(client, loreCache) {
+  const bounds = getCycleBounds();
+  const existing = await getCycleState();
+
+  if (
+    existing &&
+    existing.cycleStartAt === bounds.cycleStartAt &&
+    existing.cycleEndAt === bounds.cycleEndAt
+  ) {
+    await ensureCatalogStates().catch(console.error);
+    if (!existing.tablonDone) {
+      await refreshTablonSelection(client, loreCache, existing).catch(console.error);
+    }
+    scheduleCycleSlots(client, loreCache, existing);
+    return existing;
+  }
+
+  return await createNewCycle(client, loreCache, bounds.cycleStartAt, true);
 }
 
 async function resumeMerchantIfNeeded(client) {
@@ -599,7 +672,12 @@ async function resumeMerchantIfNeeded(client) {
   if (!state?.active) return;
 
   const remaining = Math.max(0, state.closesAt - Date.now());
-  if (remaining <= 0) return;
+  if (remaining <= 0) {
+    await db.clearEventState("merchant").catch(async () => {
+      await db.setEventState("merchant", { active: false, closedAt: Date.now() }).catch(() => {});
+    });
+    return;
+  }
 
   const channel = await fetchChannel(client);
   if (!channel) return;
@@ -609,7 +687,7 @@ async function resumeMerchantIfNeeded(client) {
     const latest = await db.getEventState("merchant").catch(() => null);
     if (!latest?.active) return;
 
-    await channel.send(`🧳 **El mercader se retira**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
+    await channel.send(`🧳 **EL MERCADER SE RETIRA**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
     await db.setEventState("merchant", {
       active: false,
       name: latest.name,
@@ -621,47 +699,31 @@ async function resumeMerchantIfNeeded(client) {
   }, remaining);
 }
 
-function scheduleCaracasCycle(client, loreCache) {
-  let stopped = false;
+function scheduleNextBoundary(client, loreCache) {
+  if (boundaryTimer) clearTimeout(boundaryTimer);
 
-  const scheduleNext = () => {
-    if (stopped) return;
-    const nextMs = getNextCaracasBoundaryMs();
-    const delay = Math.max(0, nextMs - Date.now());
-
-    boundaryTimer = setTimeout(async () => {
-      if (stopped) return;
-      try {
-        await openCycleEvents(Date.now(), client, loreCache);
-      } catch (err) {
-        console.error("Scheduler boundary error:", err);
-      }
-      scheduleNext();
-    }, delay);
-  };
-
-  scheduleNext();
-
-  return () => {
-    stopped = true;
-    if (boundaryTimer) clearTimeout(boundaryTimer);
-    if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
-    clearCycleTimers();
-  };
+  const nextMs = getNextBoundaryMs();
+  boundaryTimer = setTimeout(async () => {
+    try {
+      await createNewCycle(client, loreCache, nextMs, true);
+    } catch (err) {
+      console.error("Scheduler boundary error:", err);
+    }
+    scheduleNextBoundary(client, loreCache);
+  }, Math.max(0, nextMs - Date.now()));
 }
 
 export async function startSchedulers(client, loreCache) {
   await hydrateSchedulerPersonajesCache(loreCache).catch(() => {});
-  await ensureTablonSelection().catch(console.error);
-  await refreshCatalogPricesAndSelections().catch(console.error);
+  await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
-  scheduleCaracasCycle(client, loreCache);
+  await rehydrateOrCreateCurrentCycle(client, loreCache).catch(console.error);
+  scheduleNextBoundary(client, loreCache);
 }
 
 export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
-  if (typeof db.rerollMarketPrices === "function") {
-    await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
-    await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
-    await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
-  }
+  if (typeof db.rerollMarketPrices !== "function") return;
+  await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
+  await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
+  await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
 }
