@@ -384,25 +384,39 @@ async function refreshTablonSelection(client, loreCache) {
   const personajes = await loadPersonajes(loreCache);
   const announcerId = pick(companionIds);
   const announcer = getPersonaje(personajes, announcerId);
+  const announcerName = announcer?.nombre || companionNames[announcerId] || announcerId;
 
   const prompt = `
 Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.
 
-El personaje es ${announcer.nombre || companionNames[announcerId]}.
+El personaje es ${announcerName}.
 Debe acercarse al tablón de anuncios, martillear un par de veces y clavar cinco nuevas expediciones.
 Luego se retira para continuar con sus tareas.
 Tono natural, de rol y con vida de campamento.
 No menciones que es una IA.
 `.trim();
 
-  let text = await generateAIText(prompt).catch(() => "");
+  let text = "";
+  try {
+    text = await generateAIText(prompt);
+  } catch (err) {
+    console.error("Error generando texto IA del tablón:", err);
+  }
+
   if (!text) {
-    text = `${announcer.nombre || companionNames[announcerId]} se acerca al tablón de anuncios, martillea un par de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
+    text = `Amanece un nuevo día, los gallos cantan y ${announcerName} sale de su tienda, se acerca al tablón de anuncios, martillea unas cuantas de veces y clava cinco nuevas expediciones antes de retirarse a continuar con sus tareas.`;
   }
 
   const missions = await loadJson("misiones.json").catch(() => []);
   const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
-  await db.setEventState("tablon", { cycleId: Date.now(), lastAt: Date.now(), nextAt: Date.now() + TWELVE_HOURS, selection }).catch(() => {});
+
+  await db.setEventState("tablon", {
+    cycleId: Date.now(),
+    lastAt: Date.now(),
+    nextAt: Date.now() + TWELVE_HOURS,
+    selection
+  }).catch(() => {});
+
   await channel.send(`🌅 **Actualización del tablón**\n\n${truncate(text)}`);
 }
 
