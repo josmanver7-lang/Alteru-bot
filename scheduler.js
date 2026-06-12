@@ -120,44 +120,6 @@ async function ai(prompt) {
   return await generateAITextStrict(prompt);
 }
 
-// scheduler.js — helper para IA sin texto manual
-async function generateAITextStrict(prompt) {
-  if (!OPENROUTER_API_KEY) {
-    throw new Error("OPENROUTER_API_KEY no está configurada");
-  }
-
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        {
-          role: "system",
-          content: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones."
-        },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.9,
-      max_tokens: 240
-    })
-  });
-
-  if (!res.ok) {
-    const details = await res.text().catch(() => "");
-    throw new Error(`OpenRouter ${res.status}: ${details}`);
-  }
-
-  const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error("OpenRouter devolvió texto vacío");
-  return text;
-}
-
-// scheduler.js — helper para IA sin texto manual
 async function generateAITextStrict(prompt) {
   if (!OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY no está configurada");
@@ -455,7 +417,6 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   }
 }
 
-// scheduler.js — tablón sin fallback manual
 async function refreshTablonSelection(client, loreCache) {
   const channel = await fetchChannel(client);
   if (!channel) return;
@@ -496,7 +457,6 @@ No menciones que es una IA.
   await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
 }
 
-// scheduler.js — mercader sin fallback manual
 async function openMerchant(client) {
   const existing = await db.getEventState("merchant").catch(() => null);
   if (existing?.active) return;
@@ -643,7 +603,6 @@ async function companionDialogue(client, loreCache, slotId = null) {
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
-// scheduler.js — un solo mercader y un solo diálogo por ciclo
 async function openCycleEvents(cycleStartMs, client, loreCache) {
   clearCycleTimers();
   await refreshTablonSelection(client, loreCache).catch(console.error);
@@ -717,7 +676,7 @@ export async function startSchedulers(client, loreCache) {
   await hydrateSchedulerPersonajesCache(loreCache).catch(() => {});
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
-  
+
   const bounds = getCycleBounds();
   await openCycleEvents(bounds.cycleStartAt, client, loreCache).catch(console.error);
 
