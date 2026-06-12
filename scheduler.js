@@ -553,13 +553,13 @@ async function companionDialogue(client, loreCache, slotId = null) {
   const history = String(loreCache?.historia_completa || "").slice(0, 5000);
 
   const a = pick(companionIds);
-  let b = pick(companionIds);
-  while (b === a) b = pick(companionIds);
+let b = pick(companionIds);
+while (b === a) b = pick(companionIds);
 
-  const personaA = getPersonaje(personajes, a);
-  const personaB = getPersonaje(personajes, b);
+const personaA = getPersonaje(personajes, a);
+const personaB = getPersonaje(personajes, b);
 
-  const themes = [
+const themes = [
   "una vieja batalla del pasado",
   "un entrenamiento entre compañeros",
   "un recuerdo del campamento al amanecer",
@@ -568,12 +568,11 @@ async function companionDialogue(client, loreCache, slotId = null) {
 
 const theme = pick(themes);
 
-...
-max_tokens: 200
-
-  let text = "";
-  try {
-    text = await ai(
+let text = "";
+try {
+  text = await ai({
+    max_tokens: 200,
+    prompt:
       `Escribe un diálogo breve en español entre dos compañeros del Campamento de Altéru.\n\n` +
       `Compañero A: ${personaA.nombre || companionNames[a]}\n` +
       `Personalidad A: ${personaA.personalidad || personaA.descripcion || personaA.tono || "sin definir"}\n\n` +
@@ -589,18 +588,18 @@ max_tokens: 200
       `- Si aparece Altéru, puede contar una hazaña o hablar de Thûlazar.\n` +
       `- Español.\n` +
       `- No menciones que es una IA.`
-    );
-  } catch (err) {
-    console.error("Error generando diálogo entre compañeros:", err);
-  }
+  });
+} catch (err) {
+  console.error("Error generando diálogo entre compañeros:", err);
+}
 
-  if (!text) {
+if (!text) {
   text = `💬 ${personaA.nombre || companionNames[a]}: ...`;
-  }
-  
-  await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
+}
 
-  if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
+await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
+
+if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
 async function openCycleEvents(cycleStartMs, client, loreCache) {
