@@ -1117,6 +1117,10 @@ function consumeCatalogSlot(profile, catalogName, item, cycleId) {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
+  const content = message.content.trim();
+  const args = content.split(/\s+/);
+  const command = args[0].toLowerCase();
+  
 if (command === "!tienda") {
   const data = tiendaCache || await loadCatalog("tienda.json");
   const catalogItems = getCatalogItems(data);
