@@ -266,18 +266,28 @@ function formatInventoryLine(item) {
 async function getCatalogPool() {
   const pool = [];
 
-  if (Array.isArray(tiendaCache?.items)) {
-    for (const item of tiendaCache.items) pool.push({ ...item, catalogName: "tienda" });
+  const tienda = tiendaCache || await loadCatalog("tienda.json").catch(() => null);
+  const armeria = armeriaCache || await loadCatalog("armeria.json").catch(() => null);
+  const merchantState = await db.getEventState("merchant").catch(() => null);
+
+  if (Array.isArray(tienda?.items)) {
+    for (const item of tienda.items) pool.push({ ...item, catalogName: "tienda" });
   }
 
-  if (Array.isArray(armeriaCache?.items) || Array.isArray(armeriaCache?.equipo)) {
-    const arr = armeriaCache.items || armeriaCache.equipo;
-    for (const item of arr) pool.push({ ...item, catalogName: "armeria" });
+  const armeriaItems = Array.isArray(armeria?.items)
+    ? armeria.items
+    : Array.isArray(armeria?.equipo)
+      ? armeria.equipo
+      : [];
+
+  for (const item of armeriaItems) {
+    pool.push({ ...item, catalogName: "armeria" });
   }
 
-  const merchantState = await db.getEventState("merchant");
   if (merchantState?.active && Array.isArray(merchantState.stock)) {
-    for (const item of merchantState.stock) pool.push({ ...item, catalogName: "mercader" });
+    for (const item of merchantState.stock) {
+      pool.push({ ...item, catalogName: "mercader" });
+    }
   }
 
   return pool;
@@ -292,7 +302,7 @@ async function findCatalogItemByQuery(query) {
     normalizeKey(item.nombre) === q ||
     normalizeKey(item.nombre).includes(q)
   ) || null;
-}
+    }
 
 async function getCurrentPriceForItem(item) {
   const catalogName = item.catalogName || "tienda";
