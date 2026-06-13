@@ -1,0 +1,1 @@
+node -e "const fs=require('fs'); JSON.parse(fs.readFileSync('armeria.json','utf8')); console.log('JSON OK')"
