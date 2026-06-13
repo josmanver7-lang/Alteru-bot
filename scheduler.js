@@ -115,16 +115,7 @@ async function fetchChannel(client) {
   return channel?.isTextBased() ? channel : null;
 }
 
-async function ai(prompt) {
-  if (!OPENROUTER_API_KEY) return "";
-  try {
-    return await generateAITextStrict(prompt);
-  } catch {
-    return "";
-  }
-}
-
-async function generateAITextStrict(prompt) {
+async function generateAITextStrict(prompt, maxTokens = 24) {
   if (!OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY no está configurada");
   }
@@ -145,7 +136,7 @@ async function generateAITextStrict(prompt) {
         { role: "user", content: prompt }
       ],
       temperature: 0.9,
-      max_tokens: 24
+      max_tokens: maxTokens
     })
   });
 
@@ -158,6 +149,15 @@ async function generateAITextStrict(prompt) {
   const text = data?.choices?.[0]?.message?.content?.trim();
   if (!text) throw new Error("OpenRouter devolvió texto vacío");
   return text;
+}
+
+async function ai(prompt, maxTokens = 24) {
+  if (!OPENROUTER_API_KEY) return "";
+  try {
+    return await generateAITextStrict(prompt, maxTokens);
+  } catch {
+    return "";
+  }
 }
 
 function shiftCaracas(ms = Date.now()) {
@@ -263,6 +263,12 @@ async function companionReaction(companionId, context, mode = "encounter") {
 
   if (!nombre) return `*asiente en silencio*`;
 
+  const titulo = context?.titulo || "sin título";
+  const tipo = context?.tipo || "desconocido";
+  const categoria = context?.categoria || "desconocida";
+  const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
+  const peligro = context?.peligro ?? 0;
+
   const prompt = `
 Eres ${nombre}.
 
@@ -280,13 +286,12 @@ ${lore.armadura || "No especificada"}
 
 Situación:
 Modo: ${mode}
-Título: ${context?.titulo || "sin título"}
-Tipo: ${context?.tipo || "desconocido"}
-Categoría: ${context?.categoria || "desconocida"}
-Peligro: ${context?.peligro ?? 0}
-Estilo del encuentro: ${getEncounterReactionStyle(context)}
+Título: ${titulo}
+Tipo: ${tipo}
+Categoría: ${categoria}
+Peligro: ${peligro}
 Descripción:
-${context?.descripcion || context?.textoExito || context?.textoFracaso || ""}
+${descripcion}
 
 Instrucciones:
 - Responde con una sola línea corta.
@@ -299,29 +304,11 @@ Instrucciones:
 `.trim();
 
   try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.85,
-        max_tokens: 24
-      })
-    });
-
-    if (!res.ok) return `${nombre}: *observa el camino de regreso en silencio*`;
-
-    const data = await res.json();
-    const raw = data?.choices?.[0]?.message?.content?.trim() || "*observa el camino de regreso en silencio*";
+    const raw = await generateAITextStrict(prompt, 24);
     const clean = stripCompanionPrefix(raw, nombre);
-
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch {
-    return `${nombre}: *observa el camino de regreso en silencio*`;
+    return `${nombre}: *observa en silencio*`;
   }
 }
 
@@ -683,9 +670,12 @@ function shuffleArray(arr) {
   return copy;
 }
 
-async function refreshTablonSelection(client, loreCache) {
+async function refreshTablonSelection(client, loreCache, cycleStartMs) {
   const channel = await fetchChannel(client);
   if (!channel) return;
+
+  const current = await db.getEventState("tablon").catch(() => null);
+  if (current?.cycleId === cycleStartMs && current?.postedAt) return;
 
   const personajes = await loadPersonajes(loreCache);
   const announcerId = pick(companionIds);
@@ -693,18 +683,19 @@ async function refreshTablonSelection(client, loreCache) {
   const announcerName = announcer?.nombre || companionNames[announcerId] || announcerId;
 
   const prompt = `
-Escribe un mensaje de ambientación en español, de entre 90 y 140 palabras.
+Escribe un mensaje de ambientación en español, de unas 60 a 90 palabras.
 
 El personaje es ${announcerName}.
 Debe acercarse al tablón de anuncios, martillear algunas veces y clavar cinco nuevas expediciones.
 Luego se retira para continuar con sus tareas.
 Tono natural, de rol y con vida de campamento.
+No pongas título.
 No menciones que es una IA.
 `.trim();
 
   let text;
   try {
-    text = await generateAITextStrict(prompt);
+    text = await generateAITextStrict(prompt, 24);
   } catch (err) {
     console.error("Error generando texto IA del tablón:", err);
     text = `${announcerName} cruza el campamento, revisa el tablón y clava cinco expediciones nuevas antes de seguir con sus tareas.`;
@@ -714,7 +705,8 @@ No menciones que es una IA.
   const selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
 
   await db.setEventState("tablon", {
-    cycleId: Date.now(),
+    cycleId: cycleStartMs,
+    postedAt: Date.now(),
     lastAt: Date.now(),
     nextAt: Date.now() + TWELVE_HOURS,
     selection
@@ -766,9 +758,26 @@ async function ensureCatalogStates() {
 }
 
 async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
-  const tienda = await loadJson("tienda.json").catch(() => ({}));
-  const armeria = await loadJson("armeria.json").catch(() => ({}));
-  const mercader = await loadJson("mercader.json").catch(() => ({}));
+  const currentTienda = await db.getEventState("tienda").catch(() => null);
+  const currentArmeria = await db.getEventState("armeria").catch(() => null);
+  const currentMercader = await db.getEventState("mercader").catch(() => null);
+
+  if (
+    currentTienda?.cycleId === cycleStartAt &&
+    currentArmeria?.cycleId === cycleStartAt &&
+    currentMercader?.cycleId === cycleStartAt &&
+    Array.isArray(currentTienda?.selection) &&
+    Array.isArray(currentArmeria?.selection) &&
+    Array.isArray(currentMercader?.selection)
+  ) {
+    return;
+  }
+
+  const [tienda, armeria, mercader] = await Promise.all([
+    loadJson("tienda.json").catch(() => ({})),
+    loadJson("armeria.json").catch(() => ({})),
+    loadJson("mercader.json").catch(() => ({}))
+  ]);
 
   const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
   const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
@@ -817,7 +826,7 @@ async function openMerchant(client) {
   const items = Array.isArray(catalogState?.selection) && catalogState.selection.length ? catalogState.selection : catalogItems;
 
   const prompt = `
-Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de unas 60 a 90 palabras.
 
 Debe incluir:
 - Su nombre: ${merchantName}
@@ -831,7 +840,7 @@ No menciones que es una IA.
 
   let intro;
   try {
-    intro = await generateAITextStrict(prompt);
+    intro = await generateAITextStrict(prompt, 24);
   } catch (err) {
     console.error("Error generando llegada del mercader:", err);
     intro = `${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}.`;
@@ -857,7 +866,7 @@ No menciones que es una IA.
     if (!state?.active) return;
 
     const closePrompt = `
-Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 90 y 150 palabras.
+Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de unas 60 a 90 palabras.
 
 Debe incluir:
 - Su nombre: ${state.name}
@@ -871,7 +880,7 @@ No menciones que es una IA.
 
     let farewell;
     try {
-      farewell = await generateAITextStrict(closePrompt);
+      farewell = await generateAITextStrict(closePrompt, 24);
     } catch (err) {
       console.error("Error generando despedida del mercader:", err);
       farewell = `${state.name} agradece a Capitán Altéru por dejarle el espacio, recoge sus bultos y parte hacia ${state.destination}.`;
@@ -929,42 +938,43 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `Tema:\n${theme.text}\n\n` +
       `Contexto de historia útil:\n${history}\n\n` +
       `Reglas:\n` +
-      `- Entre 220 y 320 palabras.\n` +
+      `- Entre 80 y 140 palabras.\n` +
       `- Debe parecer una escena de rol natural.\n` +
       `- Cada intervención debe llevar el nombre del personaje al inicio.\n` +
       `- Uno habla y el otro responde o pregunta.\n` +
       `- Si el tema es entrenamiento, debe sentirse como un combate amistoso con espadas de madera.\n` +
       `- Español.\n` +
-      `- No menciones que es una IA.`
+      `- No pongas título.\n` +
+      `- No menciones que es una IA.`,
+      24
     );
   } catch (err) {
     console.error("Error generando diálogo entre compañeros:", err);
   }
 
   if (!text) {
-    const winnerName = Math.random() < 0.5 ? nombreA : nombreB;
-
     text =
-      `💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n` +
       `${nombreA}: Vamos. Hoy quiero ver si sigues tan rápido como ayer.\n` +
       `${nombreB}: En el patio central, con espadas de madera, no pienso dejarme ganar tan fácil.\n` +
       `${nombreA}: Entonces mueve esos pies. No voy a darte tregua.\n` +
-      `${nombreB}: Mejor. Así el entrenamiento vale la pena.\n` +
-      `${nombreA}: Cuidado con ese golpe.\n` +
-      `${nombreB}: Demasiado tarde. Ese choque me abrió la guardia.\n` +
-      `${nombreA}: Bien. Aun así, no pienso bajar el ritmo.\n` +
-      `${nombreB}: Y con ese último cruce, el vencedor del entrenamiento fue **${winnerName}**.\n`;
+      `${nombreB}: Mejor. Así el entrenamiento vale la pena.`;
+  } else {
+    text = String(text)
+      .replace(/^💬\s*/i, "")
+      .replace(/^🗣️\s*/i, "")
+      .replace(/^##.*\n/i, "")
+      .trim();
   }
 
-  await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1900)}`);
+  await channel.send(`💬 **CONVERSACIÓN ENTRE COMPAÑEROS**\n\n${truncate(text, 1500)}`);
 
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
 async function openCycleEvents(cycleStartMs, client, loreCache) {
   clearCycleTimers();
-  await refreshTablonSelection(client, loreCache).catch(console.error);
-  await refreshCatalogPricesAndSelections().catch(console.error);
+  await refreshTablonSelection(client, loreCache, cycleStartMs).catch(console.error);
+  await refreshCatalogPricesAndSelections(cycleStartMs).catch(console.error);
 
   scheduleCycleRandomEvents(cycleStartMs, [
     {
