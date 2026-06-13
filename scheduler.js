@@ -820,13 +820,21 @@ async function openMerchant(client) {
 
   const merchantName = pick(merchantNames);
   const destination = pick(merchantCities);
+
   const stockCatalog = await loadJson("mercader.json").catch(() => ({ items: [] }));
-  const catalogItems = Array.isArray(stockCatalog.items) ? stockCatalog.items : Array.isArray(stockCatalog) ? stockCatalog : [];
+  const catalogItems = Array.isArray(stockCatalog.items)
+    ? stockCatalog.items
+    : Array.isArray(stockCatalog)
+      ? stockCatalog
+      : [];
+
   const catalogState = await db.getEventState("mercader").catch(() => null);
-  const items = Array.isArray(catalogState?.selection) && catalogState.selection.length ? catalogState.selection : catalogItems;
+  const items = Array.isArray(catalogState?.selection) && catalogState.selection.length
+    ? catalogState.selection
+    : catalogItems;
 
   const prompt = `
-Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de unas 60 a 90 palabras.
+Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 60 y 90 palabras.
 
 Debe incluir:
 - Su nombre: ${merchantName}
@@ -835,6 +843,7 @@ Debe incluir:
 - Que después seguirá hacia ${destination}
 - Tono de rol medieval/Tierra Media
 - Natural, cálido y convincente
+- Termina con una invitación breve: "Te invito a que veas mi mercancía, usa !mercader."
 No menciones que es una IA.
 `.trim();
 
@@ -843,12 +852,13 @@ No menciones que es una IA.
     intro = await generateAITextStrict(prompt, 24);
   } catch (err) {
     console.error("Error generando llegada del mercader:", err);
-    intro = `${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}.`;
+    intro = `${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}. Te invito a que veas mi mercancía, usa !mercader.`;
   }
 
-  const stockLines = items.slice(0, 6).map(item => `• ${item.nombre} — ${item.precioBase ?? item.precio ?? 0} pts`).join("\n");
-
-  await channel.send(`🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${truncate(intro)}\n\n${stockLines ? `**Mercancía destacada:**\n${stockLines}` : ""}`.trim());
+  await channel.send(
+    `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n` +
+    `${truncate(String(intro).replace(/^🚚\s*/i, '').trim())}`
+  );
 
   await db.setEventState("merchant", {
     active: true,
@@ -859,6 +869,7 @@ No menciones que es una IA.
     nextAt: Date.now() + TWELVE_HOURS,
     stock: items.slice(0, 12)
   }).catch(() => {});
+}
 
   if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
   merchantCloseTimer = setTimeout(async () => {
