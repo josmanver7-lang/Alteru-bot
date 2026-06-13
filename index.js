@@ -1649,7 +1649,7 @@ if (command === "!mercader") {
 
     texto += "Más adelante podrás usar `!comprar <id>`.";
     return message.reply(texto.trim());
-  }
+    
 
   if (command === "!comprar") {
     const query = args.slice(1).join(" ").trim();
