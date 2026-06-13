@@ -812,7 +812,6 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
 }
 
 async function openMerchant(client) {
-  async function openMerchant(client) {
   const existing = await db.getEventState("merchant").catch(() => null);
   if (existing?.active) return;
 
