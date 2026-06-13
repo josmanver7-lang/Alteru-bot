@@ -1,4 +1,4 @@
-import * as db from "./database.js";
+yimport * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile } from 'node:fs/promises';
@@ -1548,7 +1548,7 @@ function buildTourYesText() {
 
 🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil, quien me ha acompañado en muchas aventuras. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Mira tu **!equipo** y asegúrate de estar bien pertrechado. Cuando quieras comprar cualquier artículo, usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
 
-🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerte manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros.
+🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerte manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros, pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará. 
 
 🎖️ Altéru: Si encuentras o escuchas algo sobre un nigromante llamado **Thûlazar**, házmelo saber. Es nuestro mayor enemigo. ¡Espero oír grandes hazañas de ti!
 
