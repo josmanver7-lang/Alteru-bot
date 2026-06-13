@@ -270,15 +270,23 @@ async function getCatalogPool() {
   const armeria = armeriaCache || await loadCatalog("armeria.json").catch(() => null);
   const merchantState = await db.getEventState("merchant").catch(() => null);
 
-  if (Array.isArray(tienda?.items)) {
-    for (const item of tienda.items) pool.push({ ...item, catalogName: "tienda" });
-  }
-
-  const armeriaItems = Array.isArray(armeria?.items)
-    ? armeria.items
-    : Array.isArray(armeria?.equipo)
-      ? armeria.equipo
+  const tiendaItems = Array.isArray(tienda)
+    ? tienda
+    : Array.isArray(tienda?.items)
+      ? tienda.items
       : [];
+
+  const armeriaItems = Array.isArray(armeria)
+    ? armeria
+    : Array.isArray(armeria?.items)
+      ? armeria.items
+      : Array.isArray(armeria?.equipo)
+        ? armeria.equipo
+        : [];
+
+  for (const item of tiendaItems) {
+    pool.push({ ...item, catalogName: "tienda" });
+  }
 
   for (const item of armeriaItems) {
     pool.push({ ...item, catalogName: "armeria" });
@@ -297,12 +305,12 @@ async function findCatalogItemByQuery(query) {
   const q = normalizeKey(query);
   const pool = await getCatalogPool();
 
-  return pool.find(item =>
-    normalizeKey(item.id) === q ||
-    normalizeKey(item.nombre) === q ||
-    normalizeKey(item.nombre).includes(q)
-  ) || null;
-    }
+  return pool.find(item => {
+    const id = normalizeKey(item.id);
+    const nombre = normalizeKey(item.nombre);
+    return id === q || nombre === q || nombre.includes(q);
+  }) || null;
+}
 
 async function getCurrentPriceForItem(item) {
   const catalogName = item.catalogName || "tienda";
