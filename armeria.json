@@ -3,6 +3,7 @@
       "id": "daga_hierro_romo",
       "nombre": "Daga de Hierro Romo",
       "slot": "arma",
+      "hand": 1
       "raza": "general",
       "rareza": "comun",
       "precioBase": 85,
