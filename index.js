@@ -27,6 +27,12 @@ const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
 const EXPEDITION_LIMIT = 2;
 const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
 
+const REWARD_MULTIPLIER = 0.5;
+
+function halfReward(value) {
+  return Math.floor(Number(value || 0) * REWARD_MULTIPLIER);
+}
+
 // Mapas de control en memoria activa
 let personajesCache = {};
 let loreCache = null;
@@ -519,7 +525,7 @@ function getCompanionBonus(profile) {
 
 function getAffinityGain() {
   const roll = Math.random();
-  return roll < 0.34 ? 0 : roll < 0.67 ? 1 : 2;
+  return roll < 0.5 ? 0 : 1;
 }
 
 function getAffinityRankText(companionId, rank) {
@@ -1752,11 +1758,11 @@ client.on("messageCreate", async (message) => {
       triviaGames.delete(message.author.id);
 
       const points =
-        game.difficulty === "facil" ? 10 :
-        game.difficulty === "normal" ? 20 :
-        game.difficulty === "dificil" ? 40 :
-        game.difficulty === "legendario" ? 80 :
-        20;
+        game.difficulty === "facil" ? 5 :
+        game.difficulty === "normal" ? 10 :
+        game.difficulty === "dificil" ? 20 :
+        game.difficulty === "legendario" ? 40 :
+        10;
 
       await db.addCorrectAnswer(message.author.id, points);
       return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
@@ -2300,7 +2306,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     await db.spendPoints(message.author.id, companion.coste);
     await db.hireCompanion(message.author.id, id);
-    await db.addAffinity(message.author.id, id, 5);
+    await db.addAffinity(message.author.id, id, 2);
 
     const scene = {
       titulo: `Contratación de ${companion.nombre}`,
@@ -2546,8 +2552,8 @@ Usa !desafiar para comenzar el viaje.`
           : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
         const beforeRank = obtenerRango(beforeProfile.points || 0);
   
-        const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
-        const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+        const xpTotal = expedition.xpEarned + halfReward(expedition.mission.xp || 0);
+        const puntosTotal = expedition.pointsEarned + halfReward(expedition.mission.puntos || 0);
   
         await db.addXP(message.author.id, xpTotal);
         await db.addPoints(message.author.id, puntosTotal);
@@ -2693,8 +2699,8 @@ Usa !desafiar para comenzar el viaje.`
     const success = Math.random() < Math.min(baseSuccess, 0.95);
   
     if (success) {
-      const xpGanada = activeEncounter.xp || 10;
-      const puntosGanados = activeEncounter.puntos || 5;
+      const xpGanada = halfReward(activeEncounter.xp || 10);
+      const puntosGanados = halfReward(activeEncounter.puntos || 5);
   
       expedition.xpEarned += xpGanada;
       expedition.pointsEarned += puntosGanados;
@@ -2743,8 +2749,8 @@ Usa !desafiar para comenzar el viaje.`
         : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
       const beforeRank = obtenerRango(beforeProfile.points || 0);
   
-      const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
-      const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+      const xpTotal = expedition.xpEarned + halfReward(expedition.mission.xp || 0);
+      const puntosTotal = expedition.pointsEarned + halfReward(expedition.mission.puntos || 0);
   
       await db.addXP(message.author.id, xpTotal);
       await db.addPoints(message.author.id, puntosTotal);
