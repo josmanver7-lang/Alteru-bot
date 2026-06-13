@@ -812,6 +812,7 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
 }
 
 async function openMerchant(client) {
+  async function openMerchant(client) {
   const existing = await db.getEventState("merchant").catch(() => null);
   if (existing?.active) return;
 
@@ -869,7 +870,6 @@ No menciones que es una IA.
     nextAt: Date.now() + TWELVE_HOURS,
     stock: items.slice(0, 12)
   }).catch(() => {});
-}
 
   if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
   merchantCloseTimer = setTimeout(async () => {
@@ -877,7 +877,7 @@ No menciones que es una IA.
     if (!state?.active) return;
 
     const closePrompt = `
-Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de unas 60 a 90 palabras.
+Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 60 y 90 palabras.
 
 Debe incluir:
 - Su nombre: ${state.name}
