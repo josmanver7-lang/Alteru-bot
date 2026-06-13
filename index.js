@@ -2086,7 +2086,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     texto += `Efecto: ${comp.efecto}\n`;
     texto += `Coste: ${comp.coste} pts\n`;
     texto += `Requisito: ${req}\n`;
-    texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
   }
 
   texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>`";
