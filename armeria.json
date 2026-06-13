@@ -672,5 +672,5 @@
       "descripcion": "Sólido y grabado con runas de resistencia.",
       "efecto": { "successBonus": 0.04, "damageReduction": 0.02 }
     }
-  ]
-}
+      ]
+    }
