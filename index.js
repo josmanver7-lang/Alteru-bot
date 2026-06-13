@@ -1604,7 +1604,7 @@ if (command === "!armeria") {
 }
 
 if (command === "!mercader") {
-  const state = await db.getEventState("merchant");
+  const state = await db.getEventState("merchant").catch(() => null);
 
   if (!state?.active) {
     return message.reply("El mercader ambulante no está en el campamento en este momento.");
@@ -1621,35 +1621,19 @@ if (command === "!mercader") {
     ? state.stock
     : catalogItems;
 
-  const items = stock.slice(0, 12);
   const profile = await db.getProfile(message.author.id);
   const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
+  const items = stock.slice(0, 12);
 
-  const texto = await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
+  const header =
+    `🚚 **MERCADER AMBULANTE**\n\n` +
+    `Nombre: **${state.name || "Desconocido"}**\n` +
+    `Destino próximo: ${state.destination || "Desconocido"}\n` +
+    `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
+
+  const texto = header + await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
   return replyLong(message, texto);
-}
-    let texto = `🚚 **MERCADER AMBULANTE**\n\n`;
-    texto += `Nombre: **${state.name || "Desconocido"}**\n`;
-    texto += `Destino próximo: ${state.destination || "Desconocido"}\n`;
-    texto += `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
-    texto += `**Mercancía disponible:**\n\n`;
-
-    for (const item of items) {
-      const price = await db.getDynamicPrice("mercader", item);
-      const remaining = getItemRemainingSlots(profile, "mercader", item, cycleId);
-
-      texto += `• **${item.nombre}**\n`;
-      texto += `ID: ${item.id}\n`;
-      texto += `Precio: ${formatPrice(price)}\n`;
-      texto += `Slots: ${remaining}/${getDefaultSlots("mercader", item)}\n`;
-      texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-      if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
-      texto += `\n`;
     }
-
-    texto += "Más adelante podrás usar `!comprar <id>`.";
-    return message.reply(texto.trim());
-    
 
   if (command === "!comprar") {
     const query = args.slice(1).join(" ").trim();
