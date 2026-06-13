@@ -1067,6 +1067,7 @@ async function getCatalogStateItems(catalogName, catalogItems) {
 
   return { state, items };
 }
+
 function getResolvedEquipment(profile = {}, equipmentRaw = null) {
   if (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw)) {
     return equipmentRaw;
@@ -1100,7 +1101,7 @@ function findInventoryItemLoose(inventory, query) {
   }
 
   return null;
-  }
+}
 
 async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 0) {
   let texto = `🏪 **${title}**\n\n`;
@@ -1293,7 +1294,6 @@ client.on("messageCreate", async (message) => {
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
   
-  
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
   // ========================================
@@ -1393,41 +1393,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(txt);
   }
 
-  function getResolvedEquipment(profile = {}, equipmentRaw = null) {
-  if (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw)) {
-    return equipmentRaw;
-  }
-
-  if (profile?.equipment && typeof profile.equipment === "object" && !Array.isArray(profile.equipment)) {
-    return profile.equipment;
-  }
-
-  if (profile?.equipo && typeof profile.equipo === "object" && !Array.isArray(profile.equipo)) {
-    return profile.equipo;
-  }
-
-  return {};
-}
-
-function findInventoryItemLoose(inventory, query) {
-  const q = normalizeKey(query);
-
-  for (const [category, items] of Object.entries(inventory || {})) {
-    if (!Array.isArray(items)) continue;
-
-    for (const item of items) {
-      const id = normalizeKey(item?.id || "");
-      const nombre = normalizeKey(item?.nombre || "");
-
-      if (id === q || nombre === q || nombre.includes(q)) {
-        return { category, item };
-      }
-    }
-  }
-
-  return null;
-}
-
   if (command === "!inventario") {
     const profile = await db.getProfile(message.author.id);
     const inventory = normalizeInventory(profile.inventory);
@@ -1454,102 +1419,101 @@ function findInventoryItemLoose(inventory, query) {
   }
 
   if (command === "!equipo") {
-  const profile = await db.getProfile(message.author.id);
-  const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const totals = sumEquipmentTotals(equipment);
+    const profile = await db.getProfile(message.author.id);
+    const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
+    const equipment = getResolvedEquipment(profile, equipmentRaw);
+    const totals = sumEquipmentTotals(equipment);
 
-  let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
+    let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
 
-  const slots = [
-    ["arma", "Arma"],
-    ["armadura", "Armadura"],
-    ["casco", "Casco"],
-    ["hombros", "Hombros"],
-    ["brazos", "Brazos"],
-    ["piernas", "Piernas"],
-    ["pies", "Pies"],
-    ["capa", "Capa"],
-    ["anillo1", "Anillo 1"],
-    ["anillo2", "Anillo 2"],
-    ["amuleto", "Amuleto"],
-    ["accesorio", "Accesorio"]
-  ];
+    const slots = [
+      ["arma", "Arma"],
+      ["armadura", "Armadura"],
+      ["casco", "Casco"],
+      ["hombros", "Hombros"],
+      ["brazos", "Brazos"],
+      ["piernas", "Piernas"],
+      ["pies", "Pies"],
+      ["capa", "Capa"],
+      ["anillo1", "Anillo 1"],
+      ["anillo2", "Anillo 2"],
+      ["amuleto", "Amuleto"],
+      ["accesorio", "Accesorio"]
+    ];
 
-  for (const [slotKey, label] of slots) {
-    const item = equipment?.[slotKey];
-    texto += `${label}: ${item?.nombre || "—"}\n`;
-  }
+    for (const [slotKey, label] of slots) {
+      const item = equipment?.[slotKey];
+      texto += `${label}: ${item?.nombre || "—"}\n`;
+    }
 
-  texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
-  return message.reply(texto);
+    texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
+    return message.reply(texto);
   }
   
   if (command === "!equipar") {
-  if (command === "!equipar") {
-  const query = args.slice(1).join(" ").trim();
-  if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
+    const query = args.slice(1).join(" ").trim();
+    if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
 
-  const profile = await db.getProfile(message.author.id);
-  const inventory = normalizeInventory(profile.inventory);
-  const found = findInventoryItemLoose(inventory, query);
+    const profile = await db.getProfile(message.author.id);
+    const inventory = normalizeInventory(profile.inventory);
+    const found = findInventoryItemLoose(inventory, query);
 
-  if (!found) {
-    return message.reply("No tienes ese objeto en el inventario.");
-  }
-
-  const { category, item } = found;
-
-  const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-
-  const equipSlot = getEquipSlotForItem(item, equipment);
-  if (!equipSlot) {
-    return message.reply(`**${item.nombre}** no se puede equipar.`);
-  }
-
-  const equippedBefore = equipment[equipSlot] || null;
-
-  if (item.cantidad > 1 && !isStackableItem(item)) {
-    return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
-  }
-
-  if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
-    return message.reply(`**${item.nombre}** ya está equipado.`);
-  }
-
-  equipment[equipSlot] = item;
-
-  const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
-  if (idx !== -1) {
-    if (isStackableItem(inventory[category][idx])) {
-      inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
-      if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
-    } else {
-      inventory[category].splice(idx, 1);
+    if (!found) {
+      return message.reply("No tienes ese objeto en el inventario.");
     }
+
+    const { category, item } = found;
+
+    const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
+    const equipment = getResolvedEquipment(profile, equipmentRaw);
+
+    const equipSlot = getEquipSlotForItem(item, equipment);
+    if (!equipSlot) {
+      return message.reply(`**${item.nombre}** no se puede equipar.`);
+    }
+
+    const equippedBefore = equipment[equipSlot] || null;
+
+    if (item.cantidad > 1 && !isStackableItem(item)) {
+      return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
+    }
+
+    if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
+      return message.reply(`**${item.nombre}** ya está equipado.`);
+    }
+
+    equipment[equipSlot] = item;
+
+    const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
+    if (idx !== -1) {
+      if (isStackableItem(inventory[category][idx])) {
+        inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
+        if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
+      } else {
+        inventory[category].splice(idx, 1);
+      }
+    }
+
+    if (equippedBefore) {
+      const oldCategory = getInventoryCategoryForItem(equippedBefore);
+      inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
+        cantidad: 1,
+        recuperadoPor: "equipar"
+      }));
+    }
+
+    if (typeof db.setEquipment === "function") {
+      await db.setEquipment(message.author.id, equipment);
+    } else {
+      await db.updateTravelerData(message.author.id, { equipment });
+    }
+
+    await db.updateTravelerData(message.author.id, {
+      inventory: normalizeInventory(inventory)
+    });
+
+    return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
   }
-
-  if (equippedBefore) {
-    const oldCategory = getInventoryCategoryForItem(equippedBefore);
-    inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
-      cantidad: 1,
-      recuperadoPor: "equipar"
-    }));
-  }
-
-  if (typeof db.setEquipment === "function") {
-    await db.setEquipment(message.author.id, equipment);
-  } else {
-    await db.updateTravelerData(message.author.id, { equipment });
-  }
-
-  await db.updateTravelerData(message.author.id, {
-    inventory: normalizeInventory(inventory)
-  });
-
-  return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
-}
 
   // Comandos de Utilidades Generales y Gestión Base
   if (command === "!info" || command === "!ayuda") {
@@ -1682,71 +1646,71 @@ function findInventoryItemLoose(inventory, query) {
     return message.reply(texto);
   }
 
-    if (command === "!tienda") {
-  const data = tiendaCache || await loadCatalog("tienda.json");
-  const catalogItems = getCatalogItems(data);
+  if (command === "!tienda") {
+    const data = tiendaCache || await loadCatalog("tienda.json");
+    const catalogItems = getCatalogItems(data);
 
-  if (!catalogItems.length) {
-    return message.reply("La tienda está vacía o no está disponible.");
-  }
-
-  const profile = await db.getProfile(message.author.id);
-  const { state, items } = await getCatalogStateItems("tienda", catalogItems);
-  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-  const limitedItems = items.slice(0, 12);
-
-  const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
-  return replyLong(message, texto);
-}
-
-if (command === "!armeria") {
-  const data = armeriaCache || await loadCatalog("armeria.json");
-  const catalogItems = getCatalogItems(data);
-
-  if (!catalogItems.length) {
-    return message.reply("La armería está vacía o no está disponible.");
-  }
-
-  const profile = await db.getProfile(message.author.id);
-  const { state, items } = await getCatalogStateItems("armeria", catalogItems);
-  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-  const limitedItems = items.slice(0, 12);
-
-  const texto = await renderCatalog("armeria", limitedItems, "ARMERÍA DEL CAMPAMENTO", profile, cycleId);
-  return replyLong(message, texto);
-}
-
-if (command === "!mercader") {
-  const state = await db.getEventState("merchant").catch(() => null);
-
-  if (!state?.active) {
-    return message.reply("El mercader ambulante no está en el campamento en este momento.");
-  }
-
-  const catalog = mercaderCache || await loadCatalog("mercader.json");
-  const catalogItems = getCatalogItems(catalog);
-
-  if (!catalogItems.length) {
-    return message.reply("El mercader no tiene mercancía disponible.");
-  }
-
-  const stock = Array.isArray(state.stock) && state.stock.length
-    ? state.stock
-    : catalogItems;
-
-  const profile = await db.getProfile(message.author.id);
-  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
-  const items = stock.slice(0, 12);
-
-  const header =
-    `🚚 **MERCADER AMBULANTE**\n\n` +
-    `Nombre: **${state.name || "Desconocido"}**\n` +
-    `Destino próximo: ${state.destination || "Desconocido"}\n` +
-    `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
-
-  const texto = header + await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
-  return replyLong(message, texto);
+    if (!catalogItems.length) {
+      return message.reply("La tienda está vacía o no está disponible.");
     }
+
+    const profile = await db.getProfile(message.author.id);
+    const { state, items } = await getCatalogStateItems("tienda", catalogItems);
+    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+    const limitedItems = items.slice(0, 12);
+
+    const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
+    return replyLong(message, texto);
+  }
+
+  if (command === "!armeria") {
+    const data = armeriaCache || await loadCatalog("armeria.json");
+    const catalogItems = getCatalogItems(data);
+
+    if (!catalogItems.length) {
+      return message.reply("La armería está vacía o no está disponible.");
+    }
+
+    const profile = await db.getProfile(message.author.id);
+    const { state, items } = await getCatalogStateItems("armeria", catalogItems);
+    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+    const limitedItems = items.slice(0, 12);
+
+    const texto = await renderCatalog("armeria", limitedItems, "ARMERÍA DEL CAMPAMENTO", profile, cycleId);
+    return replyLong(message, texto);
+  }
+
+  if (command === "!mercader") {
+    const state = await db.getEventState("merchant").catch(() => null);
+
+    if (!state?.active) {
+      return message.reply("El mercader ambulante no está en el campamento en este momento.");
+    }
+
+    const catalog = mercaderCache || await loadCatalog("mercader.json");
+    const catalogItems = getCatalogItems(catalog);
+
+    if (!catalogItems.length) {
+      return message.reply("El mercader no tiene mercancía disponible.");
+    }
+
+    const stock = Array.isArray(state.stock) && state.stock.length
+      ? state.stock
+      : catalogItems;
+
+    const profile = await db.getProfile(message.author.id);
+    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
+    const items = stock.slice(0, 12);
+
+    const header =
+      `🚚 **MERCADER AMBULANTE**\n\n` +
+      `Nombre: **${state.name || "Desconocido"}**\n` +
+      `Destino próximo: ${state.destination || "Desconocido"}\n` +
+      `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
+
+    const texto = header + await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
+    return replyLong(message, texto);
+  }
 
   if (command === "!comprar") {
     const query = args.slice(1).join(" ").trim();
@@ -1936,7 +1900,6 @@ if (command === "!mercader") {
     const numero = parseInt(args[1]);
     if (isNaN(numero)) return message.reply("Usa !expedicion <numero>");
 
-    // Se asegura de tomar la misión correspondiente de tablonSelection si está activa, o usar loadMissions()
     const missions = tablonSelection.length ? tablonSelection : await loadMissions();
     const mission = missions[numero - 1];
     if (!mission) return message.reply("Esa misión no existe.");
@@ -2569,4 +2532,3 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
 });
 
 client.login(DISCORD_TOKEN);
-
