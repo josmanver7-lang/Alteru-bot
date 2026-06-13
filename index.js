@@ -1093,10 +1093,6 @@ async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 
   return texto;
 }
 
-  texto += `Más adelante podrás usar \`!comprar <id>\` o \`!equipar <id>\`.`;
-  return texto;
-}
-
 function chunkDiscordText(text, limit = 1900) {
   const chunks = [];
   const blocks = String(text).split("\n\n");
