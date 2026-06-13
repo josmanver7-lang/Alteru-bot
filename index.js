@@ -1780,18 +1780,20 @@ client.on("messageCreate", async (message) => {
 
   // Comandos de Perfil y Sistema de Estadísticas
   if (command === "!perfil") {
-    const profile = await db.getProfile(message.author.id);
-    const lvl = db.calculateLevel(profile.xp || 0);
-    return message.reply(
+  const profile = await db.getProfile(message.author.id);
+  const lvl = db.calculateLevel(profile.xp || 0);
+
+  return message.reply(
 `👤 **PERFIL DE VIAJERO**
+Nombre: ${profile.nombre || profile.name || "No definido"}
 Raza: ${profile.race || "No definida"} | Clase: ${profile.class || "No definida"}
 Rango: ${obtenerRango(profile.points || 0)} | Nivel: ${lvl} (${profile.xp || 0} XP)
 Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100
 
 📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0}
 🔥 Racha Actual: ${profile.rachaActual || 0} | Mejor: ${profile.mejorRacha || 0}`
-    );
-  }
+  );
+}
 
   if (command === "!puntos") {
     const pts = await db.getPoints(message.author.id);
