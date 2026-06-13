@@ -1053,6 +1053,49 @@ async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 
   return texto;
 }
 
+function chunkDiscordText(text, limit = 1900) {
+  const chunks = [];
+  const blocks = String(text).split("\n\n");
+  let current = "";
+
+  for (const block of blocks) {
+    const candidate = current ? `${current}\n\n${block}` : block;
+
+    if (candidate.length <= limit) {
+      current = candidate;
+      continue;
+    }
+
+    if (current) chunks.push(current);
+
+    if (block.length <= limit) {
+      current = block;
+    } else {
+      let start = 0;
+      while (start < block.length) {
+        chunks.push(block.slice(start, start + limit));
+        start += limit;
+      }
+      current = "";
+    }
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+async function replyLong(message, text) {
+  const chunks = chunkDiscordText(text, 1900);
+  if (!chunks.length) return message.reply("—");
+
+  const first = await message.reply(chunks[0]);
+  for (const chunk of chunks.slice(1)) {
+    await message.channel.send(chunk);
+  }
+
+  return first;
+}
+
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
@@ -1527,69 +1570,64 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
     if (command === "!tienda") {
-    const data = tiendaCache || await loadCatalog("tienda.json");
-    const catalogItems = getCatalogItems(data);
+  const data = tiendaCache || await loadCatalog("tienda.json");
+  const catalogItems = getCatalogItems(data);
 
-    if (!catalogItems.length) {
-      return message.reply("La tienda está vacía o no está disponible.");
-    }
-
-    const profile = await db.getProfile(message.author.id);
-    const state = await db.getEventState("tienda").catch(() => null);
-    const items = Array.isArray(state?.selection) && state.selection.length
-      ? state.selection
-      : catalogItems;
-
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || Date.now();
-    const limitedItems = items.slice(0, 12);
-
-    const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
-    return message.reply(texto);
+  if (!catalogItems.length) {
+    return message.reply("La tienda está vacía o no está disponible.");
   }
 
-  if (command === "!armeria") {
-    const data = armeriaCache || await loadCatalog("armeria.json");
-    const catalogItems = getCatalogItems(data);
+  const profile = await db.getProfile(message.author.id);
+  const { state, items } = await getCatalogStateItems("tienda", catalogItems);
+  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+  const limitedItems = items.slice(0, 12);
 
-    if (!catalogItems.length) {
-      return message.reply("La armería está vacía o no está disponible.");
-    }
+  const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
+  return replyLong(message, texto);
+}
 
-    const profile = await db.getProfile(message.author.id);
-    const state = await db.getEventState("armeria").catch(() => null);
-    const items = Array.isArray(state?.selection) && state.selection.length
-      ? state.selection
-      : catalogItems;
+if (command === "!armeria") {
+  const data = armeriaCache || await loadCatalog("armeria.json");
+  const catalogItems = getCatalogItems(data);
 
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || Date.now();
-    const limitedItems = items.slice(0, 12);
-
-    const texto = await renderCatalog("armeria", limitedItems, "ARMERÍA DEL CAMPAMENTO", profile, cycleId);
-    return message.reply(texto);
+  if (!catalogItems.length) {
+    return message.reply("La armería está vacía o no está disponible.");
   }
 
-  if (command === "!mercader") {
-    const state = await db.getEventState("merchant").catch(() => null);
+  const profile = await db.getProfile(message.author.id);
+  const { state, items } = await getCatalogStateItems("armeria", catalogItems);
+  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+  const limitedItems = items.slice(0, 12);
 
-    if (!state?.active) {
-      return message.reply("El mercader ambulante no está en el campamento en este momento.");
-    }
+  const texto = await renderCatalog("armeria", limitedItems, "ARMERÍA DEL CAMPAMENTO", profile, cycleId);
+  return replyLong(message, texto);
+}
 
-    const catalog = mercaderCache || await loadCatalog("mercader.json");
-    const catalogItems = getCatalogItems(catalog);
+if (command === "!mercader") {
+  const state = await db.getEventState("merchant");
 
-    if (!catalogItems.length) {
-      return message.reply("El mercader no tiene mercancía disponible.");
-    }
+  if (!state?.active) {
+    return message.reply("El mercader ambulante no está en el campamento en este momento.");
+  }
 
-    const stock = Array.isArray(state.stock) && state.stock.length
-      ? state.stock
-      : catalogItems;
+  const catalog = mercaderCache || await loadCatalog("mercader.json");
+  const catalogItems = getCatalogItems(catalog);
 
-    const profile = await db.getProfile(message.author.id);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || Date.now();
-    const items = stock.slice(0, 12);
+  if (!catalogItems.length) {
+    return message.reply("El mercader no tiene mercancía disponible.");
+  }
 
+  const stock = Array.isArray(state.stock) && state.stock.length
+    ? state.stock
+    : catalogItems;
+
+  const items = stock.slice(0, 12);
+  const profile = await db.getProfile(message.author.id);
+  const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
+
+  const texto = await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
+  return replyLong(message, texto);
+}
     let texto = `🚚 **MERCADER AMBULANTE**\n\n`;
     texto += `Nombre: **${state.name || "Desconocido"}**\n`;
     texto += `Destino próximo: ${state.destination || "Desconocido"}\n`;
@@ -2434,3 +2472,4 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
 });
 
 client.login(DISCORD_TOKEN);
+
