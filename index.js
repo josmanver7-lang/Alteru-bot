@@ -1103,6 +1103,15 @@ function findInventoryItemLoose(inventory, query) {
   return null;
 }
 
+function saveResolvedEquipment(profile = {}, equipment = {}) {
+  const payload = {
+    equipment,
+    equipo: equipment
+  };
+
+  return payload;
+}
+
 async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 0) {
   let texto = `🏪 **${title}**\n\n`;
 
@@ -1419,100 +1428,101 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   if (command === "!equipo") {
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
-    const totals = sumEquipmentTotals(equipment);
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const totals = sumEquipmentTotals(equipment);
 
-    let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
+  let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
 
-    const slots = [
-      ["arma", "Arma"],
-      ["armadura", "Armadura"],
-      ["casco", "Casco"],
-      ["hombros", "Hombros"],
-      ["brazos", "Brazos"],
-      ["piernas", "Piernas"],
-      ["pies", "Pies"],
-      ["capa", "Capa"],
-      ["anillo1", "Anillo 1"],
-      ["anillo2", "Anillo 2"],
-      ["amuleto", "Amuleto"],
-      ["accesorio", "Accesorio"]
-    ];
+  const slots = [
+    ["arma", "Arma"],
+    ["armadura", "Armadura"],
+    ["casco", "Casco"],
+    ["hombros", "Hombros"],
+    ["brazos", "Brazos"],
+    ["piernas", "Piernas"],
+    ["pies", "Pies"],
+    ["capa", "Capa"],
+    ["anillo1", "Anillo 1"],
+    ["anillo2", "Anillo 2"],
+    ["amuleto", "Amuleto"],
+    ["accesorio", "Accesorio"]
+  ];
 
-    for (const [slotKey, label] of slots) {
-      const item = equipment?.[slotKey];
-      texto += `${label}: ${item?.nombre || "—"}\n`;
-    }
-
-    texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
-    return message.reply(texto);
+  for (const [slotKey, label] of slots) {
+    const item = equipment?.[slotKey];
+    texto += `${label}: ${item?.nombre || "—"}\n`;
   }
+
+  texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
+  return message.reply(texto);
+}
   
   if (command === "!equipar") {
-    const query = args.slice(1).join(" ").trim();
-    if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
+  const query = args.slice(1).join(" ").trim();
+  if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
 
-    const profile = await db.getProfile(message.author.id);
-    const inventory = normalizeInventory(profile.inventory);
-    const found = findInventoryItemLoose(inventory, query);
+  const profile = await db.getProfile(message.author.id);
+  const inventory = normalizeInventory(profile.inventory);
+  const found = findInventoryItemLoose(inventory, query);
 
-    if (!found) {
-      return message.reply("No tienes ese objeto en el inventario.");
-    }
+  if (!found) {
+    return message.reply("No tienes ese objeto en el inventario.");
+  }
 
-    const { category, item } = found;
+  const { category, item } = found;
 
-    const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
 
-    const equipSlot = getEquipSlotForItem(item, equipment);
-    if (!equipSlot) {
-      return message.reply(`**${item.nombre}** no se puede equipar.`);
-    }
+  const equipSlot = getEquipSlotForItem(item, equipment);
+  if (!equipSlot) {
+    return message.reply(`**${item.nombre}** no se puede equipar.`);
+  }
 
-    const equippedBefore = equipment[equipSlot] || null;
+  const equippedBefore = equipment[equipSlot] || null;
 
-    if (item.cantidad > 1 && !isStackableItem(item)) {
-      return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
-    }
+  if (item.cantidad > 1 && !isStackableItem(item)) {
+    return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
+  }
 
-    if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
-      return message.reply(`**${item.nombre}** ya está equipado.`);
-    }
+  if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
+    return message.reply(`**${item.nombre}** ya está equipado.`);
+  }
 
-    equipment[equipSlot] = item;
+  equipment[equipSlot] = item;
 
-    const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
-    if (idx !== -1) {
-      if (isStackableItem(inventory[category][idx])) {
-        inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
-        if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
-      } else {
-        inventory[category].splice(idx, 1);
-      }
-    }
-
-    if (equippedBefore) {
-      const oldCategory = getInventoryCategoryForItem(equippedBefore);
-      inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
-        cantidad: 1,
-        recuperadoPor: "equipar"
-      }));
-    }
-
-    if (typeof db.setEquipment === "function") {
-      await db.setEquipment(message.author.id, equipment);
+  const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
+  if (idx !== -1) {
+    if (isStackableItem(inventory[category][idx])) {
+      inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
+      if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
     } else {
-      await db.updateTravelerData(message.author.id, { equipment });
+      inventory[category].splice(idx, 1);
     }
+  }
 
-    await db.updateTravelerData(message.author.id, {
-      inventory: normalizeInventory(inventory)
-    });
+  if (equippedBefore) {
+    const oldCategory = getInventoryCategoryForItem(equippedBefore);
+    inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
+      cantidad: 1,
+      recuperadoPor: "equipar"
+    }));
+  }
 
-    return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
+  const equipmentPayload = saveResolvedEquipment(profile, equipment);
+
+  if (typeof db.setEquipment === "function") {
+    await db.setEquipment(message.author.id, equipment);
+  }
+
+  await db.updateTravelerData(message.author.id, {
+    inventory: normalizeInventory(inventory),
+    ...equipmentPayload
+  });
+
+  return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
   }
 
   // Comandos de Utilidades Generales y Gestión Base
