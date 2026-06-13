@@ -1419,8 +1419,6 @@ export async function startSchedulers(client, loreCache) {
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
 
-  // No publicamos nada al arrancar.
-  // Solo dejamos preparado el siguiente cambio de ciclo.
   scheduleNextBoundary(client, loreCache);
 }
 
