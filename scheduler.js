@@ -1026,7 +1026,7 @@ const companionScenes = [
 
 💬 Duilon: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tu tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"
 
-*Cirdil sonreía mientras negaba con la cabeza, preparando sus herramientas para calentar el acero.*
+*Cirdil sonreía mientras negaba con la cabeza, preparing sus herramientas para calentar el acero.*
 
 💬 Cirdil: "¿Y yo que obtengo a cambio? Mira todo el trabajo que tengo, y ya le prometí a una de las viajeras acompañarla a una misión en Anfalas. Es muy hermosa por cierto. Pero déjame ver que puedo hacer, quizás cuando termine de preparar esto."
 
@@ -1186,7 +1186,7 @@ const companionScenes = [
   {
     id: "escena_16",
     order: 16,
-    text: `*Un viajero acompañado por Faelon y Cirdil trajeron a un capitán corsario amordazado frente a la tienda del capitán, colocándolo de rodillas.*
+    text: `*Un viajero acompañado por Faelon y Cirdil trajeron a un capitán corsario amordazado frente a la tienda del capitán, colocando de rodillas.*
 
 💬 Altéru: "¿Sabes quien soy no? ¿Y sabes que me gusta hacerle a los capitanes piratas que se dedican a hacer el mal en nuestras tierras? No me respondas, por tus ojos se que lo sabes. ¡Traiganme una estaca afilada en la punta! No. Que estoy bromeando."
 
@@ -1227,6 +1227,21 @@ const companionScenes = [
 💬 Cirdil: "Gracias Altéru, sabes que eres como un hermano."
 
 💬 Altéru: "Tú igual, cuando tu hijo nazca le diré que soy su tío. Bueno, márchate cuando te quieras ir, toma el camino principal y no acampes lejos de una ciudad."`
+  },
+  {
+    id: "escena_19",
+    order: 19,
+    text: `*Altéru tenía algunos minutos buscando a Faelon hasta que se le ocurrió buscarlo en su tienda, allí lo encontró sumido en sus pergaminos, leyendo gracias a la luz de una pequeña vela a la que le quedaba poco menos de unos treinta minutos*
+
+💬 Altéru: "Elfo, estaba buscándote. Quería preguntarte sobre... ¿Qué es eso que lees?"
+
+💬 Faelon: "¿Cuál? ¿Este o este otro? Estoy haciendo algunas comparaciones. El que tengo a mi derecha narra la batalla de Azanulbizar, una lucha memorable entre Enanos y trasgos."
+
+*Altéru se acercó más a él y trató de leer por encima un poco aquel pergamino*
+
+💬 Altéru: "Quince mil Enanos contra sesenta mil orcos, debió ser una masacre."
+
+💬 Faelon: "Y la fue, aunque orcos y trasgos murieron o huyeron casi todos, muchos Enanos no sobrevivieron aquel combate. A Imladris llegaron las noticias, una agridulce. Un enemigo que teníamos muy cerca habia desaparecido, pero tantos hombres de Thráin II que habían caído, fue doloroso incluso para nosotros."`
   },
   {
     id: "escena_19",
@@ -1419,9 +1434,8 @@ export async function startSchedulers(client, loreCache) {
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
 
-  const bounds = getCycleBounds();
-  await openCycleEvents(bounds.cycleStartAt, client, loreCache).catch(console.error);
-
+  // No publicamos nada al arrancar.
+  // Solo dejamos preparado el siguiente cambio de ciclo.
   scheduleNextBoundary(client, loreCache);
 }
 
