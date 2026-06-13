@@ -1083,9 +1083,15 @@ async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 
     texto += `Precio: ${formatPrice(price)}\n`;
     texto += `Slots: ${remaining}/${maxSlots}\n`;
     texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-    if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
+    if (item.descripcion && catalogName !== "armeria") {
+      texto += `Descripción: ${item.descripcion}\n`;
+    }
     texto += `\n`;
   }
+
+  texto += `Más adelante podrás usar \`!comprar <id>\` o \`!equipar <id>\`.`;
+  return texto;
+}
 
   texto += `Más adelante podrás usar \`!comprar <id>\` o \`!equipar <id>\`.`;
   return texto;
@@ -1357,6 +1363,41 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(txt);
   }
 
+  function getResolvedEquipment(profile = {}, equipmentRaw = null) {
+  if (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw)) {
+    return equipmentRaw;
+  }
+
+  if (profile?.equipment && typeof profile.equipment === "object" && !Array.isArray(profile.equipment)) {
+    return profile.equipment;
+  }
+
+  if (profile?.equipo && typeof profile.equipo === "object" && !Array.isArray(profile.equipo)) {
+    return profile.equipo;
+  }
+
+  return {};
+}
+
+function findInventoryItemLoose(inventory, query) {
+  const q = normalizeKey(query);
+
+  for (const [category, items] of Object.entries(inventory || {})) {
+    if (!Array.isArray(items)) continue;
+
+    for (const item of items) {
+      const id = normalizeKey(item?.id || "");
+      const nombre = normalizeKey(item?.nombre || "");
+
+      if (id === q || nombre === q || nombre.includes(q)) {
+        return { category, item };
+      }
+    }
+  }
+
+  return null;
+}
+
   if (command === "!inventario") {
     const profile = await db.getProfile(message.author.id);
     const inventory = normalizeInventory(profile.inventory);
@@ -1385,15 +1426,11 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   if (command === "!equipo") {
   const profile = await db.getProfile(message.author.id);
   const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-
-  const equipment =
-    (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw))
-      ? equipmentRaw
-      : profile.equipment || profile.equipo || {};
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
 
   const totals = sumEquipmentTotals(equipment);
 
-  let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
+  let texto = "🛡️ **EQUIPO EQUIIPADO**\n\n";
 
   const slots = [
     ["arma", "Arma"],
@@ -1417,6 +1454,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
   return message.reply(texto);
+  }
 }
   if (command === "!equipar") {
   const query = args.slice(1).join(" ").trim();
@@ -1424,18 +1462,16 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   const profile = await db.getProfile(message.author.id);
   const inventory = normalizeInventory(profile.inventory);
-  const found = findInventoryItem(inventory, query);
+  const found = findInventoryItemLoose(inventory, query);
 
   if (!found) {
     return message.reply("No tienes ese objeto en el inventario.");
   }
 
   const { category, item } = found;
+
   const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
-  const equipment =
-    (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw))
-      ? equipmentRaw
-      : {};
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
 
   const equipSlot = getEquipSlotForItem(item, equipment);
   if (!equipSlot) {
@@ -1472,7 +1508,14 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }));
   }
 
-  await db.setEquipment(message.author.id, equipment);
+  if (typeof db.setEquipment === "function") {
+    await db.setEquipment(message.author.id, equipment);
+  } else {
+    await db.updateTravelerData(message.author.id, {
+      equipment
+    });
+  }
+
   await db.updateTravelerData(message.author.id, {
     inventory: normalizeInventory(inventory)
   });
