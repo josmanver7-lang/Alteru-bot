@@ -1451,7 +1451,7 @@ function findInventoryItemLoose(inventory, query) {
   texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
   return message.reply(texto);
   }
-}
+  
   if (command === "!equipar") {
   const query = args.slice(1).join(" ").trim();
   if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
