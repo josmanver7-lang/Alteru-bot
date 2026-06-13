@@ -1526,163 +1526,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto);
   }
 
-  
-  if (command === "!tienda") {
-    const data = tiendaCache || await loadCatalog("tienda.json");
-    const catalogItems = getCatalogItems(data);
-  
-    if (!catalogItems.length) {
-      return message.reply("La tienda está vacía o no está disponible.");
-    }
-  
-    const profile = await db.getProfile(message.author.id);
-    const { state, items } = await getCatalogStateItems("tienda", catalogItems);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    const limitedItems = items.slice(0, 12);
-  
-    const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
-    return message.reply(texto);
-  }
-
-  if (command === "!armeria") {
-    const data = armeriaCache || await loadCatalog("armeria.json");
-    const catalogItems = getCatalogItems(data);
-  
-    if (!catalogItems.length) {
-      return message.reply("La armería está vacía o no está disponible.");
-    }
-  
-    const profile = await db.getProfile(message.author.id);
-    const { state, items } = await getCatalogStateItems("armeria", catalogItems);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    const limitedItems = items.slice(0, 12);
-  
-    const texto = await renderCatalog("armeria", limitedItems, "ARMERÍA DEL CAMPAMENTO", profile, cycleId);
-    return message.reply(texto);
-  }
-
-  if (command === "!mercader") {
-    const state = await db.getEventState("merchant");
-  
-    if (!state?.active) {
-      return message.reply("El mercader ambulante no está en el campamento en este momento.");
-    }
-  
-    const catalog = mercaderCache || await loadCatalog("mercader.json");
-    const catalogItems = getCatalogItems(catalog);
-  
-    if (!catalogItems.length) {
-      return message.reply("El mercader no tiene mercancía disponible.");
-    }
-  
-    const stock = Array.isArray(state.stock) && state.stock.length
-      ? state.stock
-      : catalogItems;
-  
-    const items = stock.slice(0, 12);
-    const profile = await db.getProfile(message.author.id);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || Date.now();
-  
-    const texto = await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
-    return message.reply(
-      `🚚 **MERCADER AMBULANTE**\n\n` +
-      `Nombre: **${state.name || "Desconocido"}**\n` +
-      `Destino próximo: ${state.destination || "Desconocido"}\n` +
-      `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n` +
-      texto
-    );
-  }
-
-  if (command === "!comprar") {
-    const query = args.slice(1).join(" ").trim();
-    if (!query) return message.reply("Usa `!comprar <nombre o id>`.");
-  
-    const profile = await db.getProfile(message.author.id);
-    const inventory = normalizeInventory(profile.inventory);
-    const found = await findCatalogItemByQuery(query);
-  
-    if (!found) {
-      return message.reply("No encuentro ese objeto en la tienda, la armería o el mercader.");
-    }
-  
-    const catalogName = found.catalogName || "tienda";
-    const cycleState = await db.getEventState(catalogName).catch(() => null);
-    const cycleId = cycleState?.cycleId || cycleState?.nextAt || cycleState?.lastAt || cycleState?.openedAt || 0;
-  
-    const remaining = getItemRemainingSlots(profile, catalogName, found, cycleId);
-    if (remaining <= 0) {
-      return message.reply(`⚠️ No te quedan slots disponibles para **${found.nombre}** en este ciclo.`);
-    }
-  
-    const price = await db.getDynamicPrice(catalogName, found);
-    const category = getInventoryCategoryForItem(found);
-    const stackable = isStackableItem(found);
-    const existing = inventory[category].find(item => normalizeKey(item.id) === normalizeKey(found.id));
-  
-    if (!stackable && existing) {
-      return message.reply(`Ya posees **${found.nombre}**.`);
-    }
-  
-    if ((profile.points || 0) < price) {
-      return message.reply(`Necesitas **${price}** puntos para comprar **${found.nombre}**.`);
-    }
-  
-    await db.spendPoints(message.author.id, price);
-  
-    if (stackable && existing) {
-      existing.cantidad = Math.max(1, Number(existing.cantidad || 1)) + 1;
-    } else {
-      inventory[category].push(
-        normalizeItemEntry(found, {
-          precioCompra: price,
-          catalogo: catalogName
-        })
-      );
-    }
-  
-    const catalogUsage = consumeCatalogSlot(profile, catalogName, found, cycleId);
-  
-    await db.updateTravelerData(message.author.id, {
-      inventory: normalizeInventory(inventory),
-      catalogUsage
-    });
-  
-    return message.reply(`🛒 Has comprado **${found.nombre}** por **${price}** puntos.`);
-  }
-
-  if (command === "!vender") {
-    const query = args.slice(1).join(" ").trim();
-    if (!query) return message.reply("Usa `!vender <nombre del objeto>`.");
-  
-    const profile = await db.getProfile(message.author.id);
-    const inventory = normalizeInventory(profile.inventory);
-    const found = findInventoryItem(inventory, query);
-  
-    if (!found) {
-      return message.reply("No tienes ese objeto en el inventario.");
-    }
-  
-    const { category, item } = found;
-    const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
-  
-    const equippedIds = Object.values(equipment)
-      .filter(Boolean)
-      .map(x => normalizeKey(x.id));
-  
-    if (equippedIds.includes(normalizeKey(item.id))) {
-      return message.reply(`No puedes vender **${item.nombre}** porque lo llevas equipado.`);
-    }
-  
-    const basePrice = Number(
-      item.precioBase ??
-      item.precioCompra ??
-      item.precio ??
-      0
-    );
-  
-    const sellPrice = Math.max(1, Math.floor(basePrice * 0.75));
-  
-  if (command === "!tienda") {
+    if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
     const catalogItems = getCatalogItems(data);
 
@@ -1750,6 +1594,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     texto += `Nombre: **${state.name || "Desconocido"}**\n`;
     texto += `Destino próximo: ${state.destination || "Desconocido"}\n`;
     texto += `Tiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
+    texto += `**Mercancía disponible:**\n\n`;
 
     for (const item of items) {
       const price = await db.getDynamicPrice("mercader", item);
@@ -1761,7 +1606,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       texto += `Slots: ${remaining}/${getDefaultSlots("mercader", item)}\n`;
       texto += `Efecto: ${formatEffect(item.efecto)}\n`;
       if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
-      texto += "\n";
+      texto += `\n`;
     }
 
     texto += "Más adelante podrás usar `!comprar <id>`.";
@@ -1878,8 +1723,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     });
 
     return message.reply(`💰 Has vendido **${item.nombre}** por **${sellPrice}** puntos.`);
-    }
-
+  }
+  
   if (command === "!contratar") {
     if (!args[1]) return message.reply("Usa !contratar <nombre>");
 
