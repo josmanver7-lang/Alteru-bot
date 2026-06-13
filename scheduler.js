@@ -981,6 +981,373 @@ async function companionDialogue(client, loreCache, slotId = null) {
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
 
+const companionScenes = [
+  {
+    id: "escena_1",
+    order: 1,
+    text: `*Todos los compañeros están sentados en torno a la fogata compartiendo la cena, Andaer el más inquieto decide romper hielo y pregunta mirando a Altéru:* 💬 Andaer: "¿No ha habido alguna otra pista sobre el nigromante? Me dijeron que ayer otro viajero que decidió explorar solo se perdió y dijo haber sentido una presencia maligna cerca de un claro con una piedra en el centro, pero por miedo no quiso acercarse."
+
+*Cirdil que estaba junto a él le continuó:* 💬 Cirdil: "Acompañé ayer a un enano pero el muy sensato llevó una antorcha, de no ser por eso nos hubiésemos perdido en la oscuridad, pero logramos encontrar el camino y acampar cerca."
+
+*Altéru se removió un poco sobre el tronco en el que estaba sentado junto a Nieriel y tras aclarase un poco la voz dijo:*
+
+💬 Altéru: "Thûlazar debe estar en alguna parte, no podrá esconderse para siempre. Estoy esperando al viajero que me traiga más pistas y vayamos juntos a cazarlo."`
+  },
+  {
+    id: "escena_2",
+    order: 2,
+    text: `*Duilon enseña a Andaer como mantener la postura en un combate contra enemigos numerosos.*
+
+💬 Duilon: "Con mi mandoble mantengo al enemigo a distancia, y atacó a quienes creo más valientes, es como un la fila de pilares, si el más grande se cae los demás se vienen abajo."
+
+*Andaer trataba de mantenerse fuera del alcance del arma del campeón Lamedoniano, pero tras esperar el momento se acercó a su rival y le apoyó su espada de practica en el cuello*
+
+💬 Andaer: "Eso si entre tus enemigos no hay alguien tan valiente como el Leal Escudero de Altéru."
+
+💬 Duilon: "No creas que por decir eso van a promoverte a Sargento."`
+  },
+  {
+    id: "escena_3",
+    order: 3,
+    text: `*Faelon enseña a Nieriel como usar la planta de Athelas, usando a uno de los montaraces de Arathir como paciente de prácticas."
+
+💬 Faelon: "En nuestro refugio cada herida es cuidada con el conocimiento y la dedicación que ameritan, no es sólo los ingredientes que aplicas, sino comprender los efectos negativos de cualquier descuido."
+
+*Nieriel seguía las indicaciones de su instructor sin interrumpir sus indicaciones aplicando una manta húmeda con ungüentos especiales para cortes."
+
+💬 Nieriel: "Será mejor que te apoyes y reposes hasta mañana, seguro que al amanecer la herida estará cerrada y sin que haya ninguna infección."
+
+*El montaraz silencioso obedeció a la doncella del cisne y se recostó para tratar de encontrar el sueño.*`
+  },
+  {
+    id: "escena_4",
+    order: 4,
+    text: `*Amanecía otro día en el campamento y Cirdil se preparaba para encender la fragua, reunió el carbón y la leña y luego de limpiar avivó el fuego hasta que logró la constancia adecuada.*
+
+💬 Duilon: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tu tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"
+
+*Cirdil sonreía mientras negaba con la cabeza, preparando sus herramientas para calentar el acero.*
+
+💬 Cirdil: "¿Y yo que obtengo a cambio? Mira todo el trabajo que tengo, y ya le prometí a una de las viajeras acompañarla a una misión en Anfalas. Es muy hermosa por cierto. Pero déjame ver que puedo hacer, quizás cuando termine de preparar esto."
+
+💬 Duilon: "Ya me lo prometiste, estaré cerca de aquí para que no lo olvides."`
+  },
+  {
+    id: "escena_5",
+    order: 5,
+    text: `*Altéru estaba en su tienda charlando con un mercader y entró Cirdil interrumpiendo la conversación.*
+
+💬 Cirdil: "Nieriel quiere que sepas que queda poca carne y han estado llegando varios viajeros durante la semana, me envió a preguntarte que debemos hacer."
+
+💬 Altéru: "¿Los montaraces aún no regresan?" *Cirdil negó rápidamente* "Entonces ordena una partida de caza con los viajeros que estén desocupados, diles que tendrán un descuento en la armeria, Faelon puede ir con ellos."
+
+💬 Cirdil: "Pero es mi armeria. Esta bien, ¡Eh! Eres Bifur ¿No? Me gustan los frutos secos que vendes, se que te debo de la última vez pero avísame cuando te instales para pagarte, además me vas a dar otros dos kilos y te los pago la próxima vez que vengas."`
+  },
+  {
+    id: "escena_6",
+    order: 6,
+    text: `*Andaer agotado de intentar aprender a usar el arco decentemente decidió rendirse y frustrado se lo regresó a su dueño*
+
+💬 Faelon: "No te impacientes muchacho, tu ímpetu puede llegar a ser tu mayor enemigo si no lo sabes controlar."
+
+💬 Andaer: "Tú debes tener mucha paciencia, supongo ¿No es aburrido vivir tanto?"
+
+💬 Faelon: "Para nosotros es un regalo, contemplamos esta tierra con otros ojos, y aunque ha perdido mucho la belleza de otros tiempos no hay amanecer al que no sienta deseos de agradecer a quienes crearon este mundo para nosotros."
+
+💬 Andaer: "¿Cuantos años dijiste que tenias?"
+
+💬 Faelon: "Quinientos tres."`
+  },
+  {
+    id: "escena_7",
+    order: 7,
+    text: `*Nieriel salía de la tienda abruptamente con cierta molestia, algo poco común en ella, detrás le seguía Altéru llamándola y tratando de que se detuviera*
+
+💬 Altéru: "¿Por qué me lo haces tan difícil? Solo quiero que no te arriesgues demasiado más allá del reino, solamente quiero..."
+
+💬 Nieriel: "¿Protegerme? eso ya lo sé, pero no puedes tenerme aquí siempre si hay tantas personas necesitando ayuda contra los invasores en las fronteras. Al traerme de Dol Amrorh me dijiste que tendríamos aventuras y..."
+
+*Altéru puso su índice en sus labios y beso su mejilla izquierda.*
+
+💬 Altéru: "Aún no hemos salido a ninguna expedición, todavía estamos comenzando. Además tampoco olvides que te hice otra promesa ¿La olvidas?"
+
+*Nieriel se cruzó de brazos resignadose y dejándose rodear por él apoyó su cabeza en el hombro derecho el capitán.*`
+  },
+  {
+    id: "escena_8",
+    order: 8,
+    text: `*Los ocho montaraces llegaron una noche con uno de los viajeros de mayor renombre con un gran botín y tres ciervos.*
+
+💬 Montaraz: "Señor la misión fue un absoluto éxito, acabamos con el capitán orco y sus guerreros, logramos traer lo que puede ver. El viajero le entregará el resto del informe."
+
+💬 Altéru: "Todas estas baratijas nos servirán para reforjar espadas, sin duda fue un buen botín, Cirdil estará contento, casi se estaba quedando sin nada que echar a su fragata."
+
+💬 Montaraz: "Hablamos con uno de los locales y nos llevó hasta un ermitaño quien afirmó saber sobre nuestro amigo."
+
+*Altéru lo interrumpió.*
+
+💬 Altéru: "Vayamos a mi tienda y cuéntame lo que te dijo".`
+  },
+  {
+    id: "escena_9",
+    order: 9,
+    text: `*Andaer había llegado con varios campesinos desde Ethring con varios varios materiales de construcción y unas cuantas gallinas y dos gallos.*
+
+💬 Nieriel: "Se acabaron los amaneceres en silencio."
+
+*Duilon curioso se acercó a ellos y los ayudó a ubicar el mejor lugar para poner un lugar gallinero en el campamento.*
+
+💬 Faelon: "¿Altéru lo sabe?"
+
+*Altéru salió de su tienda al oír el alboroto y dijo:*
+
+💬 Altéru: "Detrás de tu tienda, que sean a ti al primero que despierten."`
+  },
+  {
+    id: "escena_10",
+    order: 10,
+    text: `*Cirdil y Altéru entrenaban como solían hacer, y como solía ocurrir Cirdil eran el vencedor, pero mientras pulian sus movimientos conversaban:*
+
+💬 Cirdil: "Ya que hablamos sobre eso ¿Has sabido algo de Berenil? Había oído que le ha estado yendo bien en su negocio."
+
+💬 Altéru: "Si, también lo escuché, me alegro mucho por él, pasamos por situaciones lamentables en Harad, espero que eso lo ayude a recuperar su confianza, aunque estoy convencido de que no es así."
+
+*Una vez más Cirdil derribó a Altéru quien cayó de espaldas contra el suelo con mucha fuerza. Preocupado lo ayudó a reincorporarse.*
+
+💬 Altéru: "Casi sentí mi espalda romperse, pero estaré bien".`
+  },
+  {
+    id: "escena_11",
+    order: 11,
+    text: `*Nieriel le daba un masaje en la espalda a Altéru mientras él conversaba con sus compañeros en la tienda*
+
+💬 Cirdil: "Esos piel oscura eran unos verdaderos desquiciados, peleaban sin importarles su propia vida, nisiquiera llevaban armadura, casi no tenias tiempo de atacar a alguno porque otro podría noquearte con su garrote si te descuidas."
+
+💬 Duilon: "De no ser porque el viejo Tarannon, que su alma repose en paz y Elphir el flanco derecho hubiera caído, allí la batalla estaría perdida. Los hacheros de Lossarnach defendieron muy bien contra esos Haradrim con escudos de cuero y yelmos intimidantes."
+
+💬 Andaer: "Mi madre no me dejó acudir a la batalla pero la carga de Altéru junto a Imrahil, sus hijos y Angbor el Intrépido se cantará en los salones del príncipe y en los festines usuales de Linhir por muchos años."`
+  },
+  {
+    id: "escena_12",
+    order: 12,
+    text: `*Altéru en su tienda discutía con varios emisarios de la capital quienes eran conocidos por intentar dañar la imagen del capital de las colinas en Minas Tirith*
+
+💬 Altéru: "Proteger nuestras tierras y a nuestra gente ¿No es nuestro deber? Yo sirvo a Gondor, a nadie más. Y ese es aquí nuestro trabajo."
+
+💬 Vorondil: "No eres más que un malcriado que obedece su propio ego, tus acciones siguen siendo rechazadas por muchos consejeros en la capital y al igual que por el honorable Senescal, hijo del sabio Ecthelion II ¿Cómo osas tu a pasearte por el reino como un héroe que no necesitamos? Ve y vuelve a tu casa, en Pinnath Gelin seguro que hay muchos viñedos a los que atender."
+
+💬 Altéru: "Les permitiré descansar con nosotros esa noche y compartir nuestra cena, pero no abusen de mi hospitalidad"
+
+💬 Vorondil: "No la necesitaremos, no deseamos pasar el resto del día entre gallinas revoloteando de un lado a otro, vamonos compañeros".
+
+💬 Altéru: "Saludos al excelentísimo Senescal Denethor II de mi parte, que salir y pasear alrededor del árbol blanco es buen ejercicio para tomar el sol de vez en cuando."`
+  },
+  {
+    id: "escena_13",
+    order: 13,
+    text: `*Un jinete de la marca se acercó al campamento en solitario, fue bien recibido y Altéru salió de su tienda para atenderlo*
+
+💬 Altéru: "Saludos, estimado Jinete, pocos son los siervos del rey de Rohan en acercarse a estas tierras y menos en pisar mi humilde campamento."
+
+*El jinete hizo una leve reverencia, se quitó el casco y mostró sus facciones eorlingas.*
+
+💬 Rohirrim: "Es un gran honor conocerle Capitán de las Colinas, aquel que sobrevivió a las penurias del sur. Sus historias han llegado hasta el Folde Este y más allá, nuestras fronteras son atravesadas por orcos desde muy al norte, necesitamos su ayuda para enviar exploradores que cubran el lejano Anorien. En la capital nuestras peticiones no son escuchadas."
+
+💬 Altéru: "Así será Jinete de la Marca, cuenta con mi ayuda, háblale de mi a tu señor."
+
+💬 Rohirrim: "Lo haré, mi señor Eomer estará muy complacido en conocerle."`
+  },
+  {
+    id: "escena_14",
+    order: 14,
+    text: `*Llovía con fuerza esa noche y uno de los montaraces de guardia a esa hora dio la alarma de ataque*
+
+💬 Montaraz: "¡Estamos bajo ataque!"
+
+*Todos los guerreros se dispusieron en los lugares más vulnerables del campamento para defenderse de hordas de trasgos que venían de la montaña y por el camino escondido del norte venían dos trolls de las cavernas.*
+
+*Los montaraces se subieron a las torres improvisadas y disparaban a todo el que se acercaba, Altéru y Nieriel pelearon juntos, intentando que los trasgos no intentarán quemar ninguna tienda. Andaer, Duilon y Cirdil pelearon con ferocidad animados por el constante sonido del cuerno del capitán Altéru.*
+
+💬 Altéru: "Esa armadura no te luce mal mi vida ¿No te lo había dicho?" *A lo que Nieriel sonrió alzando su escudo y espada*
+
+*Tras una hora de combate los pocos trasgos que quedaron huyeron y Faelon se preparó para atender las heridas de todos.*`
+  },
+  {
+    id: "escena_15",
+    order: 15,
+    text: `*Varios campesinos llegaron a las puertas del campamento pidiendo ayuda contra unos huargos que se habían adentrado en la zona norte entre Lamedon y Blackroot Vale.*
+
+💬 Altéru: "No hay tiempo de colocar ningún aviso de expedición, escogan a los viajeros más dispuestos y vayan a darles caza."
+
+💬 Nieriel: "¿Tú iras?"
+
+💬 Altéru: "No, nos quedaremos aquí, espero recibir la visita de unos marineros para comerciar provisiones con Linhir."`
+  },
+  {
+    id: "escena_16",
+    order: 16,
+    text: `*Un viajero acompañado por Faelon y Cirdil trajeron a un capitán corsario amordazado frente a la tienda del capitán, colocándolo de rodillas.*
+
+💬 Altéru: "¿Sabes quien soy no? ¿Y sabes que me gusta hacerle a los capitanes piratas que se dedican a hacer el mal en nuestras tierras? No me respondas, por tus ojos se que lo sabes. ¡Traiganme una estaca afilada en la punta! No. Que estoy bromeando."
+
+💬 Altéru: "Llévenlo a la jaula de las gallinas y busquenle otro lugar a las aves, tengo preguntas que hacerle a nuestro invitado."
+
+*Faelon y Cirdil obedecieron y se llevaron al prisionero detrás de la tienda de Andaer y Duilon.*`
+  },
+  {
+    id: "escena_17",
+    order: 17,
+    text: `*Una noche oscura iluminada por las estrellas, Altéru que no podía dormir, se levantó tratando de no despertar a Nieriel y se dirigió a una de las torres de vigilancia donde uno de los montaraces hacia guardia*
+
+💬 Altéru: "¿Puedo subir? Es que simplemente no puedo dormir y deseo conversar un poco. ¿Alguna novedad que reportar?"
+
+💬 Montaraz: "Todo está tranquilo señor, durante mi guardia no ha habido nada que reportar."
+
+💬 Altéru: "¿Cómo te sientes aquí? Sabes que también lo extraño y pienso lo descuidado que fue al dejar que aquello pasara. Pero es el riesgo a los que nos exponemos."
+
+💬 Montaraz: "El Capitán Arathir era el mejor hombre al que conocí, después de usted. Nos conocíamos de toda la vida y siempre le seguimos. Ahora obedecemos su última voluntad y estamos bajo sus ordenes."
+
+💬 Altéru: "Más allá de eso, quiero que te sientas bien, no estamos en el norte, al menos no por ahora. Continua vigilando, no quisiera otro ataque de alimañas de las montañas.
+
+💬 Montaraz: "Así será señor."`
+  },
+  {
+    id: "escena_18",
+    order: 18,
+    text: `*Altéru se encontraba conversando con varios viajeros recién llegados junto a Nieriel, en los que había Hobbits, Enanos, Élfos incluso un hombre oso, o Beórnida. Hasta que Cirdil lo llamó a cierta distancia.*
+
+💬 Cirdil: "Altéru necesito hablar contigo"
+
+💬 Altéru: "¿Qué pasa? ¿Ocurre algo?"
+
+💬 Cirdil: "Ya sabes que mi mujer está embarazada y debe tener ya seis meses, así que me gustaría ir a verla, entonces te quería preguntar si me podía ausentar una semana."
+
+💬 Altéru: "Claro, ve y mira como sigue, envíale mi saludos, pero no te demores demasiado, sabes que aquí necesitamos manos."
+
+💬 Cirdil: "Gracias Altéru, sabes que eres como un hermano."
+
+💬 Altéru: "Tú igual, cuando tu hijo nazca le diré que soy su tío. Bueno, márchate cuando te quieras ir, toma el camino principal y no acampes lejos de una ciudad."`
+  },
+  {
+    id: "escena_19",
+    order: 19,
+    text: `*Altéru tenía algunos minutos buscando a Faelon hasta que se le ocurrió buscarlo en su tienda, allí lo encontró sumido en sus pergaminos, leyendo gracias a la luz de una pequeña vela a la que le quedaba poco menos de unos treinta minutos*
+
+💬 Altéru: "Elfo, estaba buscándote. Quería preguntarte sobre... ¿Qué es eso que lees?"
+
+💬 Faelon: "¿Cuál? ¿Este o este otro? Estoy haciendo algunas comparaciones. El que tengo a mi derecha narra la batalla de Azanulbizar, una lucha memorable entre Enanos y trasgos."
+
+*Altéru se acercó más a él y trató de leer por encima un poco aquel pergamino*
+
+💬 Altéru: "Quince mil Enanos contra sesenta mil orcos, debió ser una masacre."
+
+💬 Faelon: "Y la fue, aunque orcos y trasgos murieron o huyeron casi todos, muchos Enanos no sobrevivieron aquel combate. A Imladris llegaron las noticias, una agridulce. Un enemigo que teníamos muy cerca habia desaparecido, pero tantos hombres de Thráin II que habían caído, fue doloroso incluso para nosotros."`
+  },
+  {
+    id: "escena_20",
+    order: 20,
+    text: `*Había una pequeña discusión en la tienda que era atendida aveces por Duilon y aveces por Faelon, en la que Altéru tuvo que intervenir.*
+
+💬 Altéru: "¿Qué ocurre Duilon? ¿Y cuál es este alboroto?"
+
+💬 Duilon: "Se quejan de los precios Altéru, las provisiones de camino casi duplican su precio de una semana a otra, y se quejan por esto."
+
+"¡Es injusto, es un robo!" *Bramó uno de los viajeros.*
+
+💬 Altéru: "Entiendo que estén molestos porque los precios no son estables, pero estamos en estado de guerra y la economía se tambalea, no soy yo quien decide los precios, sino las caravanas y comerciantes que llegan cada día para comerciar. A ellos también les afecta y a cada Gondoriano que viva dentro de los límites de nuestro reino. Alguno de ustedes quizás ayer luchó contra un troll lo derrotó ¿Y hoy se queja por el precio de un pan de lembas? Dejar tanto escándalo que tengo visitas por atender, van a pensar que esto es un nido de bandidos."`
+  }
+];
+
+const COMPANION_SCENES_KEY = "companion_scenes";
+const COMPANION_SCENE_HISTORY_LIMIT = 8;
+
+function chunkDiscordText(text, limit = 1900) {
+  const chunks = [];
+  const paragraphs = String(text || "").split(/\n{2,}/);
+  let current = "";
+
+  for (const paragraph of paragraphs) {
+    const candidate = current ? `${current}\n\n${paragraph}` : paragraph;
+
+    if (candidate.length <= limit) {
+      current = candidate;
+      continue;
+    }
+
+    if (current) {
+      chunks.push(current);
+      current = "";
+    }
+
+    if (paragraph.length <= limit) {
+      current = paragraph;
+      continue;
+    }
+
+    let start = 0;
+    while (start < paragraph.length) {
+      chunks.push(paragraph.slice(start, start + limit));
+      start += limit;
+    }
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+async function sendLongScene(channel, text) {
+  const chunks = chunkDiscordText(text, 1900);
+  if (!chunks.length) return;
+
+  for (const chunk of chunks) {
+    await channel.send(chunk);
+  }
+}
+
+async function getCompanionSceneState() {
+  return await db.getEventState(COMPANION_SCENES_KEY).catch(() => null);
+}
+
+async function saveCompanionSceneState(state) {
+  await db.setEventState(COMPANION_SCENES_KEY, state).catch(() => {});
+}
+
+async function pickCompanionSceneForCycle(cycleStartMs = getCycleBounds().cycleStartAt) {
+  const state = await getCompanionSceneState();
+
+  if (state?.cycleId === cycleStartMs && state?.scene?.id) {
+    return state.scene;
+  }
+
+  const history = Array.isArray(state?.history) ? state.history : [];
+  const recent = new Set(history.slice(-COMPANION_SCENE_HISTORY_LIMIT));
+
+  let pool = companionScenes.filter(scene => !recent.has(scene.id));
+  if (!pool.length) pool = companionScenes;
+
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+  if (!chosen) return null;
+
+  await saveCompanionSceneState({
+    cycleId: cycleStartMs,
+    postedAt: Date.now(),
+    scene: chosen,
+    history: [...history, chosen.id].slice(-COMPANION_SCENE_HISTORY_LIMIT)
+  });
+
+  return chosen;
+}
+
+async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cycleStartAt) {
+  const channel = await fetchChannel(client);
+  if (!channel) return;
+
+  const scene = await pickCompanionSceneForCycle(cycleStartMs);
+  if (!scene) return;
+
+  await sendLongScene(channel, scene.text);
+}
+
 async function openCycleEvents(cycleStartMs, client, loreCache) {
   clearCycleTimers();
   await refreshTablonSelection(client, loreCache, cycleStartMs).catch(console.error);
@@ -991,14 +1358,11 @@ async function openCycleEvents(cycleStartMs, client, loreCache) {
       minOffsetMs: 1 * 60 * 60 * 1000,
       maxOffsetMs: 5 * 60 * 60 * 1000,
       task: () => openMerchant(client)
-    }
-  ]);
-
-  scheduleCycleRandomEvents(cycleStartMs, [
+    },
     {
       minOffsetMs: 6 * 60 * 60 * 1000,
       maxOffsetMs: 11 * 60 * 60 * 1000,
-      task: () => companionDialogue(client, loreCache)
+      task: () => publishCompanionScene(client, cycleStartMs)
     }
   ]);
 }
