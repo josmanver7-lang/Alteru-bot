@@ -1292,6 +1292,418 @@ function consumeCatalogSlot(profile, catalogName, item, cycleId) {
   return usage;
 }
 
+const VALID_RACES = ["Hombre", "Enano", "Elfo", "Hobbit", "Beornida"];
+
+const VALID_CLASSES = [
+  "Guardián",
+  "Vigilante",
+  "Campeón",
+  "Cazador",
+  "Luchador",
+  "Bardo",
+  "Guardián Rúnico",
+  "Capitán",
+  "Sabio",
+  "Saqueador",
+  "Marinero",
+  "Beórnida"
+];
+
+const CLASS_KEY_TO_LABEL = {
+  guardian: "Guardián",
+  vigilante: "Vigilante",
+  campeon: "Campeón",
+  cazador: "Cazador",
+  luchador: "Luchador",
+  bardo: "Bardo",
+  guardian_runico: "Guardián Rúnico",
+  capitan: "Capitán",
+  sabio: "Sabio",
+  saqueador: "Saqueador",
+  marinero: "Marinero",
+  beornida: "Beórnida"
+};
+
+const STARTER_ITEMS_BY_CLASS = {
+  guardian: {
+    id: "espada_larga_tier1",
+    nombre: "Espada Larga",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  vigilante: {
+    id: "lanza_corta_tier1",
+    nombre: "Lanza Corta",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  campeon: {
+    id: "mandoble_simple_tier1",
+    nombre: "Mandoble Simple",
+    slot: "arma",
+    hands: 2,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 2 }
+  },
+  cazador: {
+    id: "arco_caza_tier1",
+    nombre: "Arco de Caza",
+    slot: "arma",
+    hands: 2,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 2 }
+  },
+  luchador: {
+    id: "guantes_tachonados_tier1",
+    nombre: "Guantes de Cuero Tachonado",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  bardo: {
+    id: "daga_bronce_tier1",
+    nombre: "Daga de Bronce",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  capitan: {
+    id: "espada_larga_capitan_tier1",
+    nombre: "Espada Larga",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  guardian_runico: {
+    id: "espada_larga_runica_tier1",
+    nombre: "Espada Larga",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  sabio: {
+    id: "baston_magico_tier1",
+    nombre: "Bastón Mágico",
+    slot: "arma",
+    hands: 2,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 2 }
+  },
+  saqueador: {
+    id: "daga_bronce_saqueador_tier1",
+    nombre: "Daga de Bronce",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  marinero: {
+    id: "espada_larga_marinero_tier1",
+    nombre: "Espada Larga",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 1 }
+  },
+  beornida: {
+    id: "hacha_pesada_leñador_tier1",
+    nombre: "Hacha Pesada de Leñador",
+    slot: "arma",
+    hands: 2,
+    tipo: "arma",
+    raza: "general",
+    rareza: "comun",
+    precioBase: 0,
+    descripcion: "Arma de bienvenida del campamento.",
+    efecto: { damageBonus: 2 }
+  }
+};
+
+function parseOption(input, options) {
+  const q = normalizeKey(input);
+  return options.find(option => normalizeKey(option) === q) || null;
+}
+
+function parseClassChoice(input) {
+  const q = normalizeKey(input);
+
+  for (const [key, label] of Object.entries(CLASS_KEY_TO_LABEL)) {
+    if (normalizeKey(key) === q || normalizeKey(label) === q) {
+      return key;
+    }
+  }
+
+  return null;
+}
+
+function getStarterItemForClass(classKey) {
+  return STARTER_ITEMS_BY_CLASS[normalizeKey(classKey)] || null;
+}
+
+function buildOnboardingIntroText() {
+  return (
+`🎖️ Altéru: Hola, soy Altéru. Te doy la bienvenida a mi campamento. Soy capitán de Gondor y me conocen como el Capitán de las Colinas, porque nací en Pinnath Gelin. He luchado en diferentes batallas y he logrado varias hazañas defendiendo nuestro reino, así que me alegra mucho ver un rostro aliado.
+
+Si estás dispuesto a ayudarnos, lo primero que me gustaría saber es: ¿cuál es tu nombre?`
+  );
+}
+
+function buildRacePrompt(name) {
+  return (
+`🎖️ Altéru: Muy bien, ${name}. Mi esposa Nieriel lleva los registros de todos en el campamento para saber quién falta cuando no regresa de una expedición. Mi siguiente pregunta es: ¿cuál es tu raza?
+
+[Hombre, Enano, Elfo, Hobbit, Beornida]`
+  );
+}
+
+function buildAgePrompt() {
+  return `🎖️ Altéru: ¿Qué edad tienes?`;
+}
+
+function buildClassPrompt() {
+  return (
+`🎖️ Altéru: ¿Cuál es tu estilo de combate?
+
+[Guardián, Vigilante, Campeón, Cazador, Luchador, Bardo, Guardián Rúnico, Capitán, Sabio, Saqueador, Marinero, Beórnida]`
+  );
+}
+
+function buildStarterGiftText(classKey, starterItem) {
+  const classLabel = CLASS_KEY_TO_LABEL[classKey] || classKey;
+  const itemName = starterItem?.nombre || "tu arma inicial";
+
+  return (
+`🎖️ Altéru: Perfecto. Como regalo de bienvenida te entregaré un arma para tu clase: **${itemName}**.
+
+Esta arma queda registrada en tu inventario y podrás revisarla con **!inventario**.
+Si más adelante quieres verla equipada, usa **!equipo** y luego **!equipar** cuando convenga.
+
+A mi espalda encontrarás el **!tablon** de expediciones. Allí verás tareas por cumplir. También puedes **!contratar** a cualquiera de mis compañeros antes de una misión.
+
+¿Te gustaría conocer otras áreas del campamento? Responde **sí** o **no**.`
+  );
+}
+
+function buildTourNoText() {
+  return (
+`🎖️ Altéru: Muy bien. Espero que la información que te di te haya servido. Cuanto antes comiences a prepararte, mucho mejor. Si quieres obtener puntos de otra manera, también puedes buscar a Faelon el Elfo, quien siempre tiene alguna **!trivia** interesante que te pondrá a pensar. ¡Espero oír grandes noticias de ti!`
+  );
+}
+
+function buildTourYesText() {
+  return (
+`🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** muchos artículos útiles para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites.
+
+🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil, quien me ha acompañado en muchas aventuras. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Mira tu **!equipo** y asegúrate de estar bien pertrechado. Cuando quieras comprar cualquier artículo, usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
+
+🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerte manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros.
+
+🎖️ Altéru: Si encuentras o escuchas algo sobre un nigromante llamado **Thûlazar**, házmelo saber. Es nuestro mayor enemigo. ¡Espero oír grandes hazañas de ti!
+
+🎖️ Altéru: Si necesitas algo más, estaré en mi tienda con **!a**, o también puedes hablar con mi esposa con **!n**.`
+  );
+}
+
+async function grantStarterItem(userId, profile, classKey) {
+  const starterItem = getStarterItemForClass(classKey);
+  if (!starterItem) return null;
+
+  const inventory = normalizeInventory(profile.inventory);
+  const category = getInventoryCategoryForItem(starterItem);
+  const exists = (inventory[category] || []).some(item => normalizeKey(item.id) === normalizeKey(starterItem.id));
+
+  if (!exists) {
+    inventory[category].push(
+      normalizeItemEntry(starterItem, {
+        cantidad: 1,
+        origen: "onboarding",
+        starterItem: true
+      })
+    );
+  }
+
+  await db.updateTravelerData(userId, {
+    inventory: normalizeInventory(inventory),
+    starterItemGranted: true
+  });
+
+  return starterItem;
+}
+
+function canEquipItem(profile, item, equipment = {}) {
+  const race = normalizeKey(profile?.race || "");
+  const classKey = normalizeKey(profile?.class || "");
+  const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : [];
+  const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : [];
+  const hands = Number(item?.hands || 1);
+  const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null;
+
+  if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) {
+    return { ok: false, reason: "Tu raza no puede usar ese objeto." };
+  }
+
+  if (itemClasses.length && !itemClasses.includes(classKey)) {
+    return { ok: false, reason: "Tu clase no puede usar ese objeto." };
+  }
+
+  if (hands === 2 && offhand) {
+    return { ok: false, reason: "No puedes usar un arma de dos manos junto con un objeto de mano secundaria." };
+  }
+
+  if (item?.slot === "escudo" && Number(equipment?.arma?.hands || 1) === 2) {
+    return { ok: false, reason: "No puedes usar escudo con un arma de dos manos." };
+  }
+
+  return { ok: true };
+}
+
+async function handleOnboarding(message, profile) {
+  const userId = message.author.id;
+  const content = message.content.trim();
+  const stage = profile.onboardingStage || null;
+  const normalized = normalizeKey(content);
+
+  if (!stage) {
+    await db.updateTravelerData(userId, { onboardingStage: "name" });
+    return message.reply(buildOnboardingIntroText());
+  }
+
+  if (stage === "name") {
+    if (!content || content.startsWith("!")) {
+      return message.reply("Escribe tu nombre en texto normal, sin comandos.");
+    }
+
+    await db.updateTravelerData(userId, {
+      name: content,
+      onboardingStage: "race"
+    });
+
+    return message.reply(buildRacePrompt(content));
+  }
+
+  if (stage === "race") {
+    const race = parseOption(content, VALID_RACES);
+    if (!race) {
+      return message.reply(`Raza no válida. Usa una de estas: ${VALID_RACES.join(", ")}.`);
+    }
+
+    await db.updateTravelerData(userId, {
+      race,
+      onboardingStage: "age"
+    });
+
+    return message.reply(buildAgePrompt());
+  }
+
+  if (stage === "age") {
+    const age = Number.parseInt(content, 10);
+    if (!Number.isFinite(age) || age < 10 || age > 500) {
+      return message.reply("Escribe una edad válida en números.");
+    }
+
+    await db.updateTravelerData(userId, {
+      age,
+      onboardingStage: "class"
+    });
+
+    return message.reply(buildClassPrompt());
+  }
+
+  if (stage === "class") {
+    const classKey = parseClassChoice(content);
+    if (!classKey) {
+      return message.reply(`Clase no válida. Usa una de estas: ${VALID_CLASSES.join(", ")}.`);
+    }
+
+    const starterItem = await grantStarterItem(userId, profile, classKey);
+
+    await db.updateTravelerData(userId, {
+      class: CLASS_KEY_TO_LABEL[classKey],
+      onboardingStage: "tour",
+      onboardingCompleted: false
+    });
+
+    return message.reply(buildStarterGiftText(classKey, starterItem));
+  }
+
+  if (stage === "tour") {
+    const yesAnswers = ["si", "sí", "s", "claro", "vale", "ok", "okay"];
+    const noAnswers = ["no", "n"];
+
+    if (yesAnswers.includes(normalized)) {
+      await db.updateTravelerData(userId, {
+        onboardingCompleted: true,
+        onboardingStage: null
+      });
+      return message.reply(buildTourYesText());
+    }
+
+    if (noAnswers.includes(normalized)) {
+      await db.updateTravelerData(userId, {
+        onboardingCompleted: true,
+        onboardingStage: null
+      });
+      return message.reply(buildTourNoText());
+    }
+
+    return message.reply("Responde con **sí** o **no**.");
+  }
+
+  return null;
+}
+
 // ==========================================
 //          MANEJO DE MENSAJES Y COMANDOS
 // ==========================================
@@ -1357,6 +1769,13 @@ client.on("messageCreate", async (message) => {
 
       return message.reply(`❌ Incorrecto. La respuesta correcta era: ||${correctRaw}||.`);
     }
+  }
+
+  const profileForOnboarding = await db.getProfile(message.author.id);
+
+  if (!profileForOnboarding.onboardingCompleted) {
+    const result = await handleOnboarding(message, profileForOnboarding);
+    if (result) return result;
   }
 
   // Comandos de Perfil y Sistema de Estadísticas
@@ -1489,6 +1908,11 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
     return message.reply(`**${item.nombre}** ya está equipado.`);
+  }
+
+  const equipCheck = canEquipItem(profile, item, equipment);
+  if (!equipCheck.ok) {
+    return message.reply(equipCheck.reason);
   }
 
   equipment[equipSlot] = item;
