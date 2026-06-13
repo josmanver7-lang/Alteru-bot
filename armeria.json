@@ -403,8 +403,7 @@
       "descripcion": "Anillo de fortaleza inquebrantable.",
       "efecto": { "successBonus": 0.05, "damageReduction": 0.04 }
     },
-    [
-  {
+    {
     "id": "coraza_cuero_hervido_hombre",
     "nombre": "Coraza de Cuero Hervido",
     "slot": "pecho",
@@ -494,7 +493,6 @@
     "descripcion": "Abrigan y dan algo de protección.",
     "efecto": { "damageReduction": 0.01 }
   },
-
   {
     "id": "hombreras_cuero_hervido_hombre",
     "nombre": "Hombreras de Cuero Hervido",
@@ -677,4 +675,5 @@
     "descripcion": "Sólido y grabado con runas de resistencia.",
     "efecto": { "successBonus": 0.04, "damageReduction": 0.02 }
   }
-  ]
+    ]
+  
