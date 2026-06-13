@@ -1,7 +1,4 @@
-{
-  "nombre": "Armería del Campamento",
-  "descripcion": "Armas, armaduras y piezas permanentes de alto valor.",
-  "items": [
+    [
     {
       "id": "daga_hierro_romo",
       "nombre": "Daga de Hierro Romo",
