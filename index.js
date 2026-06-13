@@ -1067,6 +1067,40 @@ async function getCatalogStateItems(catalogName, catalogItems) {
 
   return { state, items };
 }
+function getResolvedEquipment(profile = {}, equipmentRaw = null) {
+  if (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw)) {
+    return equipmentRaw;
+  }
+
+  if (profile?.equipment && typeof profile.equipment === "object" && !Array.isArray(profile.equipment)) {
+    return profile.equipment;
+  }
+
+  if (profile?.equipo && typeof profile.equipo === "object" && !Array.isArray(profile.equipo)) {
+    return profile.equipo;
+  }
+
+  return {};
+}
+
+function findInventoryItemLoose(inventory, query) {
+  const q = normalizeKey(query);
+
+  for (const [category, items] of Object.entries(inventory || {})) {
+    if (!Array.isArray(items)) continue;
+
+    for (const item of items) {
+      const id = normalizeKey(item?.id || "");
+      const nombre = normalizeKey(item?.nombre || "");
+
+      if (id === q || nombre === q || nombre.includes(q)) {
+        return { category, item };
+      }
+    }
+  }
+
+  return null;
+  }
 
 async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 0) {
   let texto = `🏪 **${title}**\n\n`;
@@ -1423,10 +1457,9 @@ function findInventoryItemLoose(inventory, query) {
   const profile = await db.getProfile(message.author.id);
   const equipmentRaw = await db.getEquipment(message.author.id).catch(() => null);
   const equipment = getResolvedEquipment(profile, equipmentRaw);
-
   const totals = sumEquipmentTotals(equipment);
 
-  let texto = "🛡️ **EQUIPO EQUIIPADO**\n\n";
+  let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
 
   const slots = [
     ["arma", "Arma"],
@@ -1452,6 +1485,7 @@ function findInventoryItemLoose(inventory, query) {
   return message.reply(texto);
   }
   
+  if (command === "!equipar") {
   if (command === "!equipar") {
   const query = args.slice(1).join(" ").trim();
   if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
@@ -1507,9 +1541,7 @@ function findInventoryItemLoose(inventory, query) {
   if (typeof db.setEquipment === "function") {
     await db.setEquipment(message.author.id, equipment);
   } else {
-    await db.updateTravelerData(message.author.id, {
-      equipment
-    });
+    await db.updateTravelerData(message.author.id, { equipment });
   }
 
   await db.updateTravelerData(message.author.id, {
