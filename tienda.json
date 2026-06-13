@@ -1,4 +1,3 @@
-[
 {
   "nombre": "Tienda del Campamento",
   "descripcion": "Suministros básicos, regalos y útiles de viaje.",
@@ -71,8 +70,9 @@
       "id": "aceite_antorcha",
       "nombre": "Aceite para Antorcha viajera",
       "tipo": "utilidad",
-      "precioBase": 95,
+      "precioBase": 55,
       "descripcion": "Reduce el riesgo de perderse.",
       "efecto": { "successBonus": 0.03, "soloProximoEncuentro": true }
     }
- ]
+  ]
+}
