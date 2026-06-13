@@ -1030,6 +1030,16 @@ async function getCatalogSelection(key, fallbackItems, limit = 12) {
   return [...(fallbackItems || [])].slice(0, limit);
 }
 
+async function getCatalogStateItems(catalogName, catalogItems) {
+  const state = await db.getEventState(catalogName).catch(() => null);
+
+  const items = Array.isArray(state?.selection) && state.selection.length
+    ? state.selection
+    : catalogItems;
+
+  return { state, items };
+}
+
 async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 0) {
   let texto = `🏪 **${title}**\n\n`;
 
