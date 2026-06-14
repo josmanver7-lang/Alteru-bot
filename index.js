@@ -3623,3 +3623,72 @@ Usa !desafiar para comenzar el viaje.`
 
   if (companionCommands[command]) {
     const companionId = companionCommands[command];
+    const mensaje = content.slice(args[0].length).trim();
+    if (!mensaje) return message.reply("Escribe algo después del comando.");
+
+    const personaje = getPersonaje(companionId);
+    if (!personaje) return message.reply("Ese compañero no está disponible.");
+
+    const profile = await db.getProfile(message.author.id);
+    const affinity = (profile.affinity || {})[companionId] || 0;
+
+    const prompt = `
+Eres ${personaje.nombre}.
+Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || ""}
+Arma: ${personaje.arma || "No especificada"} | Armadura: ${personaje.armadura || "No especificada"}
+Afinidad con el viajero: ${affinity}
+
+Trata al viajero según esta escala:
+0-24 desconocido, 25-49 conocido, 50-74 aliado, 75-99 amigo cercano, 100 compañero de confianza
+
+Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.
+`.trim();
+
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: MODEL, messages: [{ role: "user", content: prompt }], temperature: 0.9, max_tokens: 40 })
+      });
+      const data = await res.json();
+      const respuesta = data?.choices?.[0]?.message?.content?.trim() || "*asiente*";
+
+      await db.addAffinity(message.author.id, companionId, 1);
+      return message.reply(`${personaje.nombre}: ${compactLine(respuesta, 12)}`);
+    } catch {
+      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
+    }
+  }
+
+  // Comando de Roleplay Principal con Altéru (!a)
+  if (command === '!a') {
+    const prompt = content.slice(args[0].length).trim();
+    const profile = await db.getProfile(message.author.id);
+    const text = prompt.toLowerCase();
+
+    if (!profile.race) {
+      const races = ["elfo", "enano", "hobbit", "hombre", "beornida", "beórnida"];
+      const foundRace = races.find(r => text.includes(r));
+      if (foundRace) await db.updateTravelerData(message.author.id, { race: foundRace });
+    }
+
+    if (profile.race && !profile.class) {
+      const classes = ["guardian", "guardián", "campeon", "campeón", "cazador", "capitan", "capitán", "maestre del saber", "minstrel", "burglar", "runekeeper", "warden", "brawler", "mariner"];
+      const foundClass = classes.find(c => text.includes(c));
+      if (foundClass) await db.updateTravelerData(message.author.id, { class: foundClass });
+    }
+
+    if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
+
+    try {
+      if (!loreCache) loreCache = await loadAlteruLore();
+      await message.channel.sendTyping();
+      const reply = await askOpenRouter(message.author.id, prompt, loreCache);
+      return message.reply(reply);
+    } catch {
+      return message.reply("No puedo responder ahora.");
+    }
+  }
+});
+
+client.login(DISCORD_TOKEN);
