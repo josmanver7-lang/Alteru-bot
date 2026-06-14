@@ -16,12 +16,12 @@ const CARACAS_OFFSET_MS = -4 * 60 * 60 * 1000;
 const CYCLE_HOURS = [0, 12];
 const CYCLE_STATE_KEY = "scheduler_cycle";
 
-const companionIds = ["alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon", "montaraces"];
+const companionIds = ["alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon", "montaraces"];
 
 const companionNames = {
   alteru: "Altéru",
   cirdil: "Círdil",
-  duilon: "Duilon",
+  duinor: "Duinor",
   andaer: "Andaer",
   nieriel: "Nieriel",
   faelon: "Faelon",
@@ -326,7 +326,7 @@ async function companionReactions(profile, context, mode = "encounter", maxLines
 
 async function announceDawnReset(client) {
   const dawnCompanionId = [
-    "faelon", "nieriel", "cirdil", "andaer", "duilon", "alteru", "montaraces"
+    "faelon", "nieriel", "cirdil", "andaer", "duinor", "alteru", "montaraces"
   ][Math.floor(Math.random() * 7)];
 
   const line = await companionReaction(
@@ -596,7 +596,7 @@ function getCompanionIcon(id) {
     case "cirdil":
     case "andaer":
       return "🛡️";
-    case "duilon":
+    case "duinor":
       return "⚔️";
     case "alteru":
     case "nieriel":
@@ -989,27 +989,27 @@ const companionScenes = [
 
 *Cirdil que estaba junto a él le continuó:* 💬 Cirdil: "Acompañé ayer a un enano pero el muy sensato llevó una antorcha, de no ser por eso nos hubiésemos perdido en la oscuridad, pero logramos encontrar el camino y acampar cerca."
 
-*Altéru se removió un poco sobre el tronco en el que estaba sentado junto a Nieriel y tras aclarase un poco la voz dijo:*
+*Altéru se removió un poco sobre el tronco en el que estaba sentado junto a Nieriel y tras aclararse un poco la voz dijo:*
 
 💬 Altéru: "Thûlazar debe estar en alguna parte, no podrá esconderse para siempre. Estoy esperando al viajero que me traiga más pistas y vayamos juntos a cazarlo."`
   },
   {
     id: "escena_2",
     order: 2,
-    text: `*Duilon enseña a Andaer como mantener la postura en un combate contra enemigos numerosos.*
+    text: `*Duinor enseña a Andaer como mantener la postura en un combate contra enemigos numerosos.*
 
-💬 Duilon: "Con mi mandoble mantengo al enemigo a distancia, y atacó a quienes creo más valientes, es como un la fila de pilares, si el más grande se cae los demás se vienen abajo."
+💬 Duinor: "Con mi mandoble mantengo al enemigo a distancia, y atacó a quienes creo más valientes, es como un la fila de pilares, si el más grande se cae los demás se vienen abajo."
 
-*Andaer trataba de mantenerse fuera del alcance del arma del campeón Lamedoniano, pero tras esperar el momento se acercó a su rival y le apoyó su espada de practica en el cuello*
+*Andaer trataba de mantenerse fuera del alcance del arma del campeón Lamedoniano, pero tras esperar el momento se acercó a su rival y le apoyó su espada de práctica en el cuello*
 
 💬 Andaer: "Eso si entre tus enemigos no hay alguien tan valiente como el Leal Escudero de Altéru."
 
-💬 Duilon: "No creas que por decir eso van a promoverte a Sargento."`
+💬 Duinor: "No creas que por decir eso van a promoverte a Sargento."`
   },
   {
     id: "escena_3",
     order: 3,
-    text: `*Faelon enseña a Nieriel como usar la planta de Athelas, usando a uno de los montaraces de Arathir como paciente de prácticas."
+    text: `*Faelon enseña a Nieriel cómo usar la planta de Athelas, usando a uno de los montaraces de Arathir como paciente de prácticas."
 
 💬 Faelon: "En nuestro refugio cada herida es cuidada con el conocimiento y la dedicación que ameritan, no es sólo los ingredientes que aplicas, sino comprender los efectos negativos de cualquier descuido."
 
@@ -1024,13 +1024,13 @@ const companionScenes = [
     order: 4,
     text: `*Amanecía otro día en el campamento y Cirdil se preparaba para encender la fragua, reunió el carbón y la leña y luego de limpiar avivó el fuego hasta que logró la constancia adecuada.*
 
-💬 Duilon: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tu tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"
+💬 Duinor: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tú tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"
 
 *Cirdil sonreía mientras negaba con la cabeza, preparando sus herramientas para calentar el acero.*
 
 💬 Cirdil: "¿Y yo que obtengo a cambio? Mira todo el trabajo que tengo, y ya le prometí a una de las viajeras acompañarla a una misión en Anfalas. Es muy hermosa por cierto. Pero déjame ver que puedo hacer, quizás cuando termine de preparar esto."
 
-💬 Duilon: "Ya me lo prometiste, estaré cerca de aquí para que no lo olvides."`
+💬 Duinor: "Ya me lo prometiste, estaré cerca de aquí para que no lo olvides."`
   },
   {
     id: "escena_5",
@@ -1095,7 +1095,7 @@ const companionScenes = [
 
 💬 Nieriel: "Se acabaron los amaneceres en silencio."
 
-*Duilon curioso se acercó a ellos y los ayudó a ubicar el mejor lugar para poner un lugar gallinero en el campamento.*
+*Duinor curioso se acercó a ellos y los ayudó a ubicar el mejor lugar para poner un lugar gallinero en el campamento.*
 
 💬 Faelon: "¿Altéru lo sabe?"
 
@@ -1123,7 +1123,7 @@ const companionScenes = [
 
 💬 Cirdil: "Esos piel oscura eran unos verdaderos desquiciados, peleaban sin importarles su propia vida, nisiquiera llevaban armadura, casi no tenias tiempo de atacar a alguno porque otro podría noquearte con su garrote si te descuidas."
 
-💬 Duilon: "De no ser porque el viejo Tarannon, que su alma repose en paz y Elphir el flanco derecho hubiera caído, allí la batalla estaría perdida. Los hacheros de Lossarnach defendieron muy bien contra esos Haradrim con escudos de cuero y yelmos intimidantes."
+💬 Duinor: "De no ser porque el viejo Tarannon, que su alma repose en paz y Elphir el flanco derecho hubiera caído, allí la batalla estaría perdida. Los hacheros de Lossarnach defendieron muy bien contra esos Haradrim con escudos de cuero y yelmos intimidantes."
 
 💬 Andaer: "Mi madre no me dejó acudir a la batalla pero la carga de Altéru junto a Imrahil, sus hijos y Angbor el Intrépido se cantará en los salones del príncipe y en los festines usuales de Linhir por muchos años."`
   },
@@ -1166,7 +1166,7 @@ const companionScenes = [
 
 *Todos los guerreros se dispusieron en los lugares más vulnerables del campamento para defenderse de hordas de trasgos que venían de la montaña y por el camino escondido del norte venían dos trolls de las cavernas.*
 
-*Los montaraces se subieron a las torres improvisadas y disparaban a todo el que se acercaba, Altéru y Nieriel pelearon juntos, intentando que los trasgos no intentarán quemar ninguna tienda. Andaer, Duilon y Cirdil pelearon con ferocidad animados por el constante sonido del cuerno del capitán Altéru.*
+*Los montaraces se subieron a las torres improvisadas y disparaban a todo el que se acercaba, Altéru y Nieriel pelearon juntos, intentando que los trasgos no intentarán quemar ninguna tienda. Andaer, Duinor y Cirdil pelearon con ferocidad animados por el constante sonido del cuerno del capitán Altéru.*
 
 💬 Altéru: "Esa armadura no te luce mal mi vida ¿No te lo había dicho?" *A lo que Nieriel sonrió alzando su escudo y espada*
 
@@ -1192,7 +1192,7 @@ const companionScenes = [
 
 💬 Altéru: "Llévenlo a la jaula de las gallinas y busquenle otro lugar a las aves, tengo preguntas que hacerle a nuestro invitado."
 
-*Faelon y Cirdil obedecieron y se llevaron al prisionero detrás de la tienda de Andaer y Duilon.*`
+*Faelon y Cirdil obedecieron y se llevaron al prisionero detrás de la tienda de Andaer y Duinor.*`
   },
   {
     id: "escena_17",
@@ -1246,11 +1246,11 @@ const companionScenes = [
   {
     id: "escena_20",
     order: 20,
-    text: `*Había una pequeña discusión en la tienda que era atendida aveces por Duilon y aveces por Faelon, en la que Altéru tuvo que intervenir.*
+    text: `*Había una pequeña discusión en la tienda que era atendida aveces por Duinor y aveces por Faelon, en la que Altéru tuvo que intervenir.*
 
-💬 Altéru: "¿Qué ocurre Duilon? ¿Y cuál es este alboroto?"
+💬 Altéru: "¿Qué ocurre Duinor? ¿Y cuál es este alboroto?"
 
-💬 Duilon: "Se quejan de los precios Altéru, las provisiones de camino casi duplican su precio de una semana a otra, y se quejan por esto."
+💬 Duinor: "Se quejan de los precios Altéru, las provisiones de camino casi duplican su precio de una semana a otra, y se quejan por esto."
 
 "¡Es injusto, es un robo!" *Bramó uno de los viajeros.*
 
@@ -1428,3 +1428,5 @@ export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) 
   await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
   await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
 }
+
+
