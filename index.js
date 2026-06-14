@@ -786,6 +786,339 @@ function chooseEncounterVariant(encounter, encountersPool = []) {
 }
 
 // ==========================================
+//        ESCENARIOS FINALES
+// ==========================================
+
+const FINAL_SCENE_COMMANDS = {
+  "!atacar": "atacar",
+  "!rodear": "rodear",
+  "!explorar": "explorar",
+  "!infiltrar": "infiltrar",
+  "!negociar": "negociar",
+  "!esperar": "esperar",
+  "!volver": "retirarse",
+  "!retirarse": "retirarse"
+};
+
+const FINAL_SCENE_RULES = {
+  atacar: { successChance: 0.68, rewardMultiplier: 1.15, damageOnFail: 18 },
+  rodear: { successChance: 0.84, rewardMultiplier: 0.95, damageOnFail: 8 },
+  explorar: { successChance: 0.82, rewardMultiplier: 1.00, damageOnFail: 6 },
+  infiltrar: { successChance: 0.75, rewardMultiplier: 1.05, damageOnFail: 10 },
+  negociar: { successChance: 0.62, rewardMultiplier: 0.85, damageOnFail: 4 },
+  esperar: { successChance: 0.90, rewardMultiplier: 0.80, damageOnFail: 2 },
+  retirarse: { successChance: 0.99, rewardMultiplier: 0.55, damageOnFail: 0 }
+};
+
+function getFinalScenarioConfig(mission = {}) {
+  const raw = mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
+
+  const enabled = raw.enabled !== false;
+  const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
+
+  let allowedActions = Array.isArray(raw.allowedActions) && raw.allowedActions.length
+    ? raw.allowedActions.map(normalizeKey)
+    : null;
+
+  if (!allowedActions || !allowedActions.length) {
+    allowedActions = hasEnemies
+      ? ["atacar", "rodear", "explorar", "infiltrar", "negociar", "retirarse"]
+      : ["explorar", "infiltrar", "negociar", "retirarse"];
+  }
+
+  allowedActions = [...new Set(allowedActions)];
+
+  if (!hasEnemies) {
+    allowedActions = allowedActions.filter(a => a !== "atacar");
+  }
+
+  return {
+    enabled,
+    title: raw.titulo || raw.title || `Escenario final: ${mission.titulo || "la misión"}`,
+    description: raw.descripcion || raw.description || mission.descripcion || "Has alcanzado el desenlace de la expedición.",
+    hasEnemies,
+    enemyLabel: raw.enemyLabel || raw.enemigo || "enemigos",
+    enemyChance: Number(raw.enemyChance ?? raw.probabilidadEnemigo ?? 0.6),
+    rewardMultiplier: Number(raw.rewardMultiplier ?? 1),
+    xpBonus: Number(raw.xpBonus ?? 0),
+    pointsBonus: Number(raw.pointsBonus ?? 0),
+    allowedActions,
+    actionText: raw.actionText || {},
+    successText: raw.successText || {},
+    failureText: raw.failureText || {},
+    affinityBonus: Number(raw.affinityBonus ?? 0)
+  };
+}
+
+function getFinalScenarioAllowedText(scenario = {}) {
+  return (scenario.allowedActions || [])
+    .map(action => `\`${action === "retirarse" ? "!volver" : "!" + action}\``)
+    .join(" · ");
+}
+
+function getFinalScenarioActionBonus(action, companionId) {
+  const id = normalizeKey(companionId);
+
+  if (action === "atacar") {
+    return ["cirdil", "duilon", "alteru", "montaraces"].includes(id) ? 1 : 0;
+  }
+
+  if (action === "rodear" || action === "explorar") {
+    return ["nieriel", "faelon", "montaraces"].includes(id) ? 1 : 0;
+  }
+
+  if (action === "infiltrar") {
+    return ["nieriel", "faelon", "andaer"].includes(id) ? 1 : 0;
+  }
+
+  if (action === "negociar") {
+    return ["alteru", "faelon", "nieriel"].includes(id) ? 1 : 0;
+  }
+
+  if (action === "retirarse") {
+    return ["nieriel", "faelon"].includes(id) ? 1 : 0;
+  }
+
+  return 0;
+}
+
+function getFinalScenarioIntroText(expedition) {
+  const mission = expedition.mission || {};
+  const scenario = expedition.finalScenario || {};
+
+  return (
+    `🎯 **${scenario.title || mission.titulo || "Escenario final"}**\n\n` +
+    `${scenario.description || mission.descripcion || "Has llegado al desenlace de la expedición."}\n\n` +
+    `**Opciones disponibles:** ${getFinalScenarioAllowedText(scenario)}`
+  );
+}
+
+function getFinalScenarioActionStartText(action, expedition) {
+  const mission = expedition.mission || {};
+  const destination = mission.destino || "la zona";
+  const enemyLabel = expedition.finalScenario?.enemyLabel || "enemigos";
+
+  switch (action) {
+    case "atacar":
+      return `⚔️ Decides atacar de frente en ${destination}. Si hay ${enemyLabel}, tendrás que abrirte paso por la fuerza.`;
+    case "rodear":
+      return `🧭 Optas por rodear la zona y buscar una entrada menos vigilada en ${destination}.`;
+    case "explorar":
+      return `🔎 Avanzas con cautela para reconocer mejor ${destination} antes de tomar una decisión.`;
+    case "infiltrar":
+      return `🌑 Te mueves entre sombras para entrar sin llamar la atención en ${destination}.`;
+    case "negociar":
+      return `🗣️ Intentas hablar antes de derramar sangre y medir la intención de quienes custodian ${destination}.`;
+    case "esperar":
+      return `⏳ Decides observar primero y medir el momento adecuado en ${destination}.`;
+    case "retirarse":
+      return `🏕️ Prefieres retirarte y llevar el informe al campamento sin arriesgar más al grupo.`;
+    default:
+      return `Has tomado una decisión en el desenlace de la misión.`;
+  }
+}
+
+function getFinalScenarioSuccessText(action, expedition) {
+  const mission = expedition.mission || {};
+  const destination = mission.destino || "la zona";
+  const enemyLabel = expedition.finalScenario?.enemyLabel || "enemigos";
+
+  switch (action) {
+    case "atacar":
+      return `Tu avance es decisivo. Si había ${enemyLabel}, logras romper su posición y asegurar ${destination}.`;
+    case "rodear":
+      return `Encuentras un flanco seguro y burlas el peligro. El camino hacia ${destination} queda bajo tu control.`;
+    case "explorar":
+      return `Tu reconocimiento da frutos. Confirmas lo que hay en ${destination} y vuelves con información útil.`;
+    case "infiltrar":
+      return `Te deslizas sin ser visto y obtienes ventaja sobre lo que ocurre en ${destination}.`;
+    case "negociar":
+      return `Tu palabra logra abrir una puerta mejor que una espada. La situación se resuelve sin un choque mayor.`;
+    case "esperar":
+      return `Tu paciencia da resultado. El momento correcto aparece y actúas con ventaja.`;
+    case "retirarse":
+      return `Te retiras con orden y entregas el informe. La misión queda cerrada sin perder la compostura.`;
+    default:
+      return `La situación se resuelve a tu favor.`;
+  }
+}
+
+function getFinalScenarioFailureText(action, expedition) {
+  const mission = expedition.mission || {};
+  const destination = mission.destino || "la zona";
+  const enemyLabel = expedition.finalScenario?.enemyLabel || "enemigos";
+
+  switch (action) {
+    case "atacar":
+      return `El choque no sale limpio. Los ${enemyLabel} resisten mejor de lo esperado y pagas el precio del intento en ${destination}.`;
+    case "rodear":
+      return `El rodeo se complica. El terreno te hace perder tiempo y la zona se vuelve más peligrosa de lo previsto.`;
+    case "explorar":
+      return `Tu avance revela más riesgos de los que esperabas. Debes retirarte con más cautela de la necesaria.`;
+    case "infiltrar":
+      return `Te detectan antes de lo previsto. Logras salir, pero la maniobra te deja expuesto.`;
+    case "negociar":
+      return `La conversación no prospera. El ambiente se tensa y no te queda más que retroceder.`;
+    case "esperar":
+      return `La espera no juega a tu favor. El escenario cambia y te obliga a improvisar.`;
+    case "retirarse":
+      return `Te retiras sin completar todo lo que querías, pero conservas a tu gente a salvo.`;
+    default:
+      return `La situación no se resuelve como esperabas.`;
+  }
+}
+
+function getFinalScenarioActionText(action, expedition) {
+  const mission = expedition.mission || {};
+  const scenario = expedition.finalScenario || {};
+  const startText = getFinalScenarioActionStartText(action, expedition);
+  const successText = scenario.successText?.[action] || getFinalScenarioSuccessText(action, expedition);
+  const failureText = scenario.failureText?.[action] || getFinalScenarioFailureText(action, expedition);
+
+  return { startText, successText, failureText };
+}
+
+async function startFinalScenario(message, expedition) {
+  const scenario = expedition.finalScenario;
+  if (!scenario?.active) return;
+
+  const text = getFinalScenarioIntroText(expedition);
+  return replyLong(message, text);
+}
+
+async function resolveFinalScenarioAction(message, expedition, action) {
+  const scenario = expedition.finalScenario;
+  if (!scenario?.active) return false;
+
+  if (!scenario.allowedActions.includes(action)) {
+    return message.reply(
+      `⚠️ En este escenario solo puedes usar: ${getFinalScenarioAllowedText(scenario)}.`
+    );
+  }
+
+  const profile = await db.getProfile(message.author.id);
+  const party = [...new Set(getOwnedCompanions(profile))];
+  const combatBonus = getCompanionBonus(profile);
+  const affinityCombat = getAffinityCombatBonus(profile, party);
+  const mission = expedition.mission || {};
+  const rules = FINAL_SCENE_RULES[action] || FINAL_SCENE_RULES.explorar;
+
+  let successChance = rules.successChance;
+
+  if (action === "atacar") {
+    successChance += affinityCombat.successBonus;
+    successChance += combatBonus.captainBonus * 0.2;
+    successChance += combatBonus.strongEnemyBonus * 0.1;
+    successChance += scenario.hasEnemies ? 0.08 : -0.35;
+  } else if (action === "rodear") {
+    successChance += (combatBonus.nierielSafe ? 0.10 : 0);
+    successChance += combatBonus.rangerBonus * 0.05;
+  } else if (action === "explorar") {
+    successChance += (combatBonus.nierielSafe ? 0.08 : 0);
+    successChance += combatBonus.rangerBonus * 0.06;
+  } else if (action === "infiltrar") {
+    successChance += (combatBonus.nierielSafe ? 0.05 : 0);
+  } else if (action === "negociar") {
+    successChance += party.includes("alteru") ? 0.04 : 0;
+    successChance += party.includes("faelon") ? 0.05 : 0;
+  } else if (action === "retirarse") {
+    successChance = 0.99;
+  } else if (action === "esperar") {
+    successChance += 0.05;
+  }
+
+  successChance = Math.max(0.05, Math.min(0.95, successChance));
+  const success = Math.random() < successChance;
+
+  const baseXP = Math.max(1, Math.round((Number(mission.xp || 0) * 0.5) * scenario.rewardMultiplier * rules.rewardMultiplier));
+  const basePoints = Math.max(1, Math.round((Number(mission.puntos || 0) * 0.5) * scenario.rewardMultiplier * rules.rewardMultiplier));
+
+  let xpReward = baseXP;
+  let pointsReward = basePoints;
+
+  if (!success) {
+    xpReward = Math.max(1, Math.round(xpReward * 0.6));
+    pointsReward = Math.max(1, Math.round(pointsReward * 0.6));
+  }
+
+  xpReward += Math.max(0, Math.round(scenario.xpBonus || 0));
+  pointsReward += Math.max(0, Math.round(scenario.pointsBonus || 0));
+
+  const totalXP = (expedition.xpEarned || 0) + xpReward;
+  const totalPoints = (expedition.pointsEarned || 0) + pointsReward;
+
+  const currentHealth = profile.salud !== undefined ? profile.salud : 100;
+  const damage = !success
+    ? Math.max(0, Math.round(rules.damageOnFail * (1 - affinityCombat.damageReduction)))
+    : 0;
+
+  if (damage > 0) {
+    await db.updateTravelerData(message.author.id, {
+      salud: Math.max(0, currentHealth - damage)
+    });
+  }
+
+  const affinityLines = [];
+  for (const cid of party.slice(0, 4)) {
+    const gain = Math.min(
+      3,
+      Math.max(0, getAffinityGain() + getFinalScenarioActionBonus(action, cid) + (scenario.affinityBonus || 0))
+    );
+    if (gain > 0) {
+      await db.addAffinity(message.author.id, cid, gain);
+      affinityLines.push(`• **${companions[cid]?.nombre || cid}**: +${gain}`);
+    }
+  }
+
+  const { startText, successText, failureText } = getFinalScenarioActionText(action, expedition);
+  let texto = `🎯 **${scenario.title}**\n\n${startText}\n\n${success ? successText : failureText}`;
+
+  if (damage > 0) {
+    texto += `\n\n❤️ Recibes **${damage}** de daño.`;
+  }
+
+  if (affinityLines.length) {
+    texto += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
+  }
+
+  texto += `\n\n🏆 Recompensa final: +${xpReward} XP y +${pointsReward} puntos.`;
+
+  const beforeProfile = await db.getProfile(message.author.id);
+  const beforeLevel = typeof db.calculateLevel === "function"
+    ? db.calculateLevel(beforeProfile.xp || 0)
+    : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
+  const beforeRank = obtenerRango(beforeProfile.points || 0);
+
+  await db.addXP(message.author.id, totalXP);
+  await db.addPoints(message.author.id, totalPoints);
+
+  const afterProfile = await db.getProfile(message.author.id);
+  const afterLevel = typeof db.calculateLevel === "function"
+    ? db.calculateLevel(afterProfile.xp || 0)
+    : Math.floor((afterProfile.xp || 0) / 1000) + 1;
+  const afterRank = obtenerRango(afterProfile.points || 0);
+
+  if (afterLevel > beforeLevel) {
+    texto += `\n\n📚 **Ascenso de nivel**\nHas subido al nivel **${afterLevel}**.`;
+  }
+
+  if (afterRank !== beforeRank) {
+    texto += `\n🏅 **Ascenso de rango**\nAhora eres conocido como **${afterRank}**.`;
+  }
+
+  expedition.finalScenario = null;
+  expedition.currentEncounter = null;
+  expedition.pendingSubEncounter = false;
+  expeditions.delete(message.author.id);
+
+  if (typeof clearExpeditionParty === "function") {
+    await clearExpeditionParty(message.author.id).catch(() => {});
+  }
+
+  return replyLong(message, texto);
+}
+
+// ==========================================
 //        LLAMADAS API E INTERACCIONES IA
 // ==========================================
 
@@ -1777,6 +2110,19 @@ client.on("messageCreate", async (message) => {
     }
   }
 
+  const activeExpedition = expeditions.get(message.author.id);
+  if (activeExpedition?.finalScenario?.active) {
+    const finalAction = FINAL_SCENE_COMMANDS[command];
+
+    if (finalAction) {
+      return resolveFinalScenarioAction(message, activeExpedition, finalAction);
+    }
+
+    return message.reply(
+      `🎯 Estás en un escenario final. Usa: ${getFinalScenarioAllowedText(activeExpedition.finalScenario)}.`
+    );
+  }
+
   const profileForOnboarding = await db.getProfile(message.author.id);
 
   if (!profileForOnboarding.onboardingCompleted) {
@@ -2385,7 +2731,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       failed: false,
       threat: 0,
       affinityLog: {},
-      pendingSubEncounter: false
+      pendingSubEncounter: false,
+      finalScenario: null
     });
 
     await db.updateTravelerData(message.author.id, {
@@ -2546,6 +2893,20 @@ Usa !desafiar para comenzar el viaje.`
       const encuentroId = expedition.mission.encuentros?.[expedition.progress];
   
       if (!encuentroId) {
+        const finalCfg = getFinalScenarioConfig(expedition.mission);
+
+        if (finalCfg.enabled !== false) {
+          expedition.finalScenario = {
+            active: true,
+            ...finalCfg
+          };
+
+          expedition.currentEncounter = null;
+          expedition.pendingSubEncounter = false;
+
+          return startFinalScenario(message, expedition);
+        }
+
         const beforeProfile = await db.getProfile(message.author.id);
         const beforeLevel = typeof db.calculateLevel === "function"
           ? db.calculateLevel(beforeProfile.xp || 0)
@@ -2743,6 +3104,22 @@ Usa !desafiar para comenzar el viaje.`
         return message.reply(textoVictoria);
       }
   
+      const finalCfg = getFinalScenarioConfig(expedition.mission);
+
+      if (finalCfg.enabled !== false) {
+        expedition.finalScenario = {
+          active: true,
+          ...finalCfg
+        };
+
+        expedition.currentEncounter = null;
+        expedition.pendingSubEncounter = false;
+        
+        await message.reply(textoVictoria);
+
+        return startFinalScenario(message, expedition);
+      }
+
       const beforeProfile = await db.getProfile(message.author.id);
       const beforeLevel = typeof db.calculateLevel === "function"
         ? db.calculateLevel(beforeProfile.xp || 0)
