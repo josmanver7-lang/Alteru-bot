@@ -40,7 +40,7 @@ export const companions = {
   },
 
   duilon: {
-    nombre: "Duilon",
+    nombre: "Duinor",
     coste: 200,
     clase: "Campeón",
     afinidadMax: 100,
