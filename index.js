@@ -979,7 +979,7 @@ function getFinalScenarioConfig(mission = {}) {
 }
 
 function getFinalScenarioAllowedText(scenario = {}) {
-  const fallback = ["atacar", "rodear", "explorar", "infiltrar", "negociar", "esperar", "retirarse"];
+  const fallback = ["!atacar", "!rodear", "!explorar", "!infiltrar", "!negociar", "!esperar", "!retirarse"];
   const allowed = Array.isArray(scenario.allowedActions) && scenario.allowedActions.length
     ? scenario.allowedActions
     : fallback;
@@ -1399,7 +1399,7 @@ async function companionReactions(profile, context, mode = "encounter", maxLines
 
 async function announceDawnReset(client) {
   const dawnCompanionId = [
-    "faelon", "nieriel", "cirdil", "andaer", "duilon", "alteru", "montaraces"
+    "faelon", "nieriel", "cirdil", "andaer", "duinor", "alteru", "montaraces"
   ][Math.floor(Math.random() * 7)];
 
   const line = await companionReaction(
@@ -2495,7 +2495,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   if (command === "!companeros" || command === "!compañeros") {
     let texto = "🤝 **Compañeros disponibles**\n\n";
-    const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
+    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
   
     for (const id of orden) {
       const comp = companions[id];
@@ -2514,7 +2514,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
   if (command === "!campamento") {
     let texto = "🏕️ **CAMPAMENTO DE ALTÉRU**\n\n";
-    const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
+    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
   
     for (const id of orden) {
       const comp = companions[id];
@@ -2570,7 +2570,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   texto += "────────────────\n\n";
   texto += "🤝 Compañeros del campamento\n\n";
 
-  const orden = ["montaraces", "alteru", "cirdil", "duilon", "andaer", "nieriel", "faelon"];
+  const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
 
   for (const id of orden) {
     const comp = companions[id];
@@ -2999,7 +2999,7 @@ Usa !desafiar para comenzar el viaje.`
         (bonuses.strongEnemyBonus || 0) +
         (affinityCombat.successBonus || 0) +
         (owned.includes("cirdil") ? 0.06 : 0) +
-        (owned.includes("duilon") ? 0.05 : 0) +
+        (owned.includes("duinor") ? 0.05 : 0) +
         (owned.includes("alteru") ? 0.04 : 0)
       ),
       rodear: Math.min(
@@ -3044,9 +3044,9 @@ Usa !desafiar para comenzar el viaje.`
       const actionText =
         getFinalScenarioActionText(activeEncounter, action, "success") ||
         (action === "atacar"
-          ? "Avanzas con decisión y resuelves el último obstáculo por la fuerza."
+          ? "Avanzas con decisión y resuelves el último obstáculo haciendo uso de tus habilidades y destrezas para derrotar al enemigo.."
           : action === "rodear"
-            ? "Encuentras un paso lateral y alcanzas tu objetivo sin llamar la atención."
+            ? "Encuentras un paso poco vigilado y te adentras en tu objetivo con mucho sigilo, sin llamar la atención."
             : "Te retiras con cautela y entregas el informe al campamento.");
 
       await clearExpeditionParty(message.author.id);
