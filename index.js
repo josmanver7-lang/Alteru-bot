@@ -6,11 +6,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
-if (!OPENROUTER_API_KEY) throw new Error('Missing OPENROUTER_API_KEY');
+if (!GEMINI_API_KEY) throw new Error('Missing GEMINI_API_KEY or GOOGLE_API_KEY');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,7 +106,7 @@ const companions = {
 const COMPANION_BASE_BONUS = {
   alteru: { captainBonus: 0.10, successBonus: 0.04 },
   cirdil: { strongEnemyBonus: 0.12, damageReduction: 0.06 },
-  duilon: { numerousEnemyBonus: 0.12, successBonus: 0.03 },
+  duinor: { numerousEnemyBonus: 0.12, successBonus: 0.03 },
   andaer: { blockChance: 0.20, damageReduction: 0.04 },
   nieriel: { nierielSafe: true, rangerBonus: 0.06 },
   faelon: { faelonHeal: 10, successBonus: 0.02 },
@@ -114,17 +114,19 @@ const COMPANION_BASE_BONUS = {
 };
 
 const PLAYER_CLASS_BONUS = {
-  guardián: { damageReduction: 0.06 },
-  campeon: { attackBonus: 0.08 },
-  capitán: { negotiationBonus: 0.08, successBonus: 0.04 },
-  cazador: { rangerBonus: 0.08 },
-  vigilante: { explorationBonus: 0.06 },
-  marinero: { explorationBonus: 0.06 },
-  guardián_rúnico: { specialBonus: 0.08 },
-  sabio: { specialBonus: 0.06 },
-  bardo: { negotiationBonus: 0.06 },
-  saqueador: { attackBonus: 0.05 },
-  beornida: { attackBonus: 0.06 }
+  guerrero: { attackBonus: 0.06, damageReduction: 0.03 },
+  guardian: { damageReduction: 0.06 },
+  vigilante: { explorationBonus: 0.06, successBonus: 0.03 },
+  campeon: { attackBonus: 0.08, successBonus: 0.03 },
+  cazador: { explorationBonus: 0.05, rangerBonus: 0.04 },
+  luchador: { attackBonus: 0.06, damageReduction: 0.02 },
+  bardo: { negotiationBonus: 0.08 },
+  guardian_runico: { specialBonus: 0.08, damageReduction: 0.04 },
+  capitan: { negotiationBonus: 0.08, successBonus: 0.04 },
+  sabio: { specialBonus: 0.06, explorationBonus: 0.04 },
+  saqueador: { attackBonus: 0.05, explorationBonus: 0.03 },
+  marinero: { explorationBonus: 0.08, successBonus: 0.03 },
+  beornida: { attackBonus: 0.06, damageReduction: 0.04 }
 };
 
 const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "regalos"];
@@ -139,6 +141,41 @@ function getPlayerClassKey(profile = {}) {
 
 function getPlayerClassBonus(profile = {}) {
   return PLAYER_CLASS_BONUS[getPlayerClassKey(profile)] || {};
+}
+
+function getPlayerClassBonusText(profile = {}) {
+  const bonus = getPlayerClassBonus(profile);
+  const parts = [];
+
+  if (bonus.attackBonus) parts.push(`Ataque +${Math.round(bonus.attackBonus * 100)}%`);
+  if (bonus.damageReduction) parts.push(`Defensa +${Math.round(bonus.damageReduction * 100)}%`);
+  if (bonus.explorationBonus) parts.push(`Exploración +${Math.round(bonus.explorationBonus * 100)}%`);
+  if (bonus.negotiationBonus) parts.push(`Negociación +${Math.round(bonus.negotiationBonus * 100)}%`);
+  if (bonus.specialBonus) parts.push(`Especial +${Math.round(bonus.specialBonus * 100)}%`);
+  if (bonus.rangerBonus) parts.push(`Rastreo +${Math.round(bonus.rangerBonus * 100)}%`);
+  if (bonus.successBonus) parts.push(`Éxito +${Math.round(bonus.successBonus * 100)}%`);
+
+  return parts.length ? parts.join(" | ") : "Sin bono definido";
+}
+
+function getCompanionBasePower(companionId) {
+  // Poder pre-calculado para ahorrar líneas (basado en tiers de equipamiento)
+  const powerMap = {
+    alteru: 32, cirdil: 19, duinor: 21, andaer: 18,
+    faelon: 21, nieriel: 28, montaraces: 19
+  };
+  const total = powerMap[normalizeKey(companionId)] || 0;
+  
+  return {
+    total,
+    successBonus: Math.min(total * 0.0025, 0.12),
+    damageReduction: Math.min(total * 0.0015, 0.08)
+  };
+}
+
+function getCompanionBaseSummary(companionId) {
+  const base = getCompanionBasePower(companionId);
+  return `Poder ${base.total} | Éxito +${Math.round(base.successBonus * 100)}% | Defensa -${Math.round(base.damageReduction * 100)}%`;
 }
 
 async function loadCatalog(filename) {
@@ -377,11 +414,6 @@ async function getCurrentTablonSelection() {
   return shuffled.slice(0, 5);
 }
 
-async function getCurrentMerchantState() {
-  const state = await db.getEventState("merchant");
-  return state || null;
-}
-
 function normalizeText(text) {
   if (!text) return '';
   return text
@@ -450,28 +482,6 @@ function getOwnedCompanions(profile) {
   return [...new Set(list.map(normalizeKey))];
 }
 
-function summarizePersonality(id) {
-  const p = getPersonaje(id);
-  const raw = p?.personalidad || p?.descripcion || p?.tono || "";
-
-  const words = String(raw)
-    .replace(/[^\p{L}\s]/gu, " ")
-    .split(/\s+/)
-    .filter(Boolean);
-
-  return words.slice(0, 2).join(" ") || "Sin definir";
-}
-
-function personalityShort(text) {
-  const parts = String(text || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (!parts.length) return "Sin definir";
-  return parts.slice(0, 2).join(" ");
-}
-
 function getPersonalityText(id) {
   const p = getPersonaje(id);
   if (!p) return "Sin definir";
@@ -489,10 +499,6 @@ function getPersonalityText(id) {
 
   const text = String(raw).trim();
   return text || "Sin definir";
-}
-
-function getCompanionEffect(id) {
-  return companions[id]?.efecto || "Sin efecto definido.";
 }
 
 function getCompanionIcon(id) {
@@ -552,23 +558,40 @@ function getCompanionBonus(profile) {
     damageReduction: 0,
     faelonHeal: 0,
     nierielSafe: false,
-    successBonus: 0,
-    attackBonus: 0,
-    explorationBonus: 0,
-    negotiationBonus: 0,
-    specialBonus: 0
+    basePower: 0,
+    baseSuccessBonus: 0,
+    baseDamageReduction: 0
   };
 
   for (const id of list) {
-    const base = COMPANION_BASE_BONUS[id];
-    if (!base) continue;
+    const base = getCompanionBasePower(id);
+    bonus.basePower += base.total;
+    bonus.baseSuccessBonus += base.successBonus;
+    bonus.baseDamageReduction += base.damageReduction;
 
-    for (const [key, value] of Object.entries(base)) {
-      if (typeof value === "boolean") {
-        bonus[key] = bonus[key] || value;
-      } else {
-        bonus[key] = (bonus[key] || 0) + value;
-      }
+    switch (normalizeKey(id)) {
+      case "alteru":
+        bonus.captainBonus += 0.20;
+        break;
+      case "cirdil":
+        bonus.strongEnemyBonus += 0.15;
+        bonus.damageReduction += 0.20;
+        break;
+      case "duinor":
+        bonus.numerousEnemyBonus += 0.25;
+        break;
+      case "andaer":
+        bonus.blockChance += 0.20;
+        break;
+      case "nieriel":
+        bonus.nierielSafe = true;
+        break;
+      case "faelon":
+        bonus.faelonHeal += 10;
+        break;
+      case "montaraces":
+        bonus.rangerBonus += 0.30;
+        break;
     }
   }
 
@@ -640,36 +663,6 @@ async function addAffinityWithRankMessage(userId, companionId, encounter, mode, 
   };
 }
 
-async function applyAffinityToParty(userId, profile, encounter, mode, outcome) {
-  const list = getOwnedCompanions(profile);
-  let total = 0;
-
-  for (const compId of list) {
-    const gain = getAffinityGain();
-    total += gain;
-    await db.addAffinity(userId, compId, gain);
-  }
-
-  return total;
-}
-
-async function applyAffinityToPartyDetailed(userId, profile, encounter, mode, outcome) {
-  const list = getOwnedCompanions(profile);
-  let total = 0;
-  const details = [];
-
-  for (const compId of list) {
-    const gain = getAffinityGain();
-    total += gain;
-    await db.addAffinity(userId, compId, gain);
-
-    const name = companions[compId]?.nombre || compId;
-    details.push(`• **${name}**: +${gain} afinidad`);
-  }
-
-  return { total, details };
-}
-
 function pickCompanionForScene(profile, encounter) {
   const list = getOwnedCompanions(profile);
   if (!list.length) return null;
@@ -684,7 +677,7 @@ function pickCompanionForScene(profile, encounter) {
   if (isElfScene && list.includes("faelon")) return "faelon";
 
   if (tipo === "enemigo_numeroso" || titulo.includes("trasgo") || titulo.includes("corsario") || titulo.includes("bandido")) {
-    if (list.includes("duilon")) return "duilon";
+    if (list.includes("duinor")) return "duinor";
   }
 
   if (tipo === "enemigo_poderoso" || tipo === "jefe" || (encounter?.peligro || 0) >= 4) {
@@ -724,7 +717,7 @@ function getAffinityRank(value) {
 function normalizeFinalAction(value) {
   const key = normalizeKey(value);
 
-  if (["huir", "escapar", "retirarse", "retirada"].includes(key)) return "retirarse";
+  if (["huir", "escapar", "retirarse", "retirada", "abandonar"].includes(key)) return "retirarse";
   if (["rodear", "flanquear", "rodeo"].includes(key)) return "rodear";
   if (["atacar", "asalto", "embestir"].includes(key)) return "atacar";
 
@@ -806,40 +799,6 @@ async function clearExpeditionParty(userId) {
     companions: [],
     hiredCompanions: []
   });
-}
-
-async function awardMissionCompletion(userId, profile, xpAmount, pointAmount) {
-  const beforeLevel = db.calculateLevel(profile.xp || 0);
-  const beforeRank = obtenerRango(profile.points || 0);
-
-  await db.addXP(userId, xpAmount);
-  await db.addPoints(userId, pointAmount);
-
-  const updated = await db.getProfile(userId);
-  const afterLevel = db.calculateLevel(updated.xp || 0);
-  const afterRank = obtenerRango(updated.points || 0);
-
-  const lines = [];
-
-  if (afterLevel > beforeLevel) {
-    lines.push(`📚 ¡Felicidades! Has ascendido al nivel **${afterLevel}**.`);
-  }
-
-  if (afterRank !== beforeRank) {
-    lines.push(`🏅 ¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`);
-  }
-
-  return lines.join("\n");
-}
-
-function applyFaelonHeal(profile) {
-  const list = getOwnedCompanions(profile);
-  if (!list.includes("faelon")) return null;
-
-  const saludActual = profile.salud !== undefined ? profile.salud : 100;
-  const nuevaSalud = Math.min(100, saludActual + 10);
-
-  return { saludActual, nuevaSalud };
 }
 
 function getEncounterSubOptions(encounter, encountersPool = []) {
@@ -925,6 +884,7 @@ const FINAL_SCENE_COMMANDS = {
   "!negociar": "negociar",
   "!esperar": "esperar",
   "!volver": "retirarse",
+  "!abandonar": "retirarse",
   "!retirarse": "retirarse"
 };
 
@@ -1220,7 +1180,7 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   if (!success && normalizedAction === "atacar") {
     const saludActual = profile.salud !== undefined ? profile.salud : 100;
     const danoBase = Number(scenario.damageOnFailure ?? 12);
-    const dano = Math.max(1, Math.floor(danoBase * (1 - combatBonus.damageReduction - affinityCombat.damageReduction)));
+    const dano = Math.max(1, Math.floor(danoBase * (1 - combatBonus.damageReduction - affinityCombat.damageReduction - (combatBonus.baseDamageReduction || 0))));
     const nuevaSalud = Math.max(0, saludActual - dano);
 
     await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
@@ -1244,7 +1204,6 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   await db.addPoints(message.author.id, pointsGain);
 
   await clearExpeditionParty(message.author.id);
-  expedition.pendingSubEncounter = false;
   expedition.pendingFinalScenario = false;
   expedition.finalScenarioShown = false;
   expeditions.delete(message.author.id);
@@ -1256,54 +1215,12 @@ async function resolveFinalScenarioAction(message, expedition, action) {
 //        LLAMADAS API E INTERACCIONES IA
 // ==========================================
 
-function getEncounterReactionStyle(encounter = {}) {
-  const tipo = normalizeKey(encounter?.tipo || "");
-  const categoria = normalizeKey(encounter?.categoria || "");
-  const titulo = normalizeKey(encounter?.titulo || "");
-  const desc = String(encounter?.descripcion || "").toLowerCase();
-
-  if (tipo === "enemigo_poderoso" || tipo === "jefe" || (encounter?.peligro || 0) >= 4) {
-    return "combate tenso, golpe a golpe, con riesgo real";
-  }
-
-  if (tipo === "enemigo_numeroso" || categoria === "combate") {
-    return "choque contra varios enemigos, presión constante y ritmo rápido";
-  }
-
-  if (tipo === "obstaculo" || categoria === "terreno") {
-    return "avance difícil, terreno hostil y cuidado en cada paso";
-  }
-
-  if (tipo === "evento_especial" || categoria === "social" || categoria === "exploracion") {
-    return "encuentro inesperado, ambiente de viaje y reacción natural";
-  }
-
-  if (titulo.includes("perdido") || desc.includes("desorient") || desc.includes("camino")) {
-    return "desorientación, tensión y búsqueda de orientación";
-  }
-
-  return "situación de viaje, reacción breve y natural";
-}
-
-function getCompanionWeaponText(companionId) {
-  const p = getPersonaje(companionId);
-  return (
-    p?.arma ||
-    p?.equipo?.arma ||
-    p?.armamento?.arma ||
-    companions[companionId]?.arma ||
-    "su arma habitual"
-  );
-}
-
 function getCompanionLore(companionId) {
   const personaje = getPersonaje(companionId);
 
   return {
     nombre: personaje?.nombre || companions[companionId]?.nombre || companionId,
     personalidad: personaje?.personalidad || personaje?.descripcion || personaje?.tono || "",
-    arma: personaje?.arma || personaje?.equipo?.arma || personaje?.armamento?.arma || "",
-    armadura: personaje?.armadura || personaje?.equipo?.armadura || personaje?.armamento?.armadura || "",
     clase: personaje?.clase || companions[companionId]?.clase || ""
   };
 }
@@ -1320,81 +1237,48 @@ async function companionReaction(companionId, context, mode = "encounter") {
   const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
   const peligro = context?.peligro ?? 0;
 
-  const prompt = `
-Eres ${nombre}.
-
-Personalidad:
-${lore.personalidad || "reservado y expresivo a su manera"}
-
-Clase:
-${lore.clase || "desconocida"}
-
-Arma:
-${lore.arma || "No especificada"}
-
-Armadura:
-${lore.armadura || "No especificada"}
-
-Situación:
+  const systemInstruction = `Eres ${nombre}.
+Personalidad: ${lore.personalidad || "reservado y expresivo a su manera"}
+Clase: ${lore.clase || "desconocida"}
 Modo: ${mode}
 Título: ${titulo}
 Tipo: ${tipo}
 Categoría: ${categoria}
 Peligro: ${peligro}
-Descripción:
-${descripcion}
 
 Instrucciones:
 - Responde con una sola línea corta.
 - Máximo 40 palabras.
 - El nombre debe aparecer solo una vez al inicio.
-- Si es combate, menciona el arma o la postura.
+- Si es combate, menciona tu postura o acción.
 - Si es obstáculo, reacciona al terreno o al riesgo.
 - Si es evento especial, comenta la escena de forma natural.
-- Español.
-`.trim();
+- Español.`;
 
   try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.85,
-        max_tokens: 60
+        systemInstruction: { parts: [{ text: systemInstruction.trim() }] },
+        contents: [{ role: "user", parts: [{ text: descripcion || "La situación se desenvuelve." }] }],
+        generationConfig: { temperature: 0.85, maxOutputTokens: 60 }
       })
     });
 
     if (!res.ok) {
-      const details = await res.text().catch(() => "");
-      console.error("OpenRouter companionReaction error:", res.status, details);
-      throw new Error(`OpenRouter ${res.status}`);
+      throw new Error(`Gemini ${res.status}`);
     }
 
     const data = await res.json();
-    const raw = data?.choices?.[0]?.message?.content?.trim() || "*observa en silencio*";
+    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*observa en silencio*";
     const clean = stripCompanionPrefix(raw, nombre);
 
     return `${nombre}: ${compactLine(clean, 40)}`;
-  } catch {
+  } catch (err) {
     return `${nombre}: *observa en silencio*`;
   }
-}
-
-async function companionReactions(profile, context, mode = "encounter", maxLines = 3, outcome = "encounter") {
-  const ids = [...new Set(getOwnedCompanions(profile))].slice(0, maxLines);
-  const lines = [];
-
-  for (const id of ids) {
-    const line = await companionReaction(id, context, mode);
-    if (line) lines.push(`💬 ${line}`);
-  }
-
-  return lines.join("\n");
 }
 
 async function announceDawnReset(client) {
@@ -1441,7 +1325,7 @@ Rango: ${obtenerRango(profile?.points || 0)}
 `.trim();
 }
 
-async function askOpenRouter(userId, userMessage, lore) {
+async function askGemini(userId, userMessage, lore) {
   const profile = await db.getProfile(userId);
   const systemPrompt = buildSystemPrompt(lore, profile);
 
@@ -1449,36 +1333,32 @@ async function askOpenRouter(userId, userMessage, lore) {
     conversationMemory.set(userId, []);
   }
   const history = conversationMemory.get(userId);
-  history.push({ role: "user", content: userMessage });
+  history.push({ role: "user", parts: [{ text: userMessage }] });
   if (history.length > 10) history.shift();
 
   try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: "system", content: systemPrompt }, ...history],
-        temperature: 0.85
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: history,
+        generationConfig: { temperature: 0.85 }
       })
     });
 
     if (!res.ok) {
-      const details = await res.text().catch(() => "");
-      console.error("OpenRouter askOpenRouter error:", res.status, details);
-      throw new Error(`OpenRouter ${res.status}`);
+      throw new Error(`Gemini ${res.status}`);
     }
     
     const data = await res.json();
-    const reply = data?.choices?.[0]?.message?.content?.trim() || "*asiente*";
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
-    history.push({ role: "assistant", content: reply });
+    history.push({ role: "model", parts: [{ text: reply }] });
     if (history.length > 10) history.shift();
     return reply;
-  } catch {
+  } catch (err) {
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
@@ -1531,14 +1411,6 @@ async function loadEncounters() {
 // ==========================================
 //   FUNCIONES DE SELECCIÓN DE CATÁLOGO
 // ==========================================
-
-async function getCatalogSelection(key, fallbackItems, limit = 12) {
-  const state = await db.getEventState(key);
-  if (Array.isArray(state?.selection) && state.selection.length) {
-    return state.selection.slice(0, limit);
-  }
-  return [...(fallbackItems || [])].slice(0, limit);
-}
 
 async function getCatalogStateItems(catalogName, catalogItems) {
   const state = await db.getEventState(catalogName).catch(() => null);
@@ -2064,15 +1936,40 @@ async function grantStarterItem(userId, profile, classKey) {
   return starterItem;
 }
 
+function raceAllowsItem(playerRace, itemRace) {
+  const race = normalizeKey(playerRace || "");
+  const allowed = normalizeKey(itemRace || "");
+
+  if (!allowed || allowed === "general" || allowed === "ninguno" || allowed === "none") {
+    return true;
+  }
+
+  if (allowed === race) return true;
+  if (allowed.includes(race)) return true;
+  if (race.includes(allowed)) return true;
+
+  return false;
+}
+
 function canEquipItem(profile, item, equipment = {}) {
   const race = normalizeKey(profile?.race || "");
   const classKey = normalizeKey(profile?.class || "");
+
+  if (!race || !classKey) {
+    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." };
+  }
+
+  const itemRace = normalizeKey(item?.raza || item?.race || "");
   const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : [];
   const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : [];
   const hands = Number(item?.hands || 1);
   const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null;
 
   if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) {
+    return { ok: false, reason: "Tu raza no puede usar ese objeto." };
+  }
+
+  if (itemRace && !raceAllowsItem(race, itemRace)) {
     return { ok: false, reason: "Tu raza no puede usar ese objeto." };
   }
 
@@ -2275,20 +2172,21 @@ client.on("messageCreate", async (message) => {
 
   // Comandos de Perfil y Sistema de Estadísticas
   if (command === "!perfil") {
-  const profile = await db.getProfile(message.author.id);
-  const lvl = db.calculateLevel(profile.xp || 0);
+    const profile = await db.getProfile(message.author.id);
+    const lvl = db.calculateLevel(profile.xp || 0);
 
-  return message.reply(
+    return message.reply(
 `👤 **PERFIL DE VIAJERO**
 Nombre: ${profile.nombre || profile.name || "No definido"}
 Raza: ${profile.race || "No definida"} | Clase: ${profile.class || "No definida"}
+Bono de clase: ${getPlayerClassBonusText(profile)}
 Rango: ${obtenerRango(profile.points || 0)} | Nivel: ${lvl} (${profile.xp || 0} XP)
 Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100
 
 📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0}
 🔥 Racha Actual: ${profile.rachaActual || 0} | Mejor: ${profile.mejorRacha || 0}`
-  );
-}
+    );
+  }
 
   if (command === "!puntos") {
     const pts = await db.getPoints(message.author.id);
@@ -2344,106 +2242,111 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   if (command === "!equipo") {
-  const profile = await db.getProfile(message.author.id);
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const totals = sumEquipmentTotals(equipment);
+    const profile = await db.getProfile(message.author.id);
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+    const equipment = getResolvedEquipment(profile, equipmentRaw);
+    const totals = sumEquipmentTotals(equipment);
 
-  let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
+    let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
 
-  const slots = [
-    ["arma", "Arma"],
-    ["armadura", "Armadura"],
-    ["casco", "Casco"],
-    ["hombros", "Hombros"],
-    ["brazos", "Brazos"],
-    ["piernas", "Piernas"],
-    ["pies", "Pies"],
-    ["capa", "Capa"],
-    ["anillo1", "Anillo 1"],
-    ["anillo2", "Anillo 2"],
-    ["amuleto", "Amuleto"],
-    ["accesorio", "Accesorio"]
-  ];
+    const slots = [
+      ["arma", "Arma"],
+      ["armadura", "Armadura"],
+      ["casco", "Casco"],
+      ["hombros", "Hombros"],
+      ["brazos", "Brazos"],
+      ["piernas", "Piernas"],
+      ["pies", "Pies"],
+      ["capa", "Capa"],
+      ["anillo1", "Anillo 1"],
+      ["anillo2", "Anillo 2"],
+      ["amuleto", "Amuleto"],
+      ["accesorio", "Accesorio"]
+    ];
 
-  for (const [slotKey, label] of slots) {
-    const item = equipment?.[slotKey];
-    texto += `${label}: ${item?.nombre || "—"}\n`;
+    for (const [slotKey, label] of slots) {
+      const item = equipment?.[slotKey];
+      texto += `${label}: ${item?.nombre || "—"}\n`;
+    }
+
+    texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
+    return message.reply(texto);
   }
-
-  texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
-  return message.reply(texto);
-}
   
   if (command === "!equipar") {
-  const query = args.slice(1).join(" ").trim();
-  if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
+    const profile = await db.getProfile(message.author.id);
 
-  const profile = await db.getProfile(message.author.id);
-  const inventory = normalizeInventory(profile.inventory);
-  const found = findInventoryItemLoose(inventory, query);
-
-  if (!found) {
-    return message.reply("No tienes ese objeto en el inventario.");
-  }
-
-  const { category, item } = found;
-
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-
-  const equipSlot = getEquipSlotForItem(item, equipment);
-  if (!equipSlot) {
-    return message.reply(`**${item.nombre}** no se puede equipar.`);
-  }
-
-  const equippedBefore = equipment[equipSlot] || null;
-
-  if (item.cantidad > 1 && !isStackableItem(item)) {
-    return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
-  }
-
-  if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
-    return message.reply(`**${item.nombre}** ya está equipado.`);
-  }
-
-  const equipCheck = canEquipItem(profile, item, equipment);
-  if (!equipCheck.ok) {
-    return message.reply(equipCheck.reason);
-  }
-
-  equipment[equipSlot] = item;
-
-  const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
-  if (idx !== -1) {
-    if (isStackableItem(inventory[category][idx])) {
-      inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
-      if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
-    } else {
-      inventory[category].splice(idx, 1);
+    if (!profile.race || !profile.class) {
+      return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar.");
     }
-  }
 
-  if (equippedBefore) {
-    const oldCategory = getInventoryCategoryForItem(equippedBefore);
-    inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
-      cantidad: 1,
-      recuperadoPor: "equipar"
-    }));
-  }
+    const query = args.slice(1).join(" ").trim();
+    if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
 
-  const equipmentPayload = saveResolvedEquipment(profile, equipment);
+    const inventory = normalizeInventory(profile.inventory);
+    const found = findInventoryItemLoose(inventory, query);
 
-  if (typeof db.setEquipment === "function") {
-    await db.setEquipment(message.author.id, equipment);
-  }
+    if (!found) {
+      return message.reply("No tienes ese objeto en el inventario.");
+    }
 
-  await db.updateTravelerData(message.author.id, {
-    inventory: normalizeInventory(inventory),
-    ...equipmentPayload
-  });
+    const { category, item } = found;
 
-  return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+    const equipment = getResolvedEquipment(profile, equipmentRaw);
+
+    const equipSlot = getEquipSlotForItem(item, equipment);
+    if (!equipSlot) {
+      return message.reply(`**${item.nombre}** no se puede equipar.`);
+    }
+
+    const equippedBefore = equipment[equipSlot] || null;
+
+    if (item.cantidad > 1 && !isStackableItem(item)) {
+      return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
+    }
+
+    if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
+      return message.reply(`**${item.nombre}** ya está equipado.`);
+    }
+
+    const equipCheck = canEquipItem(profile, item, equipment);
+    if (!equipCheck.ok) {
+      return message.reply(equipCheck.reason);
+    }
+
+    equipment[equipSlot] = item;
+
+    const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
+    if (idx !== -1) {
+      if (isStackableItem(inventory[category][idx])) {
+        inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
+        if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
+      } else {
+        inventory[category].splice(idx, 1);
+      }
+    }
+
+    if (equippedBefore) {
+      const oldCategory = getInventoryCategoryForItem(equippedBefore);
+      inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
+        cantidad: 1,
+        recuperadoPor: "equipar"
+      }));
+    }
+
+    const equipmentPayload = saveResolvedEquipment(profile, equipment);
+
+    if (typeof db.setEquipment === "function") {
+      await db.setEquipment(message.author.id, equipment);
+    }
+
+    await db.updateTravelerData(message.author.id, {
+      inventory: normalizeInventory(inventory),
+      ...equipmentPayload
+    });
+
+    return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
   }
 
   // Comandos de Utilidades Generales y Gestión Base
@@ -2458,7 +2361,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 !campamento, !companeros, !contratar <nombre>, !grupo
 
 🗺️ EXPEDICIONES
-!tablon, !expedicion <numero>, !desafiar, !interactuar, !volver
+!tablon, !expedicion <numero>, !desafiar, !interactuar, !volver, !abandonar
 
 🛍️ COMERCIO
 !tienda, !armeria, !mercader, !comprar <item>, !vender <item>, !equipar <item>
@@ -2493,7 +2396,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(`🔄 Expediciones reiniciadas para <@${target.id}>.`);
   }
 
-  if (command === "!companeros" || command === "!compañeros") {
+  if (command === "!companeros" || command === "!compañeros" || command === "!campamento") {
     let texto = "🤝 **Compañeros disponibles**\n\n";
     const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
   
@@ -2503,25 +2406,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   
       texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
       texto += `Habilidad: ${comp.habilidad}\n`;
-      texto += `Efecto: ${comp.efecto}\n`;
-      texto += `Coste: ${comp.coste} pts\n`;
-      texto += `Requisito: ${req}\n`;
-      texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
-    }
-  
-    return message.reply(texto);
-  }
-
-  if (command === "!campamento") {
-    let texto = "🏕️ **CAMPAMENTO DE ALTÉRU**\n\n";
-    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
-  
-    for (const id of orden) {
-      const comp = companions[id];
-      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
-  
-      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-      texto += `Habilidad: ${comp.habilidad}\n`;
+      texto += `Base total: ${getCompanionBaseSummary(id)}\n`;
       texto += `Efecto: ${comp.efecto}\n`;
       texto += `Coste: ${comp.coste} pts\n`;
       texto += `Requisito: ${req}\n`;
@@ -2532,61 +2417,61 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   if (command === "!tablon") {
-  const state = await db.getEventState("tablon").catch(() => null);
+    const state = await db.getEventState("tablon").catch(() => null);
 
-  let selection = Array.isArray(state?.selection) && state.selection.length
-    ? state.selection
-    : null;
+    let selection = Array.isArray(state?.selection) && state.selection.length
+      ? state.selection
+      : null;
 
-  if (!selection) {
-    const missions = await loadMissions();
+    if (!selection) {
+      const missions = await loadMissions();
 
-    if (!missions.length) {
-      return message.reply("No hay expediciones disponibles en este momento.");
+      if (!missions.length) {
+        return message.reply("No hay expediciones disponibles en este momento.");
+      }
+
+      selection = [...missions]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5);
+
+      await db.setEventState("tablon", {
+        cycleId: state?.cycleId || Date.now(),
+        lastAt: Date.now(),
+        nextAt: Date.now() + (12 * 60 * 60 * 1000),
+        selection
+      }).catch(() => {});
     }
 
-    selection = [...missions]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 5);
+    let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
 
-    await db.setEventState("tablon", {
-      cycleId: state?.cycleId || Date.now(),
-      lastAt: Date.now(),
-      nextAt: Date.now() + (12 * 60 * 60 * 1000),
-      selection
-    }).catch(() => {});
-  }
+    selection.forEach((m, i) => {
+      texto += `${i + 1}. ${m.titulo}\n`;
+      texto += `📍 ${m.destino}\n`;
+      texto += `⚠ Nivel ${m.nivel}\n`;
+      texto += `🎖 ${m.puntos} pts\n`;
+      texto += `📚 ${m.xp} XP\n\n`;
+    });
 
-  let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+    texto += "────────────────\n\n";
+    texto += "🤝 Compañeros del campamento\n\n";
 
-  selection.forEach((m, i) => {
-    texto += `${i + 1}. ${m.titulo}\n`;
-    texto += `📍 ${m.destino}\n`;
-    texto += `⚠ Nivel ${m.nivel}\n`;
-    texto += `🎖 ${m.puntos} pts\n`;
-    texto += `📚 ${m.xp} XP\n\n`;
-  });
+    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
 
-  texto += "────────────────\n\n";
-  texto += "🤝 Compañeros del campamento\n\n";
+    for (const id of orden) {
+      const comp = companions[id];
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
 
-  const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
-
-  for (const id of orden) {
-    const comp = companions[id];
-    const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
-
-    texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-    texto += `Habilidad: ${comp.habilidad}\n`;
-    texto += `Efecto: ${comp.efecto}\n`;
-    texto += `Coste: ${comp.coste} pts\n`;
-    texto += `Requisito: ${req}\n`;
-  }
-
-  texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>`";
-
-  return replyLong(message, texto);
+      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
+      texto += `Habilidad: ${comp.habilidad}\n`;
+      texto += `Efecto: ${comp.efecto}\n`;
+      texto += `Coste: ${comp.coste} pts\n`;
+      texto += `Requisito: ${req}\n`;
     }
+
+    texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>`";
+
+    return replyLong(message, texto);
+  }
 
   if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
@@ -2874,9 +2759,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       failed: false,
       threat: 0,
       affinityLog: {},
-      pendingSubEncounter: false,
-      pendingSubReveal: false,
-      pendingSubResolve: false,
       pendingFinalScenario: false,
       finalScenarioShown: false,
       finalScenario: getFinalScenarioConfig(mission)
@@ -2970,7 +2852,7 @@ Usa !desafiar para comenzar el viaje.`
     return message.reply("Usa !interactuar o !volver.");
   }
 
-    if (["!atacar", "!rodear", "!retirarse", "!huir"].includes(command)) {
+  if (["!atacar", "!rodear", "!retirarse", "!huir", "!abandonar"].includes(command)) {
     const expedition = expeditions.get(message.author.id);
 
     if (!expedition?.pendingFinalScenario || expedition?.currentEncounter?.tipo !== "escenario_final") {
@@ -3050,11 +2932,8 @@ Usa !desafiar para comenzar el viaje.`
             : "Te retiras con cautela y entregas el informe al campamento.");
 
       await clearExpeditionParty(message.author.id);
-      expedition.pendingSubReveal = false;
-      expedition.pendingSubResolve = false;
       expedition.pendingFinalScenario = false;
       expedition.finalScenarioShown = false;
-      expedition.pendingSubEncounter = false;
       expedition.currentEncounter = null;
       expeditions.delete(message.author.id);
 
@@ -3101,11 +2980,8 @@ Usa !desafiar para comenzar el viaje.`
 
     if (newHealth <= 0) {
       await clearExpeditionParty(message.author.id);
-      expedition.pendingSubReveal = false;
-      expedition.pendingSubResolve = false;
       expedition.pendingFinalScenario = false;
       expedition.finalScenarioShown = false;
-      expedition.pendingSubEncounter = false;
       expedition.currentEncounter = null;
       expeditions.delete(message.author.id);
 
@@ -3119,14 +2995,10 @@ Usa !desafiar para comenzar el viaje.`
     );
   }
 
-  if (command === "!volver") {
+  if (command === "!volver" || command === "!abandonar") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
     }
-  
-    const expedition = expeditions.get(message.author.id);
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = false;
   
     expeditions.delete(message.author.id);
     await clearExpeditionParty(message.author.id);
@@ -3136,57 +3008,279 @@ Usa !desafiar para comenzar el viaje.`
 
   if (command === "!desafiar") {
     if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
-  }
-
-  const expedition = expeditions.get(message.author.id);
-  const profile = await db.getProfile(message.author.id);
-  const owned = getOwnedCompanions(profile);
-  const xpActual = profile.xp || 0;
-  const nivelJugador = typeof db.calculateLevel === "function"
-    ? db.calculateLevel(xpActual)
-    : Math.floor(xpActual / 1000) + 1;
-
-  expedition.affinityLog = expedition.affinityLog || {};
-  if (typeof expedition.pendingSubReveal !== "boolean") {
-    expedition.pendingSubReveal = false;
-  }
-  if (typeof expedition.pendingSubResolve !== "boolean") {
-    expedition.pendingSubResolve = false;
-  }
-  if (typeof expedition.pendingFinalScenario !== "boolean") {
-    expedition.pendingFinalScenario = false;
-  }
-
-  const affinityCombat = getAffinityCombatBonus(profile, owned);
-
-  const recordAffinity = async (compId, encounter, mode, outcome) => {
-    const result = await addAffinityWithRankMessage(message.author.id, compId, encounter, mode, outcome);
-    expedition.affinityLog[compId] = (expedition.affinityLog[compId] || 0) + result.gain;
-    return result;
-  };
-
-  const healWithFaelon = async () => {
-    if (!owned.includes("faelon")) return null;
-
-    const saludActual = profile.salud !== undefined ? profile.salud : 100;
-    const nuevaSalud = Math.min(100, saludActual + 10);
-
-    if (nuevaSalud !== saludActual) {
-      await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+      return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
     }
 
-    return { saludActual, nuevaSalud };
-  };
+    const expedition = expeditions.get(message.author.id);
+    const profile = await db.getProfile(message.author.id);
+    const owned = getOwnedCompanions(profile);
+    const xpActual = profile.xp || 0;
+    const nivelJugador = typeof db.calculateLevel === "function"
+      ? db.calculateLevel(xpActual)
+      : Math.floor(xpActual / 1000) + 1;
 
-  if (expedition.failed) {
-    return message.reply("La expedición ha fracasado o concluido. Usa !volver para regresar al campamento.");
-  }
+    expedition.affinityLog = expedition.affinityLog || {};
+    if (typeof expedition.pendingFinalScenario !== "boolean") {
+      expedition.pendingFinalScenario = false;
+    }
 
-  if (expedition.currentEncounter === null) {
-    const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+    const affinityCombat = getAffinityCombatBonus(profile, owned);
 
-    if (!encuentroId) {
+    const recordAffinity = async (compId, encounter, mode, outcome) => {
+      const result = await addAffinityWithRankMessage(message.author.id, compId, encounter, mode, outcome);
+      expedition.affinityLog[compId] = (expedition.affinityLog[compId] || 0) + result.gain;
+      return result;
+    };
+
+    const healWithFaelon = async () => {
+      if (!owned.includes("faelon")) return null;
+
+      const saludActual = profile.salud !== undefined ? profile.salud : 100;
+      const nuevaSalud = Math.min(100, saludActual + 10);
+
+      if (nuevaSalud !== saludActual) {
+        await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+      }
+
+      return { saludActual, nuevaSalud };
+    };
+
+    if (expedition.failed) {
+      return message.reply("La expedición ha fracasado o concluido. Usa !volver para regresar al campamento.");
+    }
+
+    if (expedition.currentEncounter === null) {
+      const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+
+      if (!encuentroId) {
+        const beforeProfile = await db.getProfile(message.author.id);
+        const beforeLevel = typeof db.calculateLevel === "function"
+          ? db.calculateLevel(beforeProfile.xp || 0)
+          : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
+        const beforeRank = obtenerRango(beforeProfile.points || 0);
+
+        const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+        const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
+        await db.addXP(message.author.id, xpTotal);
+        await db.addPoints(message.author.id, puntosTotal);
+
+        const afterProfile = await db.getProfile(message.author.id);
+        const afterLevel = typeof db.calculateLevel === "function"
+          ? db.calculateLevel(afterProfile.xp || 0)
+          : Math.floor((afterProfile.xp || 0) / 1000) + 1;
+        const afterRank = obtenerRango(afterProfile.points || 0);
+
+        const affinityEntries = Object.entries(expedition.affinityLog || {});
+        const affinityText = affinityEntries.length
+          ? affinityEntries
+              .map(([id, value]) => `• **${companions[id]?.nombre || id}**: +${value} afinidad`)
+              .join("\n")
+          : "• Ninguna";
+
+        const finalReactions = [];
+        for (const cid of owned.slice(0, 3)) {
+          const line = await companionReaction(cid, expedition.mission, "mision_completada");
+          if (line) finalReactions.push(`💬 ${line}`);
+        }
+
+        await clearExpeditionParty(message.author.id);
+        expedition.pendingFinalScenario = false;
+        expeditions.delete(message.author.id);
+
+        let textoFinal = `🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${affinityText}`;
+
+        if (afterLevel > beforeLevel) {
+          textoFinal += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+        }
+
+        if (afterRank !== beforeRank) {
+          textoFinal += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
+        }
+
+        if (finalReactions.length) {
+          textoFinal += `\n\n${finalReactions.join("\n")}`;
+        }
+
+        return message.reply(textoFinal);
+      }
+
+      const encounters = await loadEncounters();
+      const destino = normalizeKey(expedition.mission.destino);
+
+      let lista = encounters.filter(e => {
+        const coincideEncuentro = e.tipo === encuentroId || e.categoria === encuentroId;
+        const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
+        return coincideEncuentro && coincideRegion;
+      });
+
+      if (owned.includes("nieriel")) {
+        const safe = lista.filter(e => (e.peligro ?? 0) <= nivelJugador);
+        if (safe.length) lista = safe;
+      }
+
+      if (!lista.length) {
+        expedition.pendingFinalScenario = false;
+        expeditions.delete(message.author.id);
+        return message.reply("⚠️ No se encontraron encuentros válidos para esta misión. La expedición ha sido cancelada.");
+      }
+
+      const encounterBase = lista[Math.floor(Math.random() * lista.length)];
+      const finalEncounter = chooseEncounterVariant(encounterBase, encounters);
+
+      expedition.currentEncounter = finalEncounter;
+      expedition.phase = "running";
+
+      const peligroTexto = finalEncounter.peligro ? getDangerText(finalEncounter.peligro) : "Ninguno";
+      let textoEncuentro = `⚠️ **${finalEncounter.titulo}**\n\n${finalEncounter.descripcion || "Te adentras en territorio desconocido..."}\n\nPeligro: ${peligroTexto}\n\nUsa:\n!desafiar\n!volver`;
+
+      const reactionIds = [...new Set(owned)].slice(0, 3);
+      const reactions = [];
+
+      for (const cid of reactionIds) {
+        const line = await companionReaction(cid, finalEncounter, "encounter");
+        if (line) reactions.push(`💬 ${line}`);
+      }
+
+      if (reactions.length) {
+        textoEncuentro += `\n\n${reactions.join("\n")}`;
+      }
+
+      return message.reply(textoEncuentro);
+    }
+
+    const activeEncounter = expedition.currentEncounter;
+
+    if (!activeEncounter) {
+      expedition.currentEncounter = null;
+      return message.reply("No hay encuentro activo.");
+    }
+
+    if (activeEncounter.tipo === "evento_especial") {
+      expedition.awaitedCommand = "!interactuar";
+      expedition.phase = "event_special";
+
+      const reactions = await addCompanionReactions(profile, activeEncounter, "encounter");
+
+      return message.reply(
+        `${buildEncounterCard(activeEncounter, "!interactuar\n!volver")}` +
+        `${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
+      );
+    }
+
+    if (activeEncounter.tipo === "escenario_final") {
+      expedition.currentEncounter = activeEncounter;
+      expedition.pendingFinalScenario = true;
+
+      const allowed = getFinalScenarioAllowedOptions(activeEncounter);
+      const reactionIds = [...new Set(owned)].slice(0, 3);
+      const reactions = [];
+
+      for (const cid of reactionIds) {
+        const line = await companionReaction(cid, activeEncounter, "encounter");
+        if (line) reactions.push(`💬 ${line}`);
+      }
+
+      return message.reply(
+        `🏁 **Escenario final**\n\n${activeEncounter.descripcion || "Has llegado al tramo decisivo de la misión."}\n\nOpciones disponibles: ${allowed.map(a => `\`${a}\``).join(", ")}\n\nUsa uno de los comandos para resolverlo.\n${reactions.length ? `\n${reactions.join("\n")}` : ""}`
+      );
+    }
+
+    const bonuses = getCompanionBonus(profile);
+    const playerClassBonus = getPlayerClassBonus(profile);
+
+    let affinityBonus = 0;
+    for (const comp of owned) {
+      affinityBonus += getAffinityBonus(profile, comp);
+    }
+
+    let baseSuccess = 0.65 + bonuses.captainBonus + bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
+    baseSuccess += bonuses.baseSuccessBonus || 0;
+    
+    if (activeEncounter.tipo === "enemigo_poderoso" || activeEncounter.tipo === "jefe" || (activeEncounter.peligro || 0) >= 4) {
+      baseSuccess += bonuses.strongEnemyBonus;
+    }
+    if (activeEncounter.tipo === "enemigo_numeroso") {
+      baseSuccess += bonuses.numerousEnemyBonus;
+    }
+    if (activeEncounter.tipo === "jefe") {
+      baseSuccess += 0.05;
+    }
+    if (activeEncounter.tipo === "evento_especial") {
+      baseSuccess += playerClassBonus.specialBonus || 0;
+    }
+    if (activeEncounter.tipo === "obstaculo") {
+      baseSuccess += playerClassBonus.explorationBonus || 0;
+    }
+    if (activeEncounter.tipo === "jefe" || activeEncounter.tipo === "enemigo_poderoso") {
+      baseSuccess += playerClassBonus.attackBonus || 0;
+    }
+
+    const success = Math.random() < Math.min(baseSuccess, 0.95);
+
+    if (success) {
+      const xpGanada = activeEncounter.xp || 10;
+      const puntosGanados = activeEncounter.puntos || 5;
+
+      expedition.xpEarned += xpGanada;
+      expedition.pointsEarned += puntosGanados;
+      expedition.progress += 1;
+
+      const encounterSnapshot = activeEncounter;
+      if (activeEncounter.tipo !== "escenario_final") {
+        expedition.currentEncounter = null;
+        expedition.pendingFinalScenario = false;
+      }
+
+      let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${encounterSnapshot.titulo}*.\n\n+${xpGanada} XP`;
+      if (puntosGanados > 0) textoVictoria += `\n+${puntosGanados} Puntos`;
+
+      const affinityGained = [];
+      for (const cid of [...new Set(owned)]) {
+        const result = await recordAffinity(cid, encounterSnapshot, "victoria", "victoria");
+        affinityGained.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+        if (result.rankMessage) affinityGained.push(`  ${result.rankMessage}`);
+      }
+
+      if (affinityGained.length) {
+        textoVictoria += `\n\n🤝 Afinidad ganada:\n${affinityGained.join("\n")}`;
+      }
+
+      const faelonHeal = await healWithFaelon();
+      if (faelonHeal) {
+        textoVictoria += `\n❤️ Faelon restaura +10 salud (${faelonHeal.nuevaSalud}/100).`;
+      }
+
+      const reactionIds = [...new Set(owned)].slice(0, 3);
+      const reactions = [];
+      for (const cid of reactionIds) {
+        const line = await companionReaction(cid, encounterSnapshot, "victoria");
+        if (line) reactions.push(`💬 ${line}`);
+      }
+      if (reactions.length) {
+        textoVictoria += `\n\n${reactions.join("\n")}`;
+      }
+
+      const totalEncuentros = expedition.mission.encuentros?.length || 0;
+
+      if (expedition.progress < totalEncuentros) {
+        textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
+        return message.reply(textoVictoria);
+      }
+
+      if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
+        expedition.finalScenarioShown = true;
+        expedition.pendingFinalScenario = true;
+        expedition.currentEncounter = {
+          ...expedition.finalScenario,
+          tipo: "escenario_final",
+          categoria: "final",
+          active: true
+        };
+
+        return startFinalScenario(message, expedition);
+      }
+
       const beforeProfile = await db.getProfile(message.author.id);
       const beforeLevel = typeof db.calculateLevel === "function"
         ? db.calculateLevel(beforeProfile.xp || 0)
@@ -3205,9 +3299,9 @@ Usa !desafiar para comenzar el viaje.`
         : Math.floor((afterProfile.xp || 0) / 1000) + 1;
       const afterRank = obtenerRango(afterProfile.points || 0);
 
-      const affinityEntries = Object.entries(expedition.affinityLog || {});
-      const affinityText = affinityEntries.length
-        ? affinityEntries
+      const finalAffinityEntries = Object.entries(expedition.affinityLog || {});
+      const finalAffinityText = finalAffinityEntries.length
+        ? finalAffinityEntries
             .map(([id, value]) => `• **${companions[id]?.nombre || id}**: +${value} afinidad`)
             .join("\n")
         : "• Ninguna";
@@ -3219,369 +3313,74 @@ Usa !desafiar para comenzar el viaje.`
       }
 
       await clearExpeditionParty(message.author.id);
-      expedition.pendingSubReveal = false;
-      expedition.pendingSubResolve = false;
       expedition.pendingFinalScenario = false;
       expeditions.delete(message.author.id);
 
-      let textoFinal = `🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${affinityText}`;
+      textoVictoria += `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${finalAffinityText}`;
 
       if (afterLevel > beforeLevel) {
-        textoFinal += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+        textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
       }
 
       if (afterRank !== beforeRank) {
-        textoFinal += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
+        textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
       }
 
       if (finalReactions.length) {
-        textoFinal += `\n\n${finalReactions.join("\n")}`;
+        textoVictoria += `\n\n${finalReactions.join("\n")}`;
       }
 
-      return message.reply(textoFinal);
-    }
-
-    const encounters = await loadEncounters();
-    const destino = normalizeKey(expedition.mission.destino);
-
-    let lista = encounters.filter(e => {
-      const coincideEncuentro = e.tipo === encuentroId || e.categoria === encuentroId;
-      const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
-      return coincideEncuentro && coincideRegion;
-    });
-
-    if (owned.includes("nieriel")) {
-      const safe = lista.filter(e => (e.peligro ?? 0) <= nivelJugador);
-      if (safe.length) lista = safe;
-    }
-
-    if (!lista.length) {
-      expedition.pendingSubReveal = false;
-      expedition.pendingSubResolve = false;
-      expedition.pendingFinalScenario = false;
-      expeditions.delete(message.author.id);
-      return message.reply("⚠️ No se encontraron encuentros válidos para esta misión. La expedición ha sido cancelada.");
-    }
-
-    const encounterBase = lista[Math.floor(Math.random() * lista.length)];
-
-    if (
-      Array.isArray(encounterBase.subencuentros) &&
-      encounterBase.subencuentros.length &&
-      !expedition.pendingSubReveal &&
-      !expedition.pendingSubResolve
-    ) {
-      expedition.currentEncounter = encounterBase;
-      expedition.pendingSubReveal = true;
-      expedition.phase = "subencounter_intro";
-
-      const reactions = await addCompanionReactions(profile, encounterBase, "encounter");
-      return message.reply(
-        `${buildEncounterCard(encounterBase, "!desafiar")}` +
-        `${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
-      );
-    }
-
-    expedition.currentEncounter = encounterBase;
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = false;
-
-    const peligroTexto = encounterBase.peligro ? getDangerText(encounterBase.peligro) : "Ninguno";
-    let textoEncuentro = `⚠️ **${encounterBase.titulo}**\n\n${encounterBase.descripcion || "Te adentras en territorio desconocido..."}\n\nPeligro: ${peligroTexto}\n\nUsa:\n!desafiar\n!volver`;
-
-    const reactionIds = [...new Set(owned)].slice(0, 3);
-    const reactions = [];
-
-    for (const cid of reactionIds) {
-      const line = await companionReaction(cid, encounterBase, "encounter");
-      if (line) reactions.push(`💬 ${line}`);
-    }
-
-    if (reactions.length) {
-      textoEncuentro += `\n\n${reactions.join("\n")}`;
-    }
-
-    return message.reply(textoEncuentro);
-  }
-
-  if (
-    expedition.pendingSubReveal &&
-    expedition.currentEncounter &&
-    Array.isArray(expedition.currentEncounter.subencuentros) &&
-    expedition.currentEncounter.subencuentros.length
-  ) {
-    const options = expedition.currentEncounter.subencuentros.slice(0, 3).filter(Boolean);
-    const chosenSub = options[Math.floor(Math.random() * options.length)];
-
-    if (!chosenSub) {
-      expedition.pendingSubReveal = false;
-      expedition.currentEncounter = null;
-      return message.reply("No se pudo generar un subencuentro válido.");
-    }
-
-    expedition.currentEncounter = {
-      ...expedition.currentEncounter,
-      ...chosenSub,
-      parentId: expedition.currentEncounter.id,
-      variantOf: expedition.currentEncounter.id,
-      subEncounter: true
-    };
-
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = true;
-    expedition.phase = "subencounter_revealed";
-
-    const reactions = await addCompanionReactions(profile, expedition.currentEncounter, "encounter");
-    return message.reply(
-      `${buildEncounterCard(expedition.currentEncounter, "!desafiar")}` +
-      `${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
-    );
-  }
-
-  const activeEncounter = expedition.currentEncounter;
-
-  if (!activeEncounter) {
-    expedition.currentEncounter = null;
-    return message.reply("No hay encuentro activo.");
-  }
-
-  if (activeEncounter.tipo === "evento_especial") {
-    expedition.awaitedCommand = "!interactuar";
-    expedition.phase = "event_special";
-
-    const reactions = await addCompanionReactions(profile, activeEncounter, "encounter");
-
-    return message.reply(
-      `${buildEncounterCard(activeEncounter, "!interactuar\n!volver")}` +
-      `${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
-    );
-  }
-
-  if (activeEncounter.tipo === "escenario_final") {
-  expedition.currentEncounter = activeEncounter;
-  expedition.pendingFinalScenario = true;
-
-  const allowed = getFinalScenarioAllowedOptions(activeEncounter);
-  const reactionIds = [...new Set(owned)].slice(0, 3);
-  const reactions = [];
-
-  for (const cid of reactionIds) {
-    const line = await companionReaction(cid, activeEncounter, "encounter");
-    if (line) reactions.push(`💬 ${line}`);
-  }
-
-  return message.reply(
-    `🏁 **Escenario final**\n\n${activeEncounter.descripcion || "Has llegado al tramo decisivo de la misión."}\n\nOpciones disponibles: ${allowed.map(a => `\`${a}\``).join(", ")}\n\nUsa uno de los comandos para resolverlo.\n${reactions.length ? `\n${reactions.join("\n")}` : ""}`
-  );
-}
-
-  const bonuses = getCompanionBonus(profile);
-  const playerClassBonus = getPlayerClassBonus(profile);
-
-  let affinityBonus = 0;
-  for (const comp of owned) {
-    affinityBonus += getAffinityBonus(profile, comp);
-  }
-
-  let baseSuccess = 0.65 + bonuses.captainBonus + bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
-  
-  if (activeEncounter.tipo === "enemigo_poderoso" || activeEncounter.tipo === "jefe" || (activeEncounter.peligro || 0) >= 4) {
-    baseSuccess += bonuses.strongEnemyBonus;
-  }
-  if (activeEncounter.tipo === "enemigo_numeroso") {
-    baseSuccess += bonuses.numerousEnemyBonus;
-  }
-  if (activeEncounter.tipo === "jefe") {
-    baseSuccess += 0.05;
-  }
-  if (activeEncounter.tipo === "evento_especial") {
-    baseSuccess += playerClassBonus.specialBonus || 0;
-  }
-  if (activeEncounter.tipo === "obstaculo") {
-    baseSuccess += playerClassBonus.explorationBonus || 0;
-  }
-  if (activeEncounter.tipo === "jefe" || activeEncounter.tipo === "enemigo_poderoso") {
-    baseSuccess += playerClassBonus.attackBonus || 0;
-  }
-
-  const success = Math.random() < Math.min(baseSuccess, 0.95);
-
-  if (success) {
-    const xpGanada = activeEncounter.xp || 10;
-    const puntosGanados = activeEncounter.puntos || 5;
-
-    expedition.xpEarned += xpGanada;
-    expedition.pointsEarned += puntosGanados;
-    expedition.progress += 1;
-
-    const encounterSnapshot = activeEncounter;
-    if (activeEncounter.tipo !== "escenario_final") {
-      expedition.currentEncounter = null;
-      expedition.pendingFinalScenario = false;
-    }
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = false;
-
-    let textoVictoria = `✅ **Éxito**\n\nHas superado el desafío de *${encounterSnapshot.titulo}*.\n\n+${xpGanada} XP`;
-    if (puntosGanados > 0) textoVictoria += `\n+${puntosGanados} Puntos`;
-
-    const affinityGained = [];
-    for (const cid of [...new Set(owned)]) {
-      const result = await recordAffinity(cid, encounterSnapshot, "victoria", "victoria");
-      affinityGained.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
-      if (result.rankMessage) affinityGained.push(`  ${result.rankMessage}`);
-    }
-
-    if (affinityGained.length) {
-      textoVictoria += `\n\n🤝 Afinidad ganada:\n${affinityGained.join("\n")}`;
-    }
-
-    const faelonHeal = await healWithFaelon();
-    if (faelonHeal) {
-      textoVictoria += `\n❤️ Faelon restaura +10 salud (${faelonHeal.nuevaSalud}/100).`;
-    }
-
-    const reactionIds = [...new Set(owned)].slice(0, 3);
-    const reactions = [];
-    for (const cid of reactionIds) {
-      const line = await companionReaction(cid, encounterSnapshot, "victoria");
-      if (line) reactions.push(`💬 ${line}`);
-    }
-    if (reactions.length) {
-      textoVictoria += `\n\n${reactions.join("\n")}`;
-    }
-
-    const totalEncuentros = expedition.mission.encuentros?.length || 0;
-
-    if (expedition.progress < totalEncuentros) {
-      textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
       return message.reply(textoVictoria);
     }
 
-    if (
-      expedition.finalScenario?.enabled &&
-      !expedition.finalScenarioShown &&
-      !expedition.pendingFinalScenario
-    ) {
-      expedition.finalScenarioShown = true;
-      expedition.pendingFinalScenario = true;
-      expedition.currentEncounter = {
-        ...expedition.finalScenario,
-        tipo: "escenario_final",
-        categoria: "final",
-        active: true
-      };
+    const saludActual = profile.salud !== undefined ? profile.salud : 100;
 
-      await startFinalScenario(message, expedition);
-      return;
+    if (owned.length > 0 && Math.random() < 0.15) {
+      const salvadorId = owned[Math.floor(Math.random() * owned.length)];
+      const salvador = companions[salvadorId]?.nombre || "Un compañero";
+      const reaction = await companionReaction(salvadorId, activeEncounter, "salvacion");
+
+      return message.reply(
+        `🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`
+      );
     }
 
-    const beforeProfile = await db.getProfile(message.author.id);
-    const beforeLevel = typeof db.calculateLevel === "function"
-      ? db.calculateLevel(beforeProfile.xp || 0)
-      : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
-    const beforeRank = obtenerRango(beforeProfile.points || 0);
+    let danoEnemigo = activeEncounter.dano || Math.floor(Math.random() * 25) + 20;
+    danoEnemigo = Math.floor(danoEnemigo * (1 - (bonuses.damageReduction || 0) - (affinityCombat.damageReduction || 0) - (bonuses.baseDamageReduction || 0)));
 
-    const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
-    const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+    const nuevaSalud = saludActual - danoEnemigo;
 
-    await db.addXP(message.author.id, xpTotal);
-    await db.addPoints(message.author.id, puntosTotal);
-
-    const afterProfile = await db.getProfile(message.author.id);
-    const afterLevel = typeof db.calculateLevel === "function"
-      ? db.calculateLevel(afterProfile.xp || 0)
-      : Math.floor((afterProfile.xp || 0) / 1000) + 1;
-    const afterRank = obtenerRango(afterProfile.points || 0);
-
-    const finalAffinityEntries = Object.entries(expedition.affinityLog || {});
-    const finalAffinityText = finalAffinityEntries.length
-      ? finalAffinityEntries
-          .map(([id, value]) => `• **${companions[id]?.nombre || id}**: +${value} afinidad`)
-          .join("\n")
-      : "• Ninguna";
-
-    const finalReactions = [];
-    for (const cid of owned.slice(0, 3)) {
-      const line = await companionReaction(cid, expedition.mission, "mision_completada");
-      if (line) finalReactions.push(`💬 ${line}`);
+    const affinityGainedLoss = [];
+    for (const cid of [...new Set(owned)]) {
+      const result = await recordAffinity(cid, activeEncounter, "derrota", "derrota");
+      affinityGainedLoss.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+      if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
     }
 
-    await clearExpeditionParty(message.author.id);
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = false;
-    expedition.pendingFinalScenario = false;
-    expeditions.delete(message.author.id);
-
-    textoVictoria += `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${finalAffinityText}`;
-
-    if (afterLevel > beforeLevel) {
-      textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+    const reactionIds = [...new Set(owned)].slice(0, 3);
+    const reactions = [];
+    for (const cid of reactionIds) {
+      const line = await companionReaction(cid, activeEncounter, "derrota");
+      if (line) reactions.push(`💬 ${line}`);
     }
 
-    if (afterRank !== beforeRank) {
-      textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
+    if (nuevaSalud <= 0) {
+      await clearExpeditionParty(message.author.id);
+      expedition.pendingFinalScenario = false;
+      expeditions.delete(message.author.id);
+
+      return message.reply(
+        `💀 **Has caído en combate**\n\nEl ataque de *${activeEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
+      );
     }
 
-    if (finalReactions.length) {
-      textoVictoria += `\n\n${finalReactions.join("\n")}`;
-    }
-
-    return message.reply(textoVictoria);
-  }
-
-  const saludActual = profile.salud !== undefined ? profile.salud : 100;
-
-  if (owned.length > 0 && Math.random() < 0.15) {
-    const salvadorId = owned[Math.floor(Math.random() * owned.length)];
-    const salvador = companions[salvadorId]?.nombre || "Un compañero";
-    const reaction = await companionReaction(salvadorId, activeEncounter, "salvacion");
+    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
 
     return message.reply(
-      `🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`
+      `⚠️ **Recibes Daño**\n\nRecibes ${danoEnemigo} de daño en *${activeEncounter.titulo}*.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
     );
   }
 
-  let danoEnemigo = activeEncounter.dano || Math.floor(Math.random() * 25) + 20;
-  danoEnemigo = Math.floor(danoEnemigo * (1 - bonuses.damageReduction - affinityCombat.damageReduction));
-
-  const nuevaSalud = saludActual - danoEnemigo;
-
-  const affinityGainedLoss = [];
-  for (const cid of [...new Set(owned)]) {
-    const result = await recordAffinity(cid, activeEncounter, "derrota", "derrota");
-    affinityGainedLoss.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
-    if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
-  }
-
-  const reactionIds = [...new Set(owned)].slice(0, 3);
-  const reactions = [];
-  for (const cid of reactionIds) {
-    const line = await companionReaction(cid, activeEncounter, "derrota");
-    if (line) reactions.push(`💬 ${line}`);
-  }
-
-  if (nuevaSalud <= 0) {
-    await clearExpeditionParty(message.author.id);
-    expedition.pendingSubReveal = false;
-    expedition.pendingSubResolve = false;
-    expedition.pendingFinalScenario = false;
-    expeditions.delete(message.author.id);
-
-    return message.reply(
-      `💀 **Has caído en combate**\n\nEl ataque de *${activeEncounter.titulo}* fue demasiado fuerte. Recibes ${danoEnemigo} de daño.\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
-    );
-  }
-
-  await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
-
-  return message.reply(
-    `⚠️ **Recibes Daño**\n\nRecibes ${danoEnemigo} de daño en *${activeEncounter.titulo}*.\n\n❤️ Salud restante: ${nuevaSalud}/100\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
-  );
- }
-  
-
-    
   // ========================================
   // SISTEMA DE TRIVIA
   // ========================================
@@ -3664,26 +3463,27 @@ Usa !desafiar para comenzar el viaje.`
     const profile = await db.getProfile(message.author.id);
     const affinity = (profile.affinity || {})[companionId] || 0;
 
-    const prompt = `
-Eres ${personaje.nombre}.
+    const systemInstruction = `Eres ${personaje.nombre}.
 Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || ""}
-Arma: ${personaje.arma || "No especificada"} | Armadura: ${personaje.armadura || "No especificada"}
 Afinidad con el viajero: ${affinity}
-
 Trata al viajero según esta escala:
 0-24 desconocido, 25-49 conocido, 50-74 aliado, 75-99 amigo cercano, 100 compañero de confianza
-
-Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.
-`.trim();
+Instrucciones:
+Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.`;
 
     try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+      const res = await fetch(url, {
         method: "POST",
-        headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: MODEL, messages: [{ role: "user", content: prompt }], temperature: 0.9, max_tokens: 40 })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemInstruction.trim() }] },
+          contents: [{ role: "user", parts: [{ text: mensaje }] }],
+          generationConfig: { temperature: 0.9, maxOutputTokens: 40 }
+        })
       });
       const data = await res.json();
-      const respuesta = data?.choices?.[0]?.message?.content?.trim() || "*asiente*";
+      const respuesta = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
       await db.addAffinity(message.author.id, companionId, 1);
       return message.reply(`${personaje.nombre}: ${compactLine(respuesta, 12)}`);
@@ -3715,7 +3515,7 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
     try {
       if (!loreCache) loreCache = await loadAlteruLore();
       await message.channel.sendTyping();
-      const reply = await askOpenRouter(message.author.id, prompt, loreCache);
+      const reply = await askGemini(message.author.id, prompt, loreCache);
       return message.reply(reply);
     } catch {
       return message.reply("No puedo responder ahora.");
