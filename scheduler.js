@@ -7,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const EVENT_CHANNEL_ID = process.env.ANNOUNCEMENTS_CHANNEL_ID || "1514198998838284288";
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.5-flash";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
@@ -116,43 +116,56 @@ async function fetchChannel(client) {
 }
 
 async function generateAITextStrict(prompt, maxTokens = 80) {
-  if (!OPENROUTER_API_KEY) {
-    throw new Error("OPENROUTER_API_KEY no está configurada");
+  if (!GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY no está configurada");
   }
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        {
-          role: "system",
-          content: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones."
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+    {
+      method: "POST",
+      headers: {
+        "x-goog-api-key": GEMINI_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones." }]
         },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.9,
-      max_tokens: maxTokens
-    })
-  });
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: prompt }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.9,
+          maxOutputTokens: maxTokens
+        }
+      })
+    }
+  );
 
   if (!res.ok) {
     const details = await res.text().catch(() => "");
-    throw new Error(`OpenRouter ${res.status}: ${details}`);
+    throw new Error(`Gemini ${res.status}: ${details}`);
   }
 
   const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error("OpenRouter devolvió texto vacío");
+  const text =
+    data?.candidates?.[0]?.content?.parts
+      ?.map(part => part?.text || "")
+      .join("")
+      .trim() || "";
+
+  if (!text) throw new Error("Gemini devolvió texto vacío");
   return text;
 }
 
 async function ai(prompt, maxTokens = 80) {
-  if (!OPENROUTER_API_KEY) return "";
+  if (!GEMINI_API_KEY) return "";
   try {
     return await generateAITextStrict(prompt, maxTokens);
   } catch {
@@ -305,6 +318,10 @@ Instrucciones:
 
   try {
     const raw = await generateAITextStrict(prompt, 60);
+    if (!raw || !String(raw).trim()) {
+      return `${nombre}: *observa en silencio*`;
+    }
+
     const clean = stripCompanionPrefix(raw, nombre);
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch {
@@ -380,22 +397,25 @@ async function askOpenRouter(userId, userMessage, lore) {
   if (history.length > 10) history.shift();
 
   try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "x-goog-api-key": GEMINI_API_KEY,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: "system", content: systemPrompt }, ...history],
-        temperature: 0.85
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: history.map(msg => ({
+          role: msg.role === "assistant" ? "model" : "user",
+          parts: [{ text: msg.content }]
+        })),
+        generationConfig: { temperature: 0.85 }
       })
     });
 
     if (!res.ok) return "Altéru: *revisa los planos tácticos en silencio*";
     const data = await res.json();
-    const reply = data?.choices?.[0]?.message?.content?.trim() || "*asiente*";
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
     history.push({ role: "assistant", content: reply });
     if (history.length > 10) history.shift();
@@ -1205,7 +1225,7 @@ const companionScenes = [
 
 💬 Altéru: "¿Cómo te sientes aquí? Sabes que también lo extraño y pienso lo descuidado que fue al dejar que aquello pasara. Pero es el riesgo a los que nos exponemos."
 
-💬 Montaraz: "El Capitán Arathir era el mejor hombre al que conocí, después de usted. Nos conocíamos de toda la vida y siempre le seguimos. Ahora obedecemos su última voluntad y estamos bajo sus ordenes."
+💬 Montaraz: "El Capitán Arathir era el mejor hombre al que conocí, después de usted. Nos conocíamos de toda la vida y siempre le seguimos. Ahora obedemiemos su última voluntad y estamos bajo sus ordenes."
 
 💬 Altéru: "Más allá de eso, quiero que te sientas bien, no estamos en el norte, al menos no por ahora. Continua vigilando, no quisiera otro ataque de alimañas de las montañas.
 
@@ -1260,6 +1280,20 @@ const companionScenes = [
 
 const COMPANION_SCENES_KEY = "companion_scenes";
 const COMPANION_SCENE_HISTORY_LIMIT = 8;
+const COMPANION_SCENES_PER_CYCLE = 2;
+
+const COMPANION_SCENE_WINDOWS = [
+  {
+    slot: 0,
+    minOffsetMs: 4 * 60 * 60 * 1000,
+    maxOffsetMs: 6 * 60 * 60 * 1000
+  },
+  {
+    slot: 1,
+    minOffsetMs: 8 * 60 * 60 * 1000,
+    maxOffsetMs: 11 * 60 * 60 * 1000
+  }
+];
 
 function chunkDiscordText(text, limit = 1900) {
   const chunks = [];
@@ -1312,40 +1346,73 @@ async function saveCompanionSceneState(state) {
   await db.setEventState(COMPANION_SCENES_KEY, state).catch(() => {});
 }
 
-async function pickCompanionSceneForCycle(cycleStartMs = getCycleBounds().cycleStartAt) {
+async function pickCompanionSceneForCycle(cycleStartMs = getCycleBounds().cycleStartAt, slot = 0) {
   const state = await getCompanionSceneState();
 
-  if (state?.cycleId === cycleStartMs && state?.scene?.id) {
-    return state.scene;
+  const scenesPosted = Array.isArray(state?.scenesPosted)
+    ? [...state.scenesPosted]
+    : [];
+
+  const history = Array.isArray(state?.history)
+    ? [...state.history]
+    : [];
+
+  if (state?.cycleId === cycleStartMs && state?.scene?.id && !scenesPosted.length) {
+    scenesPosted.push({
+      slot: 0,
+      scene: state.scene,
+      postedAt: state.postedAt || Date.now()
+    });
   }
 
-  const history = Array.isArray(state?.history) ? state.history : [];
-  const recent = new Set(history.slice(-COMPANION_SCENE_HISTORY_LIMIT));
+  const existingForSlot = scenesPosted.find(entry => entry.slot === slot);
+  if (state?.cycleId === cycleStartMs && existingForSlot?.scene?.id) {
+    return existingForSlot.scene;
+  }
 
-  let pool = companionScenes.filter(scene => !recent.has(scene.id));
-  if (!pool.length) pool = companionScenes;
+  const recent = new Set(history.slice(-COMPANION_SCENE_HISTORY_LIMIT));
+  const usedIds = new Set(
+    scenesPosted.map(entry => entry?.scene?.id).filter(Boolean)
+  );
+
+  let pool = companionScenes.filter(scene => !recent.has(scene.id) && !usedIds.has(scene.id));
+
+  if (!pool.length) {
+    pool = companionScenes.filter(scene => !usedIds.has(scene.id));
+  }
+
+  if (!pool.length) {
+    pool = companionScenes;
+  }
 
   const chosen = pool[Math.floor(Math.random() * pool.length)];
   if (!chosen) return null;
 
+  scenesPosted.push({
+    slot,
+    scene: chosen,
+    postedAt: Date.now()
+  });
+
   await saveCompanionSceneState({
     cycleId: cycleStartMs,
-    postedAt: Date.now(),
-    scene: chosen,
+    postedAt: state?.postedAt || Date.now(),
+    scenesPosted,
     history: [...history, chosen.id].slice(-COMPANION_SCENE_HISTORY_LIMIT)
   });
 
   return chosen;
 }
 
-async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cycleStartAt) {
+async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cycleStartAt, slot = 0) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
-  const scene = await pickCompanionSceneForCycle(cycleStartMs);
+  const scene = await pickCompanionSceneForCycle(cycleStartMs, slot);
   if (!scene) return;
 
-  await sendLongScene(channel, scene.text);
+  const header = scene.title ? `🌿 **${scene.title}**\n\n` : "";
+  await sendLongScene(channel, `${header}${scene.text}`);
 }
 
 async function openCycleEvents(cycleStartMs, client, loreCache) {
@@ -1356,13 +1423,18 @@ async function openCycleEvents(cycleStartMs, client, loreCache) {
   scheduleCycleRandomEvents(cycleStartMs, [
     {
       minOffsetMs: 1 * 60 * 60 * 1000,
-      maxOffsetMs: 5 * 60 * 60 * 1000,
+      maxOffsetMs: 3 * 60 * 60 * 1000,
       task: () => openMerchant(client)
     },
     {
-      minOffsetMs: 6 * 60 * 60 * 1000,
-      maxOffsetMs: 11 * 60 * 60 * 1000,
-      task: () => publishCompanionScene(client, cycleStartMs)
+      minOffsetMs: COMPANION_SCENE_WINDOWS[0].minOffsetMs,
+      maxOffsetMs: COMPANION_SCENE_WINDOWS[0].maxOffsetMs,
+      task: () => publishCompanionScene(client, cycleStartMs, 0)
+    },
+    {
+      minOffsetMs: COMPANION_SCENE_WINDOWS[1].minOffsetMs,
+      maxOffsetMs: COMPANION_SCENE_WINDOWS[1].maxOffsetMs,
+      task: () => publishCompanionScene(client, cycleStartMs, 1)
     }
   ]);
 }
@@ -1428,5 +1500,3 @@ export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) 
   await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
   await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
 }
-
-
