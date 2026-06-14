@@ -1244,6 +1244,9 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   await db.addPoints(message.author.id, pointsGain);
 
   await clearExpeditionParty(message.author.id);
+  expedition.pendingSubEncounter = false;
+  expedition.pendingFinalScenario = false;
+  expedition.finalScenarioShown = false;
   expeditions.delete(message.author.id);
 
   return message.reply(texto);
@@ -2871,9 +2874,12 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       failed: false,
       threat: 0,
       affinityLog: {},
+      pendingSubEncounter: false,
       pendingSubReveal: false,
       pendingSubResolve: false,
-      finalScenario: null
+      pendingFinalScenario: false,
+      finalScenarioShown: false,
+      finalScenario: getFinalScenarioConfig(mission)
     });
 
     await db.updateTravelerData(message.author.id, {
@@ -3047,6 +3053,8 @@ Usa !desafiar para comenzar el viaje.`
       expedition.pendingSubReveal = false;
       expedition.pendingSubResolve = false;
       expedition.pendingFinalScenario = false;
+      expedition.finalScenarioShown = false;
+      expedition.pendingSubEncounter = false;
       expedition.currentEncounter = null;
       expeditions.delete(message.author.id);
 
@@ -3096,6 +3104,8 @@ Usa !desafiar para comenzar el viaje.`
       expedition.pendingSubReveal = false;
       expedition.pendingSubResolve = false;
       expedition.pendingFinalScenario = false;
+      expedition.finalScenarioShown = false;
+      expedition.pendingSubEncounter = false;
       expedition.currentEncounter = null;
       expeditions.delete(message.author.id);
 
@@ -3405,8 +3415,10 @@ Usa !desafiar para comenzar el viaje.`
     expedition.progress += 1;
 
     const encounterSnapshot = activeEncounter;
-    expedition.currentEncounter = null;
-    expedition.pendingFinalScenario = false;
+    if (activeEncounter.tipo !== "escenario_final") {
+      expedition.currentEncounter = null;
+      expedition.pendingFinalScenario = false;
+    }
     expedition.pendingSubReveal = false;
     expedition.pendingSubResolve = false;
 
@@ -3439,9 +3451,29 @@ Usa !desafiar para comenzar el viaje.`
       textoVictoria += `\n\n${reactions.join("\n")}`;
     }
 
-    if (expedition.progress < (expedition.mission.encuentros?.length || 0)) {
+    const totalEncuentros = expedition.mission.encuentros?.length || 0;
+
+    if (expedition.progress < totalEncuentros) {
       textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa !desafiar para seguir viajando.`;
       return message.reply(textoVictoria);
+    }
+
+    if (
+      expedition.finalScenario?.enabled &&
+      !expedition.finalScenarioShown &&
+      !expedition.pendingFinalScenario
+    ) {
+      expedition.finalScenarioShown = true;
+      expedition.pendingFinalScenario = true;
+      expedition.currentEncounter = {
+        ...expedition.finalScenario,
+        tipo: "escenario_final",
+        categoria: "final",
+        active: true
+      };
+
+      await startFinalScenario(message, expedition);
+      return;
     }
 
     const beforeProfile = await db.getProfile(message.author.id);
