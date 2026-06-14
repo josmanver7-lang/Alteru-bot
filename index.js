@@ -994,7 +994,7 @@ function getFinalScenarioFailureText(action, expedition) {
   }
 }
 
-function getFinalScenarioActionText(action, expedition) {
+function getFinalScenarioActionText2(action, expedition) {
   const scenario = expedition.finalScenario || {};
 
   return {
