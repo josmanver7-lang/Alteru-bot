@@ -65,8 +65,8 @@ const companions = {
     efecto: "+15% contra enemigos poderosos y reduce daño recibido.",
     coste: 250
   },
-  duilon: {
-    nombre: "Duilon",
+  duinor: {
+    nombre: "Duinor",
     clase: "Campeón",
     habilidad: "Deseo de Lucha",
     efecto: "+25% contra enemigos numerosos.",
@@ -500,7 +500,7 @@ function getCompanionIcon(id) {
     case "cirdil":
     case "andaer":
       return "🛡️";
-    case "duilon":
+    case "duinor":
       return "⚔️";
     case "alteru":
     case "nieriel":
@@ -761,7 +761,7 @@ function getFinalScenarioActionText(encounter = {}, action = "atacar", outcome =
 
 function getFinalScenarioReactionIds(action, owned = []) {
   const poolByAction = {
-    atacar: ["duilon", "cirdil", "alteru"],
+    atacar: ["duinor", "cirdil", "alteru"],
     rodear: ["nieriel", "faelon", "andaer"],
     retirarse: ["nieriel", "faelon", "alteru"]
   };
@@ -771,7 +771,7 @@ function getFinalScenarioReactionIds(action, owned = []) {
 
 function getFinalScenarioAffinityTargets(action, owned = []) {
   const poolByAction = {
-    atacar: ["duilon", "cirdil", "alteru"],
+    atacar: ["duinor", "cirdil", "alteru"],
     rodear: ["nieriel", "faelon", "andaer"],
     retirarse: ["nieriel", "faelon"]
   };
@@ -3650,7 +3650,7 @@ Usa !desafiar para comenzar el viaje.`
 
   // Comandos de Roleplay Directo con los Compañeros
   const companionCommands = {
-    "!al": "alteru", "!c": "cirdil", "!d": "duilon", "!an": "andaer", "!n": "nieriel", "!f": "faelon", "!m": "montaraces"
+    "!al": "alteru", "!c": "cirdil", "!d": "duinor", "!an": "andaer", "!n": "nieriel", "!f": "faelon", "!m": "montaraces"
   };
 
   if (companionCommands[command]) {
