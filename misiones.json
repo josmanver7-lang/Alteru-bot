@@ -163,8 +163,8 @@
     }
   },
   {
-    "id": "rastreo_dinadab",
-    "titulo": "Rastreo en Dínadab",
+    "id": "rastreo_lothgobel",
+    "titulo": "Rastreo en Lothgobel",
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Se han visto huellas y señales extrañas en los alrededores de Dínadab. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
@@ -178,7 +178,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Senderos de Dínadab",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "descripcion": "Has llegado a la zona objetivo y encuentras a un no muy numeroso grupo de bandidos. Puedes atacar, rodear, o retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
@@ -189,25 +189,16 @@
       "allowedActions": [
         "atacar",
         "rodear",
-        "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "successText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "atacar": "Rompes su línea defensiva y los bandidos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Tras seguir las huellas alrededor de Dínadab, confirmas que la ruta sigue segura y entregas el informe al capitán.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "failureText": {
         "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
         "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
         "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
       }
     }
