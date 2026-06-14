@@ -115,7 +115,7 @@ async function fetchChannel(client) {
   return channel?.isTextBased() ? channel : null;
 }
 
-async function generateAITextStrict(prompt, maxTokens = 60) {
+async function generateAITextStrict(prompt, maxTokens = 80) {
   if (!OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY no está configurada");
   }
@@ -151,7 +151,7 @@ async function generateAITextStrict(prompt, maxTokens = 60) {
   return text;
 }
 
-async function ai(prompt, maxTokens = 60) {
+async function ai(prompt, maxTokens = 80) {
   if (!OPENROUTER_API_KEY) return "";
   try {
     return await generateAITextStrict(prompt, maxTokens);
