@@ -7,7 +7,7 @@
     "alineamiento": "Aliado",
     "estado": "Vivo",
     "Armas": ["Espada larga templada", "Escudo de gota", "Daga ornamentada Haradrim"],
-    "Armadura": ["Capa con Capucha morada", "Placa metálica", "Brazaletes metalicos", "Grebas doradas", "Hombreras metálicas"],
+    "Armadura": ["Capa con Capucha morada", "Placa metálica", "Brazaletes metálicos", "Grebas doradas", "Hombreras metálicas"],
     "Objetos": ["Cuerno de Gondor", "Laúd Viejo", "Copa de Bronce"],
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
     "personalidad": "Desafiante,  ambicioso, apasionado,  cariñoso, guía, irónico, serio, observador,  estoico.",
@@ -21,7 +21,7 @@
       "Fue nombrado Capitán p9r Hirluin el Hermoso y destacó en la defensa de Ost Anrdir,",
       "Participó y destacó en la batalla de Belfalas liderando la última carga,",
       "En el banquete del día siguiente conoció y se enamoró de su amada Nieriel.",
-      "Creó una hueste personal acompañado de Duilon, Andaer, Cirdil, Berendir y Berenil, hicieron una campaña de limpieza y acabaron con muchos invasores.",
+      "Creó una hueste personal acompañado de Duinor, Andaer, Cirdil, Berendir y Berenil, hicieron una campaña de limpieza y acabaron con muchos invasores.",
       "Fue capturado y hecho prisionero por Jajax el corsario, tras perder un duelo individual contra Khaldoon y fue enviado prisionero a Harad.",
       "Logró escapar junto a una cacique tribal llamada Yusraa, pasó por las minas de Esh Mêkag, luego gracias a su salvadora fueron a su hogar en el Gûl Sakhâsha, allí pagó su favor unificando varias tribus bajon la leyenda del Rey Leon, derrotando a los Ordâkhai en el desierto.",
       "Embarazó a Yusraa y volvió con dificultad a Gondor, siendo atacado en el camino por un espíritu de Thûlazar. Pero encontró la fuerza para volver a su pais."
@@ -34,7 +34,7 @@
       "Cirdil": "Su mejor amigo, a pesar de su impulsividad desmedida, sabe sacar lo mejor de él.",
       "Faelon": "Sabio y aventurero, no se imaginaba a los elfos tan animados.",
       "Andaer": "Inquieto y competitivo, pero leal, diligente y servicial.",
-      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
+      "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
     }
   },
   {
@@ -61,7 +61,7 @@
       "Cirdil": "Algo impulsivo, pero de buen corazón.",
       "Faelon": "Muy amigable y humilde; una buena compañía.",
       "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
-      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
+      "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
     }
   },
   {
@@ -92,11 +92,11 @@
       "Nieriel": "Intrigante y de buen corazón.",
       "Faelon": "Muy amigable y humilde; una buena compañía.",
       "Andaer": "Amigable y servicial, aunque siempre inquieto; una buena compañía.",
-      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
+      "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
     }
   },
   {
-    "nombre": "Duilon",
+    "nombre": "Duinor",
     "titulo": "El paladín",
     "raza": "Humano",
     "clase": "Campeón",
@@ -155,7 +155,7 @@
     "opiniones": {
       "Alteru": "Capitán, buen líder, cercano y de carácter dominante.",
       "Nieriel": "Hermosa persona, brilla con esplendor y de buen corazón.",
-      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, de buen corazón.",
+      "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, de buen corazón.",
       "Andaer": "Amigable y servicial, aunque siempre inquieto; de buen corazón, pero no disfruta mucho su compañía.",
       "Cirdil": "Algo impulsivo, pero de buen corazón, a veces le recuerda la corrupción de los Edain."
     }
@@ -185,9 +185,10 @@
     "opiniones": {
       "Alteru": "Capitán, modelo a seguir.",
       "Nieriel": "Hermosa persona y de buen corazón.",
-      "Duilon": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, con quien mejor se lleva.",
+      "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla, con quien mejor se lleva.",
       "Faelon": "Muy amigable y humilde; una buena compañía aunque algon distante.",
       "Cirdil": "Algo impulsivo, pero de buen corazón, no hay demasiada afinidad."
     }
   }
 ]
+
