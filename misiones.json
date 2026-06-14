@@ -139,7 +139,6 @@
       "allowedActions": [
         "atacar",
         "rodear",
-        "explorar",
         "infiltrar",
         "negociar",
         "retirarse"
@@ -147,7 +146,6 @@
       "successText": {
         "atacar": "Derrotas al último corsario y liberas a los prisioneros que estaban atados cerca de la fogata, ellos te agradecen y vuelven contigo al campamento.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
         "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
@@ -204,44 +202,40 @@
     }
   },
   {
-    "id": "reliquia_calembel",
-    "titulo": "Reliquia perdida cerca de Calembel",
+    "id": "niños_perdidos",
+    "titulo": "Niños perdidos de Calembel",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Un objeto antiguo fue visto por última vez en un sendero cercano a Calembel. Debes localizarlo antes de que quede enterrado bajo barro y maleza.",
-    "puntos": 45,
+    "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros."
     "xp": 90,
     "encuentros": [
       "obstaculo",
       "evento_especial",
-      "obstaculo"
+      "enemigo_numeroso"
     ],
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Sendero oculto",
-      "descripcion": "Llegas al punto marcado. No hay batalla que librar, solo decidir cómo asegurar el objetivo y regresar.",
-      "hasEnemies": false,
-      "enemyChance": 0,
+      "descripcion": "Tras derrotar a sus escoltas, el líder enemigo te esperaba con los niños a su espalda amarrados. '¿Así que llegó el rescate eh? Primero tendrás que vencerme'.",
+      "hasEnemies": true,
+      "enemyLabel": "lider bandido"
+      "enemyChance": 9.5,
       "rewardMultiplier": 1,
       "xpBonus": 0,
       "pointsBonus": 0,
       "affinityBonus": 0,
       "allowedActions": [
-        "explorar",
-        "infiltrar",
+        "atacar",
         "negociar",
         "retirarse"
       ],
       "successText": {
-        "explorar": "Recuperas la reliquia perdida cerca de Calembel y la entregas intacta al campamento.",
-        "infiltrar": "Te mueves con cuidado y recuperas lo necesario sin incidentes.",
-        "negociar": "Hablas con los pocos presentes y obtienes acceso sin problemas.",
-        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
-      },
+        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo haciendo uso de tu habilidad para debilitarlo hasta dar el golpe mortal ¡Victoria!.",
+        "negociar": "Intentas negociar con el enemigo y a cambio de dejarlo libre aceptará entregarte a los niños.",
+        "retirarse": "Decides regresarse en informar de la situación en el campamento."
       "failureText": {
-        "explorar": "El terreno te retrasa y pierdes tiempo antes de encontrar lo que buscabas.",
-        "infiltrar": "Una mala pisada te obliga a detenerte y corregir el rumbo.",
-        "negociar": "La conversación no avanza y terminas retirándote.",
+        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo, pero tras un intenso combate fuiste superado dejándote tirado e inconsciente en el lugar.",
+        "negociar": "Intentas convencerlo por todos los medios pero se niega a liberar a los niños, asi que sin mas remedio, vuelves al campamento para informar.",
         "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
       }
     }
