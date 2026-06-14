@@ -115,7 +115,7 @@ async function fetchChannel(client) {
   return channel?.isTextBased() ? channel : null;
 }
 
-async function generateAITextStrict(prompt, maxTokens = 24) {
+async function generateAITextStrict(prompt, maxTokens = 60) {
   if (!OPENROUTER_API_KEY) {
     throw new Error("OPENROUTER_API_KEY no está configurada");
   }
@@ -151,7 +151,7 @@ async function generateAITextStrict(prompt, maxTokens = 24) {
   return text;
 }
 
-async function ai(prompt, maxTokens = 24) {
+async function ai(prompt, maxTokens = 60) {
   if (!OPENROUTER_API_KEY) return "";
   try {
     return await generateAITextStrict(prompt, maxTokens);
@@ -304,7 +304,7 @@ Instrucciones:
 `.trim();
 
   try {
-    const raw = await generateAITextStrict(prompt, 24);
+    const raw = await generateAITextStrict(prompt, 60);
     const clean = stripCompanionPrefix(raw, nombre);
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch {
@@ -695,7 +695,7 @@ No menciones que es una IA.
 
   let text;
   try {
-    text = await generateAITextStrict(prompt, 24);
+    text = await generateAITextStrict(prompt, 90);
   } catch (err) {
     console.error("Error generando texto IA del tablón:", err);
     text = `${announcerName} cruza el campamento, revisa el tablón y clava cinco expediciones nuevas antes de seguir con sus tareas.`;
@@ -849,7 +849,7 @@ No menciones que es una IA.
 
   let intro;
   try {
-    intro = await generateAITextStrict(prompt, 24);
+    intro = await generateAITextStrict(prompt, 60);
   } catch (err) {
     console.error("Error generando llegada del mercader:", err);
     intro = `${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}. Te invito a que veas mi mercancía, usa !mercader.`;
@@ -890,7 +890,7 @@ No menciones que es una IA.
 
     let farewell;
     try {
-      farewell = await generateAITextStrict(closePrompt, 24);
+      farewell = await generateAITextStrict(closePrompt, 60);
     } catch (err) {
       console.error("Error generando despedida del mercader:", err);
       farewell = `${state.name} agradece a Capitán Altéru por dejarle el espacio, recoge sus bultos y parte hacia ${state.destination}.`;
