@@ -102,30 +102,30 @@ const companions = {
   }
 };
 
-const COMPANION_BASE_BONUS = {
-  alteru: { captainBonus: 0.10, successBonus: 0.04 },
-  cirdil: { strongEnemyBonus: 0.12, damageReduction: 0.06 },
-  duinor: { numerousEnemyBonus: 0.12, successBonus: 0.03 },
-  andaer: { blockChance: 0.20, damageReduction: 0.04 },
-  nieriel: { nierielSafe: true, rangerBonus: 0.06 },
-  faelon: { faelonHeal: 10, successBonus: 0.02 },
-  montaraces: { rangerBonus: 0.10, successBonus: 0.04 }
-};
+const ITEM_TIER_VALUES = { ninguno: 0, none: 0, comun: 1, forjado: 2, superior: 3, legendario: 4 }; 
+const PLAYER_CLASS_BONUS = { 
+  guardian: { damageReduction: 0.06 }, 
+  vigilante: { explorationBonus: 0.06, successBonus: 0.03 }, 
+  campeon: { attackBonus: 0.08, successBonus: 0.03 }, 
+  cazador: { explorationBonus: 0.05, rangerBonus: 0.04 }, 
+  luchador: { attackBonus: 0.06, damageReduction: 0.02 }, 
+  bardo: { negotiationBonus: 0.08 }, 
+  guardian_runico: { specialBonus: 0.08, damageReduction: 0.04 }, 
+  capitan: { negotiationBonus: 0.08, successBonus: 0.04 }, 
+  sabio: { specialBonus: 0.06, explorationBonus: 0.04 }, 
+  saqueador: { attackBonus: 0.05, explorationBonus: 0.03 }, 
+  marinero: { explorationBonus: 0.08, successBonus: 0.03 }, 
+  beornida: { attackBonus: 0.06, damageReduction: 0.04 } 
+}; 
 
-const PLAYER_CLASS_BONUS = {
-  guerrero: { attackBonus: 0.06, damageReduction: 0.03 },
-  guardian: { damageReduction: 0.06 },
-  vigilante: { explorationBonus: 0.06, successBonus: 0.03 },
-  campeon: { attackBonus: 0.08, successBonus: 0.03 },
-  cazador: { explorationBonus: 0.05, rangerBonus: 0.04 },
-  luchador: { attackBonus: 0.06, damageReduction: 0.02 },
-  bardo: { negotiationBonus: 0.08 },
-  guardian_runico: { specialBonus: 0.08, damageReduction: 0.04 },
-  capitan: { negotiationBonus: 0.08, successBonus: 0.04 },
-  sabio: { specialBonus: 0.06, explorationBonus: 0.04 },
-  saqueador: { attackBonus: 0.05, explorationBonus: 0.03 },
-  marinero: { explorationBonus: 0.08, successBonus: 0.03 },
-  beornida: { attackBonus: 0.06, damageReduction: 0.04 }
+const COMPANION_BASE_EQUIPMENT = { 
+  alteru: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Legendario", capa: "Legendario", casco: "Superior", hombros: "Superior", anillo1: "Superior", anillo2: "Superior", amuleto: "Ninguno", accesorio: "Ninguno" }, 
+  cirdil: { arma: "Superior", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Forjado", hombros: "Forjado", anillo1: "Forjado", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
+  duinor: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Superior", capa: "Ninguno", casco: "Ninguno", hombros: "Superior", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Ninguno" }, 
+  andaer: { arma: "Forjado", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Forjado", hombros: "Forjado", anillo1: "Forjado", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
+  faelon: { arma: "Forjado", armadura: "Forjado", guantes: "Comun", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Ninguno", hombros: "Ninguno", anillo1: "Superior", anillo2: "Forjado", amuleto: "Legendario", accesorio: "Superior" }, 
+  nieriel: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Superior", capa: "Forjado", casco: "Superior", hombros: "Superior", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
+  montaraces: { arma: "Superior", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Superior", casco: "Ninguno", hombros: "Ninguno", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Forjado", accesorio: "Ninguno" } 
 };
 
 const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "regalos"];
@@ -134,47 +134,51 @@ const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes"
 //          FUNCIONES AUXILIARES
 // ==========================================
 
-function getPlayerClassKey(profile = {}) {
-  return normalizeKey(profile?.class || profile?.clase || "");
+function getPlayerClassKey(profile = {}) { 
+  return normalizeKey(profile?.class || profile?.clase || ""); 
+} 
+
+function getPlayerClassBonus(profile = {}) { 
+  return PLAYER_CLASS_BONUS[getPlayerClassKey(profile)] || {}; 
+} 
+
+function getPlayerClassBonusText(profile = {}) { 
+  const bonus = getPlayerClassBonus(profile); 
+  const parts = []; 
+  if (bonus.attackBonus) parts.push(`Ataque +${Math.round(bonus.attackBonus * 100)}%`); 
+  if (bonus.damageReduction) parts.push(`Defensa +${Math.round(bonus.damageReduction * 100)}%`); 
+  if (bonus.explorationBonus) parts.push(`Exploración +${Math.round(bonus.explorationBonus * 100)}%`); 
+  if (bonus.negotiationBonus) parts.push(`Negociación +${Math.round(bonus.negotiationBonus * 100)}%`); 
+  if (bonus.specialBonus) parts.push(`Especial +${Math.round(bonus.specialBonus * 100)}%`); 
+  if (bonus.rangerBonus) parts.push(`Rastreo +${Math.round(bonus.rangerBonus * 100)}%`); 
+  if (bonus.successBonus) parts.push(`Éxito +${Math.round(bonus.successBonus * 100)}%`); 
+  return parts.length ? parts.join(" | ") : "Sin bonos de clase"; 
 }
 
-function getPlayerClassBonus(profile = {}) {
-  return PLAYER_CLASS_BONUS[getPlayerClassKey(profile)] || {};
-}
+function getProfilePowerSummary(profile = {}, equipment = {}) { 
+  const lvl = typeof db.calculateLevel === "function" ? db.calculateLevel(profile.xp || 0) : Math.floor((profile.xp || 0) / 1000) + 1; 
+  const totals = sumEquipmentTotals(equipment); 
+  const classBonus = getPlayerClassBonus(profile); 
+  const classPct = Object.values(classBonus).reduce((sum, v) => sum + (typeof v === "number" ? v : 0), 0); 
+  const score = Math.max( 1, Math.round( (lvl * 10) + ((totals.damageBonus || 0) * 5) + ((totals.successBonus || 0) * 100) + ((totals.damageReduction || 0) * 100) + (classPct * 100) ) ); 
+  return { score, level: lvl, bonusText: getPlayerClassBonusText(profile) }; 
+} 
 
-function getPlayerClassBonusText(profile = {}) {
-  const bonus = getPlayerClassBonus(profile);
-  const parts = [];
+function getEquipmentPowerSummary(equipment = {}) { 
+  const totals = sumEquipmentTotals(equipment); 
+  const score = Math.max( 1, Math.round( ((totals.damageBonus || 0) * 5) + ((totals.successBonus || 0) * 100) + ((totals.damageReduction || 0) * 100) ) ); 
+  return { score, totals, detailText: formatEquipmentTotals(totals) }; 
+} 
 
-  if (bonus.attackBonus) parts.push(`Ataque +${Math.round(bonus.attackBonus * 100)}%`);
-  if (bonus.damageReduction) parts.push(`Defensa +${Math.round(bonus.damageReduction * 100)}%`);
-  if (bonus.explorationBonus) parts.push(`Exploración +${Math.round(bonus.explorationBonus * 100)}%`);
-  if (bonus.negotiationBonus) parts.push(`Negociación +${Math.round(bonus.negotiationBonus * 100)}%`);
-  if (bonus.specialBonus) parts.push(`Especial +${Math.round(bonus.specialBonus * 100)}%`);
-  if (bonus.rangerBonus) parts.push(`Rastreo +${Math.round(bonus.rangerBonus * 100)}%`);
-  if (bonus.successBonus) parts.push(`Éxito +${Math.round(bonus.successBonus * 100)}%`);
+function getCompanionBasePower(companionId) { 
+  const loadout = COMPANION_BASE_EQUIPMENT[normalizeKey(companionId)] || {}; 
+  const total = Object.values(loadout).reduce( (sum, tier) => sum + (ITEM_TIER_VALUES[normalizeKey(tier)] || 0), 0 ); 
+  return { total, successBonus: Math.min(total * 0.0025, 0.12), damageReduction: Math.min(total * 0.0015, 0.08) }; 
+} 
 
-  return parts.length ? parts.join(" | ") : "Sin bono definido";
-}
-
-function getCompanionBasePower(companionId) {
-  // Poder pre-calculado para ahorrar líneas (basado en tiers de equipamiento)
-  const powerMap = {
-    alteru: 32, cirdil: 19, duinor: 21, andaer: 18,
-    faelon: 21, nieriel: 28, montaraces: 19
-  };
-  const total = powerMap[normalizeKey(companionId)] || 0;
-  
-  return {
-    total,
-    successBonus: Math.min(total * 0.0025, 0.12),
-    damageReduction: Math.min(total * 0.0015, 0.08)
-  };
-}
-
-function getCompanionBaseSummary(companionId) {
-  const base = getCompanionBasePower(companionId);
-  return `Poder ${base.total} | Éxito +${Math.round(base.successBonus * 100)}% | Defensa -${Math.round(base.damageReduction * 100)}%`;
+function getCompanionBaseSummary(companionId) { 
+  const base = getCompanionBasePower(companionId); 
+  return `Poder ${base.total} | Éxito +${Math.round(base.successBonus * 100)}% | Defensa -${Math.round(base.damageReduction * 100)}%`; 
 }
 
 async function loadCatalog(filename) {
@@ -545,56 +549,30 @@ function getAffinityBonus(profile, companionId) {
   return 0;
 }
 
-function getCompanionBonus(profile) {
-  const list = getOwnedCompanions(profile);
-
-  const bonus = {
-    captainBonus: 0,
-    strongEnemyBonus: 0,
-    numerousEnemyBonus: 0,
-    blockChance: 0,
-    rangerBonus: 0,
-    damageReduction: 0,
-    faelonHeal: 0,
-    nierielSafe: false,
-    basePower: 0,
-    baseSuccessBonus: 0,
-    baseDamageReduction: 0
-  };
-
-  for (const id of list) {
-    const base = getCompanionBasePower(id);
-    bonus.basePower += base.total;
-    bonus.baseSuccessBonus += base.successBonus;
-    bonus.baseDamageReduction += base.damageReduction;
-
-    switch (normalizeKey(id)) {
-      case "alteru":
-        bonus.captainBonus += 0.20;
-        break;
-      case "cirdil":
-        bonus.strongEnemyBonus += 0.15;
-        bonus.damageReduction += 0.20;
-        break;
-      case "duinor":
-        bonus.numerousEnemyBonus += 0.25;
-        break;
-      case "andaer":
-        bonus.blockChance += 0.20;
-        break;
-      case "nieriel":
-        bonus.nierielSafe = true;
-        break;
-      case "faelon":
-        bonus.faelonHeal += 10;
-        break;
-      case "montaraces":
-        bonus.rangerBonus += 0.30;
-        break;
-    }
-  }
-
-  return bonus;
+function getCompanionBonus(profile) { 
+  const list = getOwnedCompanions(profile); 
+  const bonus = { 
+    captainBonus: 0, strongEnemyBonus: 0, numerousEnemyBonus: 0, 
+    blockChance: 0, rangerBonus: 0, damageReduction: 0, 
+    faelonHeal: 0, nierielSafe: false, baseSuccessBonus: 0, baseDamageReduction: 0 
+  }; 
+  for (const id of list) { 
+    const base = getCompanionBasePower(id); 
+    bonus.baseSuccessBonus += base.successBonus; 
+    bonus.baseDamageReduction += base.damageReduction; 
+    switch (normalizeKey(id)) { 
+      case "alteru": bonus.captainBonus += 0.20; break; 
+      case "cirdil": bonus.strongEnemyBonus += 0.15; bonus.damageReduction += 0.20; break; 
+      case "duinor": bonus.numerousEnemyBonus += 0.25; break; 
+      case "andaer": bonus.blockChance += 0.20; break; 
+      case "nieriel": bonus.nierielSafe = true; break; 
+      case "faelon": bonus.faelonHeal += 10; break; 
+      case "montaraces": bonus.rangerBonus += 0.30; break; 
+    } 
+  } 
+  bonus.baseSuccessBonus = Math.min(bonus.baseSuccessBonus, 0.20); 
+  bonus.baseDamageReduction = Math.min(bonus.baseDamageReduction, 0.15); 
+  return bonus; 
 }
 
 function getAffinityGain() {
@@ -1233,8 +1211,12 @@ async function companionReaction(companionId, context, mode = "encounter") {
   const titulo = context?.titulo || "sin título";
   const tipo = context?.tipo || "desconocido";
   const categoria = context?.categoria || "desconocida";
-  const descripcion = context?.descripcion || context?.textoExito || context?.textoFracaso || "";
   const peligro = context?.peligro ?? 0;
+
+  // FIX: Forzar que sea un string limpio, esto prevenía que Gemini arroje 400 Bad Request cuando el contexto es un objeto.
+  let descripcionRaw = context?.descripcion || context?.textoExito || context?.textoFracaso || "La situación se desenvuelve ante ti.";
+  if (typeof descripcionRaw === "object") descripcionRaw = "La situación se desarrolla y debes reaccionar rápido.";
+  const descripcion = String(descripcionRaw).substring(0, 500);
 
   const systemInstruction = `Eres ${nombre}.
 Personalidad: ${lore.personalidad || "reservado y expresivo a su manera"}
@@ -1261,13 +1243,14 @@ Instrucciones:
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemInstruction.trim() }] },
-        contents: [{ role: "user", parts: [{ text: descripcion || "La situación se desenvuelve." }] }],
+        contents: [{ role: "user", parts: [{ text: descripcion }] }],
         generationConfig: { temperature: 0.85, maxOutputTokens: 60 }
       })
     });
 
     if (!res.ok) {
-      throw new Error(`Gemini ${res.status}`);
+      console.error(`Gemini API Error in companionReaction (${res.status}):`, await res.text());
+      return `${nombre}: *observa en silencio*`;
     }
 
     const data = await res.json();
@@ -1276,6 +1259,7 @@ Instrucciones:
 
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch (err) {
+    console.error("Gemini Catch Error (companionReaction):", err);
     return `${nombre}: *observa en silencio*`;
   }
 }
@@ -1320,7 +1304,6 @@ function buildSystemPrompt(lore, profile) {
 Raza: ${profile?.race || "desconocida"}
 Clase: ${profile?.class || "desconocida"}
 Puntos: ${profile?.points || 0}
-Rango: ${obtenerRango(profile?.points || 0)}
 `.trim();
 }
 
@@ -1332,8 +1315,19 @@ async function askGemini(userId, userMessage, lore) {
     conversationMemory.set(userId, []);
   }
   const history = conversationMemory.get(userId);
-  history.push({ role: "user", parts: [{ text: userMessage }] });
-  if (history.length > 10) history.shift();
+  
+  // FIX: Forzar roles alternados para que Gemini no lance 400 Bad Request
+  if (history.length > 0 && history[history.length - 1].role === "user") {
+    history[history.length - 1].parts[0].text += "\n\n" + userMessage;
+  } else {
+    history.push({ role: "user", parts: [{ text: userMessage }] });
+  }
+
+  if (history.length > 10) {
+    history.shift(); // Quitamos el más viejo
+    // Si al quitar nos quedamos con un "model" al inicio, también lo quitamos para seguir la estructura
+    if (history.length > 0 && history[0].role === "model") history.shift();
+  }
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
@@ -1348,16 +1342,17 @@ async function askGemini(userId, userMessage, lore) {
     });
 
     if (!res.ok) {
-      throw new Error(`Gemini ${res.status}`);
+      console.error(`Gemini API Error in askGemini (${res.status}):`, await res.text());
+      return "Altéru: *observa los senderos lejanos con suspicacia*";
     }
     
     const data = await res.json();
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
     history.push({ role: "model", parts: [{ text: reply }] });
-    if (history.length > 10) history.shift();
     return reply;
   } catch (err) {
+    console.error("Gemini Catch Error (askGemini):", err);
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
@@ -1901,7 +1896,7 @@ function buildTourYesText() {
 
 🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil, quien me ha acompañado en muchas aventuras. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Mira tu **!equipo** y asegúrate de estar bien pertrechado. Cuando quieras comprar cualquier artículo, usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
 
-🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerte manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros, pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará. 
+🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerse manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros, pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará. 
 
 🎖️ Altéru: Si encuentras o escuchas algo sobre un nigromante llamado **Thûlazar**, házmelo saber. Es nuestro mayor enemigo. ¡Espero oír grandes hazañas de ti!
 
@@ -1950,41 +1945,41 @@ function raceAllowsItem(playerRace, itemRace) {
   return false;
 }
 
-function canEquipItem(profile, item, equipment = {}) {
-  const race = normalizeKey(profile?.race || "");
-  const classKey = normalizeKey(profile?.class || "");
-
-  if (!race || !classKey) {
-    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." };
-  }
-
-  const itemRace = normalizeKey(item?.raza || item?.race || "");
-  const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : [];
-  const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : [];
-  const hands = Number(item?.hands || 1);
-  const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null;
-
-  if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) {
-    return { ok: false, reason: "Tu raza no puede usar ese objeto." };
-  }
-
-  if (itemRace && !raceAllowsItem(race, itemRace)) {
-    return { ok: false, reason: "Tu raza no puede usar ese objeto." };
-  }
-
-  if (itemClasses.length && !itemClasses.includes(classKey)) {
-    return { ok: false, reason: "Tu clase no puede usar ese objeto." };
-  }
-
-  if (hands === 2 && offhand) {
-    return { ok: false, reason: "No puedes usar un arma de dos manos junto con un objeto de mano secundaria." };
-  }
-
-  if (item?.slot === "escudo" && Number(equipment?.arma?.hands || 1) === 2) {
-    return { ok: false, reason: "No puedes usar escudo con un arma de dos manos." };
-  }
-
-  return { ok: true };
+function canEquipItem(profile, item, equipment = {}) { 
+  const race = normalizeKey(profile?.race || ""); 
+  const classKey = normalizeKey(profile?.class || ""); 
+  
+  if (!race || !classKey) { 
+    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." }; 
+  } 
+  
+  const itemRace = normalizeKey(item?.raza || item?.race || ""); 
+  const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : []; 
+  const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : []; 
+  const hands = Number(item?.hands || 1); 
+  const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null; 
+  
+  if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) { 
+    return { ok: false, reason: "Tu raza no puede usar ese objeto." }; 
+  } 
+  
+  if (itemRace && itemRace !== "general" && itemRace !== "none" && itemRace !== "ninguno" && itemRace !== race) { 
+    return { ok: false, reason: "Tu raza no puede usar ese objeto." }; 
+  } 
+  
+  if (itemClasses.length && !itemClasses.includes(classKey)) { 
+    return { ok: false, reason: "Tu clase no puede usar ese objeto." }; 
+  } 
+  
+  if (hands === 2 && offhand) { 
+    return { ok: false, reason: "No puedes usar un arma de dos manos junto con un objeto de mano secundaria." }; 
+  } 
+  
+  if (item?.slot === "escudo" && Number(equipment?.arma?.hands || 1) === 2) { 
+    return { ok: false, reason: "No puedes usar escudo con un arma de dos manos." }; 
+  } 
+  
+  return { ok: true }; 
 }
 
 async function handleOnboarding(message, profile) {
@@ -2170,21 +2165,22 @@ client.on("messageCreate", async (message) => {
   }
 
   // Comandos de Perfil y Sistema de Estadísticas
-  if (command === "!perfil") {
-    const profile = await db.getProfile(message.author.id);
-    const lvl = db.calculateLevel(profile.xp || 0);
+  if (command === "!perfil") { 
+    const profile = await db.getProfile(message.author.id); 
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null); 
+    const equipment = getResolvedEquipment(profile, equipmentRaw); 
+    const power = getProfilePowerSummary(profile, equipment); 
+    return message.reply( 
+`👤 **PERFIL DE VIAJERO** Nombre: ${profile.nombre || profile.name || "No definido"} 
+Raza: ${profile.race || "No definida"} | Clase: ${profile.class || "No definida"} 
+Bono de clase: ${power.bonusText} 
+Poder total: ${power.score} 
+Nivel: ${power.level} (${profile.xp || 0} XP) 
+Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100 
 
-    return message.reply(
-`👤 **PERFIL DE VIAJERO**
-Nombre: ${profile.nombre || profile.name || "No definido"}
-Raza: ${profile.race || "No definida"} | Clase: ${profile.class || "No definida"}
-Bono de clase: ${getPlayerClassBonusText(profile)}
-Rango: ${obtenerRango(profile.points || 0)} | Nivel: ${lvl} (${profile.xp || 0} XP)
-Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100
-
-📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0}
-🔥 Racha Actual: ${profile.rachaActual || 0} | Mejor: ${profile.mejorRacha || 0}`
-    );
+📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0} 
+🔥 Racha Actual: ${profile.rachaActual || 0} | Mejor: ${profile.mejorRacha || 0}` 
+    ); 
   }
 
   if (command === "!puntos") {
@@ -2240,43 +2236,36 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto.trim());
   }
 
-  if (command === "!equipo") {
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
-    const totals = sumEquipmentTotals(equipment);
-
-    let texto = "🛡️ **EQUIPO EQUIPADO**\n\n";
-
-    const slots = [
-      ["arma", "Arma"],
-      ["armadura", "Armadura"],
-      ["casco", "Casco"],
-      ["hombros", "Hombros"],
-      ["brazos", "Brazos"],
-      ["piernas", "Piernas"],
-      ["pies", "Pies"],
-      ["capa", "Capa"],
-      ["anillo1", "Anillo 1"],
-      ["anillo2", "Anillo 2"],
-      ["amuleto", "Amuleto"],
-      ["accesorio", "Accesorio"]
-    ];
-
-    for (const [slotKey, label] of slots) {
-      const item = equipment?.[slotKey];
-      texto += `${label}: ${item?.nombre || "—"}\n`;
-    }
-
-    texto += `\n✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`;
-    return message.reply(texto);
+  if (command === "!equipo") { 
+    const profile = await db.getProfile(message.author.id); 
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null); 
+    const equipment = getResolvedEquipment(profile, equipmentRaw); 
+    const totals = sumEquipmentTotals(equipment); 
+    const eqPower = getEquipmentPowerSummary(equipment); 
+    let texto = "🛡️ **EQUIPO EQUIPADO**\n\n"; 
+    
+    const slots = [ 
+      ["arma", "Arma"], ["armadura", "Armadura"], ["casco", "Casco"], 
+      ["hombros", "Hombros"], ["brazos", "Brazos"], ["piernas", "Piernas"], 
+      ["pies", "Pies"], ["capa", "Capa"], ["anillo1", "Anillo 1"], 
+      ["anillo2", "Anillo 2"], ["amuleto", "Amuleto"], ["accesorio", "Accesorio"] 
+    ]; 
+    
+    for (const [slotKey, label] of slots) { 
+      const item = equipment?.[slotKey]; 
+      texto += `${label}: ${item?.nombre || "—"}\n`; 
+    } 
+    
+    texto += `\n⚔️ **Poder total del equipo**: ${eqPower.score}\n`; 
+    texto += `✨ **Índice añadido total**\n${formatEquipmentTotals(totals)}\n`; 
+    return message.reply(texto); 
   }
   
   if (command === "!equipar") {
     const profile = await db.getProfile(message.author.id);
-
-    if (!profile.race || !profile.class) {
-      return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar.");
+    
+    if (!profile.race || !profile.class) { 
+      return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar."); 
     }
 
     const query = args.slice(1).join(" ").trim();
@@ -2349,28 +2338,31 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   // Comandos de Utilidades Generales y Gestión Base
-  if (command === "!info" || command === "!ayuda") {
-    return message.reply(
-`📜 Campamento de Altéru
+  if (command === "!info" || command === "!ayuda") { 
+    return message.reply( 
+`📜 Campamento de Altéru 
 
-👤 PERFIL
-!perfil, !puntos, !nivel, !ranking, !afinidad, !inventario, !equipo
+👤 PERFIL 
+!perfil, !puntos, !nivel, !afinidad, !inventario, !equipo 
 
-🤝 COMPAÑEROS
-!campamento, !companeros, !contratar <nombre>, !grupo
+📊 ESTADÍSTICAS 
+!ranking 
 
-🗺️ EXPEDICIONES
-!tablon, !expedicion <numero>, !desafiar, !interactuar, !volver, !abandonar
+🤝 COMPAÑEROS 
+!campamento, !companeros, !contratar <nombre>, !grupo 
 
-🛍️ COMERCIO
-!tienda, !armeria, !mercader, !comprar <item>, !vender <item>, !equipar <item>
+🗺️ EXPEDICIONES 
+!tablon, !expedicion <numero>, !desafiar, !interactuar, !volver, !abandonar, !curar 
 
-📚 TRIVIA
-!trivia <facil/normal/dificil/legendario>
+🛍️ COMERCIO 
+!tienda, !armeria, !mercader, !comprar <item>, !vender <item>, !equipar <item> 
 
-🔥 ROLEPLAY
-!a <mensaje> (Hablar con Altéru) o directos (!al, !c, !d, !an, !n, !f)`
-    );
+📚 TRIVIA 
+!trivia <facil/normal/dificil/legendario> 
+
+🔥 ROLEPLAY 
+!a <mensaje> (Hablar con Altéru) o directos (!al, !c, !d, !an, !n, !f)` 
+    ); 
   }
 
   if (command === "!resetear") {
@@ -2395,24 +2387,21 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(`🔄 Expediciones reiniciadas para <@${target.id}>.`);
   }
 
-  if (command === "!companeros" || command === "!compañeros" || command === "!campamento") {
-    let texto = "🤝 **Compañeros disponibles**\n\n";
-    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
-  
-    for (const id of orden) {
-      const comp = companions[id];
-      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
-  
-      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-      texto += `Habilidad: ${comp.habilidad}\n`;
-      texto += `Base total: ${getCompanionBaseSummary(id)}\n`;
-      texto += `Efecto: ${comp.efecto}\n`;
-      texto += `Coste: ${comp.coste} pts\n`;
-      texto += `Requisito: ${req}\n`;
-      texto += `Personalidad: ${getPersonalityText(id)}\n\n`;
-    }
-  
-    return message.reply(texto);
+  if (command === "!companeros" || command === "!compañeros" || command === "!campamento") { 
+    let texto = "🤝 **Compañeros disponibles**\n\n"; 
+    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"]; 
+    for (const id of orden) { 
+      const comp = companions[id]; 
+      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno"; 
+      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`; 
+      texto += `Habilidad: ${comp.habilidad}\n`; 
+      texto += `Poder base: ${getCompanionBaseSummary(id)}\n`; 
+      texto += `Efecto: ${comp.efecto}\n`; 
+      texto += `Coste: ${comp.coste} pts\n`; 
+      texto += `Requisito: ${req}\n`; 
+      texto += `Personalidad: ${getPersonalityText(id)}\n\n`; 
+    } 
+    return message.reply(texto); 
   }
 
   if (command === "!tablon") {
@@ -2713,6 +2702,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto);
   }
 
+  if (command === "!curar") { 
+    if (expeditions.has(message.author.id)) { 
+      return message.reply("⚠️ No puedes curarte en medio de una expedición. Termina o usa `!volver` primero."); 
+    } 
+    const profile = await db.getProfile(message.author.id); 
+    const saludActual = profile.salud !== undefined ? profile.salud : 100; 
+    if (saludActual >= 100) { 
+      return message.reply( 
+        "🌿 Faelon te mira con calma desde su tienda: ya estás mucho mejor. Para el próximo viaje no vayas solo." 
+      ); 
+    } 
+    await db.updateTravelerData(message.author.id, { salud: 100 }); 
+    return message.reply( 
+      `🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja tener mas cuidado.` 
+    ); 
+  }
+
   // ========================================
   // SISTEMA DE EXPEDICIONES
   // ========================================
@@ -2731,6 +2737,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     if (!mission) return message.reply("Esa misión no existe.");
 
     const profile = await db.getProfile(message.author.id);
+    const saludActual = profile.salud !== undefined ? profile.salud : 100; 
     const xpActual = profile.xp || 0;
     const nivelJugador = typeof db.calculateLevel === "function"
       ? db.calculateLevel(xpActual)
@@ -2767,15 +2774,10 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       activeCompanions
     });
 
-    return message.reply(
-`📜 ${mission.titulo}
+    const avisoSalud = saludActual < 100 ? `⚠️ Vas herido (${saludActual}/100). Puedes pasar por la tienda de Faelon antes para que puedas  \`!curar\` tus heridas.\n\n` : ""; 
+    const textoExpedicion = `📜 ${mission.titulo}\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa !desafiar para comenzar el viaje.`;
 
-📍 Destino: ${mission.destino}
-
-${mission.descripcion}
-
-Usa !desafiar para comenzar el viaje.`
-    );
+    return replyLong(message, `${avisoSalud}${textoExpedicion}`);
   }
 
   if (command === "!interactuar") {
@@ -3194,7 +3196,7 @@ Usa !desafiar para comenzar el viaje.`
     }
 
     let baseSuccess = 0.65 + bonuses.captainBonus + bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
-    baseSuccess += bonuses.baseSuccessBonus || 0;
+    baseSuccess += bonuses.baseSuccessBonus || 0; 
     
     if (activeEncounter.tipo === "enemigo_poderoso" || activeEncounter.tipo === "jefe" || (activeEncounter.peligro || 0) >= 4) {
       baseSuccess += bonuses.strongEnemyBonus;
@@ -3481,12 +3483,19 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
           generationConfig: { temperature: 0.9, maxOutputTokens: 40 }
         })
       });
+
+      if (!res.ok) {
+        console.error(`Gemini API Error in direct RP (${res.status}):`, await res.text());
+        return message.reply(`${personaje.nombre}: *asiente en silencio*`);
+      }
+
       const data = await res.json();
       const respuesta = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
       await db.addAffinity(message.author.id, companionId, 1);
       return message.reply(`${personaje.nombre}: ${compactLine(respuesta, 12)}`);
-    } catch {
+    } catch (err) {
+      console.error("Gemini Catch Error (Direct RP):", err);
       return message.reply(`${personaje.nombre}: *asiente en silencio*`);
     }
   }
@@ -3516,7 +3525,8 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
       await message.channel.sendTyping();
       const reply = await askGemini(message.author.id, prompt, loreCache);
       return message.reply(reply);
-    } catch {
+    } catch (err) {
+      console.error("Unhandled Error during !a process:", err);
       return message.reply("No puedo responder ahora.");
     }
   }
