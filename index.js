@@ -669,6 +669,64 @@ function getAffinityRank(value) {
   return "Desconocido";
 }
 
+function normalizeFinalAction(value) {
+  const key = normalizeKey(value);
+
+  if (["huir", "escapar", "retirarse", "retirada"].includes(key)) return "retirarse";
+  if (["rodear", "flanquear", "rodeo"].includes(key)) return "rodear";
+  if (["atacar", "asalto", "embestir"].includes(key)) return "atacar";
+
+  return key;
+}
+
+function getFinalScenarioAllowedOptions(encounter = {}) {
+  const raw = Array.isArray(encounter.opciones)
+    ? encounter.opciones
+    : Array.isArray(encounter.options)
+      ? encounter.options
+      : [];
+
+  const mapped = raw
+    .map(opt => {
+      if (typeof opt === "string") return normalizeFinalAction(opt);
+      return normalizeFinalAction(opt?.id || opt?.key || opt?.action || opt?.nombre || "");
+    })
+    .filter(Boolean);
+
+  return mapped.length ? [...new Set(mapped)] : ["atacar", "rodear", "retirarse"];
+}
+
+function getFinalScenarioActionText(encounter = {}, action = "atacar", outcome = "success") {
+  const key = normalizeFinalAction(action);
+  const block = encounter?.resultados?.[key] || encounter?.finales?.[key] || encounter?.final?.[key] || {};
+
+  if (outcome === "success") {
+    return block.successText || block.textoExito || block.exito || "";
+  }
+
+  return block.failText || block.textoFracaso || block.fracaso || "";
+}
+
+function getFinalScenarioReactionIds(action, owned = []) {
+  const poolByAction = {
+    atacar: ["duilon", "cirdil", "alteru"],
+    rodear: ["nieriel", "faelon", "andaer"],
+    retirarse: ["nieriel", "faelon", "alteru"]
+  };
+
+  return poolByAction[normalizeFinalAction(action)] || owned.slice(0, 3);
+}
+
+function getFinalScenarioAffinityTargets(action, owned = []) {
+  const poolByAction = {
+    atacar: ["duilon", "cirdil", "alteru"],
+    rodear: ["nieriel", "faelon", "andaer"],
+    retirarse: ["nieriel", "faelon"]
+  };
+
+  return (poolByAction[normalizeFinalAction(action)] || owned).filter(id => owned.includes(id));
+}
+
 function getDangerText(peligro) {
   if (peligro <= 2) return "Bajo";
   if (peligro <= 4) return "Moderado";
@@ -2832,6 +2890,149 @@ Usa !desafiar para comenzar el viaje.`
     return message.reply("Usa !interactuar o !volver.");
   }
 
+    if (["!atacar", "!rodear", "!retirarse", "!huir"].includes(command)) {
+    const expedition = expeditions.get(message.author.id);
+
+    if (!expedition?.pendingFinalScenario || expedition?.currentEncounter?.tipo !== "escenario_final") {
+      return message.reply("No tienes un escenario final activo.");
+    }
+
+    const activeEncounter = expedition.currentEncounter;
+    const action = normalizeFinalAction(command);
+    const allowed = getFinalScenarioAllowedOptions(activeEncounter);
+
+    if (allowed.length && !allowed.includes(action)) {
+      return message.reply(`En este escenario solo puedes usar: ${allowed.map(a => `\`${a}\``).join(", ")}.`);
+    }
+
+    const profile = await db.getProfile(message.author.id);
+    const owned = getOwnedCompanions(profile);
+    const bonuses = getCompanionBonus(profile);
+    const affinityCombat = getAffinityCombatBonus(profile, owned);
+
+    const reactionIds = getFinalScenarioReactionIds(action, owned);
+
+    const successMap = {
+      atacar: Math.min(
+        0.92,
+        0.52 +
+        (bonuses.strongEnemyBonus || 0) +
+        (affinityCombat.successBonus || 0) +
+        (owned.includes("cirdil") ? 0.06 : 0) +
+        (owned.includes("duilon") ? 0.05 : 0) +
+        (owned.includes("alteru") ? 0.04 : 0)
+      ),
+      rodear: Math.min(
+        0.94,
+        0.60 +
+        (bonuses.rangerBonus || 0) +
+        (affinityCombat.successBonus || 0) +
+        (owned.includes("nieriel") ? 0.08 : 0) +
+        (owned.includes("faelon") ? 0.04 : 0)
+      ),
+      retirarse: 1
+    };
+
+    const success = Math.random() < (successMap[action] ?? 0.5);
+    const xpReward = Math.max(1, Math.floor((activeEncounter.xp || 10) * (action === "retirarse" ? 0.5 : 1)));
+    const pointReward = Math.max(0, Math.floor((activeEncounter.puntos || 5) * (action === "retirarse" ? 0.5 : 1)));
+
+    if (success) {
+      if (xpReward > 0) await db.addXP(message.author.id, xpReward);
+      if (pointReward > 0) await db.addPoints(message.author.id, pointReward);
+
+      expedition.affinityLog = expedition.affinityLog || {};
+
+      const affinityTargets = getFinalScenarioAffinityTargets(action, owned);
+      const affinityLines = [];
+
+      for (const cid of affinityTargets) {
+        const result = await addAffinityWithRankMessage(message.author.id, cid, activeEncounter, action, "victoria");
+        expedition.affinityLog[cid] = (expedition.affinityLog[cid] || 0) + result.gain;
+
+        affinityLines.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+        if (result.rankMessage) affinityLines.push(`  ${result.rankMessage}`);
+      }
+
+      const reactions = [];
+      for (const cid of reactionIds) {
+        if (!owned.includes(cid)) continue;
+        const line = await companionReaction(cid, activeEncounter, action);
+        if (line) reactions.push(`💬 ${line}`);
+      }
+
+      const actionText =
+        getFinalScenarioActionText(activeEncounter, action, "success") ||
+        (action === "atacar"
+          ? "Avanzas con decisión y resuelves el último obstáculo por la fuerza."
+          : action === "rodear"
+            ? "Encuentras un paso lateral y alcanzas tu objetivo sin llamar la atención."
+            : "Te retiras con cautela y entregas el informe al campamento.");
+
+      await clearExpeditionParty(message.author.id);
+      expedition.pendingSubEncounter = false;
+      expedition.pendingFinalScenario = false;
+      expedition.currentEncounter = null;
+      expeditions.delete(message.author.id);
+
+      let texto = `✅ **Escenario final resuelto**\n\n${actionText}\n\n`;
+
+      if (action !== "retirarse") {
+        texto += `🏆 Recompensa: +${pointReward} pts | +${xpReward} XP\n\n`;
+      } else {
+        texto += `📄 Has decidido retirarte y entregar el informe.\n\n`;
+      }
+
+      if (affinityLines.length) {
+        texto += `🤝 Afinidad ganada:\n${affinityLines.join("\n")}\n\n`;
+      }
+
+      if (reactions.length) {
+        texto += `${reactions.join("\n")}\n\n`;
+      }
+
+      texto += "La expedición ha concluido.";
+      return message.reply(texto);
+    }
+
+    const damage = Math.max(5, Math.floor((activeEncounter.dano || 20) * 0.5));
+    const currentHealth = profile.salud !== undefined ? profile.salud : 100;
+    const newHealth = Math.max(0, currentHealth - damage);
+
+    await db.updateTravelerData(message.author.id, { salud: newHealth });
+
+    const failedText =
+      getFinalScenarioActionText(activeEncounter, action, "fail") ||
+      (action === "atacar"
+        ? "Tu asalto no sale como esperabas y la situación se complica."
+        : action === "rodear"
+          ? "Tu intento de rodear la zona falla y pierdes el control del terreno."
+          : "Tu retirada se vuelve caótica y el grupo queda expuesto.");
+
+    const reactions = [];
+    for (const cid of reactionIds) {
+      if (!owned.includes(cid)) continue;
+      const line = await companionReaction(cid, activeEncounter, action);
+      if (line) reactions.push(`💬 ${line}`);
+    }
+
+    if (newHealth <= 0) {
+      await clearExpeditionParty(message.author.id);
+      expedition.pendingSubEncounter = false;
+      expedition.pendingFinalScenario = false;
+      expedition.currentEncounter = null;
+      expeditions.delete(message.author.id);
+
+      return message.reply(
+        `💀 **Has caído en el escenario final**\n\n${failedText}\n\nRecibes ${damage} de daño y tu salud llega a 0.\n\nLa expedición fracasa y eres devuelto al campamento.\n\n${reactions.length ? reactions.join("\n") : ""}`
+      );
+    }
+
+    return message.reply(
+      `⚠️ **El escenario final se complica**\n\n${failedText}\n\nRecibes ${damage} de daño.\n❤️ Salud restante: ${newHealth}/100\n\nPuedes intentar otra acción o usar \`!volver\`.\n${reactions.length ? `\n${reactions.join("\n")}` : ""}`
+    );
+  }
+
   if (command === "!volver") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
@@ -3057,6 +3258,24 @@ Usa !desafiar para comenzar el viaje.`
 
     return message.reply(textoEvento);
   }
+
+  if (activeEncounter.tipo === "escenario_final") {
+  expedition.currentEncounter = activeEncounter;
+  expedition.pendingFinalScenario = true;
+
+  const allowed = getFinalScenarioAllowedOptions(activeEncounter);
+  const reactionIds = [...new Set(owned)].slice(0, 3);
+  const reactions = [];
+
+  for (const cid of reactionIds) {
+    const line = await companionReaction(cid, activeEncounter, "encounter");
+    if (line) reactions.push(`💬 ${line}`);
+  }
+
+  return message.reply(
+    `🏁 **Escenario final**\n\n${activeEncounter.descripcion || "Has llegado al tramo decisivo de la misión."}\n\nOpciones disponibles: ${allowed.map(a => `\`${a}\``).join(", ")}\n\nUsa uno de los comandos para resolverlo.\n${reactions.length ? `\n${reactions.join("\n")}` : ""}`
+  );
+}
 
   if (activeEncounter.tipo === "escenario_final" || activeEncounter.finalScenario === true) {
     expedition.pendingFinalScenario = true;
