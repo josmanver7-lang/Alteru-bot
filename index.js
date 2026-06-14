@@ -994,7 +994,7 @@ function getFinalScenarioActionStartText(action, expedition) {
 
   switch (act) {
     case "atacar":
-      return `🗡️ **${title}**\n\nDecides atacar de frente. No hay marcha atrás: tomas posición y buscas romper la defensa enemiga.`;
+      return `🗡️ **${title}**\n\nDecides atacar de frente. No hay marcha atrás: tomas posición y buscas romper la defensa enemiga resuelto a vencer.`;
     case "rodear":
       return `🧭 **${title}**\n\nDecides rodear la zona y buscar una entrada menos expuesta. El terreno puede jugar a tu favor... o en tu contra.`;
     case "explorar":
