@@ -1,274 +1,704 @@
 [
-{
-  "id": "campamento_corsario_lamedon",
-  "nivel": 1,
-  "titulo": "Campamento Corsario Abandonado",
-  "destino": "Lamedon",
-  "objetivo": "recuperar_suministros",
-  "xp": 100,
-  "puntos": 50,
-  "descripcion":
-    "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf.",
-  "textoExito":
-    "Llegaste a los pantanos de Tathrendalf y tras registrar cada rincón del campamento, reuniste mapas, provisiones y documentos abandonados, así como armamento. Con la misión cumplida emprendiste el viaje de regreso al Campamento.",
-  "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión.",
-  
-  "encuentros": [
-    "enemigo_numeroso",
-    "obstaculo", 
-    "evento_especial"
-  ]
-},
-{
-  "id": "cueva_trasgos",
-  "nivel": 1,
-  "titulo": "Cueva de trasgos cercana",
-  "destino": "Lamedon",
-  "objetivo": "eliminar_enemigos",
-  "xp": 100,
-  "puntos": 50,
-  "descripcion":
-    "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
-  "textoExito":
-    "Desentierras tu arma del cuerpo de ultimo trasgo que había final de la cueva y suspiras al fin, ves los cadaveres alrededor y te dispones a regresar al campamento e informar de tu éxito.",
-  "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión.",
-  "encuentros": [
-    "enemigo_numeroso",
-    "enemigo_numeroso", 
-    "enemigo_numeroso"
-  ]
-},
   {
-  "id": "vigilar_camino_de_dinadab",
-  "nivel": 1,
-  "titulo": "Vigilar el camino a Dinadab",
-  "destino": "Lamedon",
-  "objetivo": "vigilar",
-  "xp": 80,
-  "puntos": 50,
-  "descripcion":
-    "Viajeros informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab. Vigilar el camino principal e informar al Capitán.",
-  "textoExito":
-    "Luegon de tres dias de vigilancia, recorres la vía hacia el norte hasta que decides regresar al campamento y entregar el informe.",
-  "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión.",
-  "encuentros": [
-    "evento_especial",
-    "evento_especial", 
-    "evento_especial"
-  ]
-},
-{
-  "id": "exploradores_prisioneros",
-  "nivel": 2,
-  "titulo": "Exploradores prisioneros",
-  "destino": "Lebennin",
-  "objetivo": "rescatar_aliados",
-  "xp": 150,
-  "puntos": 100,
-  "descripcion":
-    "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, tenemos que liberarlos.",
-  "textoExito":
-    "Derrotas al último corsario y liberas a los prisioneros que estaban atados cerca de la fogata, ellos te agradecen y vuelven contigo al campamento.",
-  "textoFracaso":
-    "La expedición se vio obligada a retirarse antes de completar la misión.",
-  
-  "encuentros": [
-    "enemigo_numeroso",
-    "evento_especial", 
-    "enemigo_numeroso"
-  ]
-},
+    "id": "campamento_corsario_lamedon",
+    "titulo": "Campamento Corsario Abandonado",
+    "destino": "Lamedon",
+    "nivel": 1,
+    "descripcion": "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf.",
+    "puntos": 50,
+    "xp": 100,
+    "encuentros": [
+      "enemigo_numeroso",
+      "obstaculo",
+      "evento_especial"
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Campamento corsario",
+      "descripcion": "Has llegado a los restos del campamento. Puedes explorar o retirarte con el informe.",
+      "hasEnemies": false,
+      "enemyLabel": "corsarios",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "explorar",
+        "retirarse"
+      ],
+      "successText": {
+        "explorar": "Llegaste a los pantanos de Tathrendalf y tras registrar cada rincón del campamento, reuniste mapas, provisiones y documentos abandonados, así como armamento. Con la misión cumplida emprendiste el viaje de regreso al Campamento.",
+        "retirarse": "Decides volver con lo que viste hasta ahora antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "explorar": "No logras abrirte paso entre el pantano, decidiendo que lo mejor es retirarse.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
+  },
+  {
+    "id": "cueva_trasgos",
+    "titulo": "Cueva de trasgos cercana",
+    "destino": "Lamedon",
+    "nivel": 1,
+    "descripcion": "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
+    "puntos": 50,
+    "xp": 100,
+    "encuentros": [
+      "enemigo_numeroso",
+      "enemigo_numeroso",
+      "enemigo_numeroso"
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Entrada a la cueva",
+      "descripcion": "Has llegado al cubil enemigo. Puedes atacar, o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "trasgos",
+      "enemyChance": 0.95,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Desentierras tu arma del cuerpo de ultimo trasgo que había final de la cueva y suspiras al fin, ves los cadaveres alrededor y te dispones a regresar al campamento e informar de tu éxito.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
+  },
+  {
+    "id": "vigilar_camino_de_dinadab",
+    "titulo": "Vigilar el camino a Dinadab",
+    "destino": "Lamedon",
+    "nivel": 1,
+    "descripcion": "Viajeros informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab. Vigilar el camino principal e informar al Capitán.",
+    "puntos": 50,
+    "xp": 80,
+    "encuentros": [
+      "evento_especial",
+      "evento_especial",
+      "evento_especial"
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Ruta hacia Dinadab",
+      "descripcion": "Cumples con el objetivo de la misión pero en la lejanía observas una débil columna de humo entre los matorrales ¿Qué decides?",
+      "hasEnemies": true,
+      "enemyChance": 0.99,
+      "rewardMultiplier": 1,
+      "xpBonus": 10,
+      "pointsBonus": 0,
+      "affinityBonus": 0,
+      "allowedActions": [
+        "explorar",
+        "retirarse"
+      ],
+      "successText": {
+        "explorar": "Luegon de tres dias de vigilancia, recorres la vía hacia el norte hasta que decides regresar al campamento y entregar el informe.",
+        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+      },
+      "failureText": {
+        "explorar": "El terreno te retrasa y pierdes tiempo antes de encontrar lo que buscabas.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
+  },
+  {
+    "id": "exploradores_prisioneros",
+    "titulo": "Exploradores prisioneros",
+    "destino": "Lebennin",
+    "nivel": 2,
+    "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, tenemos que liberarlos.",
+    "puntos": 100,
+    "xp": 150,
+    "encuentros": [
+      "enemigo_numeroso",
+      "evento_especial",
+      "enemigo_numeroso"
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Campamento de corsarios en Lebennin",
+      "descripcion": "Has llegado al campamento enemigo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "corsarios",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Derrotas al último corsario y liberas a los prisioneros que estaban atados cerca de la fogata, ellos te agradecen y vuelven contigo al campamento.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
+  },
   {
     "id": "rastreo_dinadab",
-    "nivel": 1,
     "titulo": "Rastreo en Dínadab",
     "destino": "Lamedon",
-    "objetivo": "investigar",
-    "xp": 80,
-    "puntos": 40,
+    "nivel": 1,
     "descripcion": "Se han visto huellas y señales extrañas en los alrededores de Dínadab. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
-    "textoExito": "Tras seguir las huellas alrededor de Dínadab, confirmas que la ruta sigue segura y entregas el informe al capitán.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 40,
+    "xp": 80,
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
       "obstaculo"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Senderos de Dínadab",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "enemigos",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Tras seguir las huellas alrededor de Dínadab, confirmas que la ruta sigue segura y entregas el informe al capitán.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "reliquia_calembel",
-    "nivel": 1,
     "titulo": "Reliquia perdida cerca de Calembel",
     "destino": "Lamedon",
-    "objetivo": "recuperar_artefacto",
-    "xp": 90,
-    "puntos": 45,
+    "nivel": 1,
     "descripcion": "Un objeto antiguo fue visto por última vez en un sendero cercano a Calembel. Debes localizarlo antes de que quede enterrado bajo barro y maleza.",
-    "textoExito": "Recuperas la reliquia perdida cerca de Calembel y la entregas intacta al campamento.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 45,
+    "xp": 90,
     "encuentros": [
       "obstaculo",
       "evento_especial",
       "obstaculo"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Sendero oculto",
+      "descripcion": "Llegas al punto marcado. No hay batalla que librar, solo decidir cómo asegurar el objetivo y regresar.",
+      "hasEnemies": false,
+      "enemyChance": 0,
+      "rewardMultiplier": 1,
+      "xpBonus": 0,
+      "pointsBonus": 0,
+      "affinityBonus": 0,
+      "allowedActions": [
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "explorar": "Recuperas la reliquia perdida cerca de Calembel y la entregas intacta al campamento.",
+        "infiltrar": "Te mueves con cuidado y recuperas lo necesario sin incidentes.",
+        "negociar": "Hablas con los pocos presentes y obtienes acceso sin problemas.",
+        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+      },
+      "failureText": {
+        "explorar": "El terreno te retrasa y pierdes tiempo antes de encontrar lo que buscabas.",
+        "infiltrar": "Una mala pisada te obliga a detenerte y corregir el rumbo.",
+        "negociar": "La conversación no avanza y terminas retirándote.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "vigilia_camino_calembel",
-    "nivel": 1,
     "titulo": "Vigilia del Camino de Calembel",
     "destino": "Lamedon",
-    "objetivo": "vigilar",
-    "xp": 80,
-    "puntos": 50,
+    "nivel": 1,
     "descripcion": "Los viajeros hablan de merodeadores en la ruta de Calembel. Mantén la vigilancia y confirma si hay riesgo real.",
-    "textoExito": "Tras varias horas de vigilancia, concluyes que la ruta necesita patrullas ligeras, no una campaña completa.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 50,
+    "xp": 80,
     "encuentros": [
       "evento_especial",
       "enemigo_numeroso",
       "obstaculo"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Ruta de Calembel",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "merodeadores",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Tras varias horas de vigilancia, concluyes que la ruta necesita patrullas ligeras, no una campaña completa.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "huellas_lebennin",
-    "nivel": 1,
     "titulo": "Huellas en Lebennin",
     "destino": "Lebennin",
-    "objetivo": "investigar",
-    "xp": 85,
-    "puntos": 45,
+    "nivel": 1,
     "descripcion": "En los caminos de Lebennin han aparecido huellas y restos de carga. Debes seguirlos hasta entender qué sucedió.",
-    "textoExito": "Sigues las marcas hasta su origen y entregas un informe útil sobre lo ocurrido en Lebennin.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 45,
+    "xp": 85,
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
       "obstaculo"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Final del rastro",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "enemigos",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Sigues las marcas hasta su origen y entregas un informe útil sobre lo ocurrido en Lebennin.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "custodia_tarlangs_neck",
-    "nivel": 2,
     "titulo": "Custodia de Tarlang's Neck",
     "destino": "Lamedon",
-    "objetivo": "vigilar",
-    "xp": 140,
-    "puntos": 80,
+    "nivel": 2,
     "descripcion": "Tarlang's Neck es un paso útil y peligroso; hay señales de bandidos y viejos restos de combate. Custodia el paso y elimina la amenaza si aparece.",
-    "textoExito": "Mantienes el paso bajo control y la vigilancia confirma que la ruta puede seguir usándose con cautela.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 80,
+    "xp": 140,
     "encuentros": [
       "evento_especial",
       "enemigo_numeroso",
       "enemigo_poderoso"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Paso de Tarlang's Neck",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "bandidos",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Mantienes el paso bajo control y la vigilancia confirma que la ruta puede seguir usándose con cautela.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "sombras_sardol",
-    "nivel": 2,
     "titulo": "Sombras en Sardol",
     "destino": "Blackroot Vale",
-    "objetivo": "eliminar_enemigos",
-    "xp": 150,
-    "puntos": 95,
+    "nivel": 2,
     "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos y neutraliza al jefe menor si aparece.",
-    "textoExito": "Derrotas la amenaza que pesaba sobre Sardol y dejas el valle en mejores condiciones que al llegar.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 95,
+    "xp": 150,
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
       "enemigo_poderoso"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Afueras de Sardol",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "saqueadores",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Derrotas la amenaza que pesaba sobre Sardol y dejas el valle en mejores condiciones que al llegar.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "rastrear_celos",
-    "nivel": 2,
     "titulo": "Rastro junto al Celos",
     "destino": "Lebennin",
-    "objetivo": "investigar",
-    "xp": 145,
-    "puntos": 90,
+    "nivel": 2,
     "descripcion": "La ribera del Celos guarda rastros de un campamento reciente. Averigua quién pasó por allí y si quedan prisioneros o botín.",
-    "textoExito": "Sigues el rastro junto al Celos hasta resolver el misterio y devuelves noticias valiosas al campamento.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 90,
+    "xp": 145,
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
       "evento_especial"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Ribera del Celos",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "enemigos",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Sigues el rastro junto al Celos hasta resolver el misterio y devuelves noticias valiosas al campamento.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "escolta_tadrent",
-    "nivel": 3,
     "titulo": "Escolta hacia Tadrent",
     "destino": "Belfalas",
-    "objetivo": "vigilar_ruta",
-    "xp": 200,
-    "puntos": 120,
+    "nivel": 3,
     "descripcion": "Una caravana debe llegar hasta Tadrent por una ruta inquieta. La escolta puede acabar en emboscada, negociación o combate abierto.",
-    "textoExito": "La caravana llega a Tadrent y tu escolta evita que el viaje se convierta en tragedia.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 120,
+    "xp": 200,
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
       "evento_especial",
       "enemigo_poderoso"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Camino hacia Tadrent",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "asaltantes",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "La caravana llega a Tadrent y tu escolta evita que el viaje se convierta en tragedia.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "eco_stone_erech",
-    "nivel": 3,
     "titulo": "Eco de la Stone of Erech",
     "destino": "Blackroot Vale",
-    "objetivo": "investigar",
-    "xp": 210,
-    "puntos": 130,
+    "nivel": 3,
     "descripcion": "Al pie de la Stone of Erech circulan rumores de un eco antiguo. Investiga las ruinas, soporta la amenaza y resuelve la situación.",
-    "textoExito": "Descifras el origen del eco y regresas con pruebas claras de lo que acecha en Blackroot Vale.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 130,
+    "xp": 210,
     "encuentros": [
       "obstaculo",
       "evento_especial",
       "enemigo_numeroso",
       "enemigo_poderoso"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Ruinas de la Stone of Erech",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "enemigos",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "Descifras el origen del eco y regresas con pruebas claras de lo que acecha en Blackroot Vale.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
   {
     "id": "frontera_belfalas_vigilia",
-    "nivel": 3,
     "titulo": "Vigilia en la frontera de Belfalas",
     "destino": "Belfalas",
-    "objetivo": "explorar",
-    "xp": 220,
-    "puntos": 140,
+    "nivel": 3,
     "descripcion": "En la frontera de Belfalas, algunos días basta con vigilar; otros, una amenaza se manifiesta y obliga a actuar. Completa la misión incluso si el peligro nunca da la cara.",
-    "textoExito": "La frontera queda clara, segura y bien observada; aun sin combate, la misión queda cumplida.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 140,
+    "xp": 220,
     "encuentros": [
       "evento_especial",
       "obstaculo",
       "enemigo_numeroso",
       "evento_especial"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Frontera de Belfalas",
+      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "hasEnemies": true,
+      "enemyLabel": "amenazas",
+      "enemyChance": 0.75,
+      "rewardMultiplier": 1.15,
+      "xpBonus": 10,
+      "pointsBonus": 8,
+      "affinityBonus": 1,
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "explorar": "La frontera queda clara, segura y bien observada; aun sin combate, la misión queda cumplida.",
+        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+      },
+      "failureText": {
+        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
+        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
+        "explorar": "Te descubren antes de terminar el reconocimiento.",
+        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
+        "negociar": "No aceptan hablar y la tensión empeora.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   },
-{
+  {
     "id": "investigacion_hierbas_nimrais",
-    "nivel": 1,
     "titulo": "Investigación en las Ered Nimrais",
     "destino": "Lamedon",
-    "objetivo": "recuperar_suministros",
-    "xp": 100,
-    "puntos": 50,
+    "nivel": 1,
     "descripcion": "Los sanadores del campamento necesitan Athelas y otras raíces raras que solo crecen en las faldas de las Ered Nimrais. Investiga la zona botánica y recolecta las muestras.",
-    "textoExito": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
-    "textoFracaso": "La expedición se vio obligada a retirarse antes de completar la misión.",
+    "puntos": 50,
+    "xp": 100,
     "encuentros": [
       "obstaculo",
       "evento_especial",
       "evento_especial"
-    ]
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Faldas de las Ered Nimrais",
+      "descripcion": "Llegas al punto marcado. No hay batalla que librar, solo decidir cómo asegurar el objetivo y regresar.",
+      "hasEnemies": false,
+      "enemyChance": 0,
+      "rewardMultiplier": 1,
+      "xpBonus": 0,
+      "pointsBonus": 0,
+      "affinityBonus": 0,
+      "allowedActions": [
+        "explorar",
+        "infiltrar",
+        "negociar",
+        "retirarse"
+      ],
+      "successText": {
+        "explorar": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
+        "infiltrar": "Te mueves con cuidado y recuperas lo necesario sin incidentes.",
+        "negociar": "Hablas con los pocos presentes y obtienes acceso sin problemas.",
+        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+      },
+      "failureText": {
+        "explorar": "El terreno te retrasa y pierdes tiempo antes de encontrar lo que buscabas.",
+        "infiltrar": "Una mala pisada te obliga a detenerte y corregir el rumbo.",
+        "negociar": "La conversación no avanza y terminas retirándote.",
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
+    }
   }
-  ]
+]
