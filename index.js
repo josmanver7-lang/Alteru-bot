@@ -3277,39 +3277,6 @@ Usa !desafiar para comenzar el viaje.`
   );
 }
 
-  if (activeEncounter.tipo === "escenario_final" || activeEncounter.finalScenario === true) {
-    expedition.pendingFinalScenario = true;
-
-    const finalOptions = Array.isArray(activeEncounter.opciones)
-      ? activeEncounter.opciones
-      : Array.isArray(activeEncounter.options)
-        ? activeEncounter.options
-        : ["atacar", "rodear", "retirarse"];
-
-    let textoFinal = `🔥 **ESCENARIO FINAL: ${activeEncounter.titulo}**\n\n${activeEncounter.descripcion || "Has llegado al punto decisivo de la misión."}\n\nOpciones disponibles:\n`;
-
-    for (const op of finalOptions) {
-      const key = normalizeKey(op);
-      textoFinal += `• \`${key}\`\n`;
-    }
-
-    textoFinal += `\nUsa el comando correspondiente para resolverlo.\nPuedes usar \`!volver\` para retirarte.`;
-
-    const reactionIds = [...new Set(owned)].slice(0, 3);
-    const reactions = [];
-
-    for (const cid of reactionIds) {
-      const line = await companionReaction(cid, activeEncounter, "encounter");
-      if (line) reactions.push(`💬 ${line}`);
-    }
-
-    if (reactions.length) {
-      textoFinal += `\n\n${reactions.join("\n")}`;
-    }
-
-    return message.reply(textoFinal);
-  }
-
   const bonuses = getCompanionBonus(profile);
 
   let affinityBonus = 0;
