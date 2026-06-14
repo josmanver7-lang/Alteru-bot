@@ -128,7 +128,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Campamento de corsarios en Lebennin",
-      "descripcion": "Has llegado al campamento enemigo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "descripcion": "Has llegado al campamento enemigo. Ves entre los enemigos a los compañeros amarrados de espaldas. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "corsarios",
       "enemyChance": 0.75,
