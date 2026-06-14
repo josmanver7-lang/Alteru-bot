@@ -10,7 +10,6 @@ const GEMINI_API_KEY = process.env.GOOGLE_API_KEY || process.env.GOOGLE_API_KEY;
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
-if (!GEMINI_API_KEY) throw new Error('Missing GEMINI_API_KEY or GOOGLE_API_KEY');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
