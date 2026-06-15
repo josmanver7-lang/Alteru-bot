@@ -69,11 +69,11 @@
       ],
       "actionText": {
         "atacar": "Te enfrentas a un numeroso grupo de trasgos al final de la cueva haciendo el mayor uso de tu habilidad e ingenio para derrotarlos.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo.",
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
         "success": "Desentierras tu arma del último trasgo y, observando los cadáveres alrededor, suspiras de alivio por haber sobrevivido. Luego decides volver e informar de tu éxito.",
-        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor.",
+        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor."
       }
     }
   },
@@ -108,11 +108,11 @@
       ],
       "actionText": {
         "explorar": "Llegas al lugar de donde procedía aquel humo y no ves a nadie, pero unos ruidos extraños a tu espalda llaman tu atención.",
-        "retirarse": "Decides informar y volver sin seguir removiendo la zona.",
+        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
       },
       "completionText": {
         "success": "¡Buen trabajo! Regresas al campamento tras cumplir la vigilancia y entregar el informe sobre lo ocurrido.",
-        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad.",
+        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad."
       }
     }
   },
@@ -157,7 +157,7 @@
       },
       "completionText": {
         "success": "Liberas a los exploradores y ellos te agradecen por haberlos salvado, luego vuelven al campamento celebrando la victoria.",
-        "failure": "No logras completar la misión y te ves obligado a regresar al campamento.",
+        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
       }
     }
   },
@@ -179,7 +179,6 @@
       "titulo": "Senderos de Dínadab",
       "descripcion": "Recorreres las huellas hasta encontrar a un no muy numeroso grupo de bandidos. Algunos de ellos parecen saber dedenderse. Puedes !atacar,!rodear, o !retirarte con el informe.",
       "hasEnemies": true,
-      "enemyLabel": "enemigos",
       "enemyChance": 0.75,
       "peligro": 3,
       "rewardMultiplier": 1.15,
@@ -197,7 +196,7 @@
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Tu desición obtuvo éxito y gracias a ello cumpliste con el objetivo de la mision, ahora puedes regresar e informar de tu éxito..",
+        "success": "Tu desición obtuvo éxito y gracias a ello cumpliste con el objetivo de la mision, ahora puedes regresar e informar de tu éxito.",
         "failure": "Yu desición no resultó de la mejor manera y no tuviste mejor opción que huir para que no te atraparan, aunque tu informe servirá para contraatacar."
       }
     }
@@ -288,7 +287,7 @@
     "titulo": "Vigilar el rio Gilrain",
     "destino": "Lebennin",
     "nivel": 2,
-    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos.",  
+    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos.",
     "puntos": 60,
     "xp": 110,
     "encuentros": [
@@ -651,4 +650,4 @@
       }
     }
   }
-      ]
+]
