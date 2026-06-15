@@ -181,9 +181,11 @@ async function generateAITextStrict(prompt, maxTokens = 80) {
 
 async function ai(prompt, maxTokens = 80) {
   try {
-    return await generateAITextStrict(prompt, maxTokens);
+    const text = await generateAITextStrict(prompt, maxTokens);
+    const clean = String(text || "").trim();
+    return clean || "*observa en silencio*";
   } catch {
-    return "";
+    return "*observa en silencio*";
   }
 }
 
