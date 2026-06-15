@@ -69,11 +69,11 @@
       ],
       "actionText": {
         "atacar": "Te enfrentas a un numeroso grupo de trasgos al final de la cueva haciendo el mayor uso de tu habilidad e ingenio para derrotarlos.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo.",
       },
       "completionText": {
         "success": "Desentierras tu arma del último trasgo y, observando los cadáveres alrededor, suspiras de alivio por haber sobrevivido. Luego decides volver e informar de tu éxito.",
-        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor."
+        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor.",
       }
     }
   },
@@ -108,11 +108,11 @@
       ],
       "actionText": {
         "explorar": "Llegas al lugar de donde procedía aquel humo y no ves a nadie, pero unos ruidos extraños a tu espalda llaman tu atención.",
-        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+        "retirarse": "Decides informar y volver sin seguir removiendo la zona.",
       },
       "completionText": {
         "success": "¡Buen trabajo! Regresas al campamento tras cumplir la vigilancia y entregar el informe sobre lo ocurrido.",
-        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad."
+        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad.",
       }
     }
   },
@@ -157,7 +157,7 @@
       },
       "completionText": {
         "success": "Liberas a los exploradores y ellos te agradecen por haberlos salvado, luego vuelven al campamento celebrando la victoria.",
-        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+        "failure": "No logras completar la misión y te ves obligado a regresar al campamento.",
       }
     }
   },
@@ -274,7 +274,7 @@
       ],
       "actionText": {
         "atacar": "Cargas contra ellos de frente gritando en medio de la noche y luchando contra ellos usando todas tus habilidades intentando no ser derrotado.",
-        "rodear": "Te acercas sigilosamente y tardan en notar tu presencia tras olfatearte, pero ya estabas lo suficientemente cerca como para tomar la ventaja."
+        "rodear": "Te acercas sigilosamente y tardan en notar tu presencia tras olfatearte, pero ya estabas lo suficientemente cerca como para tomar la ventaja.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
@@ -288,7 +288,7 @@
     "titulo": "Vigilar el rio Gilrain",
     "destino": "Lebennin",
     "nivel": 2,
-    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos."   
+    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos.",  
     "puntos": 60,
     "xp": 110,
     "encuentros": [
