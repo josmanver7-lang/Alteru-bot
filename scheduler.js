@@ -13,9 +13,6 @@ const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
-const CARACAS_OFFSET_MS = -4 * 60 * 60 * 1000;
-const CYCLE_HOURS = [0, 12];
-const CYCLE_STATE_KEY = "scheduler_cycle";
 
 const companionIds = ["alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon", "montaraces"];
 
@@ -1361,75 +1358,107 @@ async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cyc
   await sendLongScene(channel, `${header}${scene.text}`);
 }
 
-async function openCycleEvents(cycleStartMs, client, loreCache) {
-  clearCycleTimers();
-  await refreshTablonSelection(client, loreCache, cycleStartMs).catch(console.error);
-  await refreshCatalogPricesAndSelections(cycleStartMs).catch(console.error);
+const FIXED_AUTO_SLOTS = [
+  { id: "relation_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
+  { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
+  { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
+  { id: "relation_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 }
+];
 
-  scheduleCycleRandomEvents(cycleStartMs, [
-    {
-      minOffsetMs: 1 * 60 * 60 * 1000,
-      maxOffsetMs: 3 * 60 * 60 * 1000,
-      task: () => openMerchant(client)
-    },
-    {
-      minOffsetMs: COMPANION_SCENE_WINDOWS[0].minOffsetMs,
-      maxOffsetMs: COMPANION_SCENE_WINDOWS[0].maxOffsetMs,
-      task: () => publishCompanionScene(client, cycleStartMs, 0)
-    },
-    {
-      minOffsetMs: COMPANION_SCENE_WINDOWS[1].minOffsetMs,
-      maxOffsetMs: COMPANION_SCENE_WINDOWS[1].maxOffsetMs,
-      task: () => publishCompanionScene(client, cycleStartMs, 1)
-    }
-  ]);
+const FIXED_AUTO_STATE_KEY = "fixed_auto_scheduler_v1";
+
+let fixedAutoTimer = null;
+let fixedAutoBusy = false;
+
+function getUTCDateKey(date = new Date()) {
+  return [
+    date.getUTCFullYear(),
+    String(date.getUTCMonth() + 1).padStart(2, "0"),
+    String(date.getUTCDate()).padStart(2, "0")
+  ].join("-");
 }
 
-async function resumeMerchantIfNeeded(client) {
-  const state = await db.getEventState("merchant").catch(() => null);
-  if (!state?.active) return;
+function getUTCMidnightMs(date = new Date()) {
+  return Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    0, 0, 0, 0
+  );
+}
 
-  const remaining = Math.max(0, state.closesAt - Date.now());
-  if (remaining <= 0) {
-    await db.clearEventState("merchant").catch(async () => {
-      await db.setEventState("merchant", { active: false, closedAt: Date.now() }).catch(() => {});
-    });
+async function getFixedAutoState() {
+  return await db.getEventState(FIXED_AUTO_STATE_KEY).catch(() => null);
+}
+
+async function saveFixedAutoState(state) {
+  await db.setEventState(FIXED_AUTO_STATE_KEY, state).catch(() => {});
+}
+
+function ensureFixedAutoStateShape(state) {
+  return {
+    dateKey: state?.dateKey || getUTCDateKey(),
+    fired: Array.isArray(state?.fired) ? state.fired : [],
+    updatedAt: state?.updatedAt || Date.now()
+  };
+}
+
+async function runFixedSlot(client, slot, dayStartMs) {
+  if (slot.type === "merchant") {
+    await openMerchant(client);
     return;
   }
 
-  const channel = await fetchChannel(client);
-  if (!channel) return;
-
-  if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
-  merchantCloseTimer = setTimeout(async () => {
-    const latest = await db.getEventState("merchant").catch(() => null);
-    if (!latest?.active) return;
-
-    await channel.send(`🧳 **EL MERCADER SE RETIRA**\n\n${latest.name}: Lo siento, debo recoger y partir. Mi próximo destino me espera. Capitán Altéru, gracias por dejarme el espacio; espero volver pronto.`);
-    await db.setEventState("merchant", {
-      active: false,
-      name: latest.name,
-      destination: latest.destination,
-      openedAt: latest.openedAt,
-      closedAt: Date.now(),
-      nextAt: Date.now() + TWELVE_HOURS
-    }).catch(() => {});
-  }, remaining);
+  if (slot.type === "relation") {
+    await publishCompanionScene(client, dayStartMs, slot.sceneSlot);
+  }
 }
 
-function scheduleNextBoundary(client, loreCache) {
-  if (boundaryTimer) clearTimeout(boundaryTimer);
+async function processFixedAutoSlots(client, loreCache) {
+  if (fixedAutoBusy) return;
+  fixedAutoBusy = true;
 
-  const nextMs = getNextBoundaryMs();
-  boundaryTimer = setTimeout(async () => {
-    try {
-      const bounds = getCycleBounds(nextMs);
-      await openCycleEvents(bounds.cycleStartAt, client, loreCache);
-    } catch (err) {
-      console.error("Scheduler boundary error:", err);
+  try {
+    const now = new Date();
+    const nowMs = now.getTime();
+    const dateKey = getUTCDateKey(now);
+    const dayStartMs = getUTCMidnightMs(now);
+
+    const state = ensureFixedAutoStateShape(await getFixedAutoState());
+
+    if (state.dateKey !== dateKey) {
+      state.dateKey = dateKey;
+      state.fired = [];
+      state.updatedAt = Date.now();
+      await saveFixedAutoState(state);
+
+      await refreshTablonSelection(client, loreCache, dayStartMs).catch(console.error);
+      await refreshCatalogPricesAndSelections(dayStartMs).catch(console.error);
     }
-    scheduleNextBoundary(client, loreCache);
-  }, Math.max(0, nextMs - Date.now()));
+
+    for (const slot of FIXED_AUTO_SLOTS) {
+      const slotTime = Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        slot.hour,
+        slot.minute,
+        0,
+        0
+      );
+
+      if (nowMs < slotTime) continue;
+      if (state.fired.includes(slot.id)) continue;
+
+      state.fired.push(slot.id);
+      state.updatedAt = Date.now();
+      await saveFixedAutoState(state);
+
+      await runFixedSlot(client, slot, dayStartMs);
+    }
+  } finally {
+    fixedAutoBusy = false;
+  }
 }
 
 export async function startSchedulers(client, loreCache) {
@@ -1437,10 +1466,14 @@ export async function startSchedulers(client, loreCache) {
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
 
-  const bounds = getCycleBounds();
-  await openCycleEvents(bounds.cycleStartAt, client, loreCache).catch(console.error);
+  await processFixedAutoSlots(client, loreCache).catch(console.error);
 
-  scheduleNextBoundary(client, loreCache);
+  if (fixedAutoTimer) clearInterval(fixedAutoTimer);
+  fixedAutoTimer = setInterval(() => {
+    processFixedAutoSlots(client, loreCache).catch(err => {
+      console.error("Fixed auto scheduler error:", err);
+    });
+  }, 30 * 1000);
 }
 
 export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
@@ -1448,4 +1481,4 @@ export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) 
   await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
   await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
   await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
-}
+        }
