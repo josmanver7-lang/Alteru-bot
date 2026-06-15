@@ -3107,7 +3107,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   return message.reply(texto);
 }
 
-  if (command === "!continuar" || command === "!ignorar") {
+  if (command === "!volver")
     return message.reply("Usa !interactuar o !volver.");
   }
 
@@ -3118,7 +3118,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   return resolveFinalScenarioAction(message, expedition, command);
 }
     
-  if (command === "!volver") {
+  if (command === "!volver" || command === "!abandonar")
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
     }
