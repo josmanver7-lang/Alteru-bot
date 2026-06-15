@@ -1002,14 +1002,86 @@ function getFinalScenarioFailureText(action, expedition) {
   }
 }
 
+function rollFinalScenarioEnemyPresence(scenario = {}) {
+  if (scenario.hasEnemies === false) return false;
+
+  const chance = Number(scenario.enemyChance ?? 0.6);
+  const clamped = Math.max(0, Math.min(chance, 1));
+
+  return Math.random() < clamped;
+}
+
 async function startFinalScenario(message, expedition) {
   const scenario = expedition.finalScenario;
   if (!scenario?.active) return;
 
   const profile = await db.getProfile(message.author.id);
   const party = [...new Set(getOwnedCompanions(profile))];
-  const reactions = [];
+  const encounter = expedition.currentEncounter || scenario;
+  const hasEnemies = encounter.enemyPresent ?? encounter.hasEnemies ?? scenario.hasEnemies ?? true;
 
+  if (!hasEnemies) {
+    const mission = expedition.mission || {};
+    const completionText =
+      scenario.completionText ||
+      `Llevas a los refugiados a un lugar seguro y regresas al campamento con la misión cumplida.`;
+
+    const baseXp = Number(scenario.xpBonus ?? mission.xp ?? 10);
+    const basePoints = Number(scenario.pointsBonus ?? mission.puntos ?? 5);
+    const rewardMultiplier = Number(scenario.rewardMultiplier ?? 1);
+
+    const xpReward = Math.max(1, Math.floor(baseXp * rewardMultiplier));
+    const pointReward = Math.max(1, Math.floor(basePoints * rewardMultiplier));
+
+    const affinityTargets = getFinalScenarioAffinityTargets("retirarse", party);
+    const affinityLines = [];
+
+    for (const cid of affinityTargets) {
+      const result = await addAffinityWithRankMessage(
+        message.author.id,
+        cid,
+        encounter,
+        "retirarse",
+        "victoria"
+      );
+
+      expedition.affinityLog = expedition.affinityLog || {};
+      expedition.affinityLog[cid] = (expedition.affinityLog[cid] || 0) + result.gain;
+
+      affinityLines.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+      if (result.rankMessage) affinityLines.push(`  ${result.rankMessage}`);
+    }
+
+    const reactions = [];
+    for (const cid of party.slice(0, 3)) {
+      const line = await companionReaction(cid, encounter, "mision_completada");
+      if (line) reactions.push(`💬 ${line}`);
+    }
+
+    await db.addXP(message.author.id, xpReward);
+    await db.addPoints(message.author.id, pointReward);
+
+    await clearExpeditionParty(message.author.id);
+    expedition.pendingFinalScenario = false;
+    expedition.finalScenarioShown = false;
+    expedition.currentEncounter = null;
+    expeditions.delete(message.author.id);
+
+    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
+
+    if (affinityLines.length) {
+      text += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
+    }
+
+    if (reactions.length) {
+      text += `\n\n${reactions.join("\n")}`;
+    }
+
+    text += `\n\nLa expedición ha concluido.`;
+    return message.reply(text);
+  }
+
+  const reactions = [];
   for (const cid of party.slice(0, 3)) {
     const line = await companionReaction(cid, {
       titulo: scenario.titulo || expedition.mission?.titulo || "Escenario final",
@@ -1031,7 +1103,7 @@ async function startFinalScenario(message, expedition) {
     : intro;
 
   return replyLong(message, text);
-}
+        }
 
 async function resolveFinalScenarioAction(message, expedition, action) {
   const scenario = expedition.finalScenario;
@@ -3346,16 +3418,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
 
       if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
-        expedition.finalScenarioShown = true;
-        expedition.pendingFinalScenario = true;
-        expedition.currentEncounter = {
-          ...expedition.finalScenario,
-          tipo: "escenario_final",
-          categoria: "final",
-          active: true
-        };
+  expedition.finalScenarioShown = true;
+  expedition.pendingFinalScenario = true;
 
-        return startFinalScenario(message, expedition);
+  const enemyPresent = rollFinalScenarioEnemyPresence(expedition.finalScenario);
+
+  expedition.currentEncounter = {
+    ...expedition.finalScenario,
+    tipo: "escenario_final",
+    categoria: "final",
+    active: true,
+    enemyPresent,
+    allowedActions: enemyPresent
+      ? expedition.finalScenario.allowedActions
+      : ["retirarse"]
+  };
+
+  return startFinalScenario(message, expedition);
       }
 
       const beforeProfile = await db.getProfile(message.author.id);
