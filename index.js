@@ -2953,23 +2953,36 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(texto);
   }
 
-  if (command === "!curar") { 
-    if (expeditions.has(message.author.id)) { 
-      return message.reply("⚠️ No puedes curarte en medio de una expedición. Termina o usa `!volver` primero."); 
-    } 
-    const profile = await db.getProfile(message.author.id); 
-    const saludActual = profile.salud !== undefined ? profile.salud : 100; 
-    if (saludActual >= 100) { 
-      return message.reply( 
-        "🌿 Faelon te mira con calma desde su tienda: estás en plena forma. Regresa si necesitas mi ayuda." 
-      ); 
-    } 
-    await db.updateTravelerData(message.author.id, { salud: 100 }); 
-    return message.reply( 
-      `🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja no andar solo.` 
-    ); 
+  if (command === "!curar") {
+  const expedition = expeditions.get(message.author.id);
+  const canHealAtStart =
+    expedition?.pendingStartHeal &&
+    expedition?.currentEncounter === null &&
+    expedition?.progress === 0;
+
+  if (expedition && !canHealAtStart) {
+    return message.reply("⚠️ No puedes curarte en medio de una expedición. Termina o usa `!volver` primero.");
   }
 
+  const profile = await db.getProfile(message.author.id);
+  const saludActual = profile.salud !== undefined ? profile.salud : 100;
+
+  if (saludActual >= 100) {
+    return message.reply(
+      "🌿 Faelon te mira con calma desde su tienda: estás en plena forma. Regresa si necesitas mi ayuda."
+    );
+  }
+
+  await db.updateTravelerData(message.author.id, { salud: 100 });
+
+  if (expedition?.pendingStartHeal) {
+    expedition.pendingStartHeal = false;
+  }
+
+  return message.reply(
+    `🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja no andar solo.`
+  );
+    }
   // ========================================
   // SISTEMA DE EXPEDICIONES
   // ========================================
