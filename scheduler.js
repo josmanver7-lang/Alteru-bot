@@ -13,6 +13,7 @@ const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
+const CYCLE_STATE_KEY = "cycle_state";
 
 const companionIds = ["alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon", "montaraces"];
 
@@ -36,9 +37,11 @@ const merchantCities = [
 ];
 
 let schedulerPersonajesCache = {};
-let boundaryTimer = null;
 let merchantCloseTimer = null;
 let cycleEventTimers = [];
+
+// Memoria para askOpenRouter
+const conversationMemory = new Map();
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -184,33 +187,18 @@ async function ai(prompt, maxTokens = 80) {
   }
 }
 
-function shiftCaracas(ms = Date.now()) {
-  return new Date(ms + CARACAS_OFFSET_MS);
-}
-
 function getCycleBounds(ms = Date.now()) {
-  const local = shiftCaracas(ms);
-  const hour = local.getUTCHours();
-  const startLocal = new Date(local);
-  startLocal.setUTCHours(hour < 12 ? 0 : 12, 0, 0, 0);
-  const endLocal = new Date(startLocal);
-  endLocal.setUTCHours(startLocal.getUTCHours() + 12, 0, 0, 0);
+  const d = new Date(ms);
+  const hour = d.getUTCHours();
+  const start = new Date(d);
+  start.setUTCHours(hour < 12 ? 0 : 12, 0, 0, 0);
+  const end = new Date(start);
+  end.setUTCHours(start.getUTCHours() + 12, 0, 0, 0);
 
   return {
-    cycleStartAt: startLocal.getTime() - CARACAS_OFFSET_MS,
-    cycleEndAt: endLocal.getTime() - CARACAS_OFFSET_MS
+    cycleStartAt: start.getTime(),
+    cycleEndAt: end.getTime()
   };
-}
-
-function getNextBoundaryMs(ms = Date.now()) {
-  const local = shiftCaracas(ms);
-  const candidates = CYCLE_HOURS.map(hour => {
-    const d = new Date(local);
-    d.setUTCHours(hour, 0, 0, 0);
-    if (d.getTime() <= local.getTime()) d.setUTCDate(d.getUTCDate() + 1);
-    return d.getTime() - CARACAS_OFFSET_MS;
-  });
-  return Math.min(...candidates);
 }
 
 async function getCycleState() {
@@ -425,6 +413,7 @@ async function askOpenRouter(userId, userMessage, lore) {
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
+
 // ==========================================
 //         CARGA DE ARCHIVOS JSON/TEXT
 // ==========================================
@@ -831,6 +820,31 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   }
 }
 
+async function closeMerchant(client) {
+  const state = await db.getEventState("merchant").catch(() => null);
+  if (!state?.active) return;
+  
+  const channel = await fetchChannel(client);
+  if (channel) {
+    await channel.send(`🚚 **EL MERCADER SE MARCHA**\n\nEl mercader ambulante empaca sus cosas y se retira del campamento. "¡Hasta la próxima, viajeros!"`);
+  }
+  
+  await db.setEventState("merchant", { ...state, active: false }).catch(() => {});
+}
+
+async function resumeMerchantIfNeeded(client) {
+  const state = await db.getEventState("merchant").catch(() => null);
+  if (!state?.active || !state?.closesAt) return;
+
+  const delay = state.closesAt - Date.now();
+  if (delay <= 0) {
+    await closeMerchant(client);
+  } else {
+    if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
+    merchantCloseTimer = setTimeout(() => closeMerchant(client), delay);
+  }
+}
+
 async function openMerchant(client) {
   const existing = await db.getEventState("merchant").catch(() => null);
   if (existing?.active) return;
@@ -862,15 +876,19 @@ async function openMerchant(client) {
     return;
   }
 
+  const closesAt = Date.now() + MERCHANT_OPEN_MS;
   await db.setEventState("merchant", {
     active: true,
     name: merchantName,
     destination,
     openedAt: Date.now(),
-    closesAt: Date.now() + MERCHANT_OPEN_MS,
+    closesAt: closesAt,
     nextAt: Date.now() + TWELVE_HOURS
   }).catch(() => {});
-    }
+
+  if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
+  merchantCloseTimer = setTimeout(() => closeMerchant(client), MERCHANT_OPEN_MS);
+}
 
 async function companionDialogue(client, loreCache, slotId = null) {
   const channel = await fetchChannel(client);
@@ -1481,4 +1499,4 @@ export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) 
   await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
   await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
   await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
-        }
+}
