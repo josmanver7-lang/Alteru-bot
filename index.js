@@ -905,6 +905,7 @@ function getFinalScenarioConfig(mission = {}) {
     hasEnemies,
     enemyLabel: raw.enemyLabel || raw.enemigo || "enemigos",
     enemyChance: Number(raw.enemyChance ?? raw.probabilidadEnemigo ?? 0.6),
+    danger: Number(raw.peligro ?? raw.danger ?? raw.nivelPeligro ?? 0),
     rewardMultiplier: Number(raw.rewardMultiplier ?? 1),
     xpBonus: Number(raw.xpBonus ?? 0),
     pointsBonus: Number(raw.pointsBonus ?? 0),
@@ -924,6 +925,12 @@ function getFinalScenarioAllowedText(scenario = {}) {
     : fallback;
 
   return allowed.map(a => `\`${a}\``).join(", ");
+}
+
+function getFinalScenarioDangerText(scenario = {}) {
+  const danger = Number(scenario.danger ?? scenario.peligro ?? 0);
+  if (!danger) return "Ninguno";
+  return getDangerText(danger);
 }
 
 function getFinalScenarioActionStartText(action, expedition) {
@@ -1046,9 +1053,12 @@ async function startFinalScenario(message, expedition) {
   const encounter = expedition.currentEncounter || scenario;
   const hasEnemies = encounter.enemyPresent ?? encounter.hasEnemies ?? scenario.hasEnemies ?? true;
 
+  const dangerText = getFinalScenarioDangerText(scenario);
+
   if (!hasEnemies) {
     const mission = expedition.mission || {};
     const completionText =
+      scenario.completionText?.success ||
       scenario.completionText ||
       `Llevas a los refugiados a un lugar seguro y regresas al campamento con la misión cumplida.`;
 
@@ -1093,7 +1103,7 @@ async function startFinalScenario(message, expedition) {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
+    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${scenario.descripcion || "Has llegado al tramo decisivo de la expedición."}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
 
     if (affinityLines.length) {
       text += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
@@ -1114,7 +1124,7 @@ async function startFinalScenario(message, expedition) {
       tipo: "escenario_final",
       categoria: scenario.categoria || "final",
       descripcion: scenario.descripcion || expedition.mission?.descripcion || "",
-      peligro: scenario.peligro || 0
+      peligro: scenario.danger || scenario.peligro || 0
     }, "encounter");
 
     if (line) reactions.push(`💬 ${line}`);
@@ -1122,14 +1132,14 @@ async function startFinalScenario(message, expedition) {
 
   const intro =
     scenario.introText ||
-    `⚠️ **${scenario.titulo || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.descripcion || "Has llegado al tramo decisivo de la expedición."}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
+    `🏁 **${scenario.titulo || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.descripcion || "Has llegado al tramo decisivo de la expedición."}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
 
   const text = reactions.length
     ? `${intro}\n\n${reactions.join("\n")}`
     : intro;
 
   return replyLong(message, text);
-        }
+}
 
 async function resolveFinalScenarioAction(message, expedition, action) {
   const scenario = expedition.finalScenario;
@@ -1169,7 +1179,13 @@ async function resolveFinalScenarioAction(message, expedition, action) {
     };
 
   let successChance = Number(rules.successChance ?? 0.5);
+    const finalDanger = Number(scenario.danger ?? scenario.peligro ?? 0);
 
+  if (finalDanger >= 7) successChance -= 0.12;
+  else if (finalDanger >= 5) successChance -= 0.08;
+  else if (finalDanger >= 3) successChance -= 0.04;
+  else if (finalDanger > 0) successChance += 0.02;
+  
   if (normalizedAction === "atacar") {
     successChance += affinityCombat.successBonus;
     successChance += combatBonus.captainBonus * 0.2;
