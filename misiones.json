@@ -206,7 +206,7 @@
     "titulo": "Niños perdidos de Calembel",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros."
+    "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros.",
     "xp": 90,
     "encuentros": [
       "obstaculo",
@@ -218,7 +218,7 @@
       "titulo": "Sendero oculto",
       "descripcion": "Tras derrotar a sus escoltas, el líder enemigo te esperaba con los niños a su espalda amarrados. '¿Así que llegó el rescate eh? Primero tendrás que vencerme'.",
       "hasEnemies": true,
-      "enemyLabel": "lider bandido"
+      "enemyLabel": "lider bandido",
       "enemyChance": 9.5,
       "rewardMultiplier": 1,
       "xpBonus": 0,
@@ -236,7 +236,7 @@
       "failureText": {
         "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo, pero tras un intenso combate fuiste superado dejándote tirado e inconsciente en el lugar.",
         "negociar": "Intentas convencerlo por todos los medios pero se niega a liberar a los niños, asi que sin mas remedio, vuelves al campamento para informar.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión.",
       }
     }
   },
