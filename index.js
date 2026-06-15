@@ -278,9 +278,10 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   const slot = normalizeKey(item?.slot || item?.tipo || "");
 
   if (slot === "arma") return "arma";
+  if (slot === "escudo") return "escudo"; 
   if (slot === "pecho" || slot === "armadura") return "armadura";
   if (slot === "casco") return "casco";
-  if (slot === "hombros") return "brazos";
+  if (slot === "hombros") return "hombros";
   if (slot === "brazos") return "brazos";
   if (slot === "piernas") return "piernas";
   if (slot === "pies") return "pies";
@@ -2495,7 +2496,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     let texto = "🛡️ **EQUIPO EQUIPADO**\n\n"; 
     
     const slots = [ 
-      ["arma", "Arma"], ["armadura", "Armadura"], ["casco", "Casco"], 
+      ["arma", "Arma"], ["escudo", "Escudo"], ["armadura", "Armadura"], ["casco", "Casco"], 
       ["hombros", "Hombros"], ["brazos", "Brazos"], ["piernas", "Piernas"], 
       ["pies", "Pies"], ["capa", "Capa"], ["anillo1", "Anillo 1"], 
       ["anillo2", "Anillo 2"], ["amuleto", "Amuleto"], ["accesorio", "Accesorio"] 
@@ -3042,7 +3043,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply("Usa !desafiar para este encuentro.");
   }
 
-  async function resolveSpecialEncounter(message, expedition) {
+  return resolveSpecialEncounter(message, expedition);
+ }
   const encounter = expedition.currentEncounter;
 
   if (!encounter || encounter.tipo !== "evento_especial") {
@@ -3107,7 +3109,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   return message.reply(texto);
 }
 
-  if (command === "!volver")
+  if (command === "!volver") {
     return message.reply("Usa !interactuar o !volver.");
   }
 
@@ -3118,7 +3120,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   return resolveFinalScenarioAction(message, expedition, command);
   }
     
-  if (command === "!volver" || command === "!abandonar")
+  if (command === "!volver" || command === "!abandonar") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
     }
