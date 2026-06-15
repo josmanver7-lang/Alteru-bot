@@ -19,6 +19,7 @@
       "hasEnemies": false,
       "enemyLabel": "corsarios",
       "enemyChance": 0.75,
+      "peligro": 2,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -27,15 +28,14 @@
         "explorar",
         "retirarse"
       ],
-      "successText": {
-        "explorar": "Con dificultad pasaste sobre cadaveres y registraste todo el lugar buscando objetos de valor para cargarlos y llevarlos al campamento.",
+      "actionText": {
+        "explorar": "Con dificultad pasaste sobre cadáveres y registraste todo el lugar buscando objetos de valor para cargarlos y llevarlos al campamento.",
         "retirarse": "Decides volver con lo que viste hasta ahora antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "explorar": "No logras abrirte paso entre el pantano, decidiendo que lo mejor es retirarse.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Encuentras mas de lo que buscabas, mapas, planes dd guerra armas, armaduras y muchos objetos de valor, cargando con lo que podias volviste al campamento."
+      "completionText": {
+        "success": "Encuentras más de lo que buscabas: mapas, planes de guerra, armas, armaduras y muchos objetos de valor. Cargando con lo que podías, volviste al campamento.",
+        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+      }
     }
   },
   {
@@ -58,6 +58,7 @@
       "hasEnemies": true,
       "enemyLabel": "trasgos",
       "enemyChance": 0.95,
+      "peligro": 4,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -66,15 +67,14 @@
         "atacar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Te enfrentas a un numeroso grupo de trasgos al final de la cueva haciendo el mayor uso de tu habilidad e ingenio para derrotarlos.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Desentierras tu arma del ultimo trasgo y observando los cadaveres alrededor suspiras de alivio por haber sobrevivido, decides volver e informar de tu éxito."
+      "completionText": {
+        "success": "Desentierras tu arma del último trasgo y, observando los cadáveres alrededor, suspiras de alivio por haber sobrevivido. Luego decides volver e informar de tu éxito.",
+        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor."
+      }
     }
   },
   {
@@ -97,6 +97,7 @@
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.7,
+      "peligro": 3,
       "rewardMultiplier": 1,
       "xpBonus": 10,
       "pointsBonus": 0,
@@ -105,15 +106,14 @@
         "explorar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "explorar": "Llegas al lugar de donde procedía aquel humo y no ves a nadie, pero unos ruidos extraños a tu espalda llaman tu atención.",
         "retirarse": "Decides informar y volver sin seguir removiendo la zona."
       },
-      "failureText": {
-        "explorar": "Eran muchos enemigos y decides escapar antes que caer derrorado en inferioridad.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "¡Buen trabajo! Regresas al campamento tras cumplir la vigilancia y entregar el informe sobre lo ocurrido."
+      "completionText": {
+        "success": "¡Buen trabajo! Regresas al campamento tras cumplir la vigilancia y entregar el informe sobre lo ocurrido.",
+        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad."
+      }
     }
   },
   {
@@ -136,6 +136,7 @@
       "hasEnemies": true,
       "enemyLabel": "corsarios",
       "enemyChance": 0.99,
+      "peligro": 5,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -147,22 +148,17 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
-        "atacar": "Te enfrentas a los corsarios de frente corriendo hacia ellos, sorprendidos reciben tu carga y se libra un feroz combate.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente, sorprendiendolos e inflingiendoles terror.",
+      "actionText": {
+        "atacar": "Te enfrentas a los corsarios de frente, corriendo hacia ellos; sorprendidos reciben tu carga y se libra un feroz combate.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente, sorprendiéndolos e infligiéndoles terror.",
         "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
         "negociar": "Tratas de negociar con ellos para que liberen a los rehenes haciendo el uso máximo de tu carisma.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Liberas a los exploradores y vuelves al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Liberas a los exploradores y vuelves al campamento con la misión cumplida.",
+        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+      }
     }
   },
   {
@@ -185,6 +181,7 @@
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
+      "peligro": 3,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -194,17 +191,15 @@
         "rodear",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los bandidos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Regresas al campamento con el rastro confirmado y la misión cumplida."
+      "completionText": {
+        "success": "Regresas al campamento con el rastro confirmado y la misión cumplida.",
+        "failure": "El rodeo se complica y pierdes tiempo valioso antes de tener que retirarte."
+      }
     }
   },
   {
@@ -226,6 +221,7 @@
       "hasEnemies": true,
       "enemyLabel": "lider bandido",
       "enemyChance": 0.95,
+      "peligro": 5,
       "rewardMultiplier": 1,
       "xpBonus": 0,
       "pointsBonus": 0,
@@ -235,17 +231,15 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
-        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo haciendo uso de tu habilidad para debilitarlo hasta dar el golpe mortal ¡Victoria!.",
-        "negociar": "Intentas negociar con el enemigo y a cambio de dejarlo libre aceptará entregarte a los niños.",
-        "retirarse": "Decides regresarse en informar de la situación en el campamento."
+      "actionText": {
+        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo haciendo uso de tu habilidad para debilitarlo hasta dar el golpe mortal.",
+        "negociar": "Intentas negociar con el enemigo y, a cambio de dejarlo libre, aceptará entregarte a los niños.",
+        "retirarse": "Decides regresar e informar de la situación en el campamento."
       },
-      "failureText": {
-        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo, pero tras un intenso combate fuiste superado dejándote tirado e inconsciente en el lugar.",
-        "negociar": "Intentas convencerlo por todos los medios pero se niega a liberar a los niños, asi que sin mas remedio, vuelves al campamento para informar.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Rescatas a los niños y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Rescatas a los niños y regresas al campamento con la misión cumplida.",
+        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+      }
     }
   },
   {
@@ -268,6 +262,7 @@
       "hasEnemies": true,
       "enemyLabel": "merodeadores",
       "enemyChance": 0.75,
+      "peligro": 3,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -280,7 +275,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Tras varias horas de vigilancia, concluyes que la ruta necesita patrullas ligeras, no una campaña completa.",
@@ -288,15 +283,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Concluyes la vigilancia del camino y vuelves al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Concluyes la vigilancia del camino y vuelves al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -319,6 +309,7 @@
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
+      "peligro": 3,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -331,7 +322,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Sigues las marcas hasta su origen y entregas un informe útil sobre lo ocurrido en Lebennin.",
@@ -339,15 +330,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Resuelves el misterio del rastro y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Resuelves el misterio del rastro y regresas al campamento con la misión cumplida.",
+        "failure": "Te ves obligado a retirarte antes de completar la misión."
+      }
     }
   },
   {
@@ -370,6 +356,7 @@
       "hasEnemies": true,
       "enemyLabel": "bandidos",
       "enemyChance": 0.75,
+      "peligro": 4,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -382,7 +369,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Mantienes el paso bajo control y la vigilancia confirma que la ruta puede seguir usándose con cautela.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
@@ -390,15 +377,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Aseguras el paso y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Aseguras el paso y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -421,6 +403,7 @@
       "hasEnemies": true,
       "enemyLabel": "saqueadores",
       "enemyChance": 0.75,
+      "peligro": 4,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -433,7 +416,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Derrotas la amenaza que pesaba sobre Sardol y dejas el valle en mejores condiciones que al llegar.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
@@ -441,15 +424,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "La amenaza queda contenida y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "La amenaza queda contenida y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -472,6 +450,7 @@
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
+      "peligro": 4,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -484,7 +463,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Sigues el rastro junto al Celos hasta resolver el misterio y devuelves noticias valiosas al campamento.",
@@ -492,15 +471,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Averiguas qué pasó en la ribera y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Averiguas qué pasó en la ribera y regresas al campamento con la misión cumplida.",
+        "failure": "La tensión te obliga a retirarte antes de completar la misión."
+      }
     }
   },
   {
@@ -524,6 +498,7 @@
       "hasEnemies": true,
       "enemyLabel": "asaltantes",
       "enemyChance": 0.75,
+      "peligro": 5,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -536,7 +511,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "La caravana llega a Tadrent y tu escolta evita que el viaje se convierta en tragedia.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
@@ -544,15 +519,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "La caravana llega a Tadrent y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "La caravana llega a Tadrent y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -576,6 +546,7 @@
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
+      "peligro": 5,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -588,7 +559,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "Descifras el origen del eco y regresas con pruebas claras de lo que acecha en Blackroot Vale.",
@@ -596,15 +567,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Resuelves el misterio de las ruinas y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Resuelves el misterio de las ruinas y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -628,6 +594,7 @@
       "hasEnemies": true,
       "enemyLabel": "amenazas",
       "enemyChance": 0.75,
+      "peligro": 4,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -640,7 +607,7 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
         "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
         "explorar": "La frontera queda clara, segura y bien observada; aun sin combate, la misión queda cumplida.",
@@ -648,15 +615,10 @@
         "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
-      "failureText": {
-        "atacar": "El choque sale peor de lo esperado y recibes una dura respuesta.",
-        "rodear": "El rodeo se complica y pierdes tiempo valioso.",
-        "explorar": "Te descubren antes de terminar el reconocimiento.",
-        "infiltrar": "Una patrulla detecta tu presencia y te obliga a retroceder.",
-        "negociar": "No aceptan hablar y la tensión empeora.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Terminas la vigilancia de la frontera y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Terminas la vigilancia de la frontera y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   },
   {
@@ -678,6 +640,7 @@
       "descripcion": "Llegas al punto marcado. No hay batalla que librar, solo decidir cómo asegurar el objetivo y regresar.",
       "hasEnemies": false,
       "enemyChance": 0,
+      "peligro": 1,
       "rewardMultiplier": 1,
       "xpBonus": 0,
       "pointsBonus": 0,
@@ -688,19 +651,16 @@
         "negociar",
         "retirarse"
       ],
-      "successText": {
+      "actionText": {
         "explorar": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
         "infiltrar": "Te mueves con cuidado y recuperas lo necesario sin incidentes.",
         "negociar": "Hablas con los pocos presentes y obtienes acceso sin problemas.",
         "retirarse": "Decides informar y volver sin seguir removiendo la zona."
       },
-      "failureText": {
-        "explorar": "El terreno te retrasa y pierdes tiempo antes de encontrar lo que buscabas.",
-        "infiltrar": "Una mala pisada te obliga a detenerte y corregir el rumbo.",
-        "negociar": "La conversación no avanza y terminas retirándote.",
-        "retirarse": "La expedición se vio obligada a retirarse antes de completar la misión."
-      },
-      "completionText": "Recolectas las hierbas necesarias y regresas al campamento con la misión cumplida."
+      "completionText": {
+        "success": "Recolectas las hierbas necesarias y regresas al campamento con la misión cumplida.",
+        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+      }
     }
   }
-        ]
+      ]
