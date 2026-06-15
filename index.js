@@ -3267,11 +3267,11 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
 
       if (reactions.length) {
-  textoEncuentro += `\n\n${reactions.join("\n")}`;
-}
+      textoEncuentro += `\n\n${reactions.join("\n")}`;
+      }
 
-return message.reply(textoEncuentro);
-}
+     return message.reply(textoEncuentro);
+     }
 
 const activeEncounter = expedition.currentEncounter;
 
