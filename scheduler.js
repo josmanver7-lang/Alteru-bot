@@ -836,49 +836,31 @@ async function openMerchant(client) {
   if (existing?.active) return;
 
   const channel = await fetchChannel(client);
-  if (!channel) return;
+  if (!channel) {
+    console.error("No se pudo obtener el canal de anuncios para el mercader.");
+    return;
+  }
 
   const merchantName = pick(merchantNames);
   const destination = pick(merchantCities);
 
-  const stockCatalog = await loadJson("mercader.json").catch(() => ({ items: [] }));
-  const catalogItems = Array.isArray(stockCatalog.items)
-    ? stockCatalog.items
-    : Array.isArray(stockCatalog)
-      ? stockCatalog
-      : [];
+  let intro = `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}. Te invito a que veas mi mercancía, usa !mercader, seguro que encuentras algo útil.`;
 
-  const catalogState = await db.getEventState("mercader").catch(() => null);
-  const items = Array.isArray(catalogState?.selection) && catalogState.selection.length
-    ? catalogState.selection
-    : catalogItems;
-
-  const prompt = `
-Escribe un mensaje de llegada de un mercader ambulante para Discord, en español, de entre 60 y 90 palabras.
-
-Debe incluir:
-- Su nombre: ${merchantName}
-- Que pide permiso para instalarse junto a la tienda
-- Que dice que solo permanecerá 2 horas
-- Que después seguirá hacia ${destination}
-- Tono de rol medieval/Tierra Media
-- Natural, cálido y convincente
-- Termina con una invitación breve: "Te invito a que veas mi mercancía, usa !mercader."
-No menciones que es una IA.
-`.trim();
-
-  let intro;
   try {
-    intro = await generateAITextStrict(prompt, 60);
+    const aiText = await generateAITextStrict(
+      `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} hacia ${destination}. Español.`
+    );
+    if (aiText?.trim()) intro = `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${aiText.trim()}`;
   } catch (err) {
     console.error("Error generando llegada del mercader:", err);
-    intro = `${merchantName} llega con sus bultos y pide permiso para instalarse junto a la tienda. Dice que solo permanecerá dos horas antes de seguir hacia ${destination}. Te invito a que veas mi mercancía, usa !mercader.`;
   }
 
-  await channel.send(
-    `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n` +
-    `${truncate(String(intro).replace(/^🚚\s*/i, '').trim())}`
-  );
+  try {
+    await channel.send(intro);
+  } catch (err) {
+    console.error("No se pudo enviar el mensaje del mercader:", err);
+    return;
+  }
 
   await db.setEventState("merchant", {
     active: true,
@@ -886,48 +868,9 @@ No menciones que es una IA.
     destination,
     openedAt: Date.now(),
     closesAt: Date.now() + MERCHANT_OPEN_MS,
-    nextAt: Date.now() + TWELVE_HOURS,
-    stock: items.slice(0, 12)
+    nextAt: Date.now() + TWELVE_HOURS
   }).catch(() => {});
-
-  if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
-  merchantCloseTimer = setTimeout(async () => {
-    const state = await db.getEventState("merchant").catch(() => null);
-    if (!state?.active) return;
-
-    const closePrompt = `
-Escribe un mensaje de despedida de un mercader ambulante para Discord, en español, de entre 60 y 90 palabras.
-
-Debe incluir:
-- Su nombre: ${state.name}
-- Que agradece a Capitán Altéru por dejarle el espacio
-- Que debe recoger y partir
-- Que su próximo destino es ${state.destination}
-- Que se aleja del campamento con su animal de carga o sus bultos
-- Tono de rol medieval/Tierra Media
-No menciones que es una IA.
-`.trim();
-
-    let farewell;
-    try {
-      farewell = await generateAITextStrict(closePrompt, 60);
-    } catch (err) {
-      console.error("Error generando despedida del mercader:", err);
-      farewell = `${state.name} agradece a Capitán Altéru por dejarle el espacio, recoge sus bultos y parte hacia ${state.destination}.`;
     }
-
-    await channel.send(`🧳 **EL MERCADER SE RETIRA**\n\n${truncate(farewell)}`);
-
-    await db.setEventState("merchant", {
-      active: false,
-      name: state.name,
-      destination: state.destination,
-      openedAt: state.openedAt,
-      closedAt: Date.now(),
-      nextAt: Date.now() + TWELVE_HOURS
-    }).catch(() => {});
-  }, MERCHANT_OPEN_MS);
-}
 
 async function companionDialogue(client, loreCache, slotId = null) {
   const channel = await fetchChannel(client);
