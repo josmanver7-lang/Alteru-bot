@@ -3127,7 +3127,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     await clearExpeditionParty(message.author.id);
   
     return message.reply("⛺ Regresas a salvo al campamento base. Expedición terminada.");
-  }
+  
 
   if (command === "!desafiar") {
     if (!expeditions.has(message.author.id)) {
