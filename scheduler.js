@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+⅞import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as db from "./database.js";
@@ -7,8 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const EVENT_CHANNEL_ID = process.env.ANNOUNCEMENTS_CHANNEL_ID || "1514198998838284288";
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
@@ -115,57 +116,70 @@ async function fetchChannel(client) {
   return channel?.isTextBased() ? channel : null;
 }
 
-async function generateAITextStrict(prompt, maxTokens = 80) {
-  if (!GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY no está configurada");
+async function groqChat({
+  systemPrompt = "",
+  messages = [],
+  temperature = 0.9,
+  maxTokens = 80
+}) {
+  if (!GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY no está configurada");
   }
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "x-goog-api-key": GEMINI_API_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones." }]
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: prompt }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.9,
-          maxOutputTokens: maxTokens
-        }
-      })
-    }
-  );
+  const chatMessages = [];
+
+  if (systemPrompt.trim()) {
+    chatMessages.push({ role: "system", content: systemPrompt.trim() });
+  }
+
+  for (const msg of messages) {
+    if (!msg || !msg.content) continue;
+    chatMessages.push({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: String(msg.content)
+    });
+  }
+
+  const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: chatMessages,
+      temperature,
+      max_tokens: maxTokens
+    })
+  });
 
   if (!res.ok) {
     const details = await res.text().catch(() => "");
-    throw new Error(`Gemini ${res.status}: ${details}`);
+    throw new Error(`Groq ${res.status}: ${details}`);
   }
 
   const data = await res.json();
-  const text =
-    data?.candidates?.[0]?.content?.parts
-      ?.map(part => part?.text || "")
-      .join("")
-      .trim() || "";
+  const text = data?.choices?.[0]?.message?.content;
 
-  if (!text) throw new Error("Gemini devolvió texto vacío");
-  return text;
+  const clean = Array.isArray(text)
+    ? text.map(part => part?.text || "").join("").trim()
+    : String(text || "").trim();
+
+  if (!clean) throw new Error("Groq devolvió texto vacío");
+  return clean;
+}
+
+async function generateAITextStrict(prompt, maxTokens = 80) {
+  return await groqChat({
+    systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones.",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.9,
+    maxTokens
+  });
 }
 
 async function ai(prompt, maxTokens = 80) {
-  if (!GEMINI_API_KEY) return "";
   try {
     return await generateAITextStrict(prompt, maxTokens);
   } catch {
@@ -387,44 +401,33 @@ Rango: ${obtenerRango(profile?.points || 0)}
 
 async function askOpenRouter(userId, userMessage, lore) {
   const profile = await db.getProfile(userId);
+
   const systemPrompt = buildSystemPrompt(lore, profile);
 
   if (!conversationMemory.has(userId)) {
     conversationMemory.set(userId, []);
   }
+
   const history = conversationMemory.get(userId);
   history.push({ role: "user", content: userMessage });
   if (history.length > 10) history.shift();
 
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
-      method: "POST",
-      headers: {
-        "x-goog-api-key": GEMINI_API_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: history.map(msg => ({
-          role: msg.role === "assistant" ? "model" : "user",
-          parts: [{ text: msg.content }]
-        })),
-        generationConfig: { temperature: 0.85 }
-      })
+    const reply = await groqChat({
+      systemPrompt,
+      messages: history,
+      temperature: 0.85,
+      maxTokens: 120
     });
-
-    if (!res.ok) return "Altéru: *revisa los planos tácticos en silencio*";
-    const data = await res.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
 
     history.push({ role: "assistant", content: reply });
     if (history.length > 10) history.shift();
+
     return reply;
   } catch {
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
-
 // ==========================================
 //         CARGA DE ARCHIVOS JSON/TEXT
 // ==========================================
