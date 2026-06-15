@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const GEMINI_API_KEY = process.env.GOOGLE_API_KEY || process.env.GOOGLE_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
@@ -1566,7 +1566,7 @@ client.once("ready", async () => {
   }
 
   await refreshTablonSelection();
-  startSchedulers(client, loreCache);
+  await startSchedulers(client, loreCache);
 
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -2710,12 +2710,12 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const saludActual = profile.salud !== undefined ? profile.salud : 100; 
     if (saludActual >= 100) { 
       return message.reply( 
-        "🌿 Faelon te mira con calma desde su tienda: ya estás mucho mejor. Para el próximo viaje no vayas solo." 
+        "🌿 Faelon te mira con calma desde su tienda: estás en plena forma. Regresa si necesitas mi ayuda." 
       ); 
     } 
     await db.updateTravelerData(message.author.id, { salud: 100 }); 
     return message.reply( 
-      `🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja tener mas cuidado.` 
+      `🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja no andar solo.` 
     ); 
   }
 
