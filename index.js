@@ -3524,34 +3524,29 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply(promptText);
   }
 
-  // Comandos de Roleplay Directo con los Compañeros
+    // Comandos de Roleplay Directo con los Compañeros
   const companionCommands = {
-    "!al": "alteru", "!c": "cirdil", "!d": "duinor", "!an": "andaer", "!n": "nieriel", "!f": "faelon", "!m": "montaraces"
+    "!al": "alteru",
+    "!c": "cirdil",
+    "!d": "duinor",
+    "!an": "andaer",
+    "!n": "nieriel",
+    "!f": "faelon",
+    "!m": "montaraces"
   };
 
   if (companionCommands[command]) {
-    const companionCommands = {
-  "!al": "alteru",
-  "!c": "cirdil",
-  "!d": "duinor",
-  "!an": "andaer",
-  "!n": "nieriel",
-  "!f": "faelon",
-  "!m": "montaraces"
-};
+    const companionId = companionCommands[command];
+    const mensaje = content.slice(args[0].length).trim();
+    if (!mensaje) return message.reply("Escribe algo después del comando.");
 
-if (companionCommands[command]) {
-  const companionId = companionCommands[command];
-  const mensaje = content.slice(args[0].length).trim();
-  if (!mensaje) return message.reply("Escribe algo después del comando.");
+    const personaje = getPersonaje(companionId);
+    if (!personaje) return message.reply("Ese compañero no está disponible.");
 
-  const personaje = getPersonaje(companionId);
-  if (!personaje) return message.reply("Ese compañero no está disponible.");
+    const profile = await db.getProfile(message.author.id);
+    const affinity = (profile.affinity || {})[companionId] || 0;
 
-  const profile = await db.getProfile(message.author.id);
-  const affinity = (profile.affinity || {})[companionId] || 0;
-
-  const systemPrompt = `Eres ${personaje.nombre}.
+    const systemPrompt = `Eres ${personaje.nombre}.
 Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || ""}
 Afinidad con el viajero: ${affinity}
 Trata al viajero según esta escala:
@@ -3559,37 +3554,36 @@ Trata al viajero según esta escala:
 Instrucciones:
 Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.`;
 
-  try {
-    const reply = await groqChat({
-      systemPrompt,
-      messages: [{ role: "user", content: mensaje }],
-      temperature: 0.9,
-      maxTokens: 40
-    });
+    try {
+      const reply = await groqChat({
+        systemPrompt,
+        messages: [{ role: "user", content: mensaje }],
+        temperature: 0.9,
+        maxTokens: 40
+      });
 
-    await db.addAffinity(message.author.id, companionId, 1);
-    return message.reply(`${personaje.nombre}: ${compactLine(reply || "*asiente*", 12)}`);
-  } catch (err) {
-    console.error("Groq Catch Error (Direct RP):", err);
-    return message.reply(`${personaje.nombre}: *asiente en silencio*`);
+      await db.addAffinity(message.author.id, companionId, 1);
+      return message.reply(`${personaje.nombre}: ${compactLine(reply || "*asiente*", 12)}`);
+    } catch (err) {
+      console.error("Groq Catch Error (Direct RP):", err);
+      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
+    }
   }
-}
 
   // Comando de Roleplay Principal con Altéru (!a)
   if (command === "!a") {
-  const prompt = content.slice(args[0].length).trim();
-  if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
+    const prompt = content.slice(args[0].length).trim();
+    if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
 
-  try {
-    if (!loreCache) loreCache = await loadAlteruLore();
-    await message.channel.sendTyping();
-
-    const reply = await askGroq(message.author.id, prompt, loreCache);
-    return message.reply(reply);
-  } catch (err) {
-    console.error("Unhandled Error during !a process:", err);
-    return message.reply("¿Qué dijiste? No te oí.");
-   }
+    try {
+      if (!loreCache) loreCache = await loadAlteruLore();
+      await message.channel.sendTyping();
+      const reply = await askGroq(message.author.id, prompt, loreCache);
+      return message.reply(reply);
+    } catch (err) {
+      console.error("Unhandled Error during !a process:", err);
+      return message.reply("¿Qué dijiste? No te oi.");
+    }
   }
 });
 
