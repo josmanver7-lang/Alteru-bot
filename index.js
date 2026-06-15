@@ -1282,6 +1282,7 @@ async function resolveFinalScenarioAction(message, expedition, action) {
     texto += `\n\nLa expedición ha concluido.`;
     return message.reply(texto);
   }
+ }
 
 // ==========================================
 //        LLAMADAS API E INTERACCIONES IA
