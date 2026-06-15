@@ -912,12 +912,13 @@ function getFinalScenarioConfig(mission = {}) {
     actionText: raw.actionText || {},
     successText: raw.successText || {},
     failureText: raw.failureText || {},
+    completionText: raw.completionText || {},
     affinityBonus: Number(raw.affinityBonus ?? 0)
   };
 }
 
 function getFinalScenarioAllowedText(scenario = {}) {
-  const fallback = ["!atacar", "!rodear", "!explorar", "!infiltrar", "!negociar", "!esperar", "!retirarse"];
+  const fallback = ["atacar", "rodear", "explorar", "infiltrar", "negociar", "esperar", "retirarse"];
   const allowed = Array.isArray(scenario.allowedActions) && scenario.allowedActions.length
     ? scenario.allowedActions
     : fallback;
@@ -1009,6 +1010,31 @@ function rollFinalScenarioEnemyPresence(scenario = {}) {
   const clamped = Math.max(0, Math.min(chance, 1));
 
   return Math.random() < clamped;
+}
+
+function getFinalActionLabel(action) {
+  const labels = {
+    atacar: "ataque",
+    rodear: "rodeo",
+    explorar: "exploración",
+    infiltrar: "infiltración",
+    negociar: "negociación",
+    esperar: "espera",
+    retirarse: "retirada"
+  };
+
+  return labels[normalizeKey(action)] || "acción";
+}
+
+function buildFinalResolutionText(action, success, scenario) {
+  const label = getFinalActionLabel(action);
+  const verdict = success ? "exitoso" : "infructuoso";
+
+  const completion = success
+    ? scenario?.completionText?.success
+    : scenario?.completionText?.failure;
+
+  return `Tu ${label} resultó ${verdict}. ${completion || ""}`.trim();
 }
 
 async function startFinalScenario(message, expedition) {
@@ -1126,12 +1152,11 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   const mission = expedition.mission || {};
   const playerClassBonus = getPlayerClassBonus(profile);
 
-  const context = {
-    titulo: scenario.titulo || mission.titulo || "Escenario final",
+  const activeEncounter = expedition.currentEncounter || {
+    ...scenario,
     tipo: "escenario_final",
-    categoria: scenario.categoria || "final",
-    descripcion: scenario.descripcion || mission.descripcion || "",
-    peligro: scenario.peligro || 0
+    categoria: "final",
+    active: true
   };
 
   const rules =
@@ -1180,8 +1205,8 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   successChance = Math.max(0.05, Math.min(successChance, 0.95));
   const success = Math.random() < successChance;
 
-  const baseXp = Number(scenario.xpReward ?? mission.xpFinal ?? mission.xp ?? 10);
-  const basePoints = Number(scenario.pointsReward ?? mission.puntosFinal ?? mission.puntos ?? 5);
+  const baseXp = Number(scenario.xpBonus ?? mission.xp ?? 10);
+  const basePoints = Number(scenario.pointsBonus ?? mission.puntos ?? 5);
   const rewardMultiplier = success
     ? Number(rules.rewardMultiplierSuccess ?? scenario.rewardMultiplierSuccess ?? 1)
     : Number(rules.rewardMultiplierFailure ?? scenario.rewardMultiplierFailure ?? 0.4);
@@ -1189,77 +1214,58 @@ async function resolveFinalScenarioAction(message, expedition, action) {
   const xpGain = Math.max(1, Math.floor(baseXp * rewardMultiplier));
   const pointsGain = Math.max(1, Math.floor(basePoints * rewardMultiplier));
 
-  const finalText = {
-    startText: getFinalScenarioActionStartText(normalizedAction, expedition),
-    successText: scenario.successText?.[normalizeKey(normalizedAction)] || getFinalScenarioSuccessText(normalizedAction, expedition),
-    failureText: scenario.failureText?.[normalizeKey(normalizedAction)] || getFinalScenarioFailureText(normalizedAction, expedition)
-  };
-
-  expedition.xpEarned = (expedition.xpEarned || 0) + xpGain;
-  expedition.pointsEarned = (expedition.pointsEarned || 0) + pointsGain;
-  expedition.progress = (expedition.progress || 0) + 1;
-  expedition.currentEncounter = null;
-  expedition.pendingFinalScenario = false;
-
+  const owned = [...new Set(getOwnedCompanions(profile))];
+  const reactionIds = getFinalScenarioReactionIds(normalizedAction, owned);
+  const affinityTargets = getFinalScenarioAffinityTargets(normalizedAction, owned);
   const affinityLines = [];
-  expedition.affinityLog = expedition.affinityLog || {};
 
-  for (const cid of party.slice(0, 3)) {
-    const result = await addAffinityWithRankMessage(
-      message.author.id,
-      cid,
-      context,
-      "escenario_final",
-      success ? normalizedAction : "derrota"
-    );
+  if (success) {
+    if (xpGain > 0) await db.addXP(message.author.id, xpGain);
+    if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
 
-    expedition.affinityLog[cid] = (expedition.affinityLog[cid] || 0) + result.gain;
+    expedition.affinityLog = expedition.affinityLog || {};
 
-    affinityLines.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
-    if (result.rankMessage) {
-      affinityLines.push(`  ${result.rankMessage}`);
+    for (const cid of affinityTargets) {
+      const result = await addAffinityWithRankMessage(message.author.id, cid, activeEncounter, normalizedAction, "victoria");
+      expedition.affinityLog[cid] = (expedition.affinityLog[cid] || 0) + result.gain;
+
+      affinityLines.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+      if (result.rankMessage) affinityLines.push(`  ${result.rankMessage}`);
     }
+
+    const reactions = [];
+    for (const cid of reactionIds) {
+      if (!owned.includes(cid)) continue;
+      const line = await companionReaction(cid, activeEncounter, normalizedAction);
+      if (line) reactions.push(`💬 ${line}`);
+    }
+
+    const actionText =
+      scenario.actionText?.[normalizedAction] ||
+      getFinalScenarioActionText(activeEncounter, normalizedAction, "success") ||
+      getFinalScenarioActionStartText(normalizedAction, expedition);
+
+    const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
+
+    await clearExpeditionParty(message.author.id);
+    expedition.pendingFinalScenario = false;
+    expedition.finalScenarioShown = false;
+    expedition.currentEncounter = null;
+    expeditions.delete(message.author.id);
+
+    let texto = `✅ **Escenario final resuelto**\n\n${actionText}\n\n${finalResolutionText}\n\n🏆 Recompensa: +${pointsGain} pts | +${xpGain} XP`;
+
+    if (affinityLines.length) {
+      texto += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
+    }
+
+    if (reactions.length) {
+      texto += `\n\n${reactions.join("\n")}`;
+    }
+
+    texto += `\n\nLa expedición ha concluido.`;
+    return message.reply(texto);
   }
-
-  const reactions = [];
-  for (const cid of party.slice(0, 3)) {
-    const line = await companionReaction(cid, context, success ? "victoria" : "derrota");
-    if (line) reactions.push(`💬 ${line}`);
-  }
-
-  if (!success && normalizedAction === "atacar") {
-    const saludActual = profile.salud !== undefined ? profile.salud : 100;
-    const danoBase = Number(scenario.damageOnFailure ?? 12);
-    const dano = Math.max(1, Math.floor(danoBase * (1 - combatBonus.damageReduction - affinityCombat.damageReduction - (combatBonus.baseDamageReduction || 0))));
-    const nuevaSalud = Math.max(0, saludActual - dano);
-
-    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
-  }
-
-  const headline = success
-    ? `🏁 **Escenario final superado**`
-    : `⚠️ **Escenario final resuelto con complicaciones**`;
-
-  let texto = `${headline}\n\n${success ? finalText.successText : finalText.failureText}\n\n🏆 Puntos obtenidos: +${pointsGain}\n📚 XP obtenida: +${xpGain}`;
-
-  if (affinityLines.length) {
-    texto += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
-  }
-
-  if (reactions.length) {
-    texto += `\n\n${reactions.join("\n")}`;
-  }
-
-  await db.addXP(message.author.id, xpGain);
-  await db.addPoints(message.author.id, pointsGain);
-
-  await clearExpeditionParty(message.author.id);
-  expedition.pendingFinalScenario = false;
-  expedition.finalScenarioShown = false;
-  expeditions.delete(message.author.id);
-
-  return message.reply(texto);
-}
 
 // ==========================================
 //        LLAMADAS API E INTERACCIONES IA
