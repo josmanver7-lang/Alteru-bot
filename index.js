@@ -3119,18 +3119,30 @@ async function resolveSpecialEncounter(message, expedition) {
     return message.reply("No tienes un escenario final activo.");
   }
 
-  return resolveFinalScenarioAction(message, expedition, command);
-    
-  if (command === "!volver" || command === "!abandonar") {
-    if (!expeditions.has(message.author.id)) {
-      return message.reply("No estás en una expedición.");
-    }
-  
-    expeditions.delete(message.author.id);
-    await clearExpeditionParty(message.author.id);
-  
-    return message.reply("⛺ Regresas a salvo al campamento base. Expedición terminada.");
+  if (command === "!continuar" || command === "!ignorar") {
+  return message.reply("Usa !interactuar o !volver.");
+}
+
+if (["!atacar", "!rodear", "!retirarse", "!huir"].includes(command)) {
+  const expedition = expeditions.get(message.author.id);
+
+  if (!expedition?.pendingFinalScenario || expedition?.currentEncounter?.tipo !== "escenario_final") {
+    return message.reply("No tienes un escenario final activo.");
   }
+
+  return resolveFinalScenarioAction(message, expedition, command);
+}
+
+if (command === "!volver") {
+  if (!expeditions.has(message.author.id)) {
+    return message.reply("No estás en una expedición.");
+  }
+
+  expeditions.delete(message.author.id);
+  await clearExpeditionParty(message.author.id);
+
+  return message.reply("⛺ Regresas a salvo al campamento base. Expedición terminada.");
+}
 
   if (command === "!desafiar") {
     if (!expeditions.has(message.author.id)) {
