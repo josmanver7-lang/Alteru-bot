@@ -1,4 +1,4 @@
-⅞import { readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as db from "./database.js";
