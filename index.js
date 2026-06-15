@@ -3044,7 +3044,9 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   return resolveSpecialEncounter(message, expedition);
- }
+}
+
+async function resolveSpecialEncounter(message, expedition) {
   const encounter = expedition.currentEncounter;
 
   if (!encounter || encounter.tipo !== "evento_especial") {
@@ -3118,7 +3120,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   return resolveFinalScenarioAction(message, expedition, command);
-  }
     
   if (command === "!volver" || command === "!abandonar") {
     if (!expeditions.has(message.author.id)) {
