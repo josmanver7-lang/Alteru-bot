@@ -3576,37 +3576,20 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
 }
 
   // Comando de Roleplay Principal con Altéru (!a)
-  if (command === '!a') {
-    const prompt = content.slice(args[0].length).trim();
-    const profile = await db.getProfile(message.author.id);
-    const text = prompt.toLowerCase();
+  if (command === "!a") {
+  const prompt = content.slice(args[0].length).trim();
+  if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
+
+  try {
+    if (!loreCache) loreCache = await loadAlteruLore();
+    await message.channel.sendTyping();
 
     const reply = await askGroq(message.author.id, prompt, loreCache);
     return message.reply(reply);
-
-    if (!profile.race) {
-      const races = ["elfo", "enano", "hobbit", "hombre", "beornida", "beórnida"];
-      const foundRace = races.find(r => text.includes(r));
-      if (foundRace) await db.updateTravelerData(message.author.id, { race: foundRace });
-    }
-
-    if (profile.race && !profile.class) {
-      const classes = ["guardian", "guardián", "campeon", "campeón", "cazador", "capitan", "capitán", "maestre del saber", "minstrel", "burglar", "runekeeper", "warden", "brawler", "mariner"];
-      const foundClass = classes.find(c => text.includes(c));
-      if (foundClass) await db.updateTravelerData(message.author.id, { class: foundClass });
-    }
-
-    if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
-
-    try {
-      if (!loreCache) loreCache = await loadAlteruLore();
-      await message.channel.sendTyping();
-      const reply = await askGemini(message.author.id, prompt, loreCache);
-      return message.reply(reply);
-    } catch (err) {
-      console.error("Unhandled Error during !a process:", err);
-      return message.reply("No puedo responder ahora.");
-    }
+  } catch (err) {
+    console.error("Unhandled Error during !a process:", err);
+    return message.reply("¿Qué dijiste? No te oí.");
+   }
   }
 });
 
