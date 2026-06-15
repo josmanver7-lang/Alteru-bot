@@ -1702,6 +1702,11 @@ async function replyLong(message, text) {
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
 
+const ALLOWED_CHANNEL_IDS = new Set([
+  "1514198998838284288",
+  "1512731937473560622"
+]);
+  
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -2253,6 +2258,8 @@ async function handleOnboarding(message, profile) {
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+
+  if (!ALLOWED_CHANNEL_IDS.has(message.channelId)) return;
 
   const content = message.content.trim();
   const args = content.split(/\s+/);
