@@ -6,8 +6,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
 
 if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
 
@@ -1202,6 +1203,60 @@ function getCompanionLore(companionId) {
   };
 }
 
+async function groqChat({
+  systemPrompt = "",
+  messages = [],
+  temperature = 0.85,
+  maxTokens = 80
+}) {
+  if (!GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY no está configurada");
+  }
+
+  const chatMessages = [];
+
+  if (systemPrompt.trim()) {
+    chatMessages.push({ role: "system", content: systemPrompt.trim() });
+  }
+
+  for (const msg of messages) {
+    if (!msg || !msg.content) continue;
+    chatMessages.push({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: String(msg.content)
+    });
+  }
+
+  const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: chatMessages,
+      temperature,
+      max_tokens: maxTokens
+    })
+  });
+
+  if (!res.ok) {
+    const details = await res.text().catch(() => "");
+    throw new Error(`Groq ${res.status}: ${details}`);
+  }
+
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content;
+
+  const clean = Array.isArray(text)
+    ? text.map(part => part?.text || "").join("").trim()
+    : String(text || "").trim();
+
+  if (!clean) throw new Error("Groq devolvió texto vacío");
+  return clean;
+}
+
 async function companionReaction(companionId, context, mode = "encounter") {
   const lore = getCompanionLore(companionId);
   const nombre = lore.nombre;
@@ -1213,12 +1268,11 @@ async function companionReaction(companionId, context, mode = "encounter") {
   const categoria = context?.categoria || "desconocida";
   const peligro = context?.peligro ?? 0;
 
-  // FIX: Forzar que sea un string limpio, esto prevenía que Gemini arroje 400 Bad Request cuando el contexto es un objeto.
   let descripcionRaw = context?.descripcion || context?.textoExito || context?.textoFracaso || "La situación se desenvuelve ante ti.";
   if (typeof descripcionRaw === "object") descripcionRaw = "La situación se desarrolla y debes reaccionar rápido.";
   const descripcion = String(descripcionRaw).substring(0, 500);
 
-  const systemInstruction = `Eres ${nombre}.
+  const systemPrompt = `Eres ${nombre}.
 Personalidad: ${lore.personalidad || "reservado y expresivo a su manera"}
 Clase: ${lore.clase || "desconocida"}
 Modo: ${mode}
@@ -1231,36 +1285,58 @@ Instrucciones:
 - Responde con una sola línea corta.
 - Máximo 40 palabras.
 - El nombre debe aparecer solo una vez al inicio.
-- Si es combate, menciona tu postura o acción.
+- Si es combate, menciona tu postura o acción, menciona tu arma.
 - Si es obstáculo, reacciona al terreno o al riesgo.
 - Si es evento especial, comenta la escena de forma natural.
 - Español.`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction.trim() }] },
-        contents: [{ role: "user", parts: [{ text: descripcion }] }],
-        generationConfig: { temperature: 0.85, maxOutputTokens: 60 }
-      })
+    const raw = await groqChat({
+      systemPrompt,
+      messages: [{ role: "user", content: descripcion }],
+      temperature: 0.85,
+      maxTokens: 80
     });
 
-    if (!res.ok) {
-      console.error(`Gemini API Error in companionReaction (${res.status}):`, await res.text());
+    if (!raw || !String(raw).trim()) {
       return `${nombre}: *observa en silencio*`;
     }
 
-    const data = await res.json();
-    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*observa en silencio*";
     const clean = stripCompanionPrefix(raw, nombre);
-
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch (err) {
-    console.error("Gemini Catch Error (companionReaction):", err);
+    console.error("Groq Catch Error (companionReaction):", err);
     return `${nombre}: *observa en silencio*`;
+  }
+}
+
+async function askGroq(userId, userMessage, lore) {
+  const profile = await db.getProfile(userId);
+  const systemPrompt = buildSystemPrompt(lore, profile);
+
+  if (!conversationMemory.has(userId)) {
+    conversationMemory.set(userId, []);
+  }
+
+  const history = conversationMemory.get(userId);
+  history.push({ role: "user", content: userMessage });
+  if (history.length > 10) history.shift();
+
+  try {
+    const reply = await groqChat({
+      systemPrompt,
+      messages: history,
+      temperature: 0.85,
+      maxTokens: 160
+    });
+
+    history.push({ role: "assistant", content: reply });
+    if (history.length > 10) history.shift();
+
+    return reply;
+  } catch (err) {
+    console.error("Groq Catch Error (askGroq):", err);
+    return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
 
@@ -3472,17 +3548,20 @@ Trata al viajero según esta escala:
 Instrucciones:
 Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.`;
 
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction.trim() }] },
-          contents: [{ role: "user", parts: [{ text: mensaje }] }],
-          generationConfig: { temperature: 0.9, maxOutputTokens: 40 }
-        })
+        try {
+      const reply = await groqChat({
+        systemPrompt,
+        messages: [{ role: "user", content: mensaje }],
+        temperature: 0.9,
+        maxTokens: 40
       });
+
+      await db.addAffinity(message.author.id, companionId, 1);
+      return message.reply(`${personaje.nombre}: ${compactLine(reply || "*asiente*", 12)}`);
+    } catch (err) {
+      console.error("Groq Catch Error (Direct RP):", err);
+      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
+    }
 
       if (!res.ok) {
         console.error(`Gemini API Error in direct RP (${res.status}):`, await res.text());
@@ -3505,6 +3584,9 @@ Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes
     const prompt = content.slice(args[0].length).trim();
     const profile = await db.getProfile(message.author.id);
     const text = prompt.toLowerCase();
+
+    const reply = await askGroq(message.author.id, prompt, loreCache);
+    return message.reply(reply);
 
     if (!profile.race) {
       const races = ["elfo", "enano", "hobbit", "hombre", "beornida", "beórnida"];
