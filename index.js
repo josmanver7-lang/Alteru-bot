@@ -3116,7 +3116,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   return resolveFinalScenarioAction(message, expedition, command);
-}
+
     
   if (command === "!volver" || command === "!abandonar")
     if (!expeditions.has(message.author.id)) {
