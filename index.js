@@ -3530,17 +3530,28 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   };
 
   if (companionCommands[command]) {
-    const companionId = companionCommands[command];
-    const mensaje = content.slice(args[0].length).trim();
-    if (!mensaje) return message.reply("Escribe algo después del comando.");
+    const companionCommands = {
+  "!al": "alteru",
+  "!c": "cirdil",
+  "!d": "duinor",
+  "!an": "andaer",
+  "!n": "nieriel",
+  "!f": "faelon",
+  "!m": "montaraces"
+};
 
-    const personaje = getPersonaje(companionId);
-    if (!personaje) return message.reply("Ese compañero no está disponible.");
+if (companionCommands[command]) {
+  const companionId = companionCommands[command];
+  const mensaje = content.slice(args[0].length).trim();
+  if (!mensaje) return message.reply("Escribe algo después del comando.");
 
-    const profile = await db.getProfile(message.author.id);
-    const affinity = (profile.affinity || {})[companionId] || 0;
+  const personaje = getPersonaje(companionId);
+  if (!personaje) return message.reply("Ese compañero no está disponible.");
 
-    const systemInstruction = `Eres ${personaje.nombre}.
+  const profile = await db.getProfile(message.author.id);
+  const affinity = (profile.affinity || {})[companionId] || 0;
+
+  const systemPrompt = `Eres ${personaje.nombre}.
 Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || ""}
 Afinidad con el viajero: ${affinity}
 Trata al viajero según esta escala:
@@ -3548,36 +3559,21 @@ Trata al viajero según esta escala:
 Instrucciones:
 Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.`;
 
-        try {
-      const reply = await groqChat({
-        systemPrompt,
-        messages: [{ role: "user", content: mensaje }],
-        temperature: 0.9,
-        maxTokens: 40
-      });
+  try {
+    const reply = await groqChat({
+      systemPrompt,
+      messages: [{ role: "user", content: mensaje }],
+      temperature: 0.9,
+      maxTokens: 40
+    });
 
-      await db.addAffinity(message.author.id, companionId, 1);
-      return message.reply(`${personaje.nombre}: ${compactLine(reply || "*asiente*", 12)}`);
-    } catch (err) {
-      console.error("Groq Catch Error (Direct RP):", err);
-      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
-    }
-
-      if (!res.ok) {
-        console.error(`Gemini API Error in direct RP (${res.status}):`, await res.text());
-        return message.reply(`${personaje.nombre}: *asiente en silencio*`);
-      }
-
-      const data = await res.json();
-      const respuesta = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
-
-      await db.addAffinity(message.author.id, companionId, 1);
-      return message.reply(`${personaje.nombre}: ${compactLine(respuesta, 12)}`);
-    } catch (err) {
-      console.error("Gemini Catch Error (Direct RP):", err);
-      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
-    }
+    await db.addAffinity(message.author.id, companionId, 1);
+    return message.reply(`${personaje.nombre}: ${compactLine(reply || "*asiente*", 12)}`);
+  } catch (err) {
+    console.error("Groq Catch Error (Direct RP):", err);
+    return message.reply(`${personaje.nombre}: *asiente en silencio*`);
   }
+}
 
   // Comando de Roleplay Principal con Altéru (!a)
   if (command === '!a') {
