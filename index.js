@@ -2957,28 +2957,28 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return replyLong(message, `${avisoSalud}${textoExpedicion}`);
   }
 
-  if (command === "!interactuar") {
+    if (command === "!interactuar") {
     const expedition = expeditions.get(message.author.id);
-  
+
     if (!expedition?.currentEncounter) {
       return message.reply("No hay nada con lo que interactuar aquí.");
     }
-  
+
     if (expedition.currentEncounter.tipo !== "evento_especial") {
       return message.reply("Usa !desafiar para este encuentro.");
     }
-  
+
     const profile = await db.getProfile(message.author.id);
     const owned = getOwnedCompanions(profile);
     const chosen = pickCompanionForScene(profile, expedition.currentEncounter);
     const xp = expedition.currentEncounter.xp || 10;
-  
+
     expedition.xpEarned = (expedition.xpEarned || 0) + xp;
     expedition.progress = (expedition.progress || 0) + 1;
     expedition.affinityLog = expedition.affinityLog || {};
-  
+
     let texto = `Has decidido involucrarte en la situación.\n\n📚 +${xp} XP`;
-  
+
     if (chosen) {
       const affinityResult = await addAffinityWithRankMessage(
         message.author.id,
@@ -2987,44 +2987,44 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
         "interaccion",
         "interaccion"
       );
-  
+
       expedition.affinityLog[chosen] = (expedition.affinityLog[chosen] || 0) + affinityResult.gain;
-  
+
       const companionName = companions[chosen]?.nombre || chosen;
       const reaction = await companionReaction(chosen, expedition.currentEncounter, "interaccion");
-  
+
       texto += `\n🤝 Afinidad con **${companionName}**: +${affinityResult.gain}`;
       if (affinityResult.rankMessage) texto += `\n${affinityResult.rankMessage}`;
       if (reaction) texto += `\n\n💬 ${reaction}`;
     }
-  
+
     if (owned.includes("faelon")) {
       const saludActual = profile.salud !== undefined ? profile.salud : 100;
       const nuevaSalud = Math.min(100, saludActual + 10);
-  
+
       if (nuevaSalud !== saludActual) {
         await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
         texto += `\n❤️ Faelon restaura +10 salud (${nuevaSalud}/100).`;
       }
     }
-  
+
     const reactions = [];
     for (const cid of [...new Set(owned)].slice(0, 3)) {
       if (cid === chosen) continue;
       const line = await companionReaction(cid, expedition.currentEncounter, "interaccion");
       if (line) reactions.push(`💬 ${line}`);
     }
-  
+
     expedition.currentEncounter = null;
     expedition.awaitedCommand = null;
     expedition.phase = "running";
-  
+
     texto += `\n\n🛤️ Continúas tu viaje.\nUsa !desafiar para seguir avanzando.`;
-  
+
     if (reactions.length) texto += `\n\n${reactions.join("\n")}`;
-  
+
     return message.reply(texto);
-  }
+        }
 
   if (command === "!continuar" || command === "!ignorar") {
     return message.reply("Usa !interactuar o !volver.");
