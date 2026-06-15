@@ -1491,6 +1491,9 @@ export async function startSchedulers(client, loreCache) {
   await ensureCatalogStates().catch(console.error);
   await resumeMerchantIfNeeded(client).catch(console.error);
 
+  const bounds = getCycleBounds();
+  await openCycleEvents(bounds.cycleStartAt, client, loreCache).catch(console.error);
+
   scheduleNextBoundary(client, loreCache);
 }
 
