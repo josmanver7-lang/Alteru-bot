@@ -19,7 +19,7 @@
       "hasEnemies": false,
       "enemyLabel": "corsarios",
       "enemyChance": 0.75,
-      "peligro": 2,
+      "peligro": 1,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -58,7 +58,7 @@
       "hasEnemies": true,
       "enemyLabel": "trasgos",
       "enemyChance": 0.95,
-      "peligro": 4,
+      "peligro": 2,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -136,7 +136,7 @@
       "hasEnemies": true,
       "enemyLabel": "corsarios",
       "enemyChance": 0.99,
-      "peligro": 5,
+      "peligro": 2,
       "rewardMultiplier": 1.15,
       "xpBonus": 10,
       "pointsBonus": 8,
@@ -150,13 +150,13 @@
       ],
       "actionText": {
         "atacar": "Te enfrentas a los corsarios de frente, corriendo hacia ellos; sorprendidos reciben tu carga y se libra un feroz combate.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente, sorprendiéndolos e infligiéndoles terror.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
+        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente, sorprendiéndolos desprevenidos.",
+        "infiltrar": "Te haces pasar por uno de ellos y se la creen, los distraes para luego improvisar.",
         "negociar": "Tratas de negociar con ellos para que liberen a los rehenes haciendo el uso máximo de tu carisma.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Liberas a los exploradores y vuelves al campamento con la misión cumplida.",
+        "success": "Liberas a los exploradores y ellos te agradecen por haberlos salvado, luego vuelven al campamento celebrando la victoria.",
         "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
       }
     }
@@ -166,7 +166,7 @@
     "titulo": "Rastreo en Lothgobel",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Se han visto huellas y señales extrañas en los alrededores de Dínadab. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
+    "descripcion": "Se han visto huellas y señales extrañas en los alrededores de la aldea de Lothgobel. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
     "puntos": 40,
     "xp": 80,
     "encuentros": [
@@ -177,7 +177,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Senderos de Dínadab",
-      "descripcion": "Has llegado a la zona objetivo y encuentras a un no muy numeroso grupo de bandidos. Puedes atacar, rodear, o retirarte con el informe.",
+      "descripcion": "Recorreres las huellas hasta encontrar a un no muy numeroso grupo de bandidos. Algunos de ellos parecen saber dedenderse. Puedes !atacar,!rodear, o !retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "enemigos",
       "enemyChance": 0.75,
@@ -192,13 +192,13 @@
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los bandidos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
+        "atacar": "Te enfrentas directamente al enemigo usando tu habilidad e ingenio para tratar de vencerlos.",
+        "rodear": "Encuentras un espacio no vigilado y te adentras en el sorprendiendolos desprevenidos.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Regresas al campamento con el rastro confirmado y la misión cumplida.",
-        "failure": "El rodeo se complica y pierdes tiempo valioso antes de tener que retirarte."
+        "success": "Tu desición obtuvo éxito y gracias a ello cumpliste con el objetivo de la mision, ahora puedes regresar e informar de tu éxito..",
+        "failure": "Yu desición no resultó de la mejor manera y no tuviste mejor opción que huir para que no te atraparan, aunque tu informe servirá para contraatacar."
       }
     }
   },
@@ -243,22 +243,22 @@
     }
   },
   {
-    "id": "vigilia_camino_calembel",
-    "titulo": "Vigilia del Camino de Calembel",
+    "id": "incursores_nocturnos",
+    "titulo": "Orcos nocturnos",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Los viajeros hablan de merodeadores en la ruta de Calembel. Mantén la vigilancia y confirma si hay riesgo real.",
+    "descripcion": "Se habla de criaturas viles acechando en la oscuridad de las noches, secuestrando y asaltando a quienes encuentren en el camino, rastrearlos y darles caza, llevar antorchas.",
     "puntos": 50,
-    "xp": 80,
+    "xp": 90,
     "encuentros": [
+      "obstaculo",
       "evento_especial",
-      "enemigo_numeroso",
       "obstaculo"
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Ruta de Calembel",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "titulo": "Orcos nocturnos",
+      "descripcion": "Luego de algunas noches de busqueda, rastreo y paciencia logras encontrar a los acechadores ¿Qué quieres hacer? !atacar, !rodear, o !retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "merodeadores",
       "enemyChance": 0.75,
@@ -270,44 +270,38 @@
       "allowedActions": [
         "atacar",
         "rodear",
-        "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Tras varias horas de vigilancia, concluyes que la ruta necesita patrullas ligeras, no una campaña completa.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "atacar": "Cargas contra ellos de frente gritando en medio de la noche y luchando contra ellos usando todas tus habilidades intentando no ser derrotado.",
+        "rodear": "Te acercas sigilosamente y tardan en notar tu presencia tras olfatearte, pero ya estabas lo suficientemente cerca como para tomar la ventaja."
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Concluyes la vigilancia del camino y vuelves al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "El combate nocturno se vuelve intenso pero para tu sorpresa resultaste vencedor y vuelves rápido al campamento para recuperarte de tus heridas y entregar el informe.",
+        "failure": "El combate nocturnon se vuelve intenso y en cierto punto pierdes la compostura optando por una retirada táctica, luego de cansarte de correr te diriges al campamento para entregar el informe."
       }
     }
   },
   {
-    "id": "huellas_lebennin",
-    "titulo": "Huellas en Lebennin",
+    "id": "vigilar_gilrain",
+    "titulo": "Vigilar el rio Gilrain",
     "destino": "Lebennin",
-    "nivel": 1,
-    "descripcion": "En los caminos de Lebennin han aparecido huellas y restos de carga. Debes seguirlos hasta entender qué sucedió.",
-    "puntos": 45,
-    "xp": 85,
+    "nivel": 2,
+    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos."   
+    "puntos": 60,
+    "xp": 110,
     "encuentros": [
       "obstaculo",
-      "enemigo_numeroso",
-      "obstaculo"
+      "obstaculo",
+      "enemigo_poderoso"
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Final del rastro",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
+      "titulo": "Encuentras las embarcaciones",
+      "descripcion": "Encuentras a uno los capitanes corsarios acompañado de pocos hombres llegando en una última embarcación ¿Qué decides hacer? !atacar, !negociar o retirarte con el informe.",
       "hasEnemies": true,
-      "enemyLabel": "enemigos",
+      "enemyLabel": "jefe",
       "enemyChance": 0.75,
       "peligro": 3,
       "rewardMultiplier": 1.15,
@@ -316,23 +310,17 @@
       "affinityBonus": 1,
       "allowedActions": [
         "atacar",
-        "rodear",
-        "explorar",
-        "infiltrar",
         "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Sigues las marcas hasta su origen y entregas un informe útil sobre lo ocurrido en Lebennin.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
+        "atacar": "Una vez desembarcaron lo encaras frente a frente y le propones un combate individual, este acepta y tras ambos prepararse comienzan el combate.",
+        "negociar": "Una vez desembarcaron lo encaras frente a frente y le propones dejarlo ir a cambio de información sobre sus planes.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Resuelves el misterio del rastro y regresas al campamento con la misión cumplida.",
-        "failure": "Te ves obligado a retirarte antes de completar la misión."
+        "success": "Lograste vencerlo, sea con palabras o con la fuerza y obtuviste información valiosa para el capitán.",
+        "failure": "Te ves superado ante él y eres rescatado antes de ser asesinado o capturado y llevado como prisionero a Umbar."
       }
     }
   },
@@ -340,10 +328,10 @@
     "id": "custodia_tarlangs_neck",
     "titulo": "Custodia de Tarlang's Neck",
     "destino": "Lamedon",
-    "nivel": 2,
+    "nivel": 4,
     "descripcion": "Tarlang's Neck es un paso útil y peligroso; hay señales de bandidos y viejos restos de combate. Custodia el paso y elimina la amenaza si aparece.",
-    "puntos": 80,
-    "xp": 140,
+    "puntos": 120,
+    "xp": 180,
     "encuentros": [
       "evento_especial",
       "enemigo_numeroso",
@@ -387,7 +375,7 @@
     "id": "sombras_sardol",
     "titulo": "Sombras en Sardol",
     "destino": "Blackroot Vale",
-    "nivel": 2,
+    "nivel": 3,
     "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos y neutraliza al jefe menor si aparece.",
     "puntos": 95,
     "xp": 150,
