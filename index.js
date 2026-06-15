@@ -935,7 +935,6 @@ const FINAL_SCENE_COMMANDS = {
   "!negociar": "negociar",
   "!esperar": "esperar",
   "!volver": "retirarse",
-  "!abandonar": "retirarse",
   "!retirarse": "retirarse"
 };
 
@@ -3008,6 +3007,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     expeditions.set(message.author.id, {
       missionId: mission.id,
+      pendingStartHeal: true,
       mission,
       progress: 0,
       currentEncounter: null,
@@ -3111,9 +3111,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     return message.reply("Usa !interactuar o !volver.");
   }
 
-  if (["!atacar", "!rodear", "!retirarse", "!huir"].includes(command)) {
-  const expedition = expeditions.get(message.author.id);
-
   if (!expedition?.pendingFinalScenario || expedition?.currentEncounter?.tipo !== "escenario_final") {
     return message.reply("No tienes un escenario final activo.");
   }
@@ -3121,7 +3118,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   return resolveFinalScenarioAction(message, expedition, command);
 }
     
-  if (command === "!volver" || command === "!abandonar") {
+  if (command === "!volver") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
     }
@@ -3253,7 +3250,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
       const encounterBase = lista[Math.floor(Math.random() * lista.length)];
       const finalEncounter = chooseEncounterVariant(encounterBase, encounters);
-
+      
+      expedition.pendingStartHeal = false;
       expedition.currentEncounter = finalEncounter;
       expedition.phase = "running";
 
