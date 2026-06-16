@@ -1,5 +1,5 @@
 import * as db from "./database.js";
-import { startSchedulers } from "./scheduler.js";
+import { startSchedulers } from "./scheduler.js";.
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -3518,8 +3518,6 @@ if (command === "!desafiar") {
 
       return message.reply(textoEncuentro);
     }
-
-    const activeEncounter = expedition.currentEncounter;
 
     if (activeEncounter.tipo === "escenario_final") {
       expedition.pendingFinalScenario = true;
