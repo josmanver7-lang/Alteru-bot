@@ -1654,8 +1654,16 @@ async function companionReaction(companionId, context, mode = "encounter") {
   const categoria = context?.categoria || "desconocida";
   const peligro = context?.peligro ?? 0;
 
-  let descripcionRaw = context?.descripcion || context?.textoExito || context?.textoFracaso || "La situación se desenvuelve ante ti.";
-  if (typeof descripcionRaw === "object") descripcionRaw = "La situación se desarrolla y debes reaccionar rápido.";
+  let descripcionRaw =
+    context?.descripcion ||
+    context?.textoExito ||
+    context?.textoFracaso ||
+    "La situación se desenvuelve ante ti.";
+
+  if (typeof descripcionRaw === "object") {
+    descripcionRaw = "La situación se desarrolla y debes reaccionar rápido.";
+  }
+
   const descripcion = String(descripcionRaw).substring(0, 500);
 
   const systemPrompt = `Eres ${nombre}.
@@ -1677,21 +1685,22 @@ Instrucciones:
 - Español.`;
 
   try {
-    const raw = await groqChat({
+    const raw = await chatWithAI({
       systemPrompt,
       messages: [{ role: "user", content: descripcion }],
       temperature: 0.85,
       maxTokens: 80
     });
 
-    if (!raw || !String(raw).trim() || raw === "*observa en silencio*") {
+    const text = String(raw || "").trim();
+    if (!text || text === "*observa en silencio*") {
       return `${nombre}: *se prepara*`;
     }
 
-    const clean = stripCompanionPrefix(raw, nombre);
+    const clean = stripCompanionPrefix(text, nombre);
     return `${nombre}: ${compactLine(clean, 40)}`;
   } catch (err) {
-    console.error("Groq Catch Error (companionReaction):", err);
+    console.error("Catch Error (companionReaction):", err);
     return `${nombre}: *observa en silencio*`;
   }
 }
@@ -1770,54 +1779,7 @@ Clase: ${profile?.class || "desconocida"}
 Puntos: ${profile?.points || 0}
 `.trim();
 }
-
-async function askGemini(userId, userMessage, lore) {
-  const profile = await db.getProfile(userId);
-  const systemPrompt = buildSystemPrompt(lore, profile);
-
-  if (!conversationMemory.has(userId)) {
-    conversationMemory.set(userId, []);
-  }
-  const history = conversationMemory.get(userId);
   
-  if (history.length > 0 && history[history.length - 1].role === "user") {
-    history[history.length - 1].parts[0].text += "\n\n" + userMessage;
-  } else {
-    history.push({ role: "user", parts: [{ text: userMessage }] });
-  }
-
-  if (history.length > 10) {
-    history.shift(); 
-    if (history.length > 0 && history[0].role === "model") history.shift();
-  }
-
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: history,
-        generationConfig: { temperature: 0.85 }
-      })
-    });
-
-    if (!res.ok) {
-      console.error(`Gemini API Error in askGemini (${res.status}):`, await res.text());
-      return "Altéru: *observa los senderos lejanos con suspicacia*";
-    }
-    
-    const data = await res.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "*asiente*";
-
-    history.push({ role: "model", parts: [{ text: reply }] });
-    return reply;
-  } catch (err) {
-    console.error("Gemini Catch Error (askGemini):", err);
-    return "Altéru: *observa los senderos lejanos con suspicacia*";
-  }
-}
 
 // ==========================================
 //         CARGA DE ARCHIVOS JSON/TEXT
