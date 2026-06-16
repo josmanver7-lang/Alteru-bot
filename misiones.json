@@ -177,7 +177,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Senderos de Dínadab",
-      "descripcion": "Recorreres las huellas hasta encontrar a un no muy numeroso grupo de bandidos. Algunos de ellos parecen saber dedenderse. Puedes !atacar,!rodear, o !retirarte con el informe.",
+      "descripcion": "Recorres las huellas hasta encontrar a un grupo no muy numeroso de bandidos. Algunos de ellos parecen saber defenderse. Puedes atacar, rodear o retirarte con el informe.",
       "hasEnemies": true,
       "enemyChance": 0.75,
       "peligro": 3,
@@ -192,21 +192,22 @@
       ],
       "actionText": {
         "atacar": "Te enfrentas directamente al enemigo usando tu habilidad e ingenio para tratar de vencerlos.",
-        "rodear": "Encuentras un espacio no vigilado y te adentras en el sorprendiendolos desprevenidos.",
+        "rodear": "Encuentras un espacio no vigilado y te adentras en él sorprendiéndolos desprevenidos.",
         "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
       },
       "completionText": {
-        "success": "Tu desición obtuvo éxito y gracias a ello cumpliste con el objetivo de la mision, ahora puedes regresar e informar de tu éxito.",
-        "failure": "Yu desición no resultó de la mejor manera y no tuviste mejor opción que huir para que no te atraparan, aunque tu informe servirá para contraatacar."
+        "success": "Tu decisión tuvo éxito y gracias a ello cumpliste con el objetivo de la misión; ahora puedes regresar e informar de tu éxito.",
+        "failure": "Tu decisión no resultó de la mejor manera y no tuviste mejor opción que huir para que no te atraparan, aunque tu informe servirá para contraatacar."
       }
     }
   },
   {
-    "id": "niños_perdidos",
+    "id": "ninos_perdidos",
     "titulo": "Niños perdidos de Calembel",
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros.",
+    "puntos": 50,
     "xp": 90,
     "encuentros": [
       "obstaculo",
@@ -257,7 +258,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Orcos nocturnos",
-      "descripcion": "Luego de algunas noches de busqueda, rastreo y paciencia logras encontrar a los acechadores ¿Qué quieres hacer? !atacar, !rodear, o !retirarte con el informe.",
+      "descripcion": "Luego de algunas noches de búsqueda, rastreo y paciencia logras encontrar a los acechadores ¿Qué quieres hacer? Atacar, rodear o retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "merodeadores",
       "enemyChance": 0.75,
@@ -278,7 +279,7 @@
       },
       "completionText": {
         "success": "El combate nocturno se vuelve intenso pero para tu sorpresa resultaste vencedor y vuelves rápido al campamento para recuperarte de tus heridas y entregar el informe.",
-        "failure": "El combate nocturnon se vuelve intenso y en cierto punto pierdes la compostura optando por una retirada táctica, luego de cansarte de correr te diriges al campamento para entregar el informe."
+        "failure": "El combate nocturno se vuelve intenso y en cierto punto pierdes la compostura optando por una retirada táctica, luego de cansarte de correr te diriges al campamento para entregar el informe."
       }
     }
   },
@@ -287,7 +288,7 @@
     "titulo": "Vigilar el rio Gilrain",
     "destino": "Lebennin",
     "nivel": 2,
-    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuando pero hay que esperarlos.",
+    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuándo pero hay que esperarlos.",
     "puntos": 60,
     "xp": 110,
     "encuentros": [
@@ -298,7 +299,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Encuentras las embarcaciones",
-      "descripcion": "Encuentras a uno los capitanes corsarios acompañado de pocos hombres llegando en una última embarcación ¿Qué decides hacer? !atacar, !negociar o retirarte con el informe.",
+      "descripcion": "Encuentras a uno de los capitanes corsarios acompañado de pocos hombres llegando en una última embarcación. ¿Qué decides hacer? Atacar, negociar o retirarte con el informe.",
       "hasEnemies": true,
       "enemyLabel": "jefe",
       "enemyChance": 0.75,
@@ -375,7 +376,7 @@
     "titulo": "Sombras en Sardol",
     "destino": "Blackroot Vale",
     "nivel": 3,
-    "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos y neutraliza al jefe menor si aparece.",
+    "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos and neutraliza al jefe menor si aparece.",
     "puntos": 95,
     "xp": 150,
     "encuentros": [
