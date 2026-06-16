@@ -135,7 +135,7 @@
       "slots": 1,
       "precioBase": 60,
       "descripcion": "Para un compañero supersticioso.",
-      "efecto": { "afinidad": 3 }
+      "efecto": { "afinidad": 3, "voluntad": 5 }
     },
     {
       "id": "pipa_madera",
@@ -143,8 +143,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 50,
-      "descripcion": "Pipa clásica de viaje.",
-      "efecto": {}
+      "descripcion": "Pipa clásica de viaje. Ayuda a calmar los pensamientos.",
+      "efecto": { "voluntad": 3 }
     },
     {
       "id": "tabaco_viejo_toby",
@@ -152,8 +152,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 40,
-      "descripcion": "La mejor hierba de la Comarca.",
-      "efecto": {}
+      "descripcion": "La mejor hierba de la Comarca. Su aroma reconforta el espíritu.",
+      "efecto": { "voluntad": 5 }
     },
     {
       "id": "laud",
@@ -162,7 +162,7 @@
       "slots": 1,
       "precioBase": 150,
       "descripcion": "Instrumento para alegrar las noches.",
-      "efecto": {}
+      "efecto": { "negotiationBonus": 0.05, "explorationBonus": 0.05 }
     },
     {
       "id": "tambor",
@@ -171,7 +171,7 @@
       "slots": 1,
       "precioBase": 130,
       "descripcion": "Para marcar el ritmo.",
-      "efecto": {}
+      "efecto": { "negotiationBonus": 0.02, "explorationBonus": 0.06 }
     },
     {
       "id": "flauta",
@@ -180,7 +180,7 @@
       "slots": 1,
       "precioBase": 100,
       "descripcion": "Instrumento ligero.",
-      "efecto": {}
+      "efecto": { "negotiationBonus": 0.04, "explorationBonus": 0.04 }
     },
     {
       "id": "piedra_afilar",
@@ -188,8 +188,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 40,
-      "descripcion": "Para mantenimiento.",
-      "efecto": {}
+      "descripcion": "Mantiene el filo de tus armas listo para cualquier imprevisto.",
+      "efecto": { "explorationBonus": 0.02 }
     },
     {
       "id": "cuerda_canamo",
@@ -197,8 +197,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 50,
-      "descripcion": "Útil para el campamento.",
-      "efecto": {}
+      "descripcion": "Esencial para superar obstáculos y asegurar el campamento.",
+      "efecto": { "explorationBonus": 0.06 }
     },
     {
       "id": "pedernal",
@@ -206,8 +206,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 30,
-      "descripcion": "Para encender fuegos.",
-      "efecto": {}
+      "descripcion": "Para encender fogatas vitales en climas adversos.",
+      "efecto": { "explorationBonus": 0.04 }
     },
     {
       "id": "cantimplora",
@@ -215,8 +215,8 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 40,
-      "descripcion": "Mantiene el agua.",
-      "efecto": {}
+      "descripcion": "Garantiza reservas de agua durante largas marchas.",
+      "efecto": { "explorationBonus": 0.05 }
     },
     {
       "id": "kit_coser",
@@ -224,8 +224,17 @@
       "tipo": "utilidad",
       "slots": 1,
       "precioBase": 30,
-      "descripcion": "Para reparar equipo.",
-      "efecto": {}
+      "descripcion": "Para reparar ropajes dañados por la maleza del camino.",
+      "efecto": { "explorationBonus": 0.02 }
+    },
+    {
+      "id": "antorcha",
+      "nombre": "Antorcha de Resina",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 15,
+      "descripcion": "Ilumina zonas oscuras y facilita rastrear caminos complejos.",
+      "efecto": { "explorationBonus": 0.10 }
     }
   ]
 }
