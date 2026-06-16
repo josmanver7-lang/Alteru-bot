@@ -437,11 +437,19 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
 }
 
 function getItemPower(effect = {}) {
-  const damageBonus = Number(effect.damageBonus || 0);
-  const successBonus = Number(effect.successBonus || 0);
-  const damageReduction = Number(effect.damageReduction || 0);
-
-  return { damageBonus, successBonus, damageReduction };
+  return {
+    damageBonus: Number(effect.damageBonus || 0),
+    successBonus: Number(effect.successBonus || 0),
+    damageReduction: Number(effect.damageReduction || 0),
+    explorationBonus: Number(effect.explorationBonus || 0),
+    stealthBonus: Number(effect.stealthBonus || 0),
+    negotiationBonus: Number(effect.negotiationBonus || 0),
+    perceptionBonus: Number(effect.perceptionBonus || 0),
+    combatBonus: Number(effect.combatBonus || 0),
+    survivalBonus: Number(effect.survivalBonus || 0),
+    willpowerBonus: Number(effect.willpowerBonus || 0),
+    healingBonus: Number(effect.healingBonus || 0)
+  };
 }
 
 function sumEquipmentTotals(equipment = {}) {
@@ -463,11 +471,84 @@ function sumEquipmentTotals(equipment = {}) {
   return totals;
 }
 
+function formatEffect(effect = {}) {
+  const parts = [];
+
+  if (effect.salud) parts.push(`Salud +${effect.salud}`);
+  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
+  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
+  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
+
+  if (effect.explorationBonus) parts.push(`Exploración +${Math.round(effect.explorationBonus * 100)}%`);
+  if (effect.stealthBonus) parts.push(`Sigilo +${Math.round(effect.stealthBonus * 100)}%`);
+  if (effect.negotiationBonus) parts.push(`Negociación +${Math.round(effect.negotiationBonus * 100)}%`);
+  if (effect.perceptionBonus) parts.push(`Visión +${Math.round(effect.perceptionBonus * 100)}%`);
+  if (effect.combatBonus) parts.push(`Combate +${Math.round(effect.combatBonus * 100)}%`);
+  if (effect.survivalBonus) parts.push(`Resistencia +${Math.round(effect.survivalBonus * 100)}%`);
+  if (effect.willpowerBonus) parts.push(`Voluntad +${Math.round(effect.willpowerBonus * 100)}%`);
+  if (effect.healingBonus) parts.push(`Sanación +${Math.round(effect.healingBonus * 100)}%`);
+
+  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
+  if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
+  if (effect.soloProximaExpedicion) parts.push(`Duración: próxima expedición`);
+  if (effect.soloProximoEncuentro) parts.push(`Duración: próximo encuentro`);
+
+  return parts.length ? parts.join(" | ") : "Sin efecto definido";
+}
+
+function sumEquipmentTotals(equipment = {}) {
+  const totals = {
+    damageBonus: 0,
+    successBonus: 0,
+    damageReduction: 0,
+    explorationBonus: 0,
+    stealthBonus: 0,
+    negotiationBonus: 0,
+    perceptionBonus: 0,
+    combatBonus: 0,
+    survivalBonus: 0,
+    willpowerBonus: 0,
+    healingBonus: 0
+  };
+
+  for (const item of Object.values(equipment || {})) {
+    if (!item) continue;
+    const effect = item.efecto || item.effect || {};
+    const stats = getItemPower(effect);
+
+    totals.damageBonus += stats.damageBonus;
+    totals.successBonus += stats.successBonus;
+    totals.damageReduction += stats.damageReduction;
+    totals.explorationBonus += stats.explorationBonus;
+    totals.stealthBonus += stats.stealthBonus;
+    totals.negotiationBonus += stats.negotiationBonus;
+    totals.perceptionBonus += stats.perceptionBonus;
+    totals.combatBonus += stats.combatBonus;
+    totals.survivalBonus += stats.survivalBonus;
+    totals.willpowerBonus += stats.willpowerBonus;
+    totals.healingBonus += stats.healingBonus;
+  }
+
+  return totals;
+}
+
 function formatEquipmentTotals(totals) {
   const daño = totals.damageBonus ? `+${totals.damageBonus} daño` : "+0 daño";
   const exito = totals.successBonus ? `+${Math.round(totals.successBonus * 100)}% éxito` : "+0% éxito";
   const defensa = totals.damageReduction ? `-${Math.round(totals.damageReduction * 100)}% daño recibido` : "-0% daño recibido";
-  return `${daño} | ${exito} | ${defensa}`;
+
+  const expl = totals.explorationBonus ? `+${Math.round(totals.explorationBonus * 100)}% exploración` : null;
+  const sig = totals.stealthBonus ? `+${Math.round(totals.stealthBonus * 100)}% sigilo` : null;
+  const neg = totals.negotiationBonus ? `+${Math.round(totals.negotiationBonus * 100)}% negociación` : null;
+  const vis = totals.perceptionBonus ? `+${Math.round(totals.perceptionBonus * 100)}% visión` : null;
+  const comb = totals.combatBonus ? `+${Math.round(totals.combatBonus * 100)}% combate` : null;
+  const res = totals.survivalBonus ? `+${Math.round(totals.survivalBonus * 100)}% resistencia` : null;
+  const vol = totals.willpowerBonus ? `+${Math.round(totals.willpowerBonus * 100)}% voluntad` : null;
+  const cur = totals.healingBonus ? `+${Math.round(totals.healingBonus * 100)}% sanación` : null;
+
+  return [daño, exito, defensa, expl, sig, neg, vis, comb, res, vol, cur]
+    .filter(Boolean)
+    .join(" | ");
 }
 
 function formatInventoryLine(item) {
