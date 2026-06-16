@@ -841,10 +841,26 @@ function chooseEncounterVariant(encounter, encountersPool = []) {
   };
 }
 
-function buildEncounterCard(encounter, commandHint = "!desafiar") {
+function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "") {
   const peligroTexto = encounter?.peligro ? getDangerText(encounter.peligro) : "Ninguno";
 
-  return `⚠️ **${encounter.titulo}**\n\n${encounter.descripcion || "Te adentras en territorio desconocido..."}\n\nPeligro: ${peligroTexto}\n\nUsa:\n${commandHint}`;
+  let text =
+`⚠️ **${encounter.titulo}**
+
+${encounter.descripcion || "Te adentras en territorio desconocido..."}`;
+
+  if (powerBlock) {
+    text += `
+
+${powerBlock}`;
+  }
+
+  text += `
+
+Peligro: ${peligroTexto}
+Usa: ${commandHint}`;
+
+  return text;
 }
 
 async function addCompanionReactions(profile, encounter, mode = "encounter", maxLines = 3) {
@@ -1063,6 +1079,14 @@ async function startFinalScenario(message, expedition) {
 
   const dangerText = getFinalScenarioDangerText(scenario);
 
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const powerBlock = buildPowerComparisonBlock({
+    profile,
+    equipment,
+    encounter
+  });
+
   if (!hasEnemies) {
     const mission = expedition.mission || {};
     const completionText =
@@ -1111,8 +1135,8 @@ async function startFinalScenario(message, expedition) {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${scenario.descripcion || "Has llegado al tramo decisivo de la expedición."}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
-
+    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || mission.descripcion || ""}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
+    
     if (affinityLines.length) {
       text += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
     }
@@ -1139,9 +1163,17 @@ async function startFinalScenario(message, expedition) {
   }
 
   const intro =
-    scenario.introText ||
-    `🏁 **${scenario.titulo || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.descripcion || "Has llegado al tramo decisivo de la expedición."}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
+  scenario.introText ||
+  `🏁 **${scenario.titulo || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || expedition.mission?.descripcion || ""}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
 
+  ${scenario.descripcion || expedition.mission?.descripcion || "Has llegado al tramo decisivo de la expedición."}
+
+${powerBlock}
+
+Peligro: ${dangerText}
+
+Acciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
+  
   const text = reactions.length
     ? `${intro}\n\n${reactions.join("\n")}`
     : intro;
@@ -2806,6 +2838,219 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     );
   }
 
+  const POWER_TIER_TABLE = {
+  1: {
+    dangerLabel: "Prácticamente desnudo",
+    powerMin: 6,
+    powerMax: 10,
+    composition: "Casi todo tier 1. Sin armadura o con piezas mínimas.",
+    armorRead: "Va prácticamente desnudo."
+  },
+  2: {
+    dangerLabel: "Defensa pobre",
+    powerMin: 11,
+    powerMax: 16,
+    composition: "Mayoría tier 1, con una o dos piezas tier 2.",
+    armorRead: "Protección ligera y desordenada."
+  },
+  3: {
+    dangerLabel: "Equipo básico",
+    powerMin: 17,
+    powerMax: 24,
+    composition: "Tier 1 dominante con varias piezas tier 2.",
+    armorRead: "Equipo modesto, todavía vulnerable."
+  },
+  4: {
+    dangerLabel: "Equipo competente",
+    powerMin: 25,
+    powerMax: 34,
+    composition: "Tier 2 dominante, alguna pieza tier 1 o tier 3 puntual.",
+    armorRead: "Ya es una amenaza seria."
+  },
+  5: {
+    dangerLabel: "Amenaza seria",
+    powerMin: 35,
+    powerMax: 44,
+    composition: "Tier 2 fuerte con alguna pieza tier 3.",
+    armorRead: "Se nota un salto claro de calidad."
+  },
+  6: {
+    dangerLabel: "Veteranos",
+    powerMin: 45,
+    powerMax: 56,
+    composition: "Tier 3 emergente y varias piezas sólidas de tier 2.",
+    armorRead: "Equipo curtido y muy peligroso."
+  },
+  7: {
+    dangerLabel: "Élite local",
+    powerMin: 57,
+    powerMax: 70,
+    composition: "Tier 3 dominante, con base consistente.",
+    armorRead: "Ya parece un grupo profesional."
+  },
+  8: {
+    dangerLabel: "Élite dura",
+    powerMin: 71,
+    powerMax: 86,
+    composition: "Tier 3 fuerte con piezas tier 4 puntuales.",
+    armorRead: "Armadura de gran calidad."
+  },
+  9: {
+    dangerLabel: "Amenaza mayor",
+    powerMin: 87,
+    powerMax: 104,
+    composition: "Tier 4 presente, respaldado por tier 3 de alta calidad.",
+    armorRead: "Equipo de alto nivel."
+  },
+  10: {
+    dangerLabel: "Jefe / monstruo",
+    powerMin: 105,
+    powerMax: 124,
+    composition: "Tier 4 dominante. Composición de élite completa.",
+    armorRead: "Es un rival monstruoso."
+  }
+};
+
+function clampNumber(value, min, max) {
+  const n = Number(value);
+  if (Number.isNaN(n)) return min;
+  return Math.max(min, Math.min(max, n));
+}
+
+function getDangerTierProfile(danger = 1) {
+  const d = clampNumber(danger, 1, 10);
+  return POWER_TIER_TABLE[d] || POWER_TIER_TABLE[1];
+}
+
+function getTravelerCorePower(profile = {}) {
+  const level = typeof db.calculateLevel === "function"
+    ? db.calculateLevel(profile.xp || 0)
+    : Math.floor((profile.xp || 0) / 1000) + 1;
+
+  const health = Number(profile.salud ?? 100);
+  const points = Number(profile.points || 0);
+  const classBonus = getPlayerClassBonus(profile);
+  const classScore = Math.round(
+    Object.values(classBonus).reduce((sum, v) => sum + (typeof v === "number" ? v : 0), 0) * 100
+  );
+
+  const score = Math.max(
+    1,
+    Math.round(
+      (level * 10) +
+      Math.floor(health / 10) +
+      Math.floor(points / 25) +
+      classScore
+    )
+  );
+
+  return {
+    score,
+    level,
+    health,
+    points,
+    rank: obtenerRango(points),
+    classText: getPlayerClassBonusText(profile)
+  };
+}
+
+function getCompanionPowerDetails(profile = {}) {
+  const owned = [...new Set(getOwnedCompanions(profile))];
+
+  const details = owned.map(id => {
+    const base = getCompanionBasePower(id);
+    const score = Math.max(
+      1,
+      Math.round((base.total * 2) + (base.successBonus * 100) + (base.damageReduction * 100))
+    );
+
+    return {
+      id,
+      nombre: companions[id]?.nombre || id,
+      score,
+      base
+    };
+  });
+
+  const total = details.reduce((sum, c) => sum + c.score, 0);
+
+  return {
+    total,
+    details
+  };
+}
+
+function getEnemyPowerSummary(encounter = {}) {
+  const danger = clampNumber(encounter.peligro ?? encounter.danger ?? 1, 1, 10);
+  const tier = getDangerTierProfile(danger);
+  const scoreMin = tier.powerMin;
+  const scoreMax = tier.powerMax;
+  const score = Math.round((scoreMin + scoreMax) / 2);
+
+  return {
+    danger,
+    score,
+    scoreMin,
+    scoreMax,
+    dangerLabel: tier.dangerLabel,
+    composition: tier.composition,
+    armorRead: tier.armorRead
+  };
+}
+
+function getPowerComparisonText(delta) {
+  if (delta >= 20) return "Ventaja aplastante";
+  if (delta >= 10) return "Ventaja clara";
+  if (delta >= 3) return "Ventaja ligera";
+  if (delta >= -2) return "Equilibrio";
+  if (delta >= -9) return "Desventaja ligera";
+  if (delta >= -19) return "Desventaja clara";
+  return "Desventaja brutal";
+}
+
+function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {} }) {
+  const traveler = getTravelerCorePower(profile);
+  const eq = getEquipmentPowerSummary(equipment);
+  const party = getCompanionPowerDetails(profile);
+  const enemy = getEnemyPowerSummary(encounter);
+
+  const expeditionTotal = traveler.score + eq.score + party.total;
+  const delta = expeditionTotal - enemy.score;
+  const comparison = getPowerComparisonText(delta);
+
+  const companionLines = party.details.length
+    ? party.details.map(c => `• ${c.nombre}: ${c.score} poder (${c.base ? getCompanionBaseSummary(c.id) : ""})`).join("\n")
+    : "• Sin compañeros";
+
+  return (
+`📊 **TABLA DE PODER**
+
+**Tu lado**
+• Usuario / viajero: ${profile.nombre || profile.name || "Sin nombre"}
+• Nivel: ${traveler.level} | Salud: ${traveler.health}/100 | Puntos: ${traveler.points}
+• Rango: ${traveler.rank}
+• Bono de clase: ${traveler.classText}
+
+• Poder del personaje: ${traveler.score}
+• Poder del equipo: ${eq.score}
+• Poder de compañeros: ${party.total}
+• **Poder total de expedición**: ${expeditionTotal}
+
+**Compañeros**
+${companionLines}
+
+**Enemigo**
+• Peligro: ${enemy.danger}/10 — ${enemy.dangerLabel}
+• Poder estimado: ${enemy.scoreMin} - ${enemy.scoreMax} (promedio ${enemy.score})
+• Composición: ${enemy.composition}
+• Lectura: ${enemy.armorRead}
+
+**Comparativa**
+• Balance: ${comparison}
+• Diferencia: ${delta >= 0 ? "+" : ""}${delta} poder`
+  );
+}
+
   // ========================================
   // SISTEMA DE EXPEDICIONES
   // ========================================
@@ -2876,11 +3121,29 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
 
     if (expedition.currentEncounter.tipo !== "evento_especial") {
-      return message.reply("Usa !desafiar para este encuentro.");
-    }
+      return message.reply(
+    `🌟 **${special.titulo}**
 
+    ${special.descripcion || "Un evento especial se presenta ante ti."}
+
+    ${powerBlock}
+
+    ${reactionText}
+
+    ${sucesoText}
+
+    Usa \`!desafiar\` para resolver el suceso.`
+    );
     return resolveSpecialEncounter(message, expedition);
   }
+
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const powerBlock = buildPowerComparisonBlock({
+  profile,
+  equipment,
+  encounter: special
+});
 
   if (command === "!volver") {
     if (!expeditions.has(message.author.id)) {
@@ -3035,39 +3298,60 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
 
       if (!lista.length) {
-        expedition.pendingFinalScenario = false;
-        expeditions.delete(message.author.id);
-        return message.reply("⚠️ No se encontraron encuentros válidos para esta misión. La expedición ha sido cancelada.");
+  const fallbackEncounter = {
+    id: `fallback_${encounterId}_${Date.now()}`,
+    titulo: "Encuentro de respaldo",
+    descripcion: "La expedición avanza hacia un obstáculo improvisado.",
+    tipo: encuentroId,
+    categoria: encuentroId,
+    peligro: Math.max(1, Math.min(10, nivelJugador))
+  };
+
+  const powerBlock = buildPowerComparisonBlock({
+    profile,
+    equipment: getResolvedEquipment(profile, await db.getEquipment?.(message.author.id).catch?.(() => null)),
+    encounter: fallbackEncounter
+  });
+
+  expedition.pendingStartHeal = false;
+  expedition.currentEncounter = fallbackEncounter;
+  expedition.phase = "running";
+
+  const accionRequerida = fallbackEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+  return message.reply(buildEncounterCard(fallbackEncounter, accionRequerida, powerBlock));
       }
 
       const encounterBase = lista[Math.floor(Math.random() * lista.length)];
       const finalEncounter = chooseEncounterVariant(encounterBase, encounters);
-      
-      expedition.pendingStartHeal = false;
-      expedition.currentEncounter = finalEncounter;
-      expedition.phase = "running";
 
-      const peligroTexto = finalEncounter.peligro ? getDangerText(finalEncounter.peligro) : "Ninguno";
-      
-      // CAMBIO DE MENSAJE SEGÚN EL TIPO PARA GUIAR AL USUARIO
-      const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+const equipment = getResolvedEquipment(profile, equipmentRaw);
+const powerBlock = buildPowerComparisonBlock({
+  profile,
+  equipment,
+  encounter: finalEncounter
+});
 
-      let textoEncuentro = `⚠️ **${finalEncounter.titulo}**\n\n${finalEncounter.descripcion || "Te adentras en territorio desconocido..."}\n\nPeligro: ${peligroTexto}\n\nUsa:\n${accionRequerida}\n!volver`;
+expedition.pendingStartHeal = false;
+expedition.currentEncounter = finalEncounter;
+expedition.phase = "running";
 
-      const reactionIds = [...new Set(owned)].slice(0, 3);
-      const reactions = [];
+const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+const textoEncuentro = buildEncounterCard(finalEncounter, accionRequerida, powerBlock);
 
-      for (const cid of reactionIds) {
-        const line = await companionReaction(cid, finalEncounter, "encounter");
-        if (line) reactions.push(`💬 ${line}`);
-      }
+const reactionIds = [...new Set(owned)].slice(0, 3);
+const reactions = [];
 
-      if (reactions.length) {
-        textoEncuentro += `\n\n${reactions.join("\n")}`;
-      }
+for (const cid of reactionIds) {
+  const line = await companionReaction(cid, finalEncounter, "encounter");
+  if (line) reactions.push(`💬 ${line}`);
+}
 
-      return message.reply(textoEncuentro);
-    }
+if (reactions.length) {
+  return message.reply(`${textoEncuentro}\n\n${reactions.join("\n")}`);
+}
+
+return message.reply(textoEncuentro);
 
     const activeEncounter = expedition.currentEncounter;
 
