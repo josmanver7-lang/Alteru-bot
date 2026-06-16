@@ -72,6 +72,249 @@
     "precioBase": 5500,
     "descripcion": "Increíblemente raro, resistente al fuego y a golpes fatales.",
     "efecto": { "damageReduction": 0.12, "successBonus": 0.03 }
-  }
+  },
+    {
+  "nombre": "Mercader Ambulante",
+  "items": [
+    {
+      "id": "garrote_semitroll",
+      "nombre": "Garrote de Semitroll",
+      "tipo": "arma",
+      "precioBase": 450,
+      "descripcion": "Un madero tosco y pesado, apenas desbastado.",
+      "efecto": { "damageBonus": 6 }
+    },
+    {
+      "id": "sable_haradrim",
+      "nombre": "Sable de los Haradrim",
+      "tipo": "arma",
+      "precioBase": 900,
+      "descripcion": "Hoja curva y letal, forjada en los desiertos del sur.",
+      "efecto": { "damageBonus": 4, "successBonus": 0.04 }
+    },
+    {
+      "id": "lanza_tribal_khand",
+      "nombre": "Lanza Tribal de Khand",
+      "tipo": "arma",
+      "precioBase": 750,
+      "descripcion": "Lanza de guerra con punta de obsidiana.",
+      "efecto": { "damageBonus": 5 }
+    },
+    {
+      "id": "daga_primera_edad",
+      "nombre": "Daga de la Primera Edad",
+      "tipo": "arma",
+      "precioBase": 2500,
+      "descripcion": "Un filo antiguo que apenas refleja la luz.",
+      "efecto": { "damageBonus": 7, "successBonus": 0.08 }
+    },
+    {
+      "id": "baston_bosque_viejo",
+      "nombre": "Bastón de Raíz del Bosque Viejo",
+      "tipo": "arma",
+      "precioBase": 1200,
+      "descripcion": "Vibrante con una energía natural inquietante.",
+      "efecto": { "damageBonus": 2, "successBonus": 0.05 }
+    },
+    {
+      "id": "raiz_atarceder",
+      "nombre": "Raíz de Atardecer",
+      "tipo": "consumible",
+      "precioBase": 200,
+      "descripcion": "Una raíz rara que altera la percepción.",
+      "efecto": { "vision": 0.1 }
+    },
+    {
+      "id": "tabaco_puertos",
+      "nombre": "Tabaco de los Puertos Grises",
+      "tipo": "consumible",
+      "precioBase": 150,
+      "descripcion": "Aroma a sal y libertad. Muy relajante.",
+      "efecto": { "afinidad": 2 }
+    },
+    {
+      "id": "hierba_sueños",
+      "nombre": "Hierba de los Sueños",
+      "tipo": "consumible",
+      "precioBase": 180,
+      "descripcion": "Induce un sueño profundo y reparador.",
+      "efecto": { "salud": 50 }
+    },
+    {
+      "id": "especias_lejanas",
+      "nombre": "Especias del Lejano Harad",
+      "tipo": "consumible",
+      "precioBase": 300,
+      "descripcion": "Potencian los sentidos y el vigor.",
+      "efecto": { "fuerza": 10 }
+    },
+    {
+      "id": "vino_oscuro_orco",
+      "nombre": "Vino añejo del Norte",
+      "tipo": "consumible",
+      "precioBase": 120,
+      "descripcion": "Un brebaje áspero que quema al bajar.",
+      "efecto": { "fuerza": 5, "salud": -10 }
+    },
+    {
+      "id": "flauta_hueso_harad",
+      "nombre": "Flauta de Hueso de Harad",
+      "tipo": "instrumento",
+      "precioBase": 400,
+      "descripcion": "Emite un sonido lúgubre y penetrante.",
+      "efecto": {}
+    },
+    {
+      "id": "arpa_tierras_oscuras",
+      "nombre": "Arpa de las Tierras Oscuras",
+      "tipo": "instrumento",
+      "precioBase": 800,
+      "descripcion": "Cuerdas tensas que parecen susurrar.",
+      "efecto": {}
+    },
+    {
+      "id": "tambor_guerra_este",
+      "nombre": "Tambor de Guerra del Este",
+      "tipo": "instrumento",
+      "precioBase": 600,
+      "descripcion": "Cueros curtidos que marcan el ritmo del miedo.",
+      "efecto": {}
+    },
+    {
+      "id": "aro_oro_primera_era",
+      "nombre": "Aro de Oro de la Primera Era",
+      "tipo": "accesorio",
+      "precioBase": 2000,
+      "descripcion": "Aro para la cabeza, símbolo de nobleza.",
+      "efecto": { "successBonus": 0.05 }
+    },
+    {
+      "id": "capa_sigilo_sombrer",
+      "nombre": "Capa de Sombra Fugaz",
+      "tipo": "armadura",
+      "precioBase": 1500,
+      "descripcion": "Tela que absorbe la luz, ideal para pasar inadvertido.",
+      "efecto": { "stealthBonus": 0.15 }
+    },
+    {
+      "id": "botas_silenciosas",
+      "nombre": "Botas de Silencio",
+      "tipo": "armadura",
+      "precioBase": 1200,
+      "descripcion": "Suelas de goma blanda que no hacen ruido al caminar.",
+      "efecto": { "stealthBonus": 0.10 }
+    },
+    {
+      "id": "calzas_merodeador",
+      "nombre": "Calzas de Merodeador",
+      "tipo": "armadura",
+      "precioBase": 900,
+      "descripcion": "Ajustadas para permitir movimientos ágiles.",
+      "efecto": { "stealthBonus": 0.08 }
+    },
+    {
+      "id": "cuerno_gondor",
+      "nombre": "Cuerno de Gondor",
+      "tipo": "accesorio",
+      "precioBase": 3500,
+      "descripcion": "Un objeto legendario que impone autoridad y respeto inmediato.",
+      "efecto": { "negotiationBonus": 0.20 }
+    },
+    {
+      "id": "collar_elocuencia",
+      "nombre": "Collar de la Elocuencia",
+      "tipo": "accesorio",
+      "precioBase": 1800,
+      "descripcion": "Parece ayudar a encontrar las palabras exactas en negociaciones.",
+      "efecto": { "negotiationBonus": 0.10 }
+    },
+    {
+      "id": "anillo_elocuencia",
+      "nombre": "Anillo de Oro de Diplomacia",
+      "tipo": "accesorio",
+      "precioBase": 1600,
+      "descripcion": "Joyas que otorgan una presencia serena y persuasiva.",
+      "efecto": { "negotiationBonus": 0.08 }
+    },
+    {
+      "id": "halcon_entrenado",
+      "nombre": "Halcón Entrenado",
+      "tipo": "utilidad",
+      "precioBase": 6000,
+      "descripcion": "Un ave de presa que vigila desde lo alto y evita emboscadas.",
+      "efecto": { "evitarPeligros": 0.25 }
+    },
+    {
+      "id": "broche_plata_rey",
+      "nombre": "Broche de Plata del Rey",
+      "tipo": "accesorio",
+      "precioBase": 2200,
+      "descripcion": "Un detalle que denota gran rango y autoridad.",
+      "efecto": { "negotiationBonus": 0.12 }
+    },
+    {
+      "id": "sombrero_viajero_bree",
+      "nombre": "Sombrero de Viajero",
+      "tipo": "accesorio",
+      "precioBase": 300,
+      "descripcion": "Ala ancha para protegerse del sol y la lluvia.",
+      "efecto": { "successBonus": 0.02 }
+    },
+    {
+      "id": "diadema_plumas_aguila",
+      "nombre": "Diadema de Plumas de Águila",
+      "tipo": "accesorio",
+      "precioBase": 1500,
+      "descripcion": "Ligera como el aire, otorga visión clara.",
+      "efecto": { "successBonus": 0.06 }
+    },
+    {
+      "id": "medallon_hierro_orodruin",
+      "nombre": "Medallón de Hierro de Orodruin",
+      "tipo": "accesorio",
+      "precioBase": 1300,
+      "descripcion": "Cálido al tacto, forjado cerca del fuego.",
+      "efecto": { "damageReduction": 0.04 }
+    },
+    {
+      "id": "tunica_seda_negra",
+      "nombre": "Túnica de Seda Negra",
+      "tipo": "armadura",
+      "precioBase": 1200,
+      "descripcion": "Ligera y resistente, favorece la agilidad.",
+      "efecto": { "successBonus": 0.05 }
+    },
+    {
+      "id": "brazaletes_montaraz",
+      "nombre": "Brazaletes de Cuero de Montaraz",
+      "tipo": "armadura",
+      "precioBase": 850,
+      "descripcion": "Cuero tratado para no hacer ruido.",
+      "efecto": { "stealthBonus": 0.05 }
+    },
+    {
+      "id": "botas_piel_bestia",
+      "nombre": "Botas de Piel de Bestia",
+      "tipo": "armadura",
+      "precioBase": 950,
+      "descripcion": "Suelas gruesas para terrenos difíciles.",
+      "efecto": { "damageReduction": 0.02 }
+    },
+    {
+      "id": "pipa_oro_exotica",
+      "nombre": "Pipa de Oro y Marfil",
+      "tipo": "accesorio",
+      "precioBase": 1000,
+      "descripcion": "Una pieza de lujo para fumar con estilo.",
+      "efecto": {}
+    },
+    {
+      "id": "espejo_visos",
+      "nombre": "Espejo de Visos Distorsionados",
+      "tipo": "accesorio",
+      "precioBase": 450,
+      "descripcion": "Permite ver cosas que otros ignoran.",
+      "efecto": {}
+    }
   ]
 }
