@@ -3291,14 +3291,6 @@ ${companionLines}
   return resolveSpecialEncounter(message, expedition);
  }
 
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const powerBlock = buildPowerComparisonBlock({
-  profile,
-  equipment,
-  encounter: special
-});
-
   if (command === "!volver") {
     if (!expeditions.has(message.author.id)) {
       return message.reply("No estás en una expedición.");
@@ -3315,16 +3307,13 @@ ${companionLines}
       return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
     }
 
-    const equipmentRaw = typeof db.getEquipment === "function"
-          ? await db.getEquipment(message.author.id).catch(() => null)
-          : null;
-
-        const equipment = getResolvedEquipment(profile, equipmentRaw);
-        const powerBlock = buildPowerComparisonBlock({
-          profile,
-          equipment,
-          encounter: fallbackEncounter
-        });
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const powerBlock = buildPowerComparisonBlock({
+  profile,
+  equipment,
+  encounter: special
+});
 
     const expedition = expeditions.get(message.author.id);
     const profile = await db.getProfile(message.author.id);
