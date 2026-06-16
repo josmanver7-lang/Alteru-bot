@@ -437,27 +437,6 @@ function getItemPower(effect = {}) {
   };
 }
 
-  for (const item of Object.values(equipment || {})) {
-    if (!item) continue;
-    const effect = item.efecto || item.effect || {};
-    const stats = getItemPower(effect);
-
-    totals.damageBonus += stats.damageBonus;
-    totals.successBonus += stats.successBonus;
-    totals.damageReduction += stats.damageReduction;
-    totals.explorationBonus += stats.explorationBonus;
-    totals.stealthBonus += stats.stealthBonus;
-    totals.negotiationBonus += stats.negotiationBonus;
-    totals.perceptionBonus += stats.perceptionBonus;
-    totals.combatBonus += stats.combatBonus;
-    totals.survivalBonus += stats.survivalBonus;
-    totals.willpowerBonus += stats.willpowerBonus;
-    totals.healingBonus += stats.healingBonus;
-  }
-
-  return totals;
-}
-
 function formatEffect(effect = {}) {
   const parts = [];
 
