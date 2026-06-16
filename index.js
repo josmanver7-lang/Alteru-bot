@@ -270,12 +270,6 @@ function getEquipmentPowerSummary(equipment = {}) {
   return { score, totals, detailText: formatEquipmentTotals(totals) }; 
 } 
 
-function getCompanionBasePower(companionId) { 
-  const loadout = COMPANION_BASE_EQUIPMENT[normalizeKey(companionId)] || {}; 
-  const total = Object.values(loadout).reduce( (sum, tier) => sum + (ITEM_TIER_VALUES[normalizeKey(tier)] || 0), 0 ); 
-  return { total, successBonus: Math.min(total * 0.0025, 0.12), damageReduction: Math.min(total * 0.0015, 0.08) }; 
-} 
-
 function getCompanionBaseSummary(companionId) { 
   const base = getCompanionBasePower(companionId); 
   return `Poder ${base.total} | Éxito +${Math.round(base.successBonus * 100)}% | Defensa -${Math.round(base.damageReduction * 100)}%`; 
