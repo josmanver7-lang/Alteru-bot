@@ -797,12 +797,7 @@ function getCompanionBonus(profile) {
   bonus.baseSuccessBonus = Math.min(bonus.baseSuccessBonus, 0.20);
   bonus.baseDamageReduction = Math.min(bonus.baseDamageReduction, 0.15);
   return bonus;
-}
-   
-  bonus.baseSuccessBonus = Math.min(bonus.baseSuccessBonus, 0.20); 
-  bonus.baseDamageReduction = Math.min(bonus.baseDamageReduction, 0.15); 
-  return bonus; 
-}
+    }
 
 function getAffinityGain() {
   const roll = Math.random();
