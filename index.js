@@ -422,6 +422,7 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
 }
 
 function getItemPower(effect = {}) {
+function getItemPower(effect = {}) {
   return {
     damageBonus: Number(effect.damageBonus || 0),
     successBonus: Number(effect.successBonus || 0),
@@ -437,14 +438,37 @@ function getItemPower(effect = {}) {
   };
 }
 
+function sumEquipmentTotals(equipment = {}) {
+  const totals = {
+    damageBonus: 0,
+    successBonus: 0,
+    damageReduction: 0,
+    explorationBonus: 0,
+    stealthBonus: 0,
+    negotiationBonus: 0,
+    perceptionBonus: 0,
+    combatBonus: 0,
+    survivalBonus: 0,
+    willpowerBonus: 0,
+    healingBonus: 0
+  };
 
   for (const item of Object.values(equipment || {})) {
     if (!item) continue;
     const effect = item.efecto || item.effect || {};
     const stats = getItemPower(effect);
+
     totals.damageBonus += stats.damageBonus;
     totals.successBonus += stats.successBonus;
     totals.damageReduction += stats.damageReduction;
+    totals.explorationBonus += stats.explorationBonus;
+    totals.stealthBonus += stats.stealthBonus;
+    totals.negotiationBonus += stats.negotiationBonus;
+    totals.perceptionBonus += stats.perceptionBonus;
+    totals.combatBonus += stats.combatBonus;
+    totals.survivalBonus += stats.survivalBonus;
+    totals.willpowerBonus += stats.willpowerBonus;
+    totals.healingBonus += stats.healingBonus;
   }
 
   return totals;
@@ -473,7 +497,7 @@ function formatEffect(effect = {}) {
   if (effect.soloProximoEncuentro) parts.push(`Duración: próximo encuentro`);
 
   return parts.length ? parts.join(" | ") : "Sin efecto definido";
-}
+ }
 
 function sumEquipmentTotals(equipment = {}) {
   const totals = {
