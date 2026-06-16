@@ -752,7 +752,6 @@ function getCompanionBasePower(companionId) {
   const key = normalizeKey(companionId);
 
   const personajeLoadout = getCompanionEquipmentFromPersonaje(key);
-  const fallbackLoadout = COMPANION_BASE_EQUIPMENT[key] || {};
 
   const loadout = Object.keys(personajeLoadout).length
     ? personajeLoadout
