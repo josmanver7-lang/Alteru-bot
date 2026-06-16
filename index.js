@@ -1,4 +1,4 @@
-import * as db from "./database.js";
+tuimport * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile } from 'node:fs/promises';
@@ -747,9 +747,6 @@ function getCompanionEquipmentFromPersonaje(companionId) {
     accesorio: fromNested.accesorio || personaje.accesorio || ""
   };
 }
-
-function getCompanionBasePower(companionId) {
-  const key = normalizeKey(companionId);
 
   const personajeLoadout = getCompanionEquipmentFromPersonaje(key);
   const fallbackLoadout = COMPANION_BASE_EQUIPMENT[key] || {};
