@@ -3334,16 +3334,53 @@ if (command === "!volver") {
 
 if (command === "!desafiar") {
   if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+  return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+}
+
+const expedition = expeditions.get(message.author.id);
+const profile = await db.getProfile(message.author.id);
+
+const owned = getOwnedCompanions(profile);
+const xpActual = profile.xp || 0;
+const nivelJugador = typeof db.calculateLevel === "function"
+  ? db.calculateLevel(xpActual)
+  : Math.floor(xpActual / 1000) + 1;
+
+const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+const equipment = getResolvedEquipment(profile, equipmentRaw);
+
+const activeEncounter = expedition.currentEncounter;
+if (!activeEncounter) {
+  return message.reply("No hay un encuentro activo.");
+}
+
+expedition.affinityLog = expedition.affinityLog || {};
+if (typeof expedition.pendingFinalScenario !== "boolean") {
+  expedition.pendingFinalScenario = false;
+}
+
+const affinityCombat = getAffinityCombatBonus(profile, owned);
+
+const recordAffinity = async (compId, encounter, mode, outcome) => {
+  const result = await addAffinityWithRankMessage(message.author.id, compId, encounter, mode, outcome);
+  expedition.affinityLog[compId] = (expedition.affinityLog[compId] || 0) + result.gain;
+  return result;
+};
+
+const healWithFaelon = async () => {
+  if (!owned.includes("faelon")) return null;
+
+  const saludActual = profile.salud !== undefined ? profile.salud : 100;
+  const nuevaSalud = Math.min(100, saludActual + 10);
+
+  if (nuevaSalud !== saludActual) {
+    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
   }
 
-  const expedition = expeditions.get(message.author.id);
-  const profile = await db.getProfile(message.author.id);
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  return nuevaSalud;
+};
 
-  const activeEncounter = expedition.currentEncounter;
-     if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
+if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
   activeEncounter.subEncounterStep = "parent";
   expedition.currentEncounter = activeEncounter;
   return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
@@ -3370,10 +3407,6 @@ if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep ===
   };
 
   const childEncounter = expedition.currentEncounter;
-  const equipmentRaw = typeof db.getEquipment === "function"
-    ? await db.getEquipment(message.author.id).catch(() => null)
-    : null;
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
   const powerBlock = buildPowerComparisonBlock({
     profile,
     equipment,
