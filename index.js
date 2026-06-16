@@ -3145,20 +3145,20 @@ function getCompanionPowerDetails(profile = {}) {
 }
 
 function getEnemyPowerSummary(encounter = {}) {
-  const danger = clampNumber(encounter.peligro ?? encounter.danger ?? 1, 1, 10);
-  const tier = getDangerTierProfile(danger);
-  const scoreMin = tier.powerMin;
-  const scoreMax = tier.powerMax;
-  const score = Math.round((scoreMin + scoreMax) / 2);
+  if (!encounter || typeof encounter !== "object") {
+    return {
+      peligro: 0,
+      tipo: "desconocido",
+      categoria: "desconocida"
+    };
+  }
+
+  const peligro = Number(encounter.peligro ?? 0);
 
   return {
-    danger,
-    score,
-    scoreMin,
-    scoreMax,
-    dangerLabel: tier.dangerLabel,
-    composition: tier.composition,
-    armorRead: tier.armorRead
+    peligro,
+    tipo: encounter.tipo || "desconocido",
+    categoria: encounter.categoria || "desconocida"
   };
 }
 
