@@ -1079,14 +1079,6 @@ async function startFinalScenario(message, expedition) {
 
   const dangerText = getFinalScenarioDangerText(scenario);
 
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const powerBlock = buildPowerComparisonBlock({
-    profile,
-    equipment,
-    encounter
-  });
-
   if (!hasEnemies) {
     const mission = expedition.mission || {};
     const completionText =
@@ -1135,8 +1127,8 @@ async function startFinalScenario(message, expedition) {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let text = `✅ **${scenario.titulo || mission.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || mission.descripcion || ""}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
-    
+    let text = `✅ **${scenario.titulo || scenario.title || mission.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || mission.descripcion || ""}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa: +${pointReward} pts | +${xpReward} XP`;
+
     if (affinityLines.length) {
       text += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
     }
@@ -1152,10 +1144,10 @@ async function startFinalScenario(message, expedition) {
   const reactions = [];
   for (const cid of party.slice(0, 3)) {
     const line = await companionReaction(cid, {
-      titulo: scenario.titulo || expedition.mission?.titulo || "Escenario final",
+      titulo: scenario.titulo || scenario.title || expedition.mission?.titulo || "Escenario final",
       tipo: "escenario_final",
       categoria: scenario.categoria || "final",
-      descripcion: scenario.descripcion || expedition.mission?.descripcion || "",
+      descripcion: scenario.description || scenario.descripcion || expedition.mission?.descripcion || "",
       peligro: scenario.danger || scenario.peligro || 0
     }, "encounter");
 
@@ -1163,17 +1155,9 @@ async function startFinalScenario(message, expedition) {
   }
 
   const intro =
-  scenario.introText ||
-  `🏁 **${scenario.titulo || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || expedition.mission?.descripcion || ""}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
+    scenario.introText ||
+    `🏁 **${scenario.titulo || scenario.title || expedition.mission?.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || expedition.mission?.descripcion || ""}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
 
-  ${scenario.descripcion || expedition.mission?.descripcion || "Has llegado al tramo decisivo de la expedición."}
-
-${powerBlock}
-
-Peligro: ${dangerText}
-
-Acciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
-  
   const text = reactions.length
     ? `${intro}\n\n${reactions.join("\n")}`
     : intro;
