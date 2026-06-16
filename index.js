@@ -15,6 +15,105 @@ if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+// VARIABLES PARA IA
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+
+async function chatWithAI({
+  systemPrompt = "",
+  messages = [],
+  temperature = 0.85,
+  maxTokens = 120
+}) {
+  const payloadMessages = [];
+
+  if (systemPrompt.trim()) {
+    payloadMessages.push({ role: "system", content: systemPrompt.trim() });
+  }
+
+  for (const msg of messages) {
+    if (!msg || !msg.content) continue;
+    payloadMessages.push({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: String(msg.content)
+    });
+  }
+
+  // 1) GROQ
+  try {
+    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY no configurada");
+
+    const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: payloadMessages,
+        temperature,
+        max_tokens: maxTokens
+      })
+    });
+
+    if (!res.ok) {
+      const details = await res.text().catch(() => "");
+      throw new Error(`Groq ${res.status}: ${details}`);
+    }
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    const clean = Array.isArray(text)
+      ? text.map(part => part?.text || "").join("").trim()
+      : String(text || "").trim();
+
+    if (clean) return clean;
+  } catch (err) {
+    console.error("Groq error:", err);
+  }
+
+  // 2) OPERATOR / respaldo
+  try {
+    if (!OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY no configurada");
+
+    const res = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.OPENROUTER_REFERER || "https://chat.openai.com",
+        "X-Title": process.env.OPENROUTER_TITLE || "Campamento de Altéru"
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: payloadMessages,
+        temperature,
+        max_tokens: maxTokens
+      })
+    });
+
+    if (!res.ok) {
+      const details = await res.text().catch(() => "");
+      throw new Error(`OpenRouter ${res.status}: ${details}`);
+    }
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    const clean = Array.isArray(text)
+      ? text.map(part => part?.text || "").join("").trim()
+      : String(text || "").trim();
+
+    return clean || "";
+  } catch (err) {
+    console.error("OpenRouter fallback error:", err);
+    return "";
+  }
+  }
+
 // ================================
 // CUOTAS + TIEMPOS
 // ================================
@@ -1331,7 +1430,36 @@ async function resolveFinalScenarioAction(message, expedition, action) {
 // ==========================================
 
 function getCompanionLore(companionId) {
-  const personaje = getPersonaje(companionId);
+  const personaje = getPersonaje(companionId) || companions[companionId];
+if (!personaje) return message.reply("Ese compañero no está disponible.");
+
+const profile = await db.getProfile(message.author.id);
+const affinity = (profile.affinity || {})[companionId] || 0;
+
+const systemPrompt = `Eres ${personaje.nombre}.
+Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || companions[companionId]?.efecto || "reservado"}
+Afinidad con el viajero: ${affinity}
+Trata al viajero según esta escala:
+0-24 desconocido, 25-49 conocido, 50-74 aliado, 75-99 amigo cercano, 100 compañero de confianza
+Instrucciones:
+Responde con una sola línea corta, con voz natural del personaje.
+No respondas con vacío.`;
+
+try {
+  const reply = await chatWithAI({
+    systemPrompt,
+    messages: [{ role: "user", content: mensaje }],
+    temperature: 0.9,
+    maxTokens: 60
+  });
+
+  const clean = String(reply || "").trim() || `${personaje.nombre}: *te escucha*`;
+  await db.addAffinity(message.author.id, companionId, 1);
+  return message.reply(`${personaje.nombre}: ${compactLine(clean, 12)}`);
+} catch (err) {
+  console.error("Catch Error (Direct RP):", err);
+  return message.reply(`${personaje.nombre}: *te escucha*`);
+}
 
   return {
     nombre: personaje?.nombre || companions[companionId]?.nombre || companionId,
@@ -1461,19 +1589,21 @@ async function askGroq(userId, userMessage, lore) {
   if (history.length > 10) history.shift();
 
   try {
-    const reply = await groqChat({
+    const reply = await chatWithAI({
       systemPrompt,
       messages: history,
       temperature: 0.85,
       maxTokens: 160
     });
 
-    history.push({ role: "assistant", content: reply });
+    const finalReply = String(reply || "").trim() || "Altéru: *observa los senderos lejanos con suspicacia*";
+
+    history.push({ role: "assistant", content: finalReply });
     if (history.length > 10) history.shift();
 
-    return reply;
+    return finalReply;
   } catch (err) {
-    console.error("Groq Catch Error (askGroq):", err);
+    console.error("Catch Error (askGroq):", err);
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
