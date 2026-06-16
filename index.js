@@ -3334,38 +3334,91 @@ if (command === "!volver") {
 
 if (command === "!desafiar") {
   if (!expeditions.has(message.author.id)) {
-  return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+    return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+  }
+
+  const expedition = expeditions.get(message.author.id);
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const owned = getOwnedCompanions(profile);
+
+  const activeEncounter = expedition.currentEncounter;
+  if (!activeEncounter) {
+    return message.reply("No hay encuentro activo en esta expedición.");
+  }
+
+  if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
+    activeEncounter.subEncounterStep = "parent";
+    expedition.currentEncounter = activeEncounter;
+    return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+  }
+
+  if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep === "parent") {
+    const options = Array.isArray(activeEncounter.subEncounterOptions)
+      ? activeEncounter.subEncounterOptions
+      : [];
+
+    const chosen = options.length
+      ? options[Math.floor(Math.random() * options.length)]
+      : null;
+
+    if (!chosen) {
+      return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+    }
+
+    expedition.currentEncounter = {
+      ...chosen,
+      parentId: activeEncounter.id,
+      variantOf: activeEncounter.id,
+      subEncounter: true
+    };
+
+    const childEncounter = expedition.currentEncounter;
+    const powerBlock = buildPowerComparisonBlock({
+      profile,
+      equipment,
+      encounter: childEncounter
+    });
+
+    const accionRequerida = childEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+    let textoEncuentro = buildEncounterCard(childEncounter, accionRequerida, powerBlock);
+
+    const reactionIds = [...new Set(owned)].slice(0, 3);
+    const reactions = [];
+
+    for (const cid of reactionIds) {
+      const line = await companionReaction(cid, childEncounter, "encounter");
+      if (line) reactions.push(`💬 ${line}`);
+    }
+
+    if (reactions.length) {
+      textoEncuentro += `\n\n${reactions.join("\n")}`;
+    }
+
+    return message.reply(textoEncuentro);
+  }
+
+  expedition.affinityLog = expedition.affinityLog || {};
+  if (typeof expedition.pendingFinalScenario !== "boolean") {
+    expedition.pendingFinalScenario = false;
+  }
+
+  const xpActual = profile.xp || 0;
+  const nivelJugador = typeof db.calculateLevel === "function"
+    ? db.calculateLevel(xpActual)
+    : Math.floor(xpActual / 1000) + 1;
+
+  const affinityCombat = getAffinityCombatBonus(profile, owned);
+
+  const recordAffinity = async (compId, encounter, mode, outcome) => {
+    const result = await addAffinityWithRankMessage(message.author.id, compId, encounter, mode, outcome);
+    expedition.affinityLog[compId] = (expedition.affinityLog[compId] || 0) + result.gain;
+    return result;
+  };
+
+  // sigue aquí el resto de tu lógica normal de !desafiar...
 }
-
-const expedition = expeditions.get(message.author.id);
-const profile = await db.getProfile(message.author.id);
-
-const owned = getOwnedCompanions(profile);
-const xpActual = profile.xp || 0;
-const nivelJugador = typeof db.calculateLevel === "function"
-  ? db.calculateLevel(xpActual)
-  : Math.floor(xpActual / 1000) + 1;
-
-const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-const equipment = getResolvedEquipment(profile, equipmentRaw);
-
-const activeEncounter = expedition.currentEncounter;
-if (!activeEncounter) {
-  return message.reply("No hay un encuentro activo.");
-}
-
-expedition.affinityLog = expedition.affinityLog || {};
-if (typeof expedition.pendingFinalScenario !== "boolean") {
-  expedition.pendingFinalScenario = false;
-}
-
-const affinityCombat = getAffinityCombatBonus(profile, owned);
-
-const recordAffinity = async (compId, encounter, mode, outcome) => {
-  const result = await addAffinityWithRankMessage(message.author.id, compId, encounter, mode, outcome);
-  expedition.affinityLog[compId] = (expedition.affinityLog[compId] || 0) + result.gain;
-  return result;
-};
 
 const healWithFaelon = async () => {
   if (!owned.includes("faelon")) return null;
@@ -3429,14 +3482,7 @@ if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep ===
   }
 
   return message.reply(textoEncuentro);
-  }
-
-  
-  const owned = getOwnedCompanions(profile);
-  const xpActual = profile.xp || 0;
-  const nivelJugador = typeof db.calculateLevel === "function"
-    ? db.calculateLevel(xpActual)
-    : Math.floor(xpActual / 1000) + 1;
+  }m
 
   expedition.affinityLog = expedition.affinityLog || {};
   if (typeof expedition.pendingFinalScenario !== "boolean") {
