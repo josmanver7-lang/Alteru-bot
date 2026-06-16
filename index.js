@@ -347,10 +347,25 @@ function getInventoryCategoryForItem(item) {
   const tipo = normalizeKey(item?.tipo || "");
   const slot = normalizeKey(item?.slot || "");
 
-  if (tipo === "consumible" || tipo === "regalo") return tipo === "regalo" ? "regalos" : "consumibles";
-  if (slot === "arma") return "armas";
-  if (["pecho", "armadura", "casco", "hombros", "brazos", "piernas", "pies"].includes(slot)) return "armaduras";
-  if (["capa", "anillo", "reliquia", "amuleto", "accesorio"].includes(slot)) return "permanentes";
+  if (tipo === "consumible" || tipo === "regalo") {
+    return tipo === "regalo" ? "regalos" : "consumibles";
+  }
+
+  if (["arma", "arma_1_mano", "arma_2_manos", "daga", "daga_1_mano"].includes(slot)) {
+    return "armas";
+  }
+
+  if (slot === "escudo") {
+    return "escudos";
+  }
+
+  if (["pecho", "armadura", "casco", "hombros", "brazos", "piernas"].includes(slot)) {
+    return "armaduras";
+  }
+
+  if (["capa", "anillo", "reliquia", "amuleto", "accesorio"].includes(slot)) {
+    return "permanentes";
+  }
 
   return "permanentes";
 }
@@ -376,8 +391,16 @@ function isStackableItem(item) {
 function getEquipSlotForItem(item, currentEquipment = {}) {
   const slot = normalizeKey(item?.slot || item?.tipo || "");
 
-  if (slot === "arma") return "arma";
-  if (slot === "escudo") return "escudo"; 
+  if (slot === "arma_2_manos") return "arma";
+
+  if (["arma", "arma_1_mano", "daga", "daga_1_mano"].includes(slot)) {
+    if (!currentEquipment.arma1) return "arma1";
+    if (!currentEquipment.arma2) return "arma2";
+    return null;
+  }
+
+  if (slot === "escudo") return "escudo";
+
   if (slot === "pecho" || slot === "armadura") return "armadura";
   if (slot === "casco") return "casco";
   if (slot === "hombros") return "hombros";
@@ -649,28 +672,86 @@ function getAffinityBonus(profile, companionId) {
   if (value >= 50) return 0.05;
   return 0;
 }
+function getCompanionEquipmentFromPersonaje(companionId) {
+  const personaje = personajesCache[normalizeKey(companionId)] || null;
+  if (!personaje) return {};
 
-function getCompanionBonus(profile) { 
-  const list = getOwnedCompanions(profile); 
-  const bonus = { 
-    captainBonus: 0, strongEnemyBonus: 0, numerousEnemyBonus: 0, 
-    blockChance: 0, rangerBonus: 0, damageReduction: 0, 
-    faelonHeal: 0, nierielSafe: false, baseSuccessBonus: 0, baseDamageReduction: 0 
-  }; 
-  for (const id of list) { 
-    const base = getCompanionBasePower(id); 
-    bonus.baseSuccessBonus += base.successBonus; 
-    bonus.baseDamageReduction += base.damageReduction; 
-    switch (normalizeKey(id)) { 
-      case "alteru": bonus.captainBonus += 0.20; break; 
-      case "cirdil": bonus.strongEnemyBonus += 0.15; bonus.damageReduction += 0.20; break; 
-      case "duinor": bonus.numerousEnemyBonus += 0.25; break; 
-      case "andaer": bonus.blockChance += 0.20; break; 
-      case "nieriel": bonus.nierielSafe = true; break; 
-      case "faelon": bonus.faelonHeal += 10; break; 
-      case "montaraces": bonus.rangerBonus += 0.30; break; 
-    } 
-  } 
+  const fromNested =
+    personaje.equipo ||
+    personaje.armamento ||
+    personaje.equipment ||
+    personaje.items ||
+    {};
+
+  return {
+    ...fromNested,
+    arma: fromNested.arma || personaje.arma || "",
+    escudo: fromNested.escudo || personaje.escudo || "",
+    armadura: fromNested.armadura || personaje.armadura || "",
+    guantes: fromNested.guantes || personaje.guantes || "",
+    piernas: fromNested.piernas || personaje.piernas || "",
+    botas: fromNested.botas || personaje.botas || "",
+    capa: fromNested.capa || personaje.capa || "",
+    casco: fromNested.casco || personaje.casco || "",
+    hombros: fromNested.hombros || personaje.hombros || "",
+    anillo1: fromNested.anillo1 || personaje.anillo1 || "",
+    anillo2: fromNested.anillo2 || personaje.anillo2 || "",
+    amuleto: fromNested.amuleto || personaje.amuleto || "",
+    accesorio: fromNested.accesorio || personaje.accesorio || ""
+  };
+}
+
+function getCompanionBasePower(companionId) {
+  const key = normalizeKey(companionId);
+
+  const personajeLoadout = getCompanionEquipmentFromPersonaje(key);
+  const fallbackLoadout = COMPANION_BASE_EQUIPMENT[key] || {};
+
+  const loadout = Object.keys(personajeLoadout).length
+    ? personajeLoadout
+    : fallbackLoadout;
+
+  const total = Object.values(loadout).reduce(
+    (sum, tier) => sum + (ITEM_TIER_VALUES[normalizeKey(tier)] || 0),
+    0
+  );
+
+  return {
+    total,
+    successBonus: Math.min(total * 0.0025, 0.12),
+    damageReduction: Math.min(total * 0.0015, 0.08)
+  };
+}
+
+function getCompanionBonus(profile) {
+  const list = getOwnedCompanions(profile);
+  const bonus = {
+    captainBonus: 0, strongEnemyBonus: 0, numerousEnemyBonus: 0,
+    blockChance: 0, rangerBonus: 0, damageReduction: 0,
+    faelonHeal: 0, nierielSafe: false, baseSuccessBonus: 0, baseDamageReduction: 0
+  };
+
+  for (const id of list) {
+    const base = getCompanionBasePower(id);
+    bonus.baseSuccessBonus += base.successBonus;
+    bonus.baseDamageReduction += base.damageReduction;
+
+    switch (normalizeKey(id)) {
+      case "alteru": bonus.captainBonus += 0.20; break;
+      case "cirdil": bonus.strongEnemyBonus += 0.15; bonus.damageReduction += 0.20; break;
+      case "duinor": bonus.numerousEnemyBonus += 0.25; break;
+      case "andaer": bonus.blockChance += 0.20; break;
+      case "nieriel": bonus.nierielSafe = true; break;
+      case "faelon": bonus.faelonHeal += 10; break;
+      case "montaraces": bonus.rangerBonus += 0.30; break;
+    }
+  }
+
+  bonus.baseSuccessBonus = Math.min(bonus.baseSuccessBonus, 0.20);
+  bonus.baseDamageReduction = Math.min(bonus.baseDamageReduction, 0.15);
+  return bonus;
+}
+   
   bonus.baseSuccessBonus = Math.min(bonus.baseSuccessBonus, 0.20); 
   bonus.baseDamageReduction = Math.min(bonus.baseDamageReduction, 0.15); 
   return bonus; 
