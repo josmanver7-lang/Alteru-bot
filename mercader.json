@@ -74,9 +74,6 @@
     "efecto": { "damageReduction": 0.12, "successBonus": 0.03 }
   },
     {
-  "nombre": "Mercader Ambulante",
-  "items": [
-    {
       "id": "garrote_semitroll",
       "nombre": "Garrote de Semitroll",
       "tipo": "arma",
