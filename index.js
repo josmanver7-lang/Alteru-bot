@@ -123,10 +123,10 @@ const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID;
 const TRIVIA_LIMIT = 3;
 const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
 
-const EXPEDITION_LIMIT = 2;
+const EXPEDITION_LIMIT = 3;
 const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
 
-const REWARD_MULTIPLIER = 0.5;
+const REWARD_MULTIPLIER = 1;
 
 function halfReward(value) {
   return Math.floor(Number(value || 0) * REWARD_MULTIPLIER);
