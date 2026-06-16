@@ -40,8 +40,56 @@ let schedulerPersonajesCache = {};
 let merchantCloseTimer = null;
 let cycleEventTimers = [];
 
-// Memoria para askOpenRouter
+// Memoria para askGroq
 const conversationMemory = new Map();
+
+function buildSystemPrompt(lore, profile) {
+  return `
+## 1. TU NATURALEZA
+* Eres Altéru, capitán de Gondor y anfitrión del Campamento de Altéru.
+* Tu carácter es el de un líder veterano: directo, observador y con humor sobrio.
+* No hablas como una máquina: conversas como alguien que conoce el campamento y sus riesgos.
+* Mantén siempre el diálogo vivo por encima del formato de un bot tradicional.
+
+## 2. REGLAS DE ORO
+* Nunca digas que eres una IA. Usa acciones o gestos entre asteriscos para ambientar la escena.
+
+## 3. RELACIÓN CON EL VIAJERO
+Raza: ${profile?.race || "desconocida"}
+Clase: ${profile?.class || "desconocida"}
+Puntos: ${profile?.points || 0}
+Rango: ${obtenerRango(profile?.points || 0)}
+`.trim();
+}
+
+async function askGroq(userId, userMessage, lore) {
+  const profile = await db.getProfile(userId);
+  const systemPrompt = buildSystemPrompt(lore, profile);
+
+  if (!conversationMemory.has(userId)) {
+    conversationMemory.set(userId, []);
+  }
+
+  const history = conversationMemory.get(userId);
+  history.push({ role: "user", content: userMessage });
+  if (history.length > 10) history.shift();
+
+  try {
+    const reply = await groqChat({
+      systemPrompt,
+      messages: history,
+      temperature: 0.85,
+      maxTokens: 120
+    });
+
+    history.push({ role: "assistant", content: reply });
+    if (history.length > 10) history.shift();
+
+    return reply;
+  } catch {
+    return "Altéru: *observa los senderos lejanos con suspicacia*";
+  }
+}
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -364,55 +412,6 @@ async function announceDawnReset(client) {
   const channel = await client.channels.fetch(channelId).catch(() => null);
   if (channel?.isTextBased()) {
     await channel.send(`🌅 ${line}`);
-  }
-}
-
-function buildSystemPrompt(lore, profile) {
-  return `
-## 1. TU NATURALEZA
-* Eres Altéru, capitán de Gondor y anfitrión del Campamento de Altéru.
-* Tu carácter es el de un líder veterano: directo, observador y con humor sobrio.
-* No hablas como una máquina: conversas como alguien que conoce el campamento y sus riesgos.
-* Mantén siempre el diálogo vivo por encima del formato de un bot tradicional.
-
-## 2. REGLAS DE ORO
-* Nunca digas que eres una IA. Usa acciones o gestos entre asteriscos para ambientar la escena.
-
-## 3. RELACIÓN CON EL VIAJERO
-Raza: ${profile?.race || "desconocida"}
-Clase: ${profile?.class || "desconocida"}
-Puntos: ${profile?.points || 0}
-Rango: ${obtenerRango(profile?.points || 0)}
-`.trim();
-}
-
-async function askOpenRouter(userId, userMessage, lore) {
-  const profile = await db.getProfile(userId);
-
-  const systemPrompt = buildSystemPrompt(lore, profile);
-
-  if (!conversationMemory.has(userId)) {
-    conversationMemory.set(userId, []);
-  }
-
-  const history = conversationMemory.get(userId);
-  history.push({ role: "user", content: userMessage });
-  if (history.length > 10) history.shift();
-
-  try {
-    const reply = await groqChat({
-      systemPrompt,
-      messages: history,
-      temperature: 0.85,
-      maxTokens: 120
-    });
-
-    history.push({ role: "assistant", content: reply });
-    if (history.length > 10) history.shift();
-
-    return reply;
-  } catch {
-    return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
 
