@@ -3199,28 +3199,18 @@ ${companionLines}
   }
 
   if (command === "!interactuar") {
-    const expedition = expeditions.get(message.author.id);
+  const expedition = expeditions.get(message.author.id);
 
-    if (!expedition?.currentEncounter) {
-      return message.reply("No hay nada con lo que interactuar aquí.");
-    }
-
-    if (expedition.currentEncounter.tipo !== "evento_especial") {
-      return message.reply(
-    `🌟 **${special.titulo}**
-
-    ${special.descripcion || "Un evento especial se presenta ante ti."}
-
-    ${powerBlock}
-
-    ${reactionText}
-
-    ${sucesoText}
-
-    Usa \`!desafiar\` para resolver el suceso.`
-    );
-    return resolveSpecialEncounter(message, expedition);
+  if (!expedition?.currentEncounter) {
+    return message.reply("No hay nada con lo que interactuar aquí.");
   }
+
+  if (expedition.currentEncounter.tipo !== "evento_especial") {
+    return message.reply("Usa !desafiar para este encuentro.");
+  }
+
+  return resolveSpecialEncounter(message, expedition);
+ }
 
   const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
   const equipment = getResolvedEquipment(profile, equipmentRaw);
