@@ -3363,6 +3363,90 @@ ${companionLines}
 
       let lista = encounters.filter(e => {
         const coincideEncuentro = e.tipo === encuentroId || e.categoria === encuentroId;
+    // GENERACIÓN DE ENCUENTRO SI NO HAY ACTIVO
+    if (expedition.currentEncounter === null) {
+      const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+
+      if (!encuentroId) {
+        // ENTRADA AL ESCENARIO FINAL SI SE ACABÓ EL PROGRESO
+        if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
+          expedition.finalScenarioShown = true;
+          expedition.pendingFinalScenario = true;
+
+          const enemyPresent = rollFinalScenarioEnemyPresence(expedition.finalScenario);
+
+          expedition.currentEncounter = {
+            ...expedition.finalScenario,
+            tipo: "escenario_final",
+            categoria: "final",
+            active: true,
+            enemyPresent,
+            allowedActions: enemyPresent
+              ? expedition.finalScenario.allowedActions
+              : ["retirarse"]
+          };
+
+          return startFinalScenario(message, expedition);
+        }
+
+        // SI NO HAY FINAL, OTORGAR RECOMPENSAS
+        const beforeProfile = await db.getProfile(message.author.id);
+        const beforeLevel = typeof db.calculateLevel === "function"
+          ? db.calculateLevel(beforeProfile.xp || 0)
+          : Math.floor((beforeProfile.xp || 0) / 1000) + 1;
+        const beforeRank = obtenerRango(beforeProfile.points || 0);
+
+        const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+        const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
+        await db.addXP(message.author.id, xpTotal);
+        await db.addPoints(message.author.id, puntosTotal);
+
+        const afterProfile = await db.getProfile(message.author.id);
+        const afterLevel = typeof db.calculateLevel === "function"
+          ? db.calculateLevel(afterProfile.xp || 0)
+          : Math.floor((afterProfile.xp || 0) / 1000) + 1;
+        const afterRank = obtenerRango(afterProfile.points || 0);
+
+        const affinityEntries = Object.entries(expedition.affinityLog || {});
+        const affinityText = affinityEntries.length
+          ? affinityEntries
+              .map(([id, value]) => `• **${companions[id]?.nombre || id}**: +${value} afinidad`)
+              .join("\n")
+          : "• Ninguna";
+
+        const finalReactions = [];
+        for (const cid of owned.slice(0, 3)) {
+          const line = await companionReaction(cid, expedition.mission, "mision_completada");
+          if (line) finalReactions.push(`💬 ${line}`);
+        }
+
+        await clearExpeditionParty(message.author.id);
+        expedition.pendingFinalScenario = false;
+        expeditions.delete(message.author.id);
+
+        let textoFinal = `🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada:\n${affinityText}`;
+
+        if (afterLevel > beforeLevel) {
+          textoFinal += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+        }
+
+        if (afterRank !== beforeRank) {
+          textoFinal += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
+        }
+
+        if (finalReactions.length) {
+          textoFinal += `\n\n${finalReactions.join("\n")}`;
+        }
+
+        return message.reply(textoFinal);
+      }
+
+      const encounters = await loadEncounters();
+      const destino = normalizeKey(expedition.mission.destino);
+
+      let lista = encounters.filter(e => {
+        const coincideEncuentro = e.tipo === encuentroId || e.categoria === encuentroId;
         const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
         return coincideEncuentro && coincideRegion;
       });
@@ -3373,60 +3457,81 @@ ${companionLines}
       }
 
       if (!lista.length) {
-  const fallbackEncounter = {
-    id: `fallback_${encounterId}_${Date.now()}`,
-    titulo: "Encuentro de respaldo",
-    descripcion: "La expedición avanza hacia un obstáculo improvisado.",
-    tipo: encuentroId,
-    categoria: encuentroId,
-    peligro: Math.max(1, Math.min(10, nivelJugador))
-  };
+        const fallbackEncounter = {
+          id: `fallback_${encuentroId}_${Date.now()}`,
+          titulo: "Encuentro de respaldo",
+          descripcion: "La expedición avanza hacia un obstáculo improvisado.",
+          tipo: encuentroId,
+          categoria: encuentroId,
+          peligro: Math.max(1, Math.min(10, nivelJugador))
+        };
 
-  const powerBlock = buildPowerComparisonBlock({
-    profile,
-    equipment: getResolvedEquipment(profile, await db.getEquipment?.(message.author.id).catch?.(() => null)),
-    encounter: fallbackEncounter
-  });
+        const equipmentRaw = typeof db.getEquipment === "function"
+          ? await db.getEquipment(message.author.id).catch(() => null)
+          : null;
 
-  expedition.pendingStartHeal = false;
-  expedition.currentEncounter = fallbackEncounter;
-  expedition.phase = "running";
+        const equipment = getResolvedEquipment(profile, equipmentRaw);
+        const powerBlock = buildPowerComparisonBlock({
+          profile,
+          equipment,
+          encounter: fallbackEncounter
+        });
 
-  const accionRequerida = fallbackEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
-  return message.reply(buildEncounterCard(fallbackEncounter, accionRequerida, powerBlock));
+        expedition.pendingStartHeal = false;
+        expedition.currentEncounter = fallbackEncounter;
+        expedition.phase = "running";
+
+        const accionRequerida = fallbackEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+        let textoEncuentro = buildEncounterCard(fallbackEncounter, accionRequerida, powerBlock);
+
+        const reactionIds = [...new Set(owned)].slice(0, 3);
+        const reactions = [];
+        for (const cid of reactionIds) {
+          const line = await companionReaction(cid, fallbackEncounter, "encounter");
+          if (line) reactions.push(`💬 ${line}`);
+        }
+
+        if (reactions.length) {
+          textoEncuentro += `\n\n${reactions.join("\n")}`;
+        }
+
+        return message.reply(textoEncuentro);
       }
 
       const encounterBase = lista[Math.floor(Math.random() * lista.length)];
       const finalEncounter = chooseEncounterVariant(encounterBase, encounters);
 
-const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-const equipment = getResolvedEquipment(profile, equipmentRaw);
-const powerBlock = buildPowerComparisonBlock({
-  profile,
-  equipment,
-  encounter: finalEncounter
-});
+      const equipmentRaw = typeof db.getEquipment === "function"
+        ? await db.getEquipment(message.author.id).catch(() => null)
+        : null;
 
-expedition.pendingStartHeal = false;
-expedition.currentEncounter = finalEncounter;
-expedition.phase = "running";
+      const equipment = getResolvedEquipment(profile, equipmentRaw);
+      const powerBlock = buildPowerComparisonBlock({
+        profile,
+        equipment,
+        encounter: finalEncounter
+      });
 
-const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
-const textoEncuentro = buildEncounterCard(finalEncounter, accionRequerida, powerBlock);
+      expedition.pendingStartHeal = false;
+      expedition.currentEncounter = finalEncounter;
+      expedition.phase = "running";
 
-const reactionIds = [...new Set(owned)].slice(0, 3);
-const reactions = [];
+      const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+      let textoEncuentro = buildEncounterCard(finalEncounter, accionRequerida, powerBlock);
 
-for (const cid of reactionIds) {
-  const line = await companionReaction(cid, finalEncounter, "encounter");
-  if (line) reactions.push(`💬 ${line}`);
-}
+      const reactionIds = [...new Set(owned)].slice(0, 3);
+      const reactions = [];
+      for (const cid of reactionIds) {
+        const line = await companionReaction(cid, finalEncounter, "encounter");
+        if (line) reactions.push(`💬 ${line}`);
+      }
 
-if (reactions.length) {
-  return message.reply(`${textoEncuentro}\n\n${reactions.join("\n")}`);
-}
+      if (reactions.length) {
+        textoEncuentro += `\n\n${reactions.join("\n")}`;
+      }
 
-return message.reply(textoEncuentro);
+      return message.reply(textoEncuentro);
+    }
 
     const activeEncounter = expedition.currentEncounter;
 
