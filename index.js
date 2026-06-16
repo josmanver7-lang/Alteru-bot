@@ -3279,18 +3279,48 @@ ${companionLines}
 
   if (command === "!interactuar") {
   const expedition = expeditions.get(message.author.id);
+  const special = expedition?.currentEncounter;
 
-  if (!expedition?.currentEncounter) {
+  if (!special) {
     return message.reply("No hay nada con lo que interactuar aquí.");
   }
 
-  if (expedition.currentEncounter.tipo !== "evento_especial") {
+  if (special.tipo !== "evento_especial") {
     return message.reply("Usa !desafiar para este encuentro.");
   }
 
-  return resolveSpecialEncounter(message, expedition);
-}
+  const profile = await db.getProfile(message.author.id);
 
+  const equipmentRaw = typeof db.getEquipment === "function"
+    ? await db.getEquipment(message.author.id).catch(() => null)
+    : null;
+
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const powerBlock = buildPowerComparisonBlock({
+    profile,
+    equipment,
+    encounter: special
+  });
+
+  const reactionIds = [...new Set(getOwnedCompanions(profile))].slice(0, 3);
+  const reactions = [];
+
+  for (const cid of reactionIds) {
+    const line = await companionReaction(cid, special, "encounter");
+    if (line) reactions.push(`💬 ${line}`);
+  }
+
+  let texto = `🌟 **${special.titulo}**\n\n${special.descripcion || "Un evento especial se presenta ante ti."}\n\n${powerBlock}`;
+
+  if (reactions.length) {
+    texto += `\n\n${reactions.join("\n")}`;
+  }
+
+  texto += `\n\nUsa \`!desafiar\` para resolver el suceso.`;
+
+  return message.reply(texto);
+  }
+  
 if (command === "!volver") {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en una expedición.");
@@ -3313,12 +3343,62 @@ if (command === "!desafiar") {
   const equipment = getResolvedEquipment(profile, equipmentRaw);
 
   const activeEncounter = expedition.currentEncounter;
+     if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
+  activeEncounter.subEncounterStep = "parent";
+  expedition.currentEncounter = activeEncounter;
+  return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+}
+
+if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep === "parent") {
+  const options = Array.isArray(activeEncounter.subEncounterOptions)
+    ? activeEncounter.subEncounterOptions
+    : [];
+
+  const chosen = options.length
+    ? options[Math.floor(Math.random() * options.length)]
+    : null;
+
+  if (!chosen) {
+    return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+  }
+
+  expedition.currentEncounter = {
+    ...chosen,
+    parentId: activeEncounter.id,
+    variantOf: activeEncounter.id,
+    subEncounter: true
+  };
+
+  const childEncounter = expedition.currentEncounter;
+  const equipmentRaw = typeof db.getEquipment === "function"
+    ? await db.getEquipment(message.author.id).catch(() => null)
+    : null;
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
   const powerBlock = buildPowerComparisonBlock({
     profile,
     equipment,
-    encounter: activeEncounter
+    encounter: childEncounter
   });
 
+  const accionRequerida = childEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+  let textoEncuentro = buildEncounterCard(childEncounter, accionRequerida, powerBlock);
+
+  const reactionIds = [...new Set(owned)].slice(0, 3);
+  const reactions = [];
+
+  for (const cid of reactionIds) {
+    const line = await companionReaction(cid, childEncounter, "encounter");
+    if (line) reactions.push(`💬 ${line}`);
+  }
+
+  if (reactions.length) {
+    textoEncuentro += `\n\n${reactions.join("\n")}`;
+  }
+
+  return message.reply(textoEncuentro);
+  }
+
+  
   const owned = getOwnedCompanions(profile);
   const xpActual = profile.xp || 0;
   const nivelJugador = typeof db.calculateLevel === "function"
