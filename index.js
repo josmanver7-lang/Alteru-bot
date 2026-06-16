@@ -3324,7 +3324,7 @@ if (command === "!desafiar") {
   const nivelJugador = typeof db.calculateLevel === "function"
     ? db.calculateLevel(xpActual)
     : Math.floor(xpActual / 1000) + 1;
-  
+
   expedition.affinityLog = expedition.affinityLog || {};
   if (typeof expedition.pendingFinalScenario !== "boolean") {
     expedition.pendingFinalScenario = false;
