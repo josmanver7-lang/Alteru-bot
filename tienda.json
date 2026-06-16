@@ -6,14 +6,16 @@
       "id": "vendaje_simple",
       "nombre": "Vendaje simple",
       "tipo": "consumible",
+      "slots": 3,
       "precioBase": 25,
       "descripcion": "Recupera 20 de salud.",
       "efecto": { "salud": 20 }
     },
     {
-      "id": "Estofado",
+      "id": "estofado",
       "nombre": "Estofado de Carne con Cebolla",
       "tipo": "consumible",
+      "slots": 3,
       "precioBase": 35,
       "descripcion": "Recupera 30 de salud.",
       "efecto": { "salud": 30 }
@@ -22,6 +24,7 @@
       "id": "tonico_hierbas",
       "nombre": "Tónico de hierbas de Rhudaur",
       "tipo": "consumible",
+      "slots": 3,
       "precioBase": 55,
       "descripcion": "Recupera 50 de salud.",
       "efecto": { "salud": 50 }
@@ -30,49 +33,199 @@
       "id": "kit_campana",
       "nombre": "Kit de campaña",
       "tipo": "consumible",
+      "slots": 3,
       "precioBase": 80,
       "descripcion": "Recupera 70 de salud.",
       "efecto": { "salud": 70 }
     },
     {
+      "id": "lembas",
+      "nombre": "Pan de Lembas",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 150,
+      "descripcion": "Pan de camino élfico. Recupera 100 de salud.",
+      "efecto": { "salud": 100 }
+    },
+    {
+      "id": "cram",
+      "nombre": "Cram",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 60,
+      "descripcion": "Galleta de viaje. Recupera 40 de salud.",
+      "efecto": { "salud": 40 }
+    },
+    {
+      "id": "pastel_miel_beorn",
+      "nombre": "Pastel de miel de Beorn",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 90,
+      "descripcion": "Muy energizante. Recupera 60 de salud.",
+      "efecto": { "salud": 60 }
+    },
+    {
+      "id": "miruvor",
+      "nombre": "Frasco de Miruvor",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 200,
+      "descripcion": "Cordial de Imladris. Recupera 120 de salud.",
+      "efecto": { "salud": 120 }
+    },
+    {
+      "id": "cerveza_enana",
+      "nombre": "Cerveza fuerte",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 45,
+      "descripcion": "Un trago fuerte.",
+      "efecto": { "fuerza": 5 }
+    },
+    {
+      "id": "carne_seca",
+      "nombre": "Carne seca de viaje",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 40,
+      "descripcion": "Dura pero nutritiva.",
+      "efecto": { "salud": 30 }
+    },
+    {
       "id": "libro_antiguo",
       "nombre": "Libro antiguo",
       "tipo": "regalo",
+      "slots": 1,
       "precioBase": 70,
-      "descripcion": "Regalo útil para compañeros estudiosos.",
+      "descripcion": "Regalo para estudiosos.",
       "efecto": { "afinidad": 3 }
     },
     {
       "id": "vino_dorwinion",
       "nombre": "Vino de Dorwinion",
       "tipo": "regalo",
+      "slots": 1,
       "precioBase": 80,
-      "descripcion": "Regalo apreciado por compañeros sociables.",
+      "descripcion": "Regalo para compañeros sociables.",
       "efecto": { "afinidad": 3 }
     },
     {
       "id": "hierbas_curativas",
       "nombre": "Hierbas curativas",
       "tipo": "regalo",
+      "slots": 1,
       "precioBase": 75,
-      "descripcion": "Regalo sencillo y útil para sanar.",
+      "descripcion": "Regalo sencillo.",
       "efecto": { "afinidad": 3 }
     },
     {
-      "id": "mapa_region",
-      "nombre": "Mapa de región",
-      "tipo": "utilidad",
-      "precioBase": 120,
-      "descripcion": "Aumenta ligeramente el éxito en el próximo encuentro.",
-      "efecto": { "successBonus": 0.05, "soloProximoEncuentro": true }
+      "id": "juguete_madera",
+      "nombre": "Juguete de madera",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Pequeño regalo nostálgico.",
+      "efecto": { "afinidad": 3 }
     },
     {
-      "id": "aceite_antorcha",
-      "nombre": "Aceite para Antorcha viajera",
+      "id": "amuleto_suerte",
+      "nombre": "Amuleto de buena suerte",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 60,
+      "descripcion": "Para un compañero supersticioso.",
+      "efecto": { "afinidad": 3 }
+    },
+    {
+      "id": "pipa_madera",
+      "nombre": "Pipa de madera",
       "tipo": "utilidad",
-      "precioBase": 55,
-      "descripcion": "Reduce el riesgo de perderse.",
-      "efecto": { "successBonus": 0.03, "soloProximoEncuentro": true }
+      "slots": 1,
+      "precioBase": 50,
+      "descripcion": "Pipa clásica de viaje.",
+      "efecto": {}
+    },
+    {
+      "id": "tabaco_viejo_toby",
+      "nombre": "Tabaco Viejo Toby",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "La mejor hierba de la Comarca.",
+      "efecto": {}
+    },
+    {
+      "id": "laud",
+      "nombre": "Laúd de viaje",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 150,
+      "descripcion": "Instrumento para alegrar las noches.",
+      "efecto": {}
+    },
+    {
+      "id": "tambor",
+      "nombre": "Tambor pequeño",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 130,
+      "descripcion": "Para marcar el ritmo.",
+      "efecto": {}
+    },
+    {
+      "id": "flauta",
+      "nombre": "Flauta de madera",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 100,
+      "descripcion": "Instrumento ligero.",
+      "efecto": {}
+    },
+    {
+      "id": "piedra_afilar",
+      "nombre": "Piedra de afilar",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "Para mantenimiento.",
+      "efecto": {}
+    },
+    {
+      "id": "cuerda_canamo",
+      "nombre": "Cuerda de cáñamo",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 50,
+      "descripcion": "Útil para el campamento.",
+      "efecto": {}
+    },
+    {
+      "id": "pedernal",
+      "nombre": "Pedernal y yesca",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Para encender fuegos.",
+      "efecto": {}
+    },
+    {
+      "id": "cantimplora",
+      "nombre": "Cantimplora de cuero",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "Mantiene el agua.",
+      "efecto": {}
+    },
+    {
+      "id": "kit_coser",
+      "nombre": "Kit de costura",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Para reparar equipo.",
+      "efecto": {}
     }
   ]
 }
