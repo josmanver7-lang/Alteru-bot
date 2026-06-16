@@ -3713,7 +3713,7 @@ return message.reply(textoEncuentro);
     return message.reply(promptText);
   }
 
-      // Comandos de Roleplay Directo con los Compañeros
+        // Comandos de Roleplay Directo con los Compañeros
   const companionCommands = {
     "!al": "alteru",
     "!c": "cirdil",
@@ -3727,68 +3727,41 @@ return message.reply(textoEncuentro);
   if (companionCommands[command]) {
     const companionId = companionCommands[command];
     const mensaje = content.slice(args[0].length).trim();
-
-    if (!mensaje) {
-      return message.reply("Escribe algo después del comando.");
-    }
+    if (!mensaje) return message.reply("Escribe algo después del comando.");
 
     const personaje = getPersonaje(companionId) || companions[companionId];
-
-    if (!personaje) {
-      return message.reply("Ese compañero no está disponible.");
-    }
+    if (!personaje) return message.reply("Ese compañero no está disponible.");
 
     const profile = await db.getProfile(message.author.id);
     const affinity = (profile.affinity || {})[companionId] || 0;
 
     const systemPrompt = `Eres ${personaje.nombre}.
-
-Personalidad:
-${personaje.personalidad || personaje.descripcion || personaje.tono || companions[companionId]?.efecto || "reservado"}
-
+Personalidad: ${personaje.personalidad || personaje.descripcion || personaje.tono || companions[companionId]?.efecto || "reservado"}
 Afinidad con el viajero: ${affinity}
-
-Escala de relación:
-0-24 desconocido
-25-49 conocido
-50-74 aliado
-75-99 amigo cercano
-100 compañero de confianza
-
-Reglas:
-- Responde como el personaje.
-- Máximo 2 frases cortas.
-- Español natural.
-- Mantén la personalidad del personaje.
-- No hables como IA.
-- No describas reglas.
-- No respondas vacío.
-- No respondas únicamente con acciones entre asteriscos.`;
+Trata al viajero según esta escala:
+0-24 desconocido, 25-49 conocido, 50-74 aliado, 75-99 amigo cercano, 100 compañero de confianza
+Instrucciones:
+Responde con una sola línea corta (máximo 12 palabras). Coloca tu nombre antes del diálogo.`;
 
     try {
       const reply = await groqChat({
         systemPrompt,
         messages: [{ role: "user", content: mensaje }],
         temperature: 0.9,
-        maxTokens: 80
+        maxTokens: 40
       });
 
       const clean = String(reply || "").trim();
-
-      if (!clean) {
-        return message.reply(`${personaje.nombre}: No estoy seguro de qué decir sobre eso.`);
-      }
-
       await db.addAffinity(message.author.id, companionId, 1);
 
       return message.reply(
         clean.startsWith(personaje.nombre)
           ? clean
-          : `${personaje.nombre}: ${clean}`
+          : `${personaje.nombre}: ${compactLine(clean || "*asiente*", 12)}`
       );
     } catch (err) {
       console.error("Groq Catch Error (Direct RP):", err);
-      return message.reply(`${personaje.nombre}: Parece que ahora mismo no encuentro las palabras adecuadas.`);
+      return message.reply(`${personaje.nombre}: *asiente en silencio*`);
     }
   }
 
