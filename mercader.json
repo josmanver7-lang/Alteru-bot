@@ -60,5 +60,18 @@
     "descripcion": "Una pieza de joyería refinada, símbolo de linaje noble.",
     "efecto": { "successBonus": 0.10 }
   },
+    {
+    "id": "escudo_hueso_dragon",
+    "nombre": "Escudo de Escamas de Dragón",
+    "slot": "arma",
+    "hand": 1,
+    "raza": "hombre",
+    "forma": "rectangular",
+    "material": "escamas reforzadas",
+    "rareza": "legendario",
+    "precioBase": 5500,
+    "descripcion": "Increíblemente raro, resistente al fuego y a golpes fatales.",
+    "efecto": { "damageReduction": 0.12, "successBonus": 0.03 }
+  }
   ]
 }
