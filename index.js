@@ -437,12 +437,6 @@ function getItemPower(effect = {}) {
   };
 }
 
-function sumEquipmentTotals(equipment = {}) {
-  const totals = {
-    damageBonus: 0,
-    successBonus: 0,
-    damageReduction: 0
-  };
 
   for (const item of Object.values(equipment || {})) {
     if (!item) continue;
