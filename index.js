@@ -290,21 +290,6 @@ async function loadCatalog(filename) {
   }
 }
 
-function formatEffect(effect = {}) {
-  const parts = [];
-
-  if (effect.salud) parts.push(`Salud +${effect.salud}`);
-  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
-  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
-  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
-  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
-  if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
-  if (effect.soloProximaExpedicion) parts.push(`Duración: próxima expedición`);
-  if (effect.soloProximoEncuentro) parts.push(`Duración: próximo encuentro`);
-
-  return parts.length ? parts.join(" | ") : "Sin efecto definido";
-}
-
 function formatPrice(value) {
   return `${Number(value || 0)} pts`;
 }
