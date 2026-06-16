@@ -422,7 +422,6 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
 }
 
 function getItemPower(effect = {}) {
-function getItemPower(effect = {}) {
   return {
     damageBonus: Number(effect.damageBonus || 0),
     successBonus: Number(effect.successBonus || 0),
@@ -437,21 +436,6 @@ function getItemPower(effect = {}) {
     healingBonus: Number(effect.healingBonus || 0)
   };
 }
-
-function sumEquipmentTotals(equipment = {}) {
-  const totals = {
-    damageBonus: 0,
-    successBonus: 0,
-    damageReduction: 0,
-    explorationBonus: 0,
-    stealthBonus: 0,
-    negotiationBonus: 0,
-    perceptionBonus: 0,
-    combatBonus: 0,
-    survivalBonus: 0,
-    willpowerBonus: 0,
-    healingBonus: 0
-  };
 
   for (const item of Object.values(equipment || {})) {
     if (!item) continue;
