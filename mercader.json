@@ -1,310 +1,240 @@
 {
-  "nombre": "Mercader Ambulante",
+  "nombre": "Tienda del Campamento",
+  "descripcion": "Suministros básicos, regalos y útiles de viaje.",
   "items": [
-    {
-      "id": "daga_hierro_romo",
-      "nombre": "Daga de Hierro Romo",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 1,
-      "raza": ["humano", "enano", "elfo"],
-      "rareza": "común",
-      "material": "hierro",
-      "precioBase": 60,
-      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
-    },
-    {
-      "id": "daga_elfica_rivendel",
-      "nombre": "Daga Élfica de Rivendel",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 1,
-      "raza": ["elfo"],
-      "rareza": "superior",
-      "material": "acero élfico",
-      "precioBase": 880,
-      "efecto": { "damageBonus": 4, "successBonus": 0.06 }
-    },
-    {
-      "id": "cota_malla_enana_doble_anillo",
-      "nombre": "Cota de Malla Enana Remachada",
-      "tipo": "armadura",
-      "slot": "pecho",
-      "raza": ["enano", "humano"],
-      "rareza": "superior",
-      "material": "acero",
-      "precioBase": 550,
-      "efecto": { "damageReduction": 0.1 }
-    },
-    {
-      "id": "capa_galadhrim",
-      "nombre": "Capa de los Galadhrim",
-      "tipo": "armadura",
-      "slot": "capa",
-      "raza": ["elfo", "humano"],
-      "rareza": "raro",
-      "material": "tela encantada",
-      "precioBase": 1400,
-      "efecto": { "successBonus": 0.08, "damageReduction": 0.03 }
-    },
-    {
-      "id": "anillo_calcedonia_rivendel",
-      "nombre": "Anillo de Calcedonia de Rivendel",
-      "tipo": "accesorio",
-      "slot": "anillo",
-      "raza": ["elfo", "humano"],
-      "rareza": "superior",
-      "material": "plata",
-      "precioBase": 1600,
-      "efecto": { "successBonus": 0.05, "damageReduction": 0.03 }
-    },
     {
       "id": "vendaje_simple",
       "nombre": "Vendaje simple",
       "tipo": "consumible",
-      "precioBase": 40,
+      "slots": 3,
+      "precioBase": 25,
+      "descripcion": "Recupera 20 de salud.",
       "efecto": { "salud": 20 }
     },
     {
+      "id": "estofado",
+      "nombre": "Estofado de Carne con Cebolla",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 35,
+      "descripcion": "Recupera 30 de salud.",
+      "efecto": { "salud": 30 }
+    },
+    {
       "id": "tonico_hierbas",
-      "nombre": "Tónico de hierbas",
+      "nombre": "Tónico de hierbas de Rhudaur",
       "tipo": "consumible",
-      "precioBase": 85,
+      "slots": 3,
+      "precioBase": 55,
+      "descripcion": "Recupera 50 de salud.",
       "efecto": { "salud": 50 }
     },
     {
-      "id": "anillo_cirvanya",
-      "nombre": "Cirvanya (Círculo Hermoso)",
-      "tipo": "accesorio",
-      "slot": "anillo",
-      "raza": ["elfo"],
-      "rareza": "superior",
-      "material": "oro",
-      "precioBase": 4900,
-      "descripcion": "Una pieza de joyería refinada, símbolo de linaje noble.",
-      "efecto": { "successBonus": 0.10 }
-    },
-    {
-      "id": "escudo_hueso_dragon",
-      "nombre": "Escudo de Escamas de Dragón",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 1,
-      "raza": ["humano", "enano"],
-      "rareza": "legendario",
-      "material": "escamas reforzadas",
-      "precioBase": 5500,
-      "descripcion": "Increíblemente raro, resistente al fuego.",
-      "efecto": { "damageReduction": 0.12, "successBonus": 0.03 }
-    },
-    {
-      "id": "garrote_semitroll",
-      "nombre": "Garrote de Semitroll",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 2,
-      "raza": ["humano", "enano"],
-      "rareza": "común",
-      "material": "madera endurecida",
-      "precioBase": 450,
-      "descripcion": "Un madero tosco y pesado, apenas desbastado.",
-      "efecto": { "damageBonus": 6 }
-    },
-    {
-      "id": "sable_haradrim",
-      "nombre": "Sable de los Haradrim",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 1,
-      "raza": ["humano"],
-      "rareza": "superior",
-      "material": "acero",
-      "precioBase": 900,
-      "descripcion": "Hoja curva y letal, forjada en los desiertos del sur.",
-      "efecto": { "damageBonus": 4, "successBonus": 0.04 }
-    },
-    {
-      "id": "lanza_tribal_khand",
-      "nombre": "Lanza Tribal de Khand",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 2,
-      "raza": ["humano", "enano"],
-      "rareza": "superior",
-      "material": "obsidiana",
-      "precioBase": 750,
-      "descripcion": "Lanza de guerra con punta de obsidiana.",
-      "efecto": { "damageBonus": 5 }
-    },
-    {
-      "id": "daga_primera_edad",
-      "nombre": "Daga de la Primera Edad",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 1,
-      "raza": ["elfo", "humano"],
-      "rareza": "legendario",
-      "material": "acero antiguo",
-      "precioBase": 2500,
-      "descripcion": "Un filo antiguo que apenas refleja la luz.",
-      "efecto": { "damageBonus": 7, "successBonus": 0.08 }
-    },
-    {
-      "id": "baston_bosque_viejo",
-      "nombre": "Bastón de Raíz del Bosque Viejo",
-      "tipo": "arma",
-      "slot": "arma",
-      "hand": 2,
-      "raza": ["elfo", "humano"],
-      "rareza": "raro",
-      "material": "madera viva",
-      "precioBase": 1200,
-      "descripcion": "Vibrante con una energía natural inquietante.",
-      "efecto": { "damageBonus": 2, "successBonus": 0.05 }
-    },
-    {
-      "id": "raiz_atarceder",
-      "nombre": "Raíz de Atardecer",
+      "id": "kit_campana",
+      "nombre": "Kit de campaña",
       "tipo": "consumible",
-      "precioBase": 200,
-      "efecto": { "vision": 0.1 }
+      "slots": 3,
+      "precioBase": 80,
+      "descripcion": "Recupera 70 de salud.",
+      "efecto": { "salud": 70 }
     },
     {
-      "id": "tabaco_puertos",
-      "nombre": "Tabaco de los Puertos Grises",
+      "id": "lembas",
+      "nombre": "Pan de Lembas",
       "tipo": "consumible",
+      "slots": 3,
       "precioBase": 150,
-      "efecto": { "afinidad": 2 }
+      "descripcion": "Pan de camino élfico. Recupera 100 de salud.",
+      "efecto": { "salud": 100 }
     },
     {
-      "id": "hierba_sueños",
-      "nombre": "Hierba de los Sueños",
+      "id": "cram",
+      "nombre": "Cram",
       "tipo": "consumible",
-      "precioBase": 180,
-      "efecto": { "salud": 50 }
+      "slots": 3,
+      "precioBase": 60,
+      "descripcion": "Galleta de viaje. Recupera 40 de salud.",
+      "efecto": { "salud": 40 }
     },
     {
-      "id": "especias_lejanas",
-      "nombre": "Especias del Lejano Harad",
+      "id": "pastel_miel_beorn",
+      "nombre": "Pastel de miel de Beorn",
       "tipo": "consumible",
-      "precioBase": 300,
-      "efecto": { "fuerza": 10 }
+      "slots": 3,
+      "precioBase": 90,
+      "descripcion": "Muy energizante. Recupera 60 de salud.",
+      "efecto": { "salud": 60 }
     },
     {
-      "id": "vino_oscuro_orco",
-      "nombre": "Vino añejo del Norte",
+      "id": "miruvor",
+      "nombre": "Frasco de Miruvor",
       "tipo": "consumible",
-      "precioBase": 120,
-      "efecto": { "fuerza": 5, "salud": -10 }
+      "slots": 3,
+      "precioBase": 200,
+      "descripcion": "Cordial de Imladris. Recupera 120 de salud.",
+      "efecto": { "salud": 120 }
     },
     {
-      "id": "flauta_hueso_harad",
-      "nombre": "Flauta de Hueso de Harad",
-      "tipo": "instrumento",
-      "slot": "accesorio",
-      "precioBase": 400,
-      "efecto": {}
+      "id": "cerveza_enana",
+      "nombre": "Cerveza fuerte",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 45,
+      "descripcion": "Un trago fuerte.",
+      "efecto": { "fuerza": 5 }
     },
     {
-      "id": "arpa_tierras_oscuras",
-      "nombre": "Arpa de las Tierras Oscuras",
-      "tipo": "instrumento",
-      "slot": "accesorio",
-      "precioBase": 800,
-      "efecto": {}
+      "id": "carne_seca",
+      "nombre": "Carne seca de viaje",
+      "tipo": "consumible",
+      "slots": 3,
+      "precioBase": 40,
+      "descripcion": "Dura pero nutritiva.",
+      "efecto": { "salud": 30 }
     },
     {
-      "id": "tambor_guerra_este",
-      "nombre": "Tambor de Guerra del Este",
-      "tipo": "instrumento",
-      "slot": "accesorio",
-      "precioBase": 600,
-      "efecto": {}
+      "id": "libro_antiguo",
+      "nombre": "Libro antiguo",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 70,
+      "descripcion": "Regalo para estudiosos.",
+      "efecto": { "afinidad": 3 }
     },
     {
-      "id": "aro_oro_primera_era",
-      "nombre": "Aro de Oro de la Primera Era",
-      "tipo": "accesorio",
-      "slot": "cabeza",
-      "raza": ["elfo", "humano"],
-      "rareza": "superior",
-      "material": "oro",
-      "precioBase": 2000,
-      "efecto": { "successBonus": 0.05 }
+      "id": "vino_dorwinion",
+      "nombre": "Vino de Dorwinion",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 80,
+      "descripcion": "Regalo para compañeros sociables.",
+      "efecto": { "afinidad": 3 }
     },
     {
-      "id": "capa_sigilo_sombrer",
-      "nombre": "Capa de Sombra Fugaz",
-      "tipo": "armadura",
-      "slot": "capa",
-      "raza": ["humano", "elfo"],
-      "rareza": "raro",
-      "material": "tela",
-      "precioBase": 1500,
-      "efecto": { "stealthBonus": 0.15 }
+      "id": "hierbas_curativas",
+      "nombre": "Hierbas curativas",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 75,
+      "descripcion": "Regalo sencillo.",
+      "efecto": { "afinidad": 3 }
     },
     {
-      "id": "botas_silenciosas",
-      "nombre": "Botas de Silencio",
-      "tipo": "armadura",
-      "slot": "pies",
-      "raza": ["humano", "elfo"],
-      "rareza": "superior",
-      "material": "cuero",
-      "precioBase": 1200,
-      "efecto": { "stealthBonus": 0.10 }
+      "id": "juguete_madera",
+      "nombre": "Juguete de madera",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Pequeño regalo nostálgico.",
+      "efecto": { "afinidad": 3 }
     },
     {
-      "id": "calzas_merodeador",
-      "nombre": "Calzas de Merodeador",
-      "tipo": "armadura",
-      "slot": "piernas",
-      "raza": ["humano", "elfo"],
-      "rareza": "superior",
-      "material": "cuero",
-      "precioBase": 900,
-      "efecto": { "stealthBonus": 0.08 }
+      "id": "amuleto_suerte",
+      "nombre": "Amuleto de buena suerte",
+      "tipo": "regalo",
+      "slots": 1,
+      "precioBase": 60,
+      "descripcion": "Para un compañero supersticioso.",
+      "efecto": { "afinidad": 3, "voluntad": 5 }
     },
     {
-      "id": "cuerno_gondor",
-      "nombre": "Cuerno de Gondor",
-      "tipo": "accesorio",
-      "slot": "accesorio",
-      "raza": ["humano"],
-      "rareza": "legendario",
-      "material": "cuerno",
-      "precioBase": 3500,
-      "efecto": { "negotiationBonus": 0.20 }
-    },
-    {
-      "id": "collar_elocuencia",
-      "nombre": "Collar de la Elocuencia",
-      "tipo": "accesorio",
-      "slot": "cuello",
-      "raza": ["humano", "elfo"],
-      "rareza": "superior",
-      "material": "plata",
-      "precioBase": 1800,
-      "efecto": { "negotiationBonus": 0.10 }
-    },
-    {
-      "id": "anillo_elocuencia",
-      "nombre": "Anillo de Oro de Diplomacia",
-      "tipo": "accesorio",
-      "slot": "anillo",
-      "raza": ["humano", "elfo"],
-      "rareza": "superior",
-      "material": "oro",
-      "precioBase": 1600,
-      "efecto": { "negotiationBonus": 0.08 }
-    },
-    {
-      "id": "halcon_entrenado",
-      "nombre": "Halcón Entrenado",
+      "id": "pipa_madera",
+      "nombre": "Pipa de madera",
       "tipo": "utilidad",
-      "slot": "accesorio",
-      "precioBase": 6000,
-      "efecto": { "evitarPeligros": 0.25 }
+      "slots": 1,
+      "precioBase": 50,
+      "descripcion": "Pipa clásica de viaje.",
+      "efecto": {}
+    },
+    {
+      "id": "tabaco_viejo_toby",
+      "nombre": "Tabaco Viejo Toby",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "La mejor hierba de la Comarca.",
+      "efecto": {}
+    },
+    {
+      "id": "laud",
+      "nombre": "Laúd de viaje",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 150,
+      "descripcion": "Instrumento para alegrar las noches.",
+      "efecto": { "negotiationBonus": 0.05, "explorationBonus": 0.05 }
+    },
+    {
+      "id": "tambor",
+      "nombre": "Tambor pequeño",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 130,
+      "descripcion": "Para marcar el ritmo.",
+      "efecto": { "negotiationBonus": 0.02, "explorationBonus": 0.06 }
+    },
+    {
+      "id": "flauta",
+      "nombre": "Flauta de madera",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 100,
+      "descripcion": "Instrumento ligero.",
+      "efecto": { "negotiationBonus": 0.04, "explorationBonus": 0.04 }
+    },
+    {
+      "id": "piedra_afilar",
+      "nombre": "Piedra de afilar",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "Para mantenimiento.",
+      "efecto": {}
+    },
+    {
+      "id": "cuerda_canamo",
+      "nombre": "Cuerda de cáñamo",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 50,
+      "descripcion": "Útil para el campamento.",
+      "efecto": {}
+    },
+    {
+      "id": "pedernal",
+      "nombre": "Pedernal y yesca",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Para encender fuegos.",
+      "efecto": {}
+    },
+    {
+      "id": "cantimplora",
+      "nombre": "Cantimplora de cuero",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 40,
+      "descripcion": "Mantiene el agua.",
+      "efecto": {}
+    },
+    {
+      "id": "kit_coser",
+      "nombre": "Kit de costura",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 30,
+      "descripcion": "Para reparar equipo.",
+      "efecto": {}
+    },
+    {
+      "id": "antorcha",
+      "nombre": "Antorcha de Resina",
+      "tipo": "utilidad",
+      "slots": 1,
+      "precioBase": 15,
+      "descripcion": "Ilumina zonas oscuras y facilita rastrear caminos complejos.",
+      "efecto": { "explorationBonus": 0.10 }
     }
   ]
 }
