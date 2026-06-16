@@ -49,6 +49,16 @@
       "tipo": "consumible",
       "precioBase": 85,
       "efecto": { "salud": 50 }
-    }
+    },
+    {
+    "id": "anillo_cirvanya",
+    "nombre": "Cirvanya (Círculo Hermoso)",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 4900,
+    "descripcion": "Una pieza de joyería refinada, símbolo de linaje noble.",
+    "efecto": { "successBonus": 0.10 }
+  },
   ]
 }
