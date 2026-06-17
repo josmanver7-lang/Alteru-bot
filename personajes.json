@@ -1,27 +1,70 @@
 [
   {
-    "id": "alteru"
+    "id": "alteru",
     "nombre": "Altéru",
     "titulo": "Capitán de Gondor",
     "raza": "Humano",
     "clase": "Capitán",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "equipo:" [
-    { "tipo": "arma", nombre: "Daga de Luz", bonusPoder: 2 },
-    { tipo: "armadura", nombre: "Túnica de viajeros", bonusSalud: 5 },
-    { tipo: "accesorio", nombre: "Amuleto de memoria", bonusAfinidad: 1 }]   
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo rectangular del Pelennor", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      }
+    ],   
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
-    "personalidad": "Desafiante,  ambicioso, apasionado,  cariñoso, guía, irónico, serio, observador,  estoico.",
+    "personalidad": "Desafiante, ambicioso, apasionado, cariñoso, guía, irónico, serio, observador, estoico.",
     "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Ost Ardnír, trabajó en la tienda de especias de su padre, se alistó a la milicia, estudió un año en el colegio de Eruditos de Minas Tirith, fue nombrado como portavoz de Gondor y recorrió todo el reino con la compañia de su amigo Cirdil y otros compañeros. Fue nombrado Capitán y lo demás son hazañas..",
     "relacion_con_alteru": "El mismo",
     "eventos_importantes": [
       "Reagrupó a los gobernadores de Gondor.",
       "Lideró el rompimiento del bloqueo de la desembocadura del Gilrain.",
       "Participó en varias escaramuzas y dio discursos que alentaron a los gondorianos.",
-      "Derrotó al líder corsario Kardŭn y lo empalizó frente a sus hombres a quienes luego ejecutó,", 
-      "Fue nombrado Capitán p9r Hirluin el Hermoso y destacó en la defensa de Ost Anrdir,",
-      "Participó y destacó en la batalla de Belfalas liderando la última carga,",
+      "Derrotó al líder corsario Kardŭn y lo empalizó frente a sus hombres a quienes luego ejecutó.",
+      "Fue nombrado Capitán por Hirluin el Hermoso y destacó en la defensa de Ost Anrdir.",
+      "Participó y destacó en la batalla de Belfalas liderando la última carga.",
       "En el banquete del día siguiente conoció y se enamoró de su amada Nieriel.",
       "Creó una hueste personal acompañado de Duinor, Andaer, Cirdil, Berendir y Berenil, hicieron una campaña de limpieza y acabaron con muchos invasores.",
       "Fue capturado y hecho prisionero por Jajax el corsario, tras perder un duelo individual contra Khaldoon y fue enviado prisionero a Harad.",
@@ -37,8 +80,7 @@
       "Faelon": "Sabio y aventurero, no se imaginaba a los elfos tan animados.",
       "Andaer": "Inquieto y competitivo, pero leal, diligente y servicial.",
       "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
-    }
-  },
+    },
   {
     "nombre": "Nieriel",
     "titulo": "La novia de Altéru",
@@ -46,8 +88,53 @@
     "clase": "Capitán",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Espada larga templada", "Escudo de gota", "Daga ornamentada del Cisne"],
-    "Armadura": ["Casco del Cisne", "Armadura metálica", "Guanteletes metalicos", "Grebas metalicas", "Hombreras metálicas", "Capa del Cisne"],
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo Doncella del Cisne", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      }
+    ],  
     "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
     "personalidad": "Reservada, silenciosa, observadora, empática y amable. Sabe cuándo expresarse gracias a su gran sensibilidad.",
     "historia": "Nació en el año 3002 de la Tercera Edad. Se crió en Dol Amroth y es hija de nobles descendientes del linaje de Galador. Tiene un hermano llamado Jandhil, seis años mayor que ella.",
@@ -73,8 +160,53 @@
     "clase": "Guerrero",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Espada larga templada", "Escudo de Gondor"],
-    "Armadura": ["Casco Nasal", "Gambeson Acolchado de Gondor", "Brazaletes metalicos", "Botas de cuero tachonado", "Hombreras metálicas"],
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo Doncella del Cisne", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      }   
+    ],  
     "descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, casi rapado.",
     "personalidad": "Inquieto, carismático, impulsivo, social y cariñoso.",
     "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Minas Tirith y, a temprana edad, fue aprendiz de herrero, está preocupado porque tiene un hijo a meses de nacer en la capital.",
@@ -104,9 +236,53 @@
     "clase": "Campeón",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Mandoble", "Daga reforjada"],
-    "Armadura": ["Yelmo completo", "Armadura metálica", "Brazaletes metalicos", "Grebas metalicas", "Hombreras metálicas"],
-    "Objetos": ["Anillo de matrimonio", "Tambor"],
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo Doncella del Cisne", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      } 
+    ], 
     "descripcion_fisica": "Piel clara, rostro atractivo y cabello corto, marron claro, fornido, alto.",
     "personalidad": "Calmado, amigable, cercano, social y cariñoso.",
     "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Lamedon y, a temprana edad, fue entrenado para formar parte de la escolta personal de Angbor.",
@@ -135,9 +311,53 @@
     "clase": "Guardián de Runas",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Arco de Rivendel", "Daga elfica simple"],
-    "Armadura": ["Gambeson ligero azul", "Brazaletes de cuero", "Botas de cuero", "Cinturón de pociones"],
-    "Objetos": ["Pergamino de curación", "Ingredientes curativos"],
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo Doncella del Cisne", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      } 
+    ], 
     "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
     "personalidad": "Calmado, amigable, cercano, social y atento.",
     "historia": "Nació en el año 2517 de la Tercera Edad. Se crió en Imladris y, a temprana edad, fue preparado en el arte de la curación y las runas.",
@@ -169,8 +389,53 @@
     "clase": "Guerrero",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Lanza de acero reforzado", "Escudo rectangular gondoriano", "Puñal afilado"],
-    "Armadura": ["Jubon de cuero tachonado", "Gambeson Acolchado", "Brazaletes de cuero", "Botas de cuero"],
+    "equipo": [
+      { 
+        "slot": "arma", 
+        "nombre": "Espada larga templada", 
+        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "escudo", 
+        "nombre": "Escudo Doncella del Cisne", 
+        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Placa metálica", 
+        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Hombreras de placas ligeras", 
+        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Yelmo de Cresta de Acero", 
+        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Brazalete metálico", 
+        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa de Cúridwan", 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Grebas doradas ornamentadas", 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+      },
+      { 
+        "slot": "anillo", 
+        "nombre": "Anillo de compromiso", 
+        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      }
+    ], 
     "descripcion_fisica": "Piel clara, rostro atractivo y cabello rojizo, delgado, altura promedio.",
     "personalidad": "Inquieto, amigable, servicial, social y diligente.",
     "historia": "Nació en el año 3002 de la Tercera Edad. Se crió en las granjas costeras de Belfalas, entrenando por su cuenta.",
