@@ -217,6 +217,7 @@ function getExplorationClosingText(points, item, rarity) {
   const hasItem = Boolean(item);
   const rarityKey = normalizeKey(rarity || "");
 
+  if (!hasItem && points < 50) {
     return "Fue un viaje mediocre. Perdí mi tiempo.";
   }
 
