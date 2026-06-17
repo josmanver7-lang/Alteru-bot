@@ -6,7 +6,7 @@
     "slot": "arma",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 60,
     "descripcion": "Una hoja sencilla, resistente y útil para viajeros.",
     "efecto": {
       "damageBonus": 1
@@ -22,7 +22,7 @@
     "precioBase": 80,
     "descripcion": "Ligera y discreta, ideal para exploradores.",
     "efecto": {
-      "damageBonus": 0.01,
+      "damageBonus": 1,
       "stealthBonus": 0.02
     }
   },
@@ -36,7 +36,7 @@
     "precioBase": 160,
     "descripcion": "Un arma pesada con marcas de antiguas batallas.",
     "efecto": {
-      "damageBonus": 0.02,
+      "damageBonus": 1,
       "combatBonus": 0.02
     }
   },
@@ -50,7 +50,7 @@
     "precioBase": 200,
     "descripcion": "Forjada para abrir paso entre maleza y enemigos.",
     "efecto": {
-      "damageBonus": 0.02
+      "damageBonus": 1
     }
   },
   {
@@ -60,7 +60,7 @@
     "slot": "arma",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 870,
     "descripcion": "Una pieza refinada que inspira respeto.",
     "efecto": {
       "damageBonus": 3,
@@ -74,7 +74,7 @@
     "slot": "arma",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 790,
     "descripcion": "Su equilibrio la hace temible en manos expertas.",
     "efecto": {
       "damageBonus": 3,
@@ -88,7 +88,7 @@
     "slot": "arma",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 0,
+    "precioBase": 2140,
     "descripcion": "Un arma casi mítica, cargada de presagio y poder.",
     "efecto": {
       "damageBonus": 5,
@@ -104,7 +104,7 @@
     "slot": "armadura",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 90,
     "descripcion": "Protección básica reforzada con cuero y remaches.",
     "efecto": {
       "damageReduction": 0.02
@@ -117,7 +117,7 @@
     "slot": "armadura",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 130,
     "descripcion": "Una cota resistente para rutas largas y peligrosas.",
     "efecto": {
       "damageReduction": 0.04,
@@ -131,7 +131,7 @@
     "slot": "armadura",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 340,
     "descripcion": "Armamento pulido para guardianes de élite.",
     "efecto": {
       "damageReduction": 0.06,
@@ -145,7 +145,7 @@
     "slot": "armadura",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 0,
+    "precioBase": 2140,
     "descripcion": "Una armadura legendaria que parece reflejar el firmamento.",
     "efecto": {
       "damageReduction": 0.10,
@@ -160,7 +160,7 @@
     "slot": "amuleto",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 50,
     "descripcion": "Reduce la sensación de extravío en caminos inciertos.",
     "efecto": {
       "explorationBonus": 0.02
@@ -173,7 +173,7 @@
     "slot": "amuleto",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 80,
     "descripcion": "Un símbolo de protección para quien no teme al deber.",
     "efecto": {
       "damageReduction": 0.03
@@ -186,7 +186,7 @@
     "slot": "amuleto",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 220,
     "descripcion": "Calienta el ánimo y fortalece la voluntad.",
     "efecto": {
       "willpowerBonus": 0.05,
@@ -200,7 +200,7 @@
     "slot": "amuleto",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 0,
+    "precioBase": 1330,
     "descripcion": "Un relicario de autoridad y destino.",
     "efecto": {
       "negotiationBonus": 0.08,
@@ -215,7 +215,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 30,
     "descripcion": "Un pequeño círculo de metal para sortear el cansancio.",
     "efecto": {
       "successBonus": 0.02
@@ -228,7 +228,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 50,
     "descripcion": "Aumenta la constancia en cada decisión.",
     "efecto": {
       "successBonus": 0.03,
@@ -242,7 +242,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 320,
     "descripcion": "Un juramento tallado en plata antigua.",
     "efecto": {
       "damageReduction": 0.03,
@@ -257,7 +257,7 @@
     "slot": "consumible",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 20,
     "descripcion": "Cura heridas leves y calma el pulso.",
     "efecto": {
       "salud": 15
@@ -270,7 +270,7 @@
     "slot": "consumible",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 30,
     "descripcion": "Un preparado más refinado para curación rápida.",
     "efecto": {
       "salud": 30
@@ -283,7 +283,7 @@
     "slot": "consumible",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 30,
     "descripcion": "Resta energías y mejora la resistencia del camino.",
     "efecto": {
       "survivalBonus": 0.03
@@ -296,7 +296,7 @@
     "slot": "consumible",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 120,
     "descripcion": "Un elixir raro que vigoriza cuerpo y mente.",
     "efecto": {
       "salud": 45,
@@ -311,7 +311,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 0,
+    "precioBase": 50,
     "descripcion": "Una capa sencilla para soportar viento y frío.",
     "efecto": {
       "explorationBonus": 0.02
@@ -324,7 +324,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 100,
     "descripcion": "Aporta sigilo y un aire sombrío.",
     "efecto": {
       "stealthBonus": 0.04
@@ -337,7 +337,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 0,
+    "precioBase": 120,
     "descripcion": "Instrumento de viaje que inspira al grupo en la marcha.",
     "efecto": {
       "negotiationBonus": 0.05,
@@ -351,7 +351,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 0,
+    "precioBase": 130,
     "descripcion": "Una melodía suave que ayuda a mantener el ánimo.",
     "efecto": {
       "willpowerBonus": 0.03,
@@ -365,7 +365,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 0,
+    "precioBase": 890,
     "descripcion": "Un instrumento antiguo de resonancia casi sagrada.",
     "efecto": {
       "willpowerBonus": 0.06,
