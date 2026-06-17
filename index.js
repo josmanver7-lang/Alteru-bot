@@ -149,6 +149,8 @@ let exploracionCache = null;
 
 const EXPLORATION_LIMIT = 1;
 const EXPLORATION_WINDOW_MS = 12 * 60 * 60 * 1000;
+const EXPLORATION_POINT_MIN = 10;
+const EXPLORATION_POINT_MAX = 200;
 
 function getExplorationBonusPercent(profile = {}, equipment = {}) {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
