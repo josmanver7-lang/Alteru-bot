@@ -8,7 +8,7 @@
     "rareza": "comun",
     "precioBase": 85,
     "descripcion": "Una hoja simple para empezar.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0,01 }
   },
   {
     "id": "daga_practica",
@@ -19,7 +19,7 @@
     "rareza": "comun",
     "precioBase": 95,
     "descripcion": "Ligera y útil para viajes menores.",
-    "efecto": { "stealthBonus": 1 }
+    "efecto": { "stealthBonus": 0.01 }
   },
   {
     "id": "pica_acero_bree",
@@ -29,8 +29,8 @@
     "raza": "hombre",
     "rareza": "forjado",
     "precioBase": 240,
-    "descripcion": "Arma larga y resistente de manufactura norteña.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "descripcion": "vvArma larga y resistente de manufactura norteña.",
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "estilete_guardia_ciudadela",
@@ -41,7 +41,7 @@
     "rareza": "superior",
     "precioBase": 480,
     "descripcion": "Hoja precisa y elegante de Gondor.",
-    "efecto": { "combatBonus": 4, "stealthBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "stealthBonus": 0.02 }
   },
   {
     "id": "daga_curva_mallorn",
@@ -52,7 +52,7 @@
     "rareza": "forjado",
     "precioBase": 280,
     "descripcion": "Ligera y refinada, pensada para la precisión.",
-    "efecto": { "combatBonus": 3, "stealthBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "daga_elfica_rivendel",
@@ -63,7 +63,7 @@
     "rareza": "superior",
     "precioBase": 840,
     "descripcion": "Una hoja de gran equilibrio, casi ceremonial.",
-    "efecto": { "combatBonus": 4, "stealthBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "stealthBonus": 0.02 }
   },
   {
     "id": "daga_elfica_beleriand",
@@ -74,7 +74,7 @@
     "rareza": "legendario",
     "precioBase": 1640,
     "descripcion": "Filo antiguo, fino y muy difícil de conseguir.",
-    "efecto": { "combatBonus": 6, "stealthBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.06, "stealthBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "daga_corta_hobbit",
@@ -85,7 +85,7 @@
     "rareza": "comun",
     "precioBase": 70,
     "descripcion": "Más práctica que heroica, pero cumple su función.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "daga_tumulos",
@@ -96,7 +96,7 @@
     "rareza": "superior",
     "precioBase": 420,
     "descripcion": "Una pieza inquietante con un aire antiguo.",
-    "efecto": { "combatBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "daga_hierro_montanas_azules",
@@ -107,7 +107,7 @@
     "rareza": "comun",
     "precioBase": 100,
     "descripcion": "Sólida, simple y de fabricación dura.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "pua_acero_runico_erebor",
@@ -118,7 +118,7 @@
     "rareza": "legendario",
     "precioBase": 1800,
     "descripcion": "Arma rúnica forjada para expediciones exigentes.",
-    "efecto": { "combatBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "gladius_bronce_antiguo",
@@ -129,7 +129,7 @@
     "rareza": "comun",
     "precioBase": 120,
     "descripcion": "Corta y fiable, aunque algo vieja.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "espada_corta_guardian_rohan",
@@ -140,7 +140,7 @@
     "rareza": "forjado",
     "precioBase": 280,
     "descripcion": "Diseñada para el combate rápido en campo abierto.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "espada_corta_explorador_lothlorien",
@@ -151,7 +151,7 @@
     "rareza": "forjado",
     "precioBase": 340,
     "descripcion": "Ligera y silenciosa, ideal para moverse con sigilo.",
-    "efecto": { "combatBonus": 3, "stealthBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "espada_corta_altos_elfos",
@@ -162,7 +162,7 @@
     "rareza": "superior",
     "precioBase": 750,
     "descripcion": "Una hoja noble y exquisitamente terminada.",
-    "efecto": { "combatBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "espada_corta_fronterizos_comarca",
@@ -173,7 +173,7 @@
     "rareza": "comun",
     "precioBase": 60,
     "descripcion": "Más robusta de lo que parece.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "espada_corta_othrikar",
@@ -184,7 +184,7 @@
     "rareza": "forjado",
     "precioBase": 280,
     "descripcion": "Compacta y muy resistente.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "espada_corta_anduin",
@@ -195,7 +195,7 @@
     "rareza": "forjado",
     "precioBase": 300,
     "descripcion": "Pensada para cazar y sobrevivir.",
-    "efecto": { "combatBonus": 3, "survivalBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "espada_larga_acero_rustico",
@@ -206,7 +206,7 @@
     "rareza": "comun",
     "precioBase": 210,
     "descripcion": "Una espada común, sólida y útil.",
-    "efecto": { "combatBonus": 2 }
+    "efecto": { "combatBonus": 0.02 }
   },
   {
     "id": "espada_jinete",
@@ -217,7 +217,7 @@
     "rareza": "forjado",
     "precioBase": 710,
     "descripcion": "Diseñada para la carga y el combate a caballo.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "espada_infanteria_ciudadela_gondor",
@@ -228,7 +228,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Forjada para servir a la guardia de la ciudad.",
-    "efecto": { "combatBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "espada_larga_rivendel",
@@ -239,7 +239,7 @@
     "rareza": "superior",
     "precioBase": 1400,
     "descripcion": "Elegante, silenciosa y de gran calidad.",
-    "efecto": { "combatBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "espada_elfica_lindon",
@@ -250,7 +250,7 @@
     "rareza": "legendario",
     "precioBase": 2200,
     "descripcion": "Una hoja de alto linaje y enorme refinamiento.",
-    "efecto": { "combatBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "espada_guerra_colinas_hierro",
@@ -261,7 +261,7 @@
     "rareza": "superior",
     "precioBase": 1300,
     "descripcion": "Hecha para aguantar golpes y devolverlos con fuerza.",
-    "efecto": { "combatBonus": 5 }
+    "efecto": { "combatBonus": 0.05 }
   },
   {
     "id": "mandoble_una_mano_erebor",
@@ -272,7 +272,7 @@
     "rareza": "superior",
     "precioBase": 1440,
     "descripcion": "Rudo y pesado, con agarre firme.",
-    "efecto": { "combatBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "gran_espada_hierro_bree",
@@ -283,7 +283,7 @@
     "rareza": "forjado",
     "precioBase": 680,
     "descripcion": "Más pesada y contundente.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "mandoble_jinetes_marca",
@@ -294,7 +294,7 @@
     "rareza": "superior",
     "precioBase": 1530,
     "descripcion": "Una gran hoja de guerra para romper líneas.",
-    "efecto": { "combatBonus": 5 }
+    "efecto": { "combatBonus": 0.05 }
   },
   {
     "id": "mandoble_practica_elfico",
@@ -305,7 +305,7 @@
     "rareza": "comun",
     "precioBase": 340,
     "descripcion": "Más de entrenamiento que de guerra.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "mandoble_estilizado_alto_elfo",
@@ -316,7 +316,7 @@
     "rareza": "superior",
     "precioBase": 1650,
     "descripcion": "Una pieza de gran equilibrio y belleza.",
-    "efecto": { "combatBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "gran_espada_tajo_moria",
@@ -327,7 +327,7 @@
     "rareza": "legendario",
     "precioBase": 2260,
     "descripcion": "Tan brutal como una puerta de forja.",
-    "efecto": { "combatBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "mandoble_pesado_vales",
@@ -338,7 +338,7 @@
     "rareza": "legendario",
     "precioBase": 3100,
     "descripcion": "Pensado para pelear como una bestia.",
-    "efecto": { "combatBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "arco_caza",
@@ -349,7 +349,7 @@
     "rareza": "comun",
     "precioBase": 290,
     "descripcion": "Arco simple de cazadores.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "arco_compuesto",
@@ -360,7 +360,7 @@
     "rareza": "forjado",
     "precioBase": 650,
     "descripcion": "Arco compuesto de guerra.",
-    "efecto": { "combatBonus": 3, "perceptionBonus": 1 }
+    "efecto": { "combatBonus": 0.2, "perceptionBonus": 0.01 }
   },
   {
     "id": "arco_largo",
@@ -371,7 +371,7 @@
     "rareza": "superior",
     "precioBase": 1420,
     "descripcion": "Arco diseñado para largo alcance.",
-    "efecto": { "combatBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "combatBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "arco_vale",
@@ -382,7 +382,7 @@
     "rareza": "legendario",
     "precioBase": 3520,
     "descripcion": "Arco especializado del Valle de la Raíz Negra.",
-    "efecto": { "combatBonus": 6, "perceptionBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "arco_galadhrim",
@@ -393,7 +393,7 @@
     "rareza": "legendario",
     "precioBase": 4210,
     "descripcion": "Arco elfico de Lothlórien.",
-    "efecto": { "combatBonus": 6, "perceptionBonus": 2, "willpowerBonus": 2 }
+    "efecto": { "combatBonus": 0.06, "perceptionBonus": 0.02, "willpowerBonus": 0.02 }
   },
   {
     "id": "honda_compuesta",
@@ -404,7 +404,7 @@
     "rareza": "forjado",
     "precioBase": 340,
     "descripcion": "Honda especial de cuero con largo alcance.",
-    "efecto": { "combatBonus": 3, "perceptionBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "armadura_placas_guardia_arbol_blanco",
@@ -414,7 +414,7 @@
     "rareza": "legendario",
     "precioBase": 5360,
     "descripcion": "Una armadura propia de veteranos de Gondor.",
-    "efecto": { "resilienceBonus": 6, "survivalBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "survivalBonus": 0.04 }
   },
   {
     "id": "armadura_laminar_alto_elfo",
@@ -424,7 +424,7 @@
     "rareza": "legendario",
     "precioBase": 5450,
     "descripcion": "Una pieza digna de un gran señor élfico.",
-    "efecto": { "resilienceBonus": 6, "survivalBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "survivalBonus": 0.04 }
   },
   {
     "id": "armadura_placas_acero_runico_erebor",
@@ -434,7 +434,7 @@
     "rareza": "legendario",
     "precioBase": 6320,
     "descripcion": "Forjada para resistir guerras enteras.",
-    "efecto": { "resilienceBonus": 6, "survivalBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "survivalBonus": 0.04 }
   },
   {
     "id": "capa_galadhrim",
@@ -444,7 +444,7 @@
     "rareza": "legendario",
     "precioBase": 3500,
     "descripcion": "Camuflaje y protección espiritual.",
-    "efecto": { "stealthBonus": 6, "perceptionBonus": 2, "willpowerBonus": 2 }
+    "efecto": { "stealthBonus": 0.06, "perceptionBonus": 0.02, "willpowerBonus": 0.02 }
   },
   {
     "id": "manto_montaraces_ithilien",
@@ -454,7 +454,7 @@
     "rareza": "legendario",
     "precioBase": 3240,
     "descripcion": "Capucha profunda y utilidad extrema.",
-    "efecto": { "stealthBonus": 6, "perceptionBonus": 2, "willpowerBonus": 2 }
+    "efecto": { "stealthBonus": 0.06, "peperceptionBonus"0.02, "wiwillpowerBonus"0.02 }
   },
   {
     "id": "capa_augur_forochel",
@@ -464,7 +464,7 @@
     "rareza": "legendario",
     "precioBase": 3780,
     "descripcion": "Protección frente al frío y la dureza del viaje.",
-    "efecto": { "stealthBonus": 6, "survivalBonus": 4 }
+    "efecto": { "ststealthBonus"0.06, "susurvivalBonus"0.04 }
   },
   {
     "id": "capa_antigua_colina",
@@ -474,7 +474,7 @@
     "rareza": "legendario",
     "precioBase": 2980,
     "descripcion": "Resiste miedo y terrores antiguos.",
-    "efecto": { "stealthBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "stealthBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "anillo_calcedonia_rivendel",
@@ -484,7 +484,7 @@
     "rareza": "legendario",
     "precioBase": 3530,
     "descripcion": "Inspira paz y estabilidad.",
-    "efecto": { "willpowerBonus": 6, "perceptionBonus": 4 }
+    "efecto": { "willpowerBonus": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "banda_oro_erebor",
@@ -494,7 +494,7 @@
     "rareza": "legendario",
     "precioBase": 3200,
     "descripcion": "Anillo de fortaleza inquebrantable.",
-    "efecto": { "willpowerBonus": 6, "negotiationBonus": 4 }
+    "efecto": { "willpowerBonus": 0.06, "negotiationBonus": 0.04 }
   },
   {
     "id": "coraza_cuero_hervido_hombre",
@@ -504,7 +504,7 @@
     "rareza": "forjado",
     "precioBase": 540,
     "descripcion": "Protección firme sin perder demasiada movilidad.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "coraza_cuero_hervido_elfo",
@@ -514,7 +514,7 @@
     "rareza": "forjado",
     "precioBase": 680,
     "descripcion": "Ligera, elegante y trabajada con precisión.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "coraza_cuero_hervido_enano",
@@ -524,7 +524,7 @@
     "rareza": "forjado",
     "precioBase": 640,
     "descripcion": "Cuero endurecido sobre una base muy sólida.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "coraza_cuero_hervido_hobbit",
@@ -534,7 +534,7 @@
     "rareza": "comun",
     "precioBase": 320,
     "descripcion": "Protección ligera y cómoda para rutas largas.",
-    "efecto": { "resilienceBonus": 1 }
+    "efecto": { "resilienceBonus": 0.01 }
   },
   {
     "id": "guantes_cuero_tachonado",
@@ -544,7 +544,7 @@
     "rareza": "comun",
     "precioBase": 110,
     "descripcion": "Mejoran el agarre y protegen las manos.",
-    "efecto": { "resilienceBonus": 1 }
+    "efecto": { "resilienceBonus": 0.01 }
   },
   {
     "id": "guanteletes_acero_gondor",
@@ -554,7 +554,7 @@
     "rareza": "superior",
     "precioBase": 630,
     "descripcion": "Pesados, precisos y muy resistentes.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "guantes_seda_lothlorien",
@@ -564,7 +564,7 @@
     "rareza": "forjado",
     "precioBase": 360,
     "descripcion": "Finos y elegantes, más útiles de lo que parecen.",
-    "efecto": { "resilienceBonus": 3, "stealthBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "guanteletes_runicos_erebor",
@@ -574,7 +574,7 @@
     "rareza": "superior",
     "precioBase": 820,
     "descripcion": "Forja enana reforzada con runas de firmeza.",
-    "efecto": { "resilienceBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "mitones_hobbit_michel_delving",
@@ -584,7 +584,7 @@
     "rareza": "comun",
     "precioBase": 85,
     "descripcion": "Abrigan y dan algo de protección.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "hombreras_cuero_hervido_hombre",
@@ -594,7 +594,7 @@
     "rareza": "comun",
     "precioBase": 380,
     "descripcion": "Sencillas y funcionales.",
-    "efecto": { "resilienceBonus": 1 }
+    "efecto": { "resilienceBonus": 0.01 }
   },
   {
     "id": "hombreras_bordadas_elficas",
@@ -604,7 +604,7 @@
     "rareza": "forjado",
     "precioBase": 830,
     "descripcion": "Protección ligera con adornos de plata.",
-    "efecto": { "resilienceBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "hombreras_angulares_enanas",
@@ -614,7 +614,7 @@
     "rareza": "superior",
     "precioBase": 840,
     "descripcion": "Robustas y de líneas duras.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "hombreras_hobbit_acolchadas",
@@ -624,7 +624,7 @@
     "rareza": "comun",
     "precioBase": 150,
     "descripcion": "Muy ligeras, pensadas para viajes tranquilos.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "grebas_normandas_hombre",
@@ -634,7 +634,7 @@
     "rareza": "forjado",
     "precioBase": 900,
     "descripcion": "Protección sólida para largas marchas.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "grebas_ligeras_elficas",
@@ -644,7 +644,7 @@
     "rareza": "forjado",
     "precioBase": 710,
     "descripcion": "Apenas pesan y siguen protegiendo bien.",
-    "efecto": { "stealthBonus": 3, "resilienceBonus": 1 }
+    "efecto": { "stealthBonus": 0.03, "resilienceBonus": 0.01 }
   },
   {
     "id": "grebas_runic_enanas",
@@ -654,7 +654,7 @@
     "rareza": "superior",
     "precioBase": 1630,
     "descripcion": "Diseñadas para resistir impactos fuertes.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "grebas_cortas_hobbit",
@@ -664,7 +664,7 @@
     "rareza": "comun",
     "precioBase": 110,
     "descripcion": "Adaptadas para una zancada corta y segura.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "casco_nasal",
@@ -674,7 +674,7 @@
     "rareza": "forjado",
     "precioBase": 560,
     "descripcion": "Protección clásica, simple y efectiva.",
-    "efecto": { "resilienceBonus": 3, "perceptionBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "yelmo_ornamentado_crestas",
@@ -684,7 +684,7 @@
     "rareza": "superior",
     "precioBase": 1320,
     "descripcion": "Pieza de élite de Gondor.",
-    "efecto": { "resilienceBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "casco_elfico_lindon",
@@ -694,7 +694,7 @@
     "rareza": "superior",
     "precioBase": 1640,
     "descripcion": "Ligero, elegantemente terminado.",
-    "efecto": { "resilienceBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "yelmo_caballero_rivendel",
@@ -704,7 +704,7 @@
     "rareza": "legendario",
     "precioBase": 2950,
     "descripcion": "Una pieza de gran prestigio y defensa.",
-    "efecto": { "resilienceBonus": 6, "perceptionBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "yelmo_cerrado_erebor",
@@ -714,7 +714,7 @@
     "rareza": "legendario",
     "precioBase": 3400,
     "descripcion": "Pesado, imponente y muy difícil de perforar.",
-    "efecto": { "resilienceBonus": 6, "perceptionBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "capucha_reforzada_hobbit",
@@ -724,7 +724,7 @@
     "rareza": "comun",
     "precioBase": 95,
     "descripcion": "Protección discreta para el camino.",
-    "efecto": { "perceptionBonus": 1 }
+    "efecto": { "perceptionBonus": 0.01 }
   },
   {
     "id": "anillo_cobre_simple",
@@ -734,7 +734,7 @@
     "rareza": "comun",
     "precioBase": 90,
     "descripcion": "Una pieza modesta pero útil.",
-    "efecto": { "perceptionBonus": 1 }
+    "efecto": { "perceptionBonus": 0.01 }
   },
   {
     "id": "anillo_hierro_runo",
@@ -744,7 +744,7 @@
     "rareza": "forjado",
     "precioBase": 180,
     "descripcion": "Refuerza la voluntad y la firmeza.",
-    "efecto": { "willpowerBonus": 3, "resilienceBonus": 1 }
+    "efecto": { "willpowerBonus": 0.03, "resilienceBonus": 0.01 }
   },
   {
     "id": "anillo_plata_rivendel",
@@ -754,7 +754,7 @@
     "rareza": "superior",
     "precioBase": 360,
     "descripcion": "Ligero, fino y de gran calidad.",
-    "efecto": { "willpowerBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "willpowerBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "anillo_bronce_erebor",
@@ -764,7 +764,7 @@
     "rareza": "superior",
     "precioBase": 420,
     "descripcion": "Sólido y grabado con runas de resistencia.",
-    "efecto": { "willpowerBonus": 4, "resilienceBonus": 2 }
+    "efecto": { "willpowerBonus": 0.04, "resilienceBonus": 0.02 }
   },
   {
     "id": "broquel_madera_comarca",
@@ -777,7 +777,7 @@
     "rareza": "comun",
     "precioBase": 60,
     "descripcion": "Un disco de madera reforzado. Poco más que una tapa de barril, pero mejor que nada.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "escudo_redondo_bree",
@@ -790,7 +790,7 @@
     "rareza": "comun",
     "precioBase": 90,
     "descripcion": "Un escudo de viaje típico de los habitantes del cruce de caminos.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "rodela_madera_rohan",
@@ -803,7 +803,7 @@
     "rareza": "comun",
     "precioBase": 110,
     "descripcion": "Ligero y eficaz para la caballería rápida de Rohan.",
-    "efecto": { "survivalBonus": 2 }
+    "efecto": { "survivalBonus": 0.02 }
   },
   {
     "id": "escudo_juez_rohan",
@@ -816,7 +816,7 @@
     "rareza": "forjado",
     "precioBase": 320,
     "descripcion": "Escudo con el símbolo del caballo blanco pintado en el centro.",
-    "efecto": { "survivalBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "survivalBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "escudo_guardia_real_rohan",
@@ -829,7 +829,7 @@
     "rareza": "superior",
     "precioBase": 950,
     "descripcion": "Escudo de alta calidad, usado por los guerreros de Meduseld.",
-    "efecto": { "survivalBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "survivalBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "escudo_sol_rohan",
@@ -842,7 +842,7 @@
     "rareza": "legendario",
     "precioBase": 2800,
     "descripcion": "Un emblema de poder. El diseño de sol brilla incluso en la batalla.",
-    "efecto": { "survivalBonus": 6, "willpowerBonus": 2, "combatBonus": 2 }
+    "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02, "combatBonus": 0.02 }
   },
   {
     "id": "escudo_torre_osgiliath",
@@ -855,7 +855,7 @@
     "rareza": "forjado",
     "precioBase": 450,
     "descripcion": "Diseño clásico de infantería para formar muros de escudos.",
-    "efecto": { "survivalBonus": 3, "resilienceBonus": 1 }
+    "efecto": { "survivalBonus": 0.03, "resilienceBonus": 0.01 }
   },
   {
     "id": "escudo_ciudadela",
@@ -868,7 +868,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Escudo con el Árbol Blanco grabado. Inmóvil como la roca.",
-    "efecto": { "survivalBonus": 4, "resilienceBonus": 2 }
+    "efecto": { "survivalBonus": 0.04, "resilienceBonus": 0.02 }
   },
   {
     "id": "escudo_capitan_gondor",
@@ -881,7 +881,7 @@
     "rareza": "legendario",
     "precioBase": 3500,
     "descripcion": "Una obra maestra de la forja de los Hombres. Ligero y virtualmente indestructible.",
-    "efecto": { "survivalBonus": 6, "willpowerBonus": 2, "combatBonus": 2 }
+    "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02, "combatBonus": 0.02 }
   },
   {
     "id": "escudo_elfico_imladris",
@@ -894,7 +894,7 @@
     "rareza": "superior",
     "precioBase": 1400,
     "descripcion": "Elegante y curvo, diseñado para desviar flechas con gracia.",
-    "efecto": { "survivalBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "survivalBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "escudo_luz_rivendel",
@@ -907,7 +907,7 @@
     "rareza": "legendario",
     "precioBase": 4200,
     "descripcion": "Parece hecho de luz estelar sólida. Protege contra el miedo y el metal.",
-    "efecto": { "survivalBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "escudo_rama_mallorn",
@@ -920,7 +920,7 @@
     "rareza": "forjado",
     "precioBase": 380,
     "descripcion": "Escudo de los exploradores de Lothlórien, diseñado para el camuflaje.",
-    "efecto": { "survivalBonus": 3, "stealthBonus": 1 }
+    "efecto": { "survivalBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "escudo_plata_galadhrim",
@@ -933,7 +933,7 @@
     "rareza": "superior",
     "precioBase": 1100,
     "descripcion": "Refleja la luz del bosque. Una pieza de artesanía antigua.",
-    "efecto": { "survivalBonus": 4, "willpowerBonus": 2 }
+    "efecto": { "survivalBonus": 0.04, "willpowerBonus": 0.02 }
   },
   {
     "id": "escudo_hierro_minas",
@@ -946,7 +946,7 @@
     "rareza": "forjado",
     "precioBase": 400,
     "descripcion": "Pesado y robusto, ideal para pasillos estrechos.",
-    "efecto": { "survivalBonus": 3, "resilienceBonus": 1 }
+    "efecto": { "survivalBonus": 0.03, "resilienceBonus": 0.01 }
   },
   {
     "id": "escudo_colinas_hierro",
@@ -959,7 +959,7 @@
     "rareza": "superior",
     "precioBase": 1350,
     "descripcion": "Escudo con bordes dentados diseñado para golpear mientras bloquea.",
-    "efecto": { "survivalBonus": 4, "combatBonus": 2 }
+    "efecto": { "survivalBonus": 0.04, "combatBonus": 0.02 }
   },
   {
     "id": "escudo_runico_erebor",
@@ -972,7 +972,7 @@
     "rareza": "legendario",
     "precioBase": 3800,
     "descripcion": "Las runas inscritas en este escudo brillan cuando se acercan orcos.",
-    "efecto": { "survivalBonus": 6, "willpowerBonus": 2, "perceptionBonus": 2 }
+    "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02, "perceptionBonus": 0.02 }
   },
   {
     "id": "arco_largo_silvano",
@@ -983,7 +983,7 @@
     "rareza": "forjado",
     "precioBase": 1800,
     "descripcion": "Arco de madera oscura, flexible y mortalmente silencioso.",
-    "efecto": { "combatBonus": 3, "stealthBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "cuchillo_bosque_negro",
@@ -994,7 +994,7 @@
     "rareza": "forjado",
     "precioBase": 450,
     "descripcion": "Pequeña hoja de acero élfico, perfecta para desollar o defensa.",
-    "efecto": { "combatBonus": 3, "stealthBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "stealthBonus": 0.01 }
   },
   {
     "id": "armadura_cuero_mirkwood",
@@ -1004,7 +1004,7 @@
     "rareza": "superior",
     "precioBase": 1350,
     "descripcion": "Tratado con resinas de árbol para resistir el agua y los golpes.",
-    "efecto": { "resilienceBonus": 4, "stealthBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "stealthBonus": 0.02 }
   },
   {
     "id": "capa_hojas_bosque",
@@ -1014,7 +1014,7 @@
     "rareza": "superior",
     "precioBase": 1100,
     "descripcion": "Capa tejida con fibras naturales que confunden la vista entre los árboles.",
-    "efecto": { "stealthBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "stealthBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "yelmo_guardia_silvana",
@@ -1024,7 +1024,7 @@
     "rareza": "superior",
     "precioBase": 1450,
     "descripcion": "Yelmo ligero con motivos de hojas grabadas en el metal.",
-    "efecto": { "resilienceBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "hacha_beornida",
@@ -1035,7 +1035,7 @@
     "rareza": "forjado",
     "precioBase": 900,
     "descripcion": "Robusta hacha de hierro, ruda pero devastadora.",
-    "efecto": { "combatBonus": 3, "survivalBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "coraza_piel_oso",
@@ -1045,7 +1045,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Cuero pesado que absorbe impactos con facilidad.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "brazaletes_piel_norte",
@@ -1055,7 +1055,7 @@
     "rareza": "forjado",
     "precioBase": 550,
     "descripcion": "Brutales y sencillos, típicos de los hombres del Val del Anduin.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "amuleto_garra_oso",
@@ -1065,7 +1065,7 @@
     "rareza": "superior",
     "precioBase": 980,
     "descripcion": "Otorga una ferocidad inusual al portador.",
-    "efecto": { "willpowerBonus": 4, "combatBonus": 2 }
+    "efecto": { "willpowerBonus": 0.04, "combatBonus": 0.02 }
   },
   {
     "id": "grebas_norte_acero",
@@ -1075,7 +1075,7 @@
     "rareza": "forjado",
     "precioBase": 850,
     "descripcion": "Protección para las piernas en terrenos accidentados.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "mandoble_guardia_citadela",
@@ -1086,7 +1086,7 @@
     "rareza": "legendario",
     "precioBase": 4200,
     "descripcion": "Espada de gran peso y elegancia, símbolo del servicio a Gondor.",
-    "efecto": { "combatBonus": 6, "willpowerBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
   },
   {
     "id": "armadura_placas_gondor_elite",
@@ -1096,7 +1096,7 @@
     "rareza": "legendario",
     "precioBase": 7200,
     "descripcion": "Acero negro grabado con el Árbol Blanco. Indestructible.",
-    "efecto": { "resilienceBonus": 6, "survivalBonus": 4 }
+    "efecto": { "resilienceBonus": 0.06, "survivalBonus": 0.04 }
   },
   {
     "id": "yelmo_ala_gondor",
@@ -1106,7 +1106,7 @@
     "rareza": "superior",
     "precioBase": 2100,
     "descripcion": "Famoso yelmo con alas que impone respeto en el campo.",
-    "efecto": { "resilienceBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "capa_montaraz_ithilien",
@@ -1116,7 +1116,7 @@
     "rareza": "superior",
     "precioBase": 1900,
     "descripcion": "Manto que se confunde perfectamente con los matorrales.",
-    "efecto": { "stealthBonus": 4, "perceptionBonus": 2 }
+    "efecto": { "stealthBonus": 0.04, "perceptionBonus": 0.02 }
   },
   {
     "id": "anillo_estrella_dunedain",
@@ -1126,7 +1126,7 @@
     "rareza": "legendario",
     "precioBase": 4500,
     "descripcion": "Un anillo que recuerda la gloria de Númenor.",
-    "efecto": { "willpowerBonus": 6, "perceptionBonus": 4 }
+    "efecto": { "willpowerBonus": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "hacha_enana_doble",
@@ -1137,7 +1137,7 @@
     "rareza": "forjado",
     "precioBase": 1100,
     "descripcion": "Equilibrada para lanzar o golpear.",
-    "efecto": { "combatBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "armadura_malla_enana",
@@ -1147,7 +1147,7 @@
     "rareza": "superior",
     "precioBase": 2400,
     "descripcion": "Anillas pequeñas de acero templado.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "hombreras_piedra_enano",
@@ -1157,7 +1157,7 @@
     "rareza": "forjado",
     "precioBase": 1300,
     "descripcion": "Pesadas y sólidas para bloquear ataques desde arriba.",
-    "efecto": { "resilienceBonus": 3, "survivalBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "guanteletes_forja_erebor",
@@ -1167,7 +1167,7 @@
     "rareza": "superior",
     "precioBase": 1500,
     "descripcion": "Permiten trabajar el metal al rojo vivo sin quemarse.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "yelmo_minero_veterano",
@@ -1177,7 +1177,7 @@
     "rareza": "forjado",
     "precioBase": 950,
     "descripcion": "Resistente a caídas de rocas.",
-    "efecto": { "resilienceBonus": 3, "perceptionBonus": 1 }
+    "efecto": { "resilienceBonus": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "lanza_elfica_larga",
@@ -1188,7 +1188,7 @@
     "rareza": "superior",
     "precioBase": 1600,
     "descripcion": "Una lanza de gran alcance para defensa de murallas.",
-    "efecto": { "combatBonus": 5 }
+    "efecto": { "combatBonus": 0.05 }
   },
   {
     "id": "daga_hoja_luna",
@@ -1199,7 +1199,7 @@
     "rareza": "legendario",
     "precioBase": 3100,
     "descripcion": "Brilla ligeramente con la luz de la luna.",
-    "efecto": { "combatBonus": 6, "stealthBonus": 4 }
+    "efecto": { "combatBonus": 0.06, "stealthBonus": 0.04 }
   },
   {
     "id": "anillo_proteccion_elfa",
@@ -1209,7 +1209,7 @@
     "rareza": "superior",
     "precioBase": 2200,
     "descripcion": "Refuerza la agilidad y el espíritu.",
-    "efecto": { "willpowerBonus": 4, "resilienceBonus": 2 }
+    "efecto": { "willpowerBonus": 0.04, "resilienceBonus": 0.02 }
   },
   {
     "id": "grebas_malla_plateada",
@@ -1219,7 +1219,7 @@
     "rareza": "superior",
     "precioBase": 1800,
     "descripcion": "Flexibles y resistentes.",
-    "efecto": { "resilienceBonus": 4, "survivalBonus": 2 }
+    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "amuleto_estrella_varda_menor",
@@ -1229,7 +1229,7 @@
     "rareza": "forjado",
     "precioBase": 1400,
     "descripcion": "Un cristal que parece capturar la luz estelar.",
-    "efecto": { "perceptionBonus": 3, "willpowerBonus": 1 }
+    "efecto": { "perceptionBonus": 0.03, "willpowerBonus": 0.01 }
   },
   {
     "id": "honda_pastor",
@@ -1240,7 +1240,7 @@
     "rareza": "comun",
     "precioBase": 80,
     "descripcion": "Simple honda de cuero, muy efectiva en manos hábiles.",
-    "efecto": { "combatBonus": 1 }
+    "efecto": { "combatBonus": 0.01 }
   },
   {
     "id": "chaleco_acolchado_hobbit",
@@ -1250,7 +1250,7 @@
     "rareza": "comun",
     "precioBase": 250,
     "descripcion": "Muy cómodo para largos paseos.",
-    "efecto": { "survivalBonus": 1 }
+    "efecto": { "survivalBonus": 0.01 }
   },
   {
     "id": "baston_viaje_madera",
