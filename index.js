@@ -247,7 +247,9 @@ function getExplorationClosingText(points, item, rarity) {
 
   return "Fue un buen viaje. Deberías hacerlo más seguido.";
 }
-
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 async function handleExploracionCommand(message) {
   const state = await db.getQuotaState(message.author.id, "exploracion", EXPLORATION_WINDOW_MS);
 
