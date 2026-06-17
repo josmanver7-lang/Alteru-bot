@@ -1,14 +1,16 @@
 [
   {
+    "id": "alteru"
     "nombre": "Altéru",
     "titulo": "Capitán de Gondor",
     "raza": "Humano",
     "clase": "Capitán",
     "alineamiento": "Aliado",
     "estado": "Vivo",
-    "Armas": ["Espada larga templada", "Escudo de gota", "Daga ornamentada Haradrim"],
-    "Armadura": ["Capa con Capucha morada", "Placa metálica", "Brazaletes metálicos", "Grebas doradas", "Hombreras metálicas"],
-    "Objetos": ["Cuerno de Gondor", "Laúd Viejo", "Copa de Bronce"],
+    "equipo:" [
+    { "tipo": "arma", nombre: "Daga de Luz", bonusPoder: 2 },
+    { tipo: "armadura", nombre: "Túnica de viajeros", bonusSalud: 5 },
+    { tipo: "accesorio", nombre: "Amuleto de memoria", bonusAfinidad: 1 }]   
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
     "personalidad": "Desafiante,  ambicioso, apasionado,  cariñoso, guía, irónico, serio, observador,  estoico.",
     "historia": "Nació en el año 2996 de la Tercera Edad. Se crió en Ost Ardnír, trabajó en la tienda de especias de su padre, se alistó a la milicia, estudió un año en el colegio de Eruditos de Minas Tirith, fue nombrado como portavoz de Gondor y recorrió todo el reino con la compañia de su amigo Cirdil y otros compañeros. Fue nombrado Capitán y lo demás son hazañas..",
