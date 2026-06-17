@@ -571,6 +571,62 @@ function normalizeInventory(inventory = {}) {
   return base;
 }
 
+function ensureInventoryCategory(inventory, item) {
+  const category = getInventoryCategoryForItem(item);
+  if (!inventory[category]) inventory[category] = [];
+  return category;
+}
+
+function addItemBackToInventory(inventory, item, reason = "equipar") {
+  if (!item) return;
+
+  const category = ensureInventoryCategory(inventory, item);
+  const stackable = isStackableItem(item);
+
+  const idx = inventory[category].findIndex(
+    x => normalizeKey(x.id) === normalizeKey(item.id)
+  );
+
+  if (stackable && idx !== -1) {
+    inventory[category][idx].cantidad = Math.max(
+      1,
+      Number(inventory[category][idx].cantidad || 1) + 1
+    );
+    return;
+  }
+
+  if (idx === -1) {
+    inventory[category].push(
+      normalizeItemEntry(item, {
+        cantidad: 1,
+        recuperadoPor: reason
+      })
+    );
+  }
+}
+
+function removeItemFromInventory(inventory, category, item) {
+  if (!inventory[category]) inventory[category] = [];
+
+  const idx = inventory[category].findIndex(
+    x => normalizeKey(x.id) === normalizeKey(item.id)
+  );
+
+  if (idx === -1) return;
+
+  if (isStackableItem(inventory[category][idx])) {
+    inventory[category][idx].cantidad = Math.max(
+      0,
+      Number(inventory[category][idx].cantidad || 1) - 1
+    );
+    if (inventory[category][idx].cantidad <= 0) {
+      inventory[category].splice(idx, 1);
+    }
+  } else {
+    inventory[category].splice(idx, 1);
+  }
+}
+
 function normalizeItemEntry(item, extra = {}) {
   return {
     id: item.id,
@@ -2505,72 +2561,31 @@ client.on("messageCreate", async (message) => {
 
   const activeExpedition = expeditions.get(message.author.id);
 
-if (activeExpedition?.finalScenario?.active || activeExpedition?.pendingFinalScenario) {
+  if (activeExpedition?.finalScenario?.active || activeExpedition?.pendingFinalScenario) {
 
-  const finalAction = FINAL_SCENE_COMMANDS[command];
+    const finalAction = FINAL_SCENE_COMMANDS[command];
 
-  if (finalAction) {
-    return resolveFinalScenarioAction(message, activeExpedition, finalAction);
+    if (finalAction) {
+      return resolveFinalScenarioAction(message, activeExpedition, finalAction);
+    }
+
+    const scenario = activeExpedition.finalScenario;
+
+    if (scenario?.enabled) {
+      const text =
+        `🎯 **${scenario.title || "Escenario final"}**\n\n` +
+        `${scenario.description || "Sin descripción disponible."}\n\n` +
+        `Acciones disponibles: ${scenario.allowedActions?.map(a => `\`${a}\``).join(", ") || "N/A"}`;
+
+      return message.reply(text);
+    }
   }
-
-  const scenario = activeExpedition.finalScenario;
-
-  if (scenario?.enabled) {
-    const text =
-      `🎯 **${scenario.title || "Escenario final"}**\n\n` +
-      `${scenario.description || "Sin descripción disponible."}\n\n` +
-      `Acciones disponibles: ${scenario.allowedActions?.map(a => `\`${a}\``).join(", ") || "N/A"}`;
-
-    return message.reply(text);
-  }
-}
 
   const profileForOnboarding = await db.getProfile(message.author.id);
 
   if (!profileForOnboarding.onboardingCompleted) {
     const result = await handleOnboarding(message, profileForOnboarding);
     if (result) return result;
-  }
-
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
-    const bonuses = getAdventureBonuses(profile, equipment);
-
-    let points = randInt(EXPLORATION_POINT_MIN, EXPLORATION_POINT_MAX);
-    const pointBoost = 1 + Math.min(
-      0.30,
-      (bonuses.exploration * 0.40) + (bonuses.willpower * 0.20) + (bonuses.negotiation * 0.10)
-    );
-    points = Math.max(10, Math.round(points * pointBoost));
-
-    await db.addPoints(message.author.id, points);
-
-    const lootPool = await loadExplorationLootPool();
-    const rarity = rollExplorationLootRarity(bonuses);
-
-    let text = `🧭 **Exploración**\n\nEncuentras **${points} pts**.`;
-    if (rarity) {
-      const item = pickExplorationItemByRarity(lootPool, rarity);
-      if (item) {
-        await addItemToInventory(message.author.id, item);
-        text += `\n\nAdemás hallas **${item.nombre}**. Rareza: **${item.rareza || rarity}**.`;
-      } else {
-        text += `\n\nNo había botín de esa rareza en el archivo de exploración.`;
-      }
-    } else {
-      text += `\n\nNo encuentras botín esta vez.`;
-    }
-
-    const utilMsg = await decrementUtilities(message.author.id);
-    await db.setQuotaState(
-      message.author.id,
-      "exploracion",
-      state.attempts + 1,
-      state.resetAt
-    );
-
-    return message.reply(text + utilMsg);
   }
 
   // Comandos de Perfil y Sistema de Estadísticas
@@ -2679,9 +2694,9 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   
   if (command === "!equipar") {
     const profile = await db.getProfile(message.author.id);
-    
-    if (!profile.race || !profile.class) { 
-      return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar."); 
+
+    if (!profile.race || !profile.class) {
+      return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar.");
     }
 
     const query = args.slice(1).join(" ").trim();
@@ -2700,7 +2715,10 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       return message.reply(`Ese objeto es un consumible o utilidad. Usa \`!usar <nombre>\`.`);
     }
 
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
+    const equipmentRaw = typeof db.getEquipment === "function"
+      ? await db.getEquipment(message.author.id).catch(() => null)
+      : null;
+
     const equipment = getResolvedEquipment(profile, equipmentRaw);
 
     const equipSlot = getEquipSlotForItem(item, equipment);
@@ -2708,11 +2726,11 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       return message.reply(`**${item.nombre}** no se puede equipar.`);
     }
 
-    const equippedBefore = equipment[equipSlot] || null;
-
     if (item.cantidad > 1 && !isStackableItem(item)) {
       return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
     }
+
+    const equippedBefore = equipment[equipSlot] || null;
 
     if (equippedBefore && normalizeKey(equippedBefore.id) === normalizeKey(item.id)) {
       return message.reply(`**${item.nombre}** ya está equipado.`);
@@ -2725,23 +2743,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     equipment[equipSlot] = item;
 
-    const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
-    if (idx !== -1) {
-      if (isStackableItem(inventory[category][idx])) {
-        inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
-        if (inventory[category][idx].cantidad <= 0) inventory[category].splice(idx, 1);
-      } else {
-        inventory[category].splice(idx, 1);
-      }
-    }
-
-    if (equippedBefore) {
-      const oldCategory = getInventoryCategoryForItem(equippedBefore);
-      inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
-        cantidad: 1,
-        recuperadoPor: "equipar"
-      }));
-    }
+    removeItemFromInventory(inventory, category, item);
+    addItemBackToInventory(inventory, equippedBefore, "equipar");
 
     const equipmentPayload = saveResolvedEquipment(profile, equipment);
 
