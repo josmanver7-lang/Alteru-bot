@@ -152,6 +152,8 @@ const EXPLORATION_WINDOW_MS = 12 * 60 * 60 * 1000;
 const EXPLORATION_POINT_MIN = 10;
 const EXPLORATION_POINT_MAX = 200;
 
+let points = randInt(EXPLORATION_POINT_MIN, EXPLORATION_POINT_MAX);
+
 function getExplorationBonusPercent(profile = {}, equipment = {}) {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
   const classBonus = getPlayerClassBonus(profile);
