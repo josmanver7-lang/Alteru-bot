@@ -79,7 +79,7 @@ async function askGroq(userId, userMessage, lore) {
       systemPrompt,
       messages: history,
       temperature: 0.85,
-      maxTokens: 120
+      maxTokens: 250 // Aumentado para evitar respuestas cortadas
     });
 
     history.push({ role: "assistant", content: reply });
@@ -168,7 +168,7 @@ async function groqChat({
   systemPrompt = "",
   messages = [],
   temperature = 0.9,
-  maxTokens = 80
+  maxTokens = 150
 }) {
   if (!GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY no está configurada");
@@ -218,7 +218,7 @@ async function groqChat({
   return clean;
 }
 
-async function generateAITextStrict(prompt, maxTokens = 80) {
+async function generateAITextStrict(prompt, maxTokens = 150) {
   return await groqChat({
     systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones.",
     messages: [{ role: "user", content: prompt }],
@@ -227,7 +227,7 @@ async function generateAITextStrict(prompt, maxTokens = 80) {
   });
 }
 
-async function ai(prompt, maxTokens = 80) {
+async function ai(prompt, maxTokens = 150) {
   try {
     const text = await generateAITextStrict(prompt, maxTokens);
     const clean = String(text || "").trim();
@@ -366,7 +366,7 @@ Instrucciones:
 `.trim();
 
   try {
-    const raw = await generateAITextStrict(prompt, 60);
+    const raw = await generateAITextStrict(prompt, 120); // Aumentado de 60 a 120
     if (!raw || !String(raw).trim()) {
       return `${nombre}: *observa en silencio*`;
     }
@@ -705,7 +705,8 @@ No menciones que es una IA.
 
   let text;
   try {
-    text = await generateAITextStrict(prompt, 90);
+    // Aumentado a 250 tokens para no quedarse corto con 90 palabras
+    text = await generateAITextStrict(prompt, 250); 
   } catch (err) {
     console.error("Error generando texto IA del tablón:", err);
     text = `${announcerName} cruza el campamento, revisa el tablón y clava cinco expediciones nuevas antes de seguir con sus tareas.`;
@@ -746,10 +747,23 @@ async function ensureCatalogStates() {
     }).catch(() => {});
   }
 
-  const existingArmeria = await db.getEventState("armeria").catch(() => null);
-  if (!existingArmeria?.selection?.length) {
-    await db.setEventState("armeria", {
+  // --- SEPARACIÓN DE ARMERÍA 1 ---
+  const existingArmeria1 = await db.getEventState("armeria1").catch(() => null);
+  if (!existingArmeria1?.selection?.length) {
+    await db.setEventState("armeria1", {
       selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
+  }
+
+  // --- SEPARACIÓN DE ARMERÍA 2 ---
+  const existingArmeria2 = await db.getEventState("armeria2").catch(() => null);
+  if (!existingArmeria2?.selection?.length) {
+    const secondPool = [...armeriaItems].sort(() => Math.random() - 0.5).slice(12, 24);
+    await db.setEventState("armeria2", {
+      selection: secondPool,
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
@@ -769,15 +783,18 @@ async function ensureCatalogStates() {
 
 async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const currentTienda = await db.getEventState("tienda").catch(() => null);
-  const currentArmeria = await db.getEventState("armeria").catch(() => null);
+  const currentArmeria1 = await db.getEventState("armeria1").catch(() => null);
+  const currentArmeria2 = await db.getEventState("armeria2").catch(() => null);
   const currentMercader = await db.getEventState("mercader").catch(() => null);
 
   if (
     currentTienda?.cycleId === cycleStartAt &&
-    currentArmeria?.cycleId === cycleStartAt &&
+    currentArmeria1?.cycleId === cycleStartAt &&
+    currentArmeria2?.cycleId === cycleStartAt &&
     currentMercader?.cycleId === cycleStartAt &&
     Array.isArray(currentTienda?.selection) &&
-    Array.isArray(currentArmeria?.selection) &&
+    Array.isArray(currentArmeria1?.selection) &&
+    Array.isArray(currentArmeria2?.selection) &&
     Array.isArray(currentMercader?.selection)
   ) {
     return;
@@ -800,8 +817,15 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
     cycleId: cycleStartAt
   }).catch(() => {});
 
-  await db.setEventState("armeria", {
+  await db.setEventState("armeria1", {
     selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+
+  await db.setEventState("armeria2", {
+    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(12, 24),
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
@@ -816,7 +840,8 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
 
   if (typeof db.rerollMarketPrices === "function") {
     await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
-    await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
+    await db.rerollMarketPrices("armeria1", armeriaItems).catch(() => {});
+    await db.rerollMarketPrices("armeria2", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
   }
 }
@@ -863,7 +888,8 @@ async function openMerchant(client) {
 
   try {
     const aiText = await generateAITextStrict(
-      `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} hacia ${destination}. Español.`
+      `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} hacia ${destination}. Español.`,
+      150 // Aumentado para evitar corte
     );
     if (aiText?.trim()) intro = `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${aiText.trim()}`;
   } catch (err) {
@@ -938,13 +964,13 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `- Español.\n` +
       `- No pongas título.\n` +
       `- No menciones que es una IA.`,
-      24
+      350 // CORREGIDO DE 24 A 350. Un diálogo de 140 palabras consume cerca de 200 tokens. 
     );
   } catch (err) {
     console.error("Error generando diálogo entre compañeros:", err);
   }
 
-  if (!text) {
+  if (!text || text === "*observa en silencio*") {
     text =
       `${nombreA}: Vamos. Hoy quiero ver si sigues tan rápido como ayer.\n` +
       `${nombreB}: En el patio central, con espadas de madera, no pienso dejarme ganar tan fácil.\n` +
@@ -1381,7 +1407,9 @@ const FIXED_AUTO_SLOTS = [
   { id: "relation_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
   { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
   { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
-  { id: "relation_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 }
+  { id: "relation_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
+  // Descomenta el siguiente para enviar el diálogo diario a una hora específica. Ej: 12:00 PM
+  // { id: "dialogue_1200", type: "dialogue", hour: 12, minute: 0 } 
 ];
 
 const FIXED_AUTO_STATE_KEY = "fixed_auto_scheduler_v1";
@@ -1422,7 +1450,7 @@ function ensureFixedAutoStateShape(state) {
   };
 }
 
-async function runFixedSlot(client, slot, dayStartMs) {
+async function runFixedSlot(client, loreCache, slot, dayStartMs) {
   if (slot.type === "merchant") {
     await openMerchant(client);
     return;
@@ -1430,6 +1458,11 @@ async function runFixedSlot(client, slot, dayStartMs) {
 
   if (slot.type === "relation") {
     await publishCompanionScene(client, dayStartMs, slot.sceneSlot);
+    return;
+  }
+
+  if (slot.type === "dialogue") {
+    await companionDialogue(client, loreCache, slot.id);
   }
 }
 
@@ -1473,7 +1506,7 @@ async function processFixedAutoSlots(client, loreCache) {
       state.updatedAt = Date.now();
       await saveFixedAutoState(state);
 
-      await runFixedSlot(client, slot, dayStartMs);
+      await runFixedSlot(client, loreCache, slot, dayStartMs);
     }
   } finally {
     fixedAutoBusy = false;
@@ -1498,6 +1531,7 @@ export async function startSchedulers(client, loreCache) {
 export async function rerollAllPrices(tiendaItems, armeriaItems, mercaderItems) {
   if (typeof db.rerollMarketPrices !== "function") return;
   await db.rerollMarketPrices("tienda", tiendaItems).catch(() => {});
-  await db.rerollMarketPrices("armeria", armeriaItems).catch(() => {});
+  await db.rerollMarketPrices("armeria1", armeriaItems).catch(() => {});
+  await db.rerollMarketPrices("armeria2", armeriaItems).catch(() => {});
   await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
 }
