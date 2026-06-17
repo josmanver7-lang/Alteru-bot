@@ -1,0 +1,375 @@
+[
+  {
+    "id": "espada_ruta",
+    "nombre": "Espada de Ruta",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Una hoja sencilla, resistente y útil para viajeros.",
+    "efecto": {
+      "damageBonus": 1
+    }
+  },
+  {
+    "id": "daga_sendero",
+    "nombre": "Daga del Sendero",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 80,
+    "descripcion": "Ligera y discreta, ideal para exploradores.",
+    "efecto": {
+      "damageBonus": 0.01,
+      "stealthBonus": 0.02
+    }
+  },
+  {
+    "id": "mandoble_viejo",
+    "nombre": "Mandoble de Campaña",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 160,
+    "descripcion": "Un arma pesada con marcas de antiguas batallas.",
+    "efecto": {
+      "damageBonus": 0.02,
+      "combatBonus": 0.02
+    }
+  },
+  {
+    "id": "hacha_bosque",
+    "nombre": "Hacha del Bosque",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 200,
+    "descripcion": "Forjada para abrir paso entre maleza y enemigos.",
+    "efecto": {
+      "damageBonus": 0.02
+    }
+  },
+  {
+    "id": "espada_ritual",
+    "nombre": "Espada Ritual",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Una pieza refinada que inspira respeto.",
+    "efecto": {
+      "damageBonus": 3,
+      "successBonus": 0.03
+    }
+  },
+  {
+    "id": "lanza_del_aurora",
+    "nombre": "Lanza del Alba",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Su equilibrio la hace temible en manos expertas.",
+    "efecto": {
+      "damageBonus": 3,
+      "explorationBonus": 0.03
+    }
+  },
+  {
+    "id": "cuchilla_primer_hielo",
+    "nombre": "Cuchilla del Primer Hielo",
+    "tipo": "arma",
+    "slot": "arma",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 0,
+    "descripcion": "Un arma casi mítica, cargada de presagio y poder.",
+    "efecto": {
+      "damageBonus": 5,
+      "successBonus": 0.05,
+      "combatBonus": 0.05
+    }
+  },
+
+  {
+    "id": "coraza_bosque",
+    "nombre": "Coraza del Bosque",
+    "tipo": "armadura",
+    "slot": "armadura",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Protección básica reforzada con cuero y remaches.",
+    "efecto": {
+      "damageReduction": 0.02
+    }
+  },
+  {
+    "id": "cota_viajero",
+    "nombre": "Cota del Viajero",
+    "tipo": "armadura",
+    "slot": "armadura",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Una cota resistente para rutas largas y peligrosas.",
+    "efecto": {
+      "damageReduction": 0.04,
+      "survivalBonus": 0.02
+    }
+  },
+  {
+    "id": "armadura_gondoriana",
+    "nombre": "Armadura Gondoriana",
+    "tipo": "armadura",
+    "slot": "armadura",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Armamento pulido para guardianes de élite.",
+    "efecto": {
+      "damageReduction": 0.06,
+      "combatBonus": 0.03
+    }
+  },
+  {
+    "id": "placas_estrella",
+    "nombre": "Placas de la Estrella",
+    "tipo": "armadura",
+    "slot": "armadura",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 0,
+    "descripcion": "Una armadura legendaria que parece reflejar el firmamento.",
+    "efecto": {
+      "damageReduction": 0.10,
+      "successBonus": 0.04
+    }
+  },
+
+  {
+    "id": "amuleto_bruma",
+    "nombre": "Amuleto de Bruma",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Reduce la sensación de extravío en caminos inciertos.",
+    "efecto": {
+      "explorationBonus": 0.02
+    }
+  },
+  {
+    "id": "amuleto_guardia",
+    "nombre": "Amuleto del Guardia",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Un símbolo de protección para quien no teme al deber.",
+    "efecto": {
+      "damageReduction": 0.03
+    }
+  },
+  {
+    "id": "amuleto_llama",
+    "nombre": "Amuleto de la Llama",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Calienta el ánimo y fortalece la voluntad.",
+    "efecto": {
+      "willpowerBonus": 0.05,
+      "successBonus": 0.03
+    }
+  },
+  {
+    "id": "amuleto_rey",
+    "nombre": "Amuleto del Rey Errante",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 0,
+    "descripcion": "Un relicario de autoridad y destino.",
+    "efecto": {
+      "negotiationBonus": 0.08,
+      "successBonus": 0.05
+    }
+  },
+
+  {
+    "id": "anillo_viaje",
+    "nombre": "Anillo del Viaje",
+    "tipo": "anillo",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Un pequeño círculo de metal para sortear el cansancio.",
+    "efecto": {
+      "successBonus": 0.02
+    }
+  },
+  {
+    "id": "anillo_diligencia",
+    "nombre": "Anillo de la Diligencia",
+    "tipo": "anillo",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Aumenta la constancia en cada decisión.",
+    "efecto": {
+      "successBonus": 0.03,
+      "explorationBonus": 0.02
+    }
+  },
+  {
+    "id": "anillo_juramento",
+    "nombre": "Anillo del Juramento",
+    "tipo": "anillo",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Un juramento tallado en plata antigua.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "successBonus": 0.03
+    }
+  },
+
+  {
+    "id": "unguento_sencillo",
+    "nombre": "Ungüento Sencillo",
+    "tipo": "consumible",
+    "slot": "consumible",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Cura heridas leves y calma el pulso.",
+    "efecto": {
+      "salud": 15
+    }
+  },
+  {
+    "id": "vial_curativo",
+    "nombre": "Vial Curativo",
+    "tipo": "consumible",
+    "slot": "consumible",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Un preparado más refinado para curación rápida.",
+    "efecto": {
+      "salud": 30
+    }
+  },
+  {
+    "id": "racion_de_marcha",
+    "nombre": "Ración de Marcha",
+    "tipo": "consumible",
+    "slot": "consumible",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Resta energías y mejora la resistencia del camino.",
+    "efecto": {
+      "survivalBonus": 0.03
+    }
+  },
+  {
+    "id": "elixir_resplandor",
+    "nombre": "Elixir del Resplandor",
+    "tipo": "consumible",
+    "slot": "consumible",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Un elixir raro que vigoriza cuerpo y mente.",
+    "efecto": {
+      "salud": 45,
+      "successBonus": 0.03
+    }
+  },
+
+  {
+    "id": "capa_viajero",
+    "nombre": "Capa del Viajero",
+    "tipo": "accesorio",
+    "slot": "accesorio",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 0,
+    "descripcion": "Una capa sencilla para soportar viento y frío.",
+    "efecto": {
+      "explorationBonus": 0.02
+    }
+  },
+  {
+    "id": "capa_sudario",
+    "nombre": "Capa del Sudario",
+    "tipo": "accesorio",
+    "slot": "accesorio",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Aporta sigilo y un aire sombrío.",
+    "efecto": {
+      "stealthBonus": 0.04
+    }
+  },
+  {
+    "id": "laud_del_camino",
+    "nombre": "Laúd del Camino",
+    "tipo": "instrumento",
+    "slot": "accesorio",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 0,
+    "descripcion": "Instrumento de viaje que inspira al grupo en la marcha.",
+    "efecto": {
+      "negotiationBonus": 0.05,
+      "successBonus": 0.02
+    }
+  },
+  {
+    "id": "flauta_peregrino",
+    "nombre": "Flauta del Peregrino",
+    "tipo": "instrumento",
+    "slot": "accesorio",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 0,
+    "descripcion": "Una melodía suave que ayuda a mantener el ánimo.",
+    "efecto": {
+      "willpowerBonus": 0.03,
+      "negotiationBonus": 0.02
+    }
+  },
+  {
+    "id": "arpa_albor",
+    "nombre": "Arpa del Albor",
+    "tipo": "instrumento",
+    "slot": "accesorio",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 0,
+    "descripcion": "Un instrumento antiguo de resonancia casi sagrada.",
+    "efecto": {
+      "willpowerBonus": 0.06,
+      "negotiationBonus": 0.08
+    }
+  }
+]
