@@ -229,7 +229,7 @@ function getExplorationClosingText(points, item, rarity) {
   }
 
   if (!hasItem && points < 150) {
-    return "No estuvo mal, para la próxima llevaré mas hierba de pipa para calmar las ansias.";
+    return "No estuvo mal, para la próxima llevaré mas hoja de la cuaderna para calmar las ansias.";
   }
 
   if (!hasItem) {
