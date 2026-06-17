@@ -703,7 +703,7 @@ function getCompanionIcon(id) {
 
 function compactLine(text, maxWords = 40) {
   const words = String(text || "")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, " সপ্তাহের")
     .trim()
     .split(" ")
     .filter(Boolean);
@@ -3309,6 +3309,7 @@ ${companionLines}
       return message.reply("No estás en una expedición.");
     }
 
+    const expedition = expeditions.get(message.author.id);
     const partialXP = expedition.xpEarned || 0;
     const partialPoints = expedition.pointsEarned || 0;
 
@@ -3386,13 +3387,14 @@ ${companionLines}
           };
           const escenario = expedition.currentEncounter;
 
-let textoFinalScenario = `🌑 **Escenario final**\n\n${escenario.descripcion}\n\n`;
+          let textoFinalScenario = `🌑 **Escenario final**\n\n${escenario.descripcion}\n\n`;
 
-textoFinalScenario += enemyPresent
-  ? `⚔️ Presencia enemiga detectada.\nUsa: ${escenario.allowedActions.join(", ")}`
-  : `🕊️ El área parece segura por ahora.\nPuedes retirarte.`;
+          textoFinalScenario += enemyPresent
+            ? `⚔️ Presencia enemiga detectada.\nUsa: ${escenario.allowedActions.join(", ")}`
+            : `🕊️ El área parece segura por ahora.\nPuedes retirarte.`;
 
-return message.reply(textoFinalScenario);
+          return message.reply(textoFinalScenario);
+        }
 
         const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
         const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
