@@ -215,17 +215,7 @@ const PLAYER_CLASS_BONUS = {
   beornida: { attackBonus: 0.06, damageReduction: 0.04 } 
 }; 
 
-const COMPANION_BASE_EQUIPMENT = { 
-  alteru: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Legendario", capa: "Legendario", casco: "Superior", hombros: "Superior", anillo1: "Superior", anillo2: "Superior", amuleto: "Ninguno", accesorio: "Ninguno" }, 
-  cirdil: { arma: "Superior", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Forjado", hombros: "Forjado", anillo1: "Forjado", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
-  duinor: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Superior", capa: "Ninguno", casco: "Ninguno", hombros: "Superior", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Ninguno" }, 
-  andaer: { arma: "Forjado", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Forjado", hombros: "Forjado", anillo1: "Forjado", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
-  faelon: { arma: "Forjado", armadura: "Forjado", guantes: "Comun", piernas: "Forjado", botas: "Forjado", capa: "Ninguno", casco: "Ninguno", hombros: "Ninguno", anillo1: "Superior", anillo2: "Forjado", amuleto: "Legendario", accesorio: "Superior" }, 
-  nieriel: { arma: "Superior", armadura: "Superior", guantes: "Superior", piernas: "Superior", botas: "Superior", capa: "Forjado", casco: "Superior", hombros: "Superior", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Ninguno", accesorio: "Forjado" }, 
-  montaraces: { arma: "Superior", armadura: "Forjado", guantes: "Forjado", piernas: "Forjado", botas: "Forjado", capa: "Superior", casco: "Ninguno", hombros: "Ninguno", anillo1: "Superior", anillo2: "Ninguno", amuleto: "Forjado", accesorio: "Ninguno" } 
-};
-
-const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "regalos", "utilidades"];
+const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades"];
 
 // ==========================================
 //          FUNCIONES AUXILIARES
@@ -1041,7 +1031,7 @@ const FINAL_SCENE_RULES = {
   atacar: { successChance: 0.68, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 18 },
   rodear: { successChance: 0.84, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 8 },
   explorar: { successChance: 0.82, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 6 },
-  infiltrar: { successChance: 0.75, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 10 },
+  infiltrar: { successChance: 0.65, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 10 },
   negociar: { successChance: 0.62, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 4 },
   esperar: { successChance: 0.90, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 2 },
   retirarse: { successChance: 0.99, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 0 }
@@ -1706,6 +1696,7 @@ async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 
     texto += `Efecto: ${formatEffect(item.efecto)}\n`;
     if (item.descripcion && catalogName !== "armeria" && catalogName !== "armeria1" && catalogName !== "armeria2") {
       texto += `Descripción: ${item.descripcion}\n`;
+      texto += `Rareza: ${item.rareza || "comun"}\n`;
     }
     texto += `\n`;
   }
