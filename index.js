@@ -146,13 +146,170 @@ let mercaderCache = null;
 // ================================
 
 let exploracionCache = null;
+
 const EXPLORATION_LIMIT = 1;
 const EXPLORATION_WINDOW_MS = 12 * 60 * 60 * 1000;
-const EXPLORATION_POINT_MIN = 10;
-const EXPLORATION_POINT_MAX = 200;
 
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getExplorationBonusPercent(profile = {}, equipment = {}) {
+  const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
+  const classBonus = getPlayerClassBonus(profile);
+
+  const bonus =
+    Number(eq.totals.explorationBonus || 0) +
+    Number(classBonus.explorationBonus || 0);
+
+  return Math.max(0, bonus);
+}
+
+async function loadExplorationLootPool() {
+  if (!exploracionCache) {
+    exploracionCache = await loadCatalog("exploracion.json").catch(() => null);
+  }
+  return getCatalogItems(exploracionCache);
+}
+
+function rollExplorationRarity(explorationBonus = 0) {
+  const boost = Math.min(20, Math.max(0, Math.round(explorationBonus * 100)));
+  const roll = Math.max(0, Math.floor(Math.random() * 100) - boost);
+
+  // Base:
+  // 50% nada
+  // 30% común
+  // 10% forjado
+  // 8% superior
+  // 2% legendario
+  if (roll < 50) return null;
+  if (roll < 80) return "comun";
+  if (roll < 90) return "forjado";
+  if (roll < 98) return "superior";
+  return "legendario";
+}
+
+function pickExplorationItemByRarity(pool, rarity) {
+  const filtered = (pool || []).filter(item => normalizeKey(item?.rareza || "comun") === rarity);
+  if (!filtered.length) return null;
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
+async function grantExplorationItemToInventory(userId, item) {
+  const profile = await db.getProfile(userId);
+  const inventory = normalizeInventory(profile.inventory || {});
+  const category = getInventoryCategoryForItem(item);
+  const stackable = isStackableItem(item);
+
+  if (!inventory[category]) inventory[category] = [];
+
+  const idx = inventory[category].findIndex(
+    x => normalizeKey(x.id) === normalizeKey(item.id)
+  );
+
+  if (idx !== -1 && stackable) {
+    inventory[category][idx].cantidad = Math.max(
+      1,
+      Number(inventory[category][idx].cantidad || 1) + 1
+    );
+  } else if (idx === -1) {
+    inventory[category].push(normalizeItemEntry(item, { cantidad: 1 }));
+  }
+
+  await db.updateTravelerData(userId, { inventory });
+}
+
+function getExplorationClosingText(points, item, rarity) {
+  const hasItem = Boolean(item);
+  const rarityKey = normalizeKey(rarity || "");
+
+  if (!hasItem && points < 50) {
+    return "Fue un viaje mediocre. Perdí mi tiempo.";
+  }
+
+  if (!hasItem && points < 100) {
+    return "Fue un lindo paseo. Al menos disfruté las buenas vistas de Gondor.";
+  }
+  }
+
+  if (!hasItem && points < 150) {
+    return "No estuvo mal, para la próxima llevaré mas hierba de pipa para calmar las ansias.";
+  }
+
+  if (!hasItem) {
+    return "No me ha ido tan mal, debería considerar adentrarme en esas rutas que parecen peligrosas, a lo mejor encuentro alguna reliquia.";
+  }
+
+  if (rarityKey === "legendario" && points >= 150) {
+    return "Este fue el mejor día de mi vida.";
+  }
+
+  if (rarityKey === "legendario") {
+    return "La fortuna te sonrió y volviste con un hallazgo legendario.";
+  }
+
+  if (rarityKey === "superior") {
+    return "Fue un buen viaje. Deberías hacerlo más seguido.";
+  }
+
+  if (rarityKey === "forjado") {
+    return "Fue un buen viaje. Deberías hacerlo más seguido.";
+  }
+
+  return "Fue un buen viaje. Deberías hacerlo más seguido.";
+}
+
+async function handleExploracionCommand(message) {
+  const state = await db.getQuotaState(message.author.id, "exploracion", EXPLORATION_WINDOW_MS);
+
+  if (state.attempts >= EXPLORATION_LIMIT) {
+    return message.reply(
+      `⚠️ Ya usaste tu exploración. Vuelve en ${formatRemainingTime(state.resetAt - Date.now())}.`
+    );
+  }
+
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+
+  const explorationBonus = getExplorationBonusPercent(profile, equipment);
+  const explorationBonusPct = Math.round(explorationBonus * 100);
+
+  const points = Math.floor(Math.random() * 191) + 10; // 10 a 200
+  await db.addPoints(message.author.id, points);
+
+  const lootPool = await loadExplorationLootPool();
+  const rarity = rollExplorationRarity(explorationBonus);
+  const item = rarity ? pickExplorationItemByRarity(lootPool, rarity) : null;
+
+  if (item) {
+    await grantExplorationItemToInventory(message.author.id, item);
+  }
+
+  const utilMsg = await decrementUtilities(message.author.id);
+
+  await db.setQuotaState(
+    message.author.id,
+    "exploracion",
+    state.attempts + 1,
+    state.resetAt
+  );
+
+  let texto =
+`🧭 **Exploración**
+
+Preparas tu equipo de viaje. sales del campamento y te dispones a explorar los alrededores entre Lebennin y Lamedon, incluso más allá, en busca de objetos, reliquias y cualquier objeto de valor.
+
+🎒 Bonus de exploración activo: +${explorationBonusPct}%`;
+
+  texto += `\n\n🏆 **Puntos hallados:** +${points}`;
+
+  if (item) {
+    texto += `\n✨ **Botín hallado:** ${item.nombre}${item.rareza ? ` (${item.rareza})` : ""}`;
+  } else {
+    texto += `\n📭 **Botín hallado:** Nada esta vez.`;
+  }
+
+  texto += `\n\n${getExplorationClosingText(points, item, rarity)}`;
+  texto += `\n\nVuelves al campamento tras un par de días de viaje.${utilMsg}`;
+
+  return message.reply(texto);
 }
 
 // ================================
@@ -2698,7 +2855,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 !ranking 
 
 🤝 COMPAÑEROS 
-!campamento, !companeros, !contratar <nombre>, !grupo 
+!companeros, !contratar <nombre>, !grupo 
 
 🗺️ EXPEDICIONES 
 !tablon, !expedicion <numero>, !desafiar, !interactuar, !exploracion, !volver, !curar 
@@ -3502,18 +3659,22 @@ ${companionLines}
     expeditions.delete(message.author.id);
 
     textoVictoria += `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada total:\n${finalAffinityText}`;
-    if (afterLevel > beforeLevel) textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
-    if (afterRank !== beforeRank) textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango, ahora eres conocido como **${afterRank}**.`;
-    if (finalReactions.length) textoVictoria += `\n\n${finalReactions.join("\n")}`;
+if (afterLevel > beforeLevel) textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+if (afterRank !== beforeRank) textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango **${afterRank}**.`;
+if (finalReactions.length) textoVictoria += `\n\n${finalReactions.join("\n")}`;
 
-    textoVictoria += utilMsg;
-    return message.reply(textoVictoria);
+textoVictoria += utilMsg;
+return message.reply(textoVictoria);
+}
+
+if (command === "!exploracion") {
+  return handleExploracionCommand(message);
+}
+
+if (command === "!volver") {
+  if (!expeditions.has(message.author.id)) {
+    return message.reply("No estás en una expedición.");
   }
-  
-  if (command === "!volver") {
-    if (!expeditions.has(message.author.id)) {
-      return message.reply("No estás en una expedición.");
-    }
 
     const expedition = expeditions.get(message.author.id);
     const partialXP = expedition.xpEarned || 0;
