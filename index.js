@@ -2249,19 +2249,26 @@ client.on("messageCreate", async (message) => {
   }
 
   const activeExpedition = expeditions.get(message.author.id);
-  if (activeExpedition?.finalScenario?.active || activeExpedition?.pendingFinalScenario) {
-    const finalAction = FINAL_SCENE_COMMANDS[command];
 
-    if (finalAction) {
-      return resolveFinalScenarioAction(message, activeExpedition, finalAction);
-    }
+if (activeExpedition?.finalScenario?.active || activeExpedition?.pendingFinalScenario) {
 
-    if (command !== "!volver" && command !== "!info" && command !== "!ayuda") {
-      return message.reply(
-        `🎯 Estás en un escenario final. Usa: ${getFinalScenarioAllowedText(activeExpedition.finalScenario)}.`
-      );
-    }
+  const finalAction = FINAL_SCENE_COMMANDS[command];
+
+  if (finalAction) {
+    return resolveFinalScenarioAction(message, activeExpedition, finalAction);
   }
+
+  const scenario = activeExpedition.finalScenario;
+
+  if (scenario?.enabled) {
+    const text =
+      `🎯 **${scenario.title || "Escenario final"}**\n\n` +
+      `${scenario.description || "Sin descripción disponible."}\n\n` +
+      `Acciones disponibles: ${scenario.allowedActions?.map(a => `\`${a}\``).join(", ") || "N/A"}`;
+
+    return message.reply(text);
+  }
+}
 
   const profileForOnboarding = await db.getProfile(message.author.id);
 
