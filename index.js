@@ -172,12 +172,6 @@ function rollExplorationRarity(explorationBonus = 0) {
   const boost = Math.min(20, Math.max(0, Math.round(explorationBonus * 100)));
   const roll = Math.max(0, Math.floor(Math.random() * 100) - boost);
 
-  // Base:
-  // 50% nada
-  // 30% común
-  // 10% forjado
-  // 8% superior
-  // 2% legendario
   if (roll < 50) return null;
   if (roll < 80) return "comun";
   if (roll < 90) return "forjado";
@@ -505,32 +499,6 @@ function getAdventureBonuses(profile = {}, equipment = {}) {
     combat: Number(totals.combatBonus || 0),
     survival: Number(totals.survivalBonus || 0)
   };
-}
-
-async function loadExplorationLootPool() {
-  if (!exploracionCache) {
-    exploracionCache = await loadCatalog("exploracion.json").catch(() => null);
-  }
-  return getCatalogItems(exploracionCache);
-}
-
-function pickExplorationItemByRarity(pool, rarity) {
-  const filtered = (pool || []).filter(item => normalizeKey(item?.rareza || "comun") === rarity);
-  if (!filtered.length) return null;
-  return filtered[Math.floor(Math.random() * filtered.length)];
-}
-
-function rollExplorationLootRarity(bonuses = {}) {
-  const boost = Math.min(
-    10,
-    Math.round(((bonuses.exploration || 0) + (bonuses.stealth || 0) + (bonuses.willpower || 0)) * 100)
-  );
-  const roll = Math.max(0, Math.floor(Math.random() * 100) - boost);
-  if (roll < 50) return null; // nada
-  if (roll < 80) return "comun"; // 30%
-  if (roll < 90) return "forjado"; // 10%
-  if (roll < 98) return "superior"; // 8%
-  return "legendario"; // 2%
 }
 
 async function addItemToInventory(userId, item) {
