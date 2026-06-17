@@ -1373,10 +1373,16 @@ async function resolveFinalScenarioAction(message, expedition, action) {
       if (line) reactions.push(`💬 ${line}`);
     }
 
-    const actionText =
-      scenario.actionText?.[normalizedAction] ||
-      getFinalScenarioActionText(activeEncounter, normalizedAction, "success") ||
-      getFinalScenarioActionStartText(normalizedAction, expedition);
+    const baseDescription =
+  scenario.description ||
+  scenario.descripcion ||
+  expedition.currentEncounter?.descripcion ||
+  expedition.mission?.descripcion ||
+  "Te enfrentas al desenlace de la expedición.";
+
+   const actionText =
+  scenario.actionText?.[normalizedAction] ||
+  `${baseDescription}`;
 
     const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
     const utilMsg = await decrementUtilities(message.author.id);
@@ -1387,7 +1393,7 @@ async function resolveFinalScenarioAction(message, expedition, action) {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let texto = `✅ **Escenario final resuelto**\n\n${actionText}\n`;
+    let texto = `✅ **Escenario final resuelto**\n\n${scenario.title || "Escenario final"}\n\n${actionText}\n`;
     if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
     texto += `\n🏆 Recompensa Total Acumulada: +${pointsGain} pts | +${xpGain} XP`;
 
