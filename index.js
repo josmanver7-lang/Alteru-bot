@@ -1047,14 +1047,19 @@ const FINAL_SCENE_RULES = {
   retirarse: { successChance: 0.99, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 0 }
 };
 
-function getFinalScenarioConfig(mission = {}) {
-  const raw = mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
+function getFinalScenarioConfig(mission = {}, expedition = {}) {
+  const raw =
+    expedition.finalScenario ||
+    mission.escenarioFinal ||
+    mission.finalScenario ||
+    mission.finalEscenario ||
+    {};
 
   const enabled = raw.enabled !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
   let allowedActions = Array.isArray(raw.allowedActions) && raw.allowedActions.length
-    ? raw.allowedActions.map(normalizeKey)
+    ? raw.allowedActions
     : null;
 
   if (!allowedActions || !allowedActions.length) {
@@ -1063,7 +1068,7 @@ function getFinalScenarioConfig(mission = {}) {
       : ["explorar", "infiltrar", "negociar", "retirarse"];
   }
 
-  allowedActions = [...new Set(allowedActions)];
+  allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
 
   if (!hasEnemies) {
     allowedActions = allowedActions.filter(a => a !== "atacar");
@@ -1071,8 +1076,20 @@ function getFinalScenarioConfig(mission = {}) {
 
   return {
     enabled,
-    title: raw.titulo || raw.title || `Escenario final: ${mission.titulo || "la misión"}`,
-    description: raw.descripcion || raw.description || raw.texto || mission.escenarioFinal?.descripcion || mission.descripcion || "Te enfrentas al desenlace de tu expedición.",
+    title:
+      raw.titulo ||
+      raw.title ||
+      mission.titulo ||
+      "Escenario final",
+
+    description:
+      raw.description ||
+      raw.descripcion ||
+      mission.escenarioFinal?.descripcion ||
+      mission.descripcion ||
+      expedition?.currentEncounter?.descripcion ||
+      "Te enfrentas al desenlace de tu expedición.",
+
     hasEnemies,
     enemyLabel: raw.enemyLabel || raw.enemigo || "enemigos",
     enemyChance: Number(raw.enemyChance ?? raw.probabilidadEnemigo ?? 0.6),
@@ -1147,9 +1164,9 @@ function buildFinalResolutionText(action, success, scenario) {
 }
 
 async function startFinalScenario(message, expedition) {
-  const scenario = expedition.finalScenario;
-  if (!scenario?.active && !expedition.pendingFinalScenario) return;
-
+  const scenario = getFinalScenarioConfig(expedition.mission || {}, expedition);
+  expedition.finalScenario = scenario;
+  
   const profile = await db.getProfile(message.author.id);
   const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
   const equipment = getResolvedEquipment(profile, equipmentRaw);
@@ -1231,9 +1248,10 @@ async function startFinalScenario(message, expedition) {
     if (line) reactions.push(`💬 ${line}`);
   }
 
-  const descToUse = scenario.description || scenario.descripcion || expedition.mission?.escenarioFinal?.descripcion || expedition.mission?.descripcion || "Te enfrentas al desenlace de tu expedición.";
-  const powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter });
-
+  const descToUse =
+  scenario.description ||
+  "Te enfrentas al desenlace de tu expedición.";
+  
   const intro =
     scenario.introText ||
     `🏁 **${scenario.titulo || scenario.title || expedition.mission?.titulo || "Escenario final"}**\n\n${descToUse}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
