@@ -1043,20 +1043,6 @@ function getEncounterSubOptions(encounter, encountersPool = []) {
   return unique.slice(0, 3);
 }
 
-function chooseEncounterVariant(encounter, encountersPool = []) {
-  const options = getEncounterSubOptions(encounter, encountersPool);
-  if (!options.length) return encounter;
-
-  const chosen = options[Math.floor(Math.random() * options.length)];
-  return {
-    ...encounter,
-    ...chosen,
-    parentId: encounter.id,
-    variantOf: encounter.id,
-    subEncounter: true
-  };
-}
-
 function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "") {
   const peligroTexto = encounter?.peligro ? getDangerText(encounter.peligro) : "Ninguno";
 
@@ -1066,15 +1052,10 @@ function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "
 ${encounter.descripcion || "Te adentras en territorio desconocido..."}`;
 
   if (powerBlock) {
-    text += `
-
-${powerBlock}`;
+    text += `\n\n${powerBlock}`;
   }
 
-  text += `
-
-Peligro: ${peligroTexto}
-Usa: ${commandHint}`;
+  text += `\n\nPeligro: ${peligroTexto}\nUsa: ${commandHint}`;
 
   return text;
 }
@@ -1103,7 +1084,8 @@ const FINAL_SCENE_COMMANDS = {
   "!negociar": "negociar",
   "!esperar": "esperar",
   "!volver": "retirarse",
-  "!retirarse": "retirarse"
+  "!retirarse": "retirarse",
+  "!abandonar": "retirarse"
 };
 
 const FINAL_SCENE_RULES = {
@@ -1275,13 +1257,11 @@ function getFinalActionLabel(action) {
 
 function buildFinalResolutionText(action, success, scenario) {
   const label = getFinalActionLabel(action);
-  const verdict = success ? "exitoso" : "infructuoso";
-
-  const completion = success
-    ? scenario?.completionText?.success
-    : scenario?.completionText?.failure;
-
-  return `Tu ${label} resultó ${verdict}. ${completion || ""}`.trim();
+  if (success) {
+    return `Tu ${label} funcionó cumpliendo con el objetivo de la misión. ${scenario?.completionText?.success || ""}`.trim();
+  } else {
+    return `Tu ${label} no funcionó, obligándote a regresar al campamento e informar. ${scenario?.completionText?.failure || ""}`.trim();
+  }
 }
 
 async function startFinalScenario(message, expedition) {
@@ -1590,7 +1570,7 @@ async function groqChat({
       model: GROQ_MODEL,
       messages: chatMessages,
       temperature,
-      max_tokens: maxTokens
+      maxTokens: maxTokens
     })
   });
 
@@ -2392,11 +2372,11 @@ client.on("messageCreate", async (message) => {
       triviaGames.delete(message.author.id);
 
       const points =
-        game.difficulty === "facil" ? 5 :
-        game.difficulty === "normal" ? 10 :
-        game.difficulty === "dificil" ? 20 :
-        game.difficulty === "legendario" ? 40 :
-        10;
+        game.difficulty === "facil" ? 10 :
+        game.difficulty === "normal" ? 20 :
+        game.difficulty === "dificil" ? 40 :
+        game.difficulty === "legendario" ? 80 :
+        20;
 
       await db.addCorrectAnswer(message.author.id, points);
       return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
@@ -3198,26 +3178,28 @@ function getPowerComparisonText(delta) {
 }
 
 function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {} }) {
+  const validTypes = ["enemigo_numeroso", "enemigo_poderoso", "jefe"];
+  if (!validTypes.includes(encounter?.tipo)) return "";
+
   const traveler = getTravelerCorePower(profile);
   const eq = getEquipmentPowerSummary(equipment);
   const party = getCompanionPowerDetails(profile);
   const enemy = getEnemyPowerSummary(encounter);
 
   const expeditionTotal = traveler.score + eq.score + party.total;
-  const delta = expeditionTotal - enemy.score;
+  const enemyScore = (enemy.peligro * 15) + (encounter.tipo === "jefe" ? 30 : 0);
+  const delta = expeditionTotal - enemyScore;
   const comparison = getPowerComparisonText(delta);
 
   const companionLines = party.details.length
-    ? party.details.map(c => `• ${c.nombre}: ${c.score} poder (${c.base ? getCompanionBaseSummary(c.id) : ""})`).join("\n")
+    ? party.details.map(c => `• ${c.nombre}: ${c.score} poder`).join("\n")
     : "• Sin compañeros";
 
   return (
 `📊 **TABLA DE PODER**
 
 **Tu lado**
-• Usuario / viajero: ${profile.nombre || profile.name || "Sin nombre"}
-• Nivel: ${traveler.level} | Salud: ${traveler.health}/100 | Puntos: ${traveler.points}
-• Rango: ${traveler.rank}
+• Nivel: ${traveler.level} | Salud: ${traveler.health}/100
 • Bono de clase: ${traveler.classText}
 
 • Poder del personaje: ${traveler.score}
@@ -3225,12 +3207,10 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 • Poder de compañeros: ${party.total}
 • **Poder total de expedición**: ${expeditionTotal}
 
-**Compañeros**
-${companionLines}
-
 **Enemigo**
-• Peligro: ${enemy.peligro}/10
-• Tipo: ${enemy.tipo}
+• Peligro: ${getDangerText(enemy.peligro)} (Nivel ${enemy.peligro})
+• Tipo: ${enemy.tipo.replace(/_/g, " ")}
+• **Poder enemigo estimado**: ${enemyScore}
 
 **Comparativa**
 • Balance: ${comparison}
@@ -3251,7 +3231,7 @@ ${companionLines}
     const numero = parseInt(args[1]);
     if (isNaN(numero)) return message.reply("Usa !expedicion <numero>");
 
-    const missions = tablonSelection.length ? tablonSelection : await loadMissions();
+    const missions = await getCurrentTablonSelection();
     const mission = missions[numero - 1];
     if (!mission) return message.reply("Esa misión no existe.");
 
@@ -3312,6 +3292,7 @@ ${companionLines}
       return message.reply("Usa !desafiar para este encuentro.");
     }
 
+    special.interacted = true;
     const profile = await db.getProfile(message.author.id);
 
     const equipmentRaw = typeof db.getEquipment === "function"
@@ -3333,7 +3314,8 @@ ${companionLines}
       if (line) reactions.push(`💬 ${line}`);
     }
 
-    let texto = `🌟 **${special.titulo}**\n\n${special.descripcion || "Un evento especial se presenta ante ti."}\n\n${powerBlock}`;
+    let texto = `🌟 **${special.titulo}**\n\n${special.descripcion || "Un evento especial se presenta ante ti."}`;
+    if (powerBlock) texto += `\n\n${powerBlock}`;
 
     if (reactions.length) {
       texto += `\n\n${reactions.join("\n")}`;
@@ -3393,7 +3375,7 @@ ${companionLines}
       return message.reply("La expedición ha fracasado o concluido. Usa !volver para regresar al campamento.");
     }
 
-    if (expedition.currentEncounter && expedition.currentEncounter.tipo === "evento_especial") {
+    if (expedition.currentEncounter && expedition.currentEncounter.tipo === "evento_especial" && !expedition.currentEncounter.interacted) {
       return message.reply("🌟 Este es un evento especial. Debes usar `!interactuar` para involucrarte o `!volver` para huir.");
     }
 
@@ -3484,20 +3466,19 @@ ${companionLines}
       }
 
       const encounterBase = lista[Math.floor(Math.random() * lista.length)];
-      const finalEncounter = chooseEncounterVariant(encounterBase, encounters);
 
       expedition.pendingStartHeal = false;
-      expedition.currentEncounter = finalEncounter;
+      expedition.currentEncounter = encounterBase;
       expedition.phase = "running";
 
-      const powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: finalEncounter });
-      const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
-      let textoEncuentro = buildEncounterCard(finalEncounter, accionRequerida, powerBlock);
+      const powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: encounterBase });
+      const accionRequerida = encounterBase.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
+      let textoEncuentro = buildEncounterCard(encounterBase, accionRequerida, powerBlock);
 
       const reactionIds = [...new Set(owned)].slice(0, 3);
       const reactions = [];
       for (const cid of reactionIds) {
-        const line = await companionReaction(cid, finalEncounter, "encounter");
+        const line = await companionReaction(cid, encounterBase, "encounter");
         if (line) reactions.push(`💬 ${line}`);
       }
 
@@ -3513,18 +3494,27 @@ ${companionLines}
       return startFinalScenario(message, expedition);
     }
 
-    if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
-      activeEncounter.subEncounterStep = "parent";
-      return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
-    }
+    const encounters = await loadEncounters();
+    const subOptions = getEncounterSubOptions(activeEncounter, encounters);
 
-    if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep === "parent") {
-      const options = Array.isArray(activeEncounter.subEncounterOptions) ? activeEncounter.subEncounterOptions : [];
-      const chosen = options.length ? options[Math.floor(Math.random() * options.length)] : null;
-      if (chosen) {
-        expedition.currentEncounter = { ...chosen, parentId: activeEncounter.id, variantOf: activeEncounter.id, subEncounter: true };
-        activeEncounter = expedition.currentEncounter;
+    if (!activeEncounter.subEncounter && subOptions.length > 0) {
+      const chosen = subOptions[Math.floor(Math.random() * subOptions.length)];
+      const variant = { ...activeEncounter, ...chosen, parentId: activeEncounter.id, variantOf: activeEncounter.id, subEncounter: true };
+      expedition.currentEncounter = variant;
+
+      const powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: variant });
+      let textoEncuentro = buildEncounterCard(variant, "!desafiar", powerBlock);
+
+      const reactionIds = [...new Set(owned)].slice(0, 3);
+      const reactions = [];
+      for (const cid of reactionIds) {
+        const line = await companionReaction(cid, variant, "encounter");
+        if (line) reactions.push(`💬 ${line}`);
       }
+
+      if (reactions.length) textoEncuentro += `\n\n${reactions.join("\n")}`;
+
+      return message.reply(`Avanzas en el escenario y se revela un nuevo desafío...\n\n${textoEncuentro}`);
     }
 
     const bonuses = getCompanionBonus(profile);
