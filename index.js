@@ -152,8 +152,6 @@ const EXPLORATION_WINDOW_MS = 12 * 60 * 60 * 1000;
 const EXPLORATION_POINT_MIN = 10;
 const EXPLORATION_POINT_MAX = 200;
 
-let points = randInt(EXPLORATION_POINT_MIN, EXPLORATION_POINT_MAX);
-
 function getExplorationBonusPercent(profile = {}, equipment = {}) {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
   const classBonus = getPlayerClassBonus(profile);
@@ -184,7 +182,9 @@ function rollExplorationRarity(explorationBonus = 0) {
 }
 
 function pickExplorationItemByRarity(pool, rarity) {
-  const filtered = (pool || []).filter(item => normalizeKey(item?.rareza || "comun") === rarity);
+  const filtered = (pool || []).filter(
+    item => normalizeKey(item?.rareza || "comun") === rarity
+  );
   if (!filtered.length) return null;
   return filtered[Math.floor(Math.random() * filtered.length)];
 }
@@ -217,7 +217,6 @@ function getExplorationClosingText(points, item, rarity) {
   const hasItem = Boolean(item);
   const rarityKey = normalizeKey(rarity || "");
 
-  if (!hasItem && points < 50) {
     return "Fue un viaje mediocre. Perdí mi tiempo.";
   }
 
@@ -251,11 +250,12 @@ function getExplorationClosingText(points, item, rarity) {
 
   return "Fue un buen viaje. Deberías hacerlo más seguido.";
 }
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 async function handleExploracionCommand(message) {
-  const state = await db.getQuotaState(message.author.id, "exploracion", EXPLORATION_WINDOW_MS);
+  const state = await db.getQuotaState(
+    message.author.id,
+    "exploracion",
+    EXPLORATION_WINDOW_MS
+  );
 
   if (state.attempts >= EXPLORATION_LIMIT) {
     return message.reply(
@@ -270,7 +270,10 @@ async function handleExploracionCommand(message) {
   const explorationBonus = getExplorationBonusPercent(profile, equipment);
   const explorationBonusPct = Math.round(explorationBonus * 100);
 
-  const points = Math.floor(Math.random() * 191) + 10; // 10 a 200
+  const points = Math.floor(
+    Math.random() * (EXPLORATION_POINT_MAX - EXPLORATION_POINT_MIN + 1)
+  ) + EXPLORATION_POINT_MIN;
+
   await db.addPoints(message.author.id, points);
 
   const lootPool = await loadExplorationLootPool();
@@ -293,7 +296,7 @@ async function handleExploracionCommand(message) {
   let texto =
 `🧭 **Exploración**
 
-Preparas tu equipo de viaje. sales del campamento y te dispones a explorar los alrededores entre Lebennin y Lamedon, incluso más allá, en busca de objetos, reliquias y cualquier objeto de valor.
+Preparas tu equipo de viaje. Sales del campamento y te dispones a explorar los alrededores entre Lebennin y Lamedon, incluso más allá, en busca de objetos, reliquias y cualquier objeto de valor.
 
 🎒 Bonus de exploración activo: +${explorationBonusPct}%`;
 
