@@ -1,4 +1,4 @@
-import * as db from "./database.js";
+yimport * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
 import { Client, GatewayIntentBits } from 'discord.js';
 import { readFile } from 'node:fs/promises';
@@ -3334,62 +3334,102 @@ if (command === "!volver") {
 
 if (command === "!desafiar") {
   if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en ninguna expedición activa. Elige una en el tablón con `!tablon`.");
+    return message.reply("No estás en ninguna expedición activa. Usa `!tablon`.");
   }
 
   const expedition = expeditions.get(message.author.id);
-  const profile = await db.getProfile(message.author.id);
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const owned = getOwnedCompanions(profile);
 
-  const activeEncounter = expedition.currentEncounter;
+  if (!expedition.currentEncounter) {
+    const missions = tablonSelection.length ? tablonSelection : await loadMissions();
+    const mission = expedition.mission || missions.find(m => m.id === expedition.missionId);
 
-if (!activeEncounter) {
-  return message.reply("No hay encuentro activo en esta expedición.");
-}
+    if (!mission) {
+      return message.reply("No se encontró la misión activa.");
+    }
 
-if (activeEncounter.tipo === "obstaculo" && !activeEncounter.subEncounterStep) {
-  activeEncounter.subEncounterStep = "parent";
-  expedition.currentEncounter = activeEncounter;
-  return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
-}
+    const encounters = Array.isArray(mission.encounters) ? mission.encounters : [];
 
-if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep === "parent") {
-  const options = Array.isArray(activeEncounter.subEncounterOptions)
-    ? activeEncounter.subEncounterOptions
-    : [];
+    if (!encounters.length) {
+      return message.reply("Esta misión no tiene encuentros disponibles.");
+    }
 
-  const chosen = options.length
-    ? options[Math.floor(Math.random() * options.length)]
-    : null;
+    const encounterId = encounters[Math.floor(Math.random() * encounters.length)];
+    const encounter = await db.getEncounter?.(encounterId) || getEncounterById(encounterId);
 
-  if (!chosen) {
-    return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+    if (!encounter) {
+      return message.reply("Error cargando el encuentro.");
+    }
+
+    expedition.currentEncounter = encounter;
   }
 
-  expedition.currentEncounter = {
-    ...chosen,
-    parentId: activeEncounter.id,
-    variantOf: activeEncounter.id,
-    subEncounter: true
-  };
+  let activeEncounter = expedition.currentEncounter;
 
-  const childEncounter = expedition.currentEncounter;
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+
+  // =========================
+  // OBSTÁCULO (PADRE)
+  // =========================
+  if (activeEncounter?.tipo === "obstaculo") {
+
+    if (!activeEncounter.subEncounterStep) {
+      activeEncounter.subEncounterStep = "parent";
+      expedition.currentEncounter = activeEncounter;
+
+      return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+    }
+
+    if (activeEncounter.subEncounterStep === "parent") {
+      const options = Array.isArray(activeEncounter.subEncounterOptions)
+        ? activeEncounter.subEncounterOptions
+        : [];
+
+      const chosen = options.length
+        ? options[Math.floor(Math.random() * options.length)]
+        : null;
+
+      if (!chosen) {
+        return message.reply(buildEncounterCard(activeEncounter, "!desafiar"));
+      }
+
+      expedition.currentEncounter = {
+        ...chosen,
+        parentId: activeEncounter.id,
+        variantOf: activeEncounter.id,
+        subEncounter: true
+      };
+
+      activeEncounter = expedition.currentEncounter;
+    }
+  }
+
+  // =========================
+  // POWER BLOCK
+  // =========================
   const powerBlock = buildPowerComparisonBlock({
     profile,
     equipment,
-    encounter: childEncounter
+    encounter: activeEncounter
   });
 
-  const accionRequerida = childEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
-  let textoEncuentro = buildEncounterCard(childEncounter, accionRequerida, powerBlock);
+  const accionRequerida =
+    activeEncounter.tipo === "evento_especial"
+      ? "!interactuar"
+      : "!desafiar";
 
+  let textoEncuentro = buildEncounterCard(activeEncounter, accionRequerida, powerBlock);
+
+  // =========================
+  // COMPAÑEROS
+  // =========================
+  const owned = getOwnedCompanions(profile);
   const reactionIds = [...new Set(owned)].slice(0, 3);
   const reactions = [];
 
   for (const cid of reactionIds) {
-    const line = await companionReaction(cid, childEncounter, "encounter");
+    const line = await companionReaction(cid, activeEncounter, "encounter");
     if (line) reactions.push(`💬 ${line}`);
   }
 
@@ -3398,8 +3438,7 @@ if (activeEncounter.tipo === "obstaculo" && activeEncounter.subEncounterStep ===
   }
 
   return message.reply(textoEncuentro);
-}
-
+                                              }
 expedition.affinityLog = expedition.affinityLog || {};
 if (typeof expedition.pendingFinalScenario !== "boolean") {
   expedition.pendingFinalScenario = false;
