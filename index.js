@@ -3309,6 +3309,14 @@ ${companionLines}
       return message.reply("No estás en una expedición.");
     }
 
+    const partialXP = expedition.xpEarned || 0;
+    const partialPoints = expedition.pointsEarned || 0;
+
+    if (partialXP > 0 || partialPoints > 0) {
+    await db.addXP(message.author.id, partialXP);
+    await db.addPoints(message.author.id, partialPoints);
+    }
+
     expeditions.delete(message.author.id);
     await clearExpeditionParty(message.author.id);
     const utilMsg = await decrementUtilities(message.author.id);
@@ -3376,8 +3384,15 @@ ${companionLines}
             enemyPresent,
             allowedActions: enemyPresent ? expedition.finalScenario.allowedActions : ["retirarse"]
           };
-          return startFinalScenario(message, expedition);
-        }
+          const escenario = expedition.currentEncounter;
+
+let textoFinalScenario = `🌑 **Escenario final**\n\n${escenario.descripcion}\n\n`;
+
+textoFinalScenario += enemyPresent
+  ? `⚔️ Presencia enemiga detectada.\nUsa: ${escenario.allowedActions.join(", ")}`
+  : `🕊️ El área parece segura por ahora.\nPuedes retirarte.`;
+
+return message.reply(textoFinalScenario);
 
         const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
         const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
