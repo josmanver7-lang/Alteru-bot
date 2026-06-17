@@ -2532,14 +2532,6 @@ if (activeExpedition?.finalScenario?.active || activeExpedition?.pendingFinalSce
     if (result) return result;
   }
 
-  if (command === "!exploracion") {
-    const state = await db.getQuotaState(message.author.id, "exploracion", EXPLORATION_WINDOW_MS);
-    if (state.attempts >= EXPLORATION_LIMIT) {
-      return message.reply(
-        `⚠️ Ya usaste tu exploración. Vuelve en ${formatRemainingTime(state.resetAt - Date.now())}.`
-      );
-    }
-
     const profile = await db.getProfile(message.author.id);
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
     const equipment = getResolvedEquipment(profile, equipmentRaw);
