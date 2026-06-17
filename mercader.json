@@ -81,7 +81,7 @@
       "slots": 3,
       "precioBase": 45,
       "descripcion": "Un trago fuerte.",
-      "efecto": { "fuerza": 5 }
+      "efecto": { "combatBonus": 0.05 }
     },
     {
       "id": "carne_seca",
@@ -93,49 +93,13 @@
       "efecto": { "salud": 30 }
     },
     {
-      "id": "libro_antiguo",
-      "nombre": "Libro antiguo",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 70,
-      "descripcion": "Regalo para estudiosos.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
       "id": "vino_dorwinion",
       "nombre": "Vino de Dorwinion",
       "tipo": "regalo",
       "slots": 1,
       "precioBase": 80,
       "descripcion": "Regalo para compañeros sociables.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "hierbas_curativas",
-      "nombre": "Hierbas curativas",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 75,
-      "descripcion": "Regalo sencillo.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "juguete_madera",
-      "nombre": "Juguete de madera",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 30,
-      "descripcion": "Pequeño regalo nostálgico.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "amuleto_suerte",
-      "nombre": "Amuleto de buena suerte",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 60,
-      "descripcion": "Para un compañero supersticioso.",
-      "efecto": { "afinidad": 3, "voluntad": 5 }
+      "efecto": { "negotiationBonus": 0.10 }
     },
     {
       "id": "pipa_madera",
@@ -198,7 +162,7 @@
       "slots": 1,
       "precioBase": 50,
       "descripcion": "Útil para el campamento.",
-      "efecto": {}
+      "efecto": {"explorationBonus": 0.04}
     },
     {
       "id": "pedernal",
@@ -207,7 +171,7 @@
       "slots": 1,
       "precioBase": 30,
       "descripcion": "Para encender fuegos.",
-      "efecto": {}
+      "efecto": {"explorationBonus": 0.03}
     },
     {
       "id": "cantimplora",
@@ -216,7 +180,7 @@
       "slots": 1,
       "precioBase": 40,
       "descripcion": "Mantiene el agua.",
-      "efecto": {}
+      "efecto": {"explorationBonus": 0.05}
     },
     {
       "id": "kit_coser",
@@ -235,6 +199,141 @@
       "precioBase": 15,
       "descripcion": "Ilumina zonas oscuras y facilita rastrear caminos complejos.",
       "efecto": { "explorationBonus": 0.10 }
+    },
+     {
+    "id": "espada_hirilrist",
+    "nombre": "Hirilrist (Hoja de la Dama)",
+    "slot": "arma",
+    "hands": 1,
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 6400,
+    "descripcion": "Elegante y letal, utilizada históricamente por las guardias de la Dama.",
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
+  },
+  {
+    "id": "espada_glendagor",
+    "nombre": "Glendagor (Batalla de Chispas)",
+    "slot": "arma",
+    "hands": 1,
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 3200,
+    "descripcion": "Su acero produce chispas al chocar con otras armas.",
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
+  },
+  {
+    "id": "espada_orrist",
+    "nombre": "Orrist (Hoja de lo Alto)",
+    "slot": "arma",
+    "hands": 1,
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 3800,
+    "descripcion": "Forjada para ser ligera en lo alto de las cumbres.",
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
+  },
+  {
+    "id": "espada_faerist",
+    "nombre": "Faerist (Hoja Espiritual)",
+    "slot": "arma",
+    "hands": 1,
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 7000,
+    "descripcion": "Parece pesar menos que el aire; corta a través de defensas mágicas.",
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
+  },
+  {
+    "id": "anillo_ciraman",
+    "nombre": "Ciraman (Círculo de Aman)",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 8500,
+    "descripcion": "Un anillo que irradia paz eterna, bendecido por la luz de Valinor.",
+    "efecto": { "willpowerBonus": 0.06, "perceptionBonus": 0.04 }
+  },
+  {
+    "id": "anillo_cirsael",
+    "nombre": "Cirsael (Círculo del Sabio)",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 5500,
+    "descripcion": "Aumenta la claridad de pensamiento del portador.",
+    "efecto": { "willpowerBonus": 0.06, "negotiationBonus": 0.04 }
+  },
+  {
+    "id": "anillo_cirgalad",
+    "nombre": "Cirgalad (Círculo de Luz)",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 4200,
+    "descripcion": "Brilla con fuerza ante la presencia de criaturas sombrías.",
+    "efecto": { "willpowerBonus": 0.04, "perceptionBonus": 0.02 }
+  },
+  {
+    "id": "anillo_cirmorn",
+    "nombre": "Cirmorn (Círculo de la Sombra)",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 6000,
+    "descripcion": "Otorga sigilo al portador; a veces se dice que atrae la oscuridad.",
+    "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.04 }
+  },
+ {
+    "id": "anillo_cirmenel",
+    "nombre": "Cirmenel (Círculo del Cielo)",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 4800,
+    "descripcion": "Incrustado con un zafiro que recuerda al cielo de la Tierra Media.",
+    "efecto": { "willpowerBonus": 0.04, "perceptionBonus": 0.02 }
+  },
+  {
+    "id": "anillo_cirnaur",
+    "nombre": "Cirnaur (Círculo de Fuego)",
+    "slot": "anillo",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 7500,
+    "descripcion": "Un anillo que siempre está caliente al tacto.",
+    "efecto": { "willpowerBonus": 0.06, "combatBonus": 0.04 }
+  },
+  {
+    "id": "anillo_cirgwilith",
+    "nombre": "Cirgwilith (Círculo del Aire)",
+    "slot": "anillo",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 4500,
+    "descripcion": "Tan ligero que casi parece desaparecer del dedo.",
+    "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.02 }
+  },
+  {
+    "id": "anillo_cirdir",
+    "nombre": "Cirdir (Círculo del Hombre)",
+    "slot": "anillo",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 3500,
+    "descripcion": "Anillo de los jefes de las tierras del norte.",
+    "efecto": { "willpowerBonus": 0.04, "resilienceBonus": 0.02 }
+  },
+  {
+    "id": "anillo_cirenvalar",
+    "nombre": "Cirenvalar (Círculo de los Valar)",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 9999,
+    "descripcion": "Un anillo antiguo con un power casi divino.",
+    "efecto": { "willpowerBonus": 0.06, "perceptionBonus": 0.02, "negotiationBonus": 0.02 }
+  },
     }
   ]
 }
