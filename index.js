@@ -226,7 +226,6 @@ function getExplorationClosingText(points, item, rarity) {
   if (!hasItem && points < 100) {
     return "Fue un lindo paseo. Al menos disfruté las buenas vistas de Gondor.";
   }
-  }
 
   if (!hasItem && points < 150) {
     return "No estuvo mal, para la próxima llevaré mas hoja de la cuaderna para calmar las ansias.";
