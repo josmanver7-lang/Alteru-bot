@@ -65,7 +65,7 @@
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
   "descripcion": "Un grupo de corsarios dispersos vigila el paso principal. Parecen disfrutar de cobrar peajes o directamente robar a los viajeros.",
   "textoExito": "Haces un sonido para llamar su atención, preparas tu arma y estos en desorden corren hacia ti, te enfrentas al primero y lo vences, luego entras en combate con el resto, y a pesar de algunas complicaciones logras vencer.",
-  "textoFracaso": "
+  "textoFracaso": "Cargas contra ellos y de manera desordenada entras en un frenético combate, Luchas lo mejor que puedes pero al poco tiempo te das cuenta que no podrás vencer. Huyes por tu vida",
   "peligro": 3,
 
   "xp": 15
@@ -104,8 +104,8 @@
   "nivelMax": 3,
   "descripcion": "Una caravana enana parece haber acampado junto al camino, beben cerveza y comparten bromas, no parecen agresivos, aunque un enano es un enano.",
   "textoExito": "Te acercas a ellos y comparten historias y bromas, además comercian algunos artículos de los que obtienes cierta ganancia."
-  "peligro": 0
-  "puntos": 40
+  "peligro": 0,
+  "puntos": 40,
   "xp": 10
 },
 {
@@ -118,7 +118,7 @@
   "nivelMax": 3,
   "descripcion": "Un pequeño grupo de elfos observa el bosque desde las sombras, te miran con cautela mientras susurran palabras en su idioma",
   "textoExito": "Decides acercarte a ellos y comparten muchas historias, te dicen que antes vivían en Edhellond y suelen explorar los alrededores de su antiguo hogar, este encuentro te llena de conocimiento.",
-  "peligro": 0
+  "peligro": 0,
   "xp": 25
 },
 {
@@ -150,15 +150,18 @@
     "descripcion": "Una caravana mercante avanza despacio por la costa, cargada de telas, sal y barriles de vino. El mercader te invita a acercarte antes de seguir rumbo al puerto.",
     "textoExito": "Te acercas al comerciante quien comparte contigo un poco de su vino, bromean y charlas y disfrutan el momento. Te ofrece un pequeño negocio y aceptas, al pasar cerca de la siguiente ciudad venderías esta mercancía y obtendrías una pequeña recompensa extra.",
     "peligro": 0,
+    "puntos": 30,
     "xp": 15
   },
   {
-    "id": "exploradores_rio_celos",
+    "id": "exploradores_rio_ciril",
     "tipo": "evento_especial",
     "categoria": "exploracion",
-    "titulo": "Exploradores del Celos",
+    "titulo": "Exploradores del Ciril",
     "region": ["lebennin", "lamedon"],
     "descripcion": "Un pequeño grupo de exploradores descansa junto al río, marcando mapas y revisando el paso. Su ruta coincide con la tuya y el encuentro parece inevitable.",
+    "textoExito": "Llegas con un paso seguro e intercambian palabras, tus palabras son bien entendidas y comparten información sobre el terreno cincurdante",
+    "textoFracaso": "Llegas con cautela y sin demostrar mucha confianza conversas con los exploradores, estos desde el inicio muestran hostilidad hacía ti y te piden que te marches y sigas tu camino.",
     "peligro": 1,
     "xp": 20
   },
