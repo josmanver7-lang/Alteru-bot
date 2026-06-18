@@ -190,8 +190,9 @@
     "tipo": "obstaculo",
     "categoria": "terreno",
     "titulo": "Camino Encharcado",
-    "region": ["lamedon"],
+    "region": ["lamedon", "blackroot_vale"],
     "descripcion": "La ruta queda cubierta por barro espeso y pequeños charcos ocultos bajo la hierba alta. Cada paso exige cuidado para no quedar atrapado.",
+    "textoExito": "Haciendo el mayor uso de tu paciencia y ánimo atraviesas el camino sin poder evitar soltar algunas maldiciones en el proceso, pero tras el complicado trayecto logras cruzar y pisar un terreno más agradable.",
     "peligro": 1,
     "xp": 5
   },
@@ -202,6 +203,7 @@
     "titulo": "Sendero Rocoso",
     "region": ["blackroot vale"],
     "descripcion": "El sendero se estrecha entre piedras húmedas y raíces expuestas. Un mal apoyo puede hacerte perder el equilibrio en la pendiente.",
+    "textoExito": "Atraviesas el sendero aferrándote en lo que encuentras intentando no mirar hacia abajo, pero luego de varios peligros encuentras nuevamente un terreno más seguro.",
     "peligro": 2,
     "xp": 8
   },
@@ -212,6 +214,7 @@
     "titulo": "Marea Baja",
     "region": ["belfalas"],
     "descripcion": "La costa se vuelve difícil de cruzar cuando la marea deja al descubierto rocas resbaladizas y pozas profundas entre la arena.",
+    "textoExito": "Te apoyas firmemente en cada paso que das entre los peñascos y piedras resbaladizas, te cuidas de cualquier criatura que puedas encontrar en el camino y observando bien el terreno puedes abandonar la orilla.",
     "peligro": 1,
     "xp": 6
   },
@@ -222,6 +225,7 @@
     "titulo": "Arboleda Densa",
     "region": ["lebennin"],
     "descripcion": "La vegetación del valle se espesa tanto que el camino apenas se distingue. Tendrás que abrirte paso con paciencia y sin hacer ruido.",
+    "textoExito": "Usas cualquier arma con filo para abrirte paso entre la espesura, atento a los peligros escondidos, algunos inevitable pero encuentras una zona más despejada al fin.",
     "peligro": 2,
     "xp": 7
   },
@@ -232,6 +236,8 @@
     "titulo": "Bandidos del Camino",
     "region": ["lamedon", "lebennin"],
     "descripcion": "Un pequeño grupo de bandidos sale de detrás de una curva con armas viejas y malas intenciones. No parecen muchos, pero sí lo bastante molestos.",
+    "textoExito": "Te preparas para enfrentarlos y te ries de ellos antes de cargar contra el más cercano y eliminarlo con facilidad, recibes al siguiente desarmandolo e hiriendole de muerte. Te enfrentas a otros dos al mismo tiempo quienes terminan huyendo al ver que no podrán vencerte.",
+    "textoFracaso": "Te preparas para enfrentarlos y te ries de ellos antes de cargar contra el más cercano y eliminarlo con facilidad, recibes al siguiente desarmandolo e hiriendole de muerte. Te enfrentas a otros dos al mismo tiempo pero uno de ellos te distrae mientras el otro te inmoviliza por la espalda pero eres rescatado justo antes del golpe fatal.",
     "peligro": 2,
     "xp": 10
   },
@@ -260,7 +266,7 @@
     "tipo": "enemigo_numeroso",
     "categoria": "combate",
     "titulo": "Exploradores Hostiles",
-    "region": ["lebennin", "blackroot vale"],
+    "region": ["lebennin", "lossarnach"],
     "descripcion": "Un grupo de exploradores enemigos avanza disperso por el camino, observando el terreno y buscando un punto débil para atacar.",
     "peligro": 3,
     "xp": 16
