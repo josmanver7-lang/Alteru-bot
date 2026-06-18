@@ -3331,6 +3331,7 @@ Raza: ${profile.race || "No definida"} | Clase: ${profile.class || "No definida"
 Bono de clase: ${power.bonusText} 
 Poder total: ${power.score} 
 Nivel: ${power.level} (${profile.xp || 0} XP) 
+Rango: ${obtenerRangoNivel(power.level)}
 Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100 
 
 📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0} 
