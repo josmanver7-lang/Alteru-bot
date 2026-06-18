@@ -112,7 +112,7 @@ async function chatWithAI({
     console.error("OpenRouter fallback error:", err);
     return "";
   }
-        }
+}
 
 // ================================
 // CUOTAS + TIEMPOS
@@ -538,7 +538,7 @@ async function addItemToInventory(userId, item) {
 
 function getCompanionBaseSummary(companionId) { 
   const base = getCompanionBasePower(companionId); 
-  return `Poder ${Math.round(base.total * 2)} | Defensa +${Math.round(base.damageReduction * 100)}%`; 
+  return `Poder ${Math.round(base.total * 2)} | Éxito +${Math.round(base.successBonus * 100)}% | Defensa +${Math.round(base.damageReduction * 100)}%`; 
 }
 
 async function loadCatalog(filename) {
@@ -1032,50 +1032,78 @@ function getCompanionEquipmentFromPersonaje(companionId) {
   const personaje = personajesCache[normalizeKey(companionId)] || null;
   if (!personaje) return {};
 
-  const fromNested =
+  const rawEq =
     personaje.equipo ||
     personaje.armamento ||
     personaje.equipment ||
     personaje.items ||
     {};
 
-  return {
-    ...fromNested,
-    arma: fromNested.arma || personaje.arma || "",
-    escudo: fromNested.escudo || personaje.escudo || "",
-    armadura: fromNested.armadura || personaje.armadura || "",
-    guantes: fromNested.guantes || personaje.guantes || "",
-    piernas: fromNested.piernas || personaje.piernas || "",
-    botas: fromNested.botas || personaje.botas || "",
-    capa: fromNested.capa || personaje.capa || "",
-    casco: fromNested.casco || personaje.casco || "",
-    hombros: fromNested.hombros || personaje.hombros || "",
-    anillo1: fromNested.anillo1 || personaje.anillo1 || "",
-    anillo2: fromNested.anillo2 || personaje.anillo2 || "",
-    amuleto: fromNested.amuleto || personaje.amuleto || "",
-    accesorio: fromNested.accesorio || personaje.accesorio || ""
-  };
+  const formattedEq = {};
+
+  if (Array.isArray(rawEq)) {
+    for (const item of rawEq) {
+      if (item && item.slot) {
+        formattedEq[item.slot] = item;
+      }
+    }
+  } else {
+    Object.assign(formattedEq, {
+      arma: rawEq.arma || personaje.arma || "",
+      escudo: rawEq.escudo || personaje.escudo || "",
+      armadura: rawEq.armadura || personaje.armadura || "",
+      guantes: rawEq.guantes || personaje.guantes || "",
+      piernas: rawEq.piernas || personaje.piernas || "",
+      botas: rawEq.botas || personaje.botas || "",
+      capa: rawEq.capa || personaje.capa || "",
+      casco: rawEq.casco || personaje.casco || "",
+      hombros: rawEq.hombros || personaje.hombros || "",
+      anillo1: rawEq.anillo1 || personaje.anillo1 || "",
+      anillo2: rawEq.anillo2 || personaje.anillo2 || "",
+      amuleto: rawEq.amuleto || personaje.amuleto || "",
+      accesorio: rawEq.accesorio || personaje.accesorio || ""
+    });
+  }
+
+  return formattedEq;
 }
 
 function getCompanionBasePower(companionId) {
   const key = normalizeKey(companionId);
+  const loadout = getCompanionEquipmentFromPersonaje(key);
 
-  const personajeLoadout = getCompanionEquipmentFromPersonaje(key);
-  const fallbackLoadout = {}; 
+  let total = 0;
+  let successBonus = 0;
+  let damageReduction = 0;
+  let hasObjectItems = false;
 
-  const loadout = Object.keys(personajeLoadout).length
-    ? personajeLoadout
-    : fallbackLoadout;
+  for (const item of Object.values(loadout)) {
+    if (!item) continue;
+    
+    if (typeof item === "string") {
+      total += (ITEM_TIER_VALUES[normalizeKey(item)] || 0);
+    } else if (typeof item === "object" && item.efecto) {
+      hasObjectItems = true;
+      total += 2;
+      const stats = getItemPower(item.efecto);
+      
+      successBonus += (stats.successBonus || 0) + (stats.combatBonus || 0) * 0.5 + (stats.willpowerBonus || 0) * 0.2;
+      damageReduction += (stats.damageReduction || 0) + (stats.survivalBonus || 0) * 0.5;
+    }
+  }
 
-  const total = Object.values(loadout).reduce(
-    (sum, tier) => sum + (ITEM_TIER_VALUES[normalizeKey(tier)] || 0),
-    0
-  );
+  if (!hasObjectItems) {
+    return {
+      total,
+      successBonus: Math.min(total * 0.0025, 0.12),
+      damageReduction: Math.min(total * 0.0015, 0.08)
+    };
+  }
 
   return {
-    total,
-    successBonus: Math.min(total * 0.0025, 0.12),
-    damageReduction: Math.min(total * 0.0015, 0.08)
+    total: Math.round(total + (successBonus * 10) + (damageReduction * 10)),
+    successBonus: Math.min(successBonus, 0.30),
+    damageReduction: Math.min(damageReduction, 0.30)
   };
 }
 
@@ -2319,11 +2347,11 @@ function buildTourNoText() {
 
 function buildTourYesText() {
   return (
-`🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** muchos artículos útiles para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites.
+`🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** y armarte para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites.
 
-🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil, quien me ha acompañado en muchas aventuras. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Mira tu **!equipo** y asegúrate de estar bien pertrechado. Cuando quieras comprar cualquier artículo, usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
+🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
 
-🎖️ Altéru: Si no tienes más preguntas, espero que puedas alistarte cuanto antes y ponerse manos a la obra. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros, pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará. 
+🎖️ Altéru: Si no tienes más preguntas, prepárate. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros. Pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará. 
 
 🎖️ Altéru: Si encuentras o escuchas algo sobre un nigromante llamado **Thûlazar**, házmelo saber. Es nuestro mayor enemigo. ¡Espero oír grandes hazañas de ti!
 
@@ -2600,7 +2628,18 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 
   const party = getCompanionPowerDetails(profile);
   const companionLines = party.details.length
-    ? party.details.map(c => `• **${c.nombre}**: Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}% | Poder Eq. ${c.eqScore}`).join("\n")
+    ? party.details.map(c => {
+        let abilityText = "";
+        if (c.id === "alteru") abilityText = " | Hab: +20% Éxito gen.";
+        else if (c.id === "cirdil") abilityText = " | Hab: +15% vs Poderosos / Reducción daño";
+        else if (c.id === "duinor") abilityText = " | Hab: +25% vs Numerosos";
+        else if (c.id === "andaer") abilityText = " | Hab: 20% Bloqueo total";
+        else if (c.id === "montaraces") abilityText = " | Hab: +30% Éxito";
+        else if (c.id === "nieriel") abilityText = " | Hab: Evasión de peligro";
+        else if (c.id === "faelon") abilityText = " | Hab: Sanación +10";
+
+        return `• **${c.nombre}**: Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}`;
+      }).join("\n")
     : "• Sin compañeros";
 
   const enemy = getEnemyPowerSummary(encounter);
