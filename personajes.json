@@ -16,12 +16,12 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo rectangular del Pelennor", 
-        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
         "nombre": "Placa metálica", 
-        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.04 "willpowerBonus": 0.03 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.04, "willpowerBonus": 0.03 } 
       },
       { 
         "slot": "hombros", 
@@ -80,7 +80,8 @@
       "Faelon": "Sabio y aventurero, no se imaginaba a los elfos tan animados.",
       "Andaer": "Inquieto y competitivo, pero leal, diligente y servicial.",
       "Duinor": "Amigable y servicial; disfruta de la buena compañía y de una buena batalla."
-    },
+    }
+  },
   {
     "nombre": "Nieriel",
     "titulo": "La novia de Altéru",
@@ -97,7 +98,7 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo Doncella del Cisne", 
-        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
@@ -174,7 +175,7 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo del Árbol Blanco", 
-        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
@@ -368,7 +369,7 @@
         "efecto": { "willpowerBonus": 0.02, "negotiationBonus": 0.02, "healingBonus": 0.04 } 
       }, 
       { 
-        "slot": "amuleto"
+        "slot": "amuleto",
         "nombre": "Runas de Etten", 
         "efecto": { "willpowerBonus": 0.02, "negotiationBonus": 0.02, "survivalBonus": 0.04 } 
       } 
@@ -473,4 +474,3 @@
     }
   }
 ]
-
