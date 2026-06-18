@@ -1288,5 +1288,215 @@
     "respuesta": "Verde",
     "dificultad": "legendaria",
     "puntos": 40
+  },
+  {
+    "pregunta": "¿Qué le regaló Galadriel a Aragorn como obsequio de despedida en Lothlórien?",
+    "opciones": ["Una daga", "Una vaina para Andúril", "El Frasco de Galadriel", "Una cuerda de elfos"],
+    "respuesta": "Una vaina para Andúril",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el capitán de las fuerzas de Sauron (el orco deforme de las películas) que lideró el asedio a Minas Tirith?",
+    "opciones": ["Azog", "Gothmog", "Bolgo", "Shagrat"],
+    "respuesta": "Gothmog",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cuál es el nombre de la última gran ciudad y reino oculto de los elfos en caer en Beleriand durante la Primera Edad?",
+    "opciones": ["Nargothrond", "Gondolin", "Menegroth", "Vinyamar"],
+    "respuesta": "Gondolin",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿De quién era la tumba que encontró Gimli en la Cámara de Mazarbul dentro de Moria?",
+    "opciones": ["Thráin", "Balin", "Fundin", "Óin"],
+    "respuesta": "Balin",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el amigo de Smeagol que encontró primero el Anillo Único en el río Anduin?",
+    "opciones": ["Déagol", "Bandobras", "Tobold", "Gorhendad"],
+    "respuesta": "Déagol",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cuál fue el nombre de la sangrienta batalla que enfrentó a enanos contra orcos y trasgos en la que destacó Thorin, ganándose el apodo de 'Escudo de Roble'?",
+    "opciones": ["Batalla de los Cinco Ejércitos", "Batalla de Azanulbizar", "Batalla de Dagorlad", "Batalla de los Campos de Celebrant"],
+    "respuesta": "Batalla de Azanulbizar",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el capitán orco que lideró la batalla frente a Khazad-dûm contra los enanos comandados por Thráin II?",
+    "opciones": ["Bolgo", "Azog", "Golfimbul", "Uglúk"],
+    "respuesta": "Azog",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Quién mató al dragón Smaug en Esgaroth utilizando la Flecha Negra?",
+    "opciones": ["Thorin", "Bardo", "Girion", "Legolas"],
+    "respuesta": "Bardo",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el anillo de poder (el Anillo del Aire) que le fue entregado originalmente al Alto Rey Gil-galad?",
+    "opciones": ["Nenya", "Narya", "Vilya", "Barahir"],
+    "respuesta": "Vilya",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Hacia dónde se dirigía el rey Isildur cuando fue emboscado por los orcos en los Campos de Gladden, donde murió y perdió el anillo?",
+    "opciones": ["Minas Anor", "Rivendel", "Osgiliath", "Gondor"],
+    "respuesta": "Rivendel",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Con quién se casó Éomer, rey de Rohan, al terminar la Guerra del Anillo?",
+    "opciones": ["Lothíriel", "Éowyn", "Arwen", "Finduilas"],
+    "respuesta": "Lothíriel",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Cuál es el nombre del señor y gobernador de la región de Lamedon en Gondor durante la Guerra del Anillo?",
+    "opciones": ["Forlong", "Angbor", "Duinhir", "Golasgil"],
+    "respuesta": "Angbor",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "En LOTRO, ¿cuál es el nombre de la fortaleza en las Solitarias (Lone-lands) donde habita la doncella roja?",
+    "opciones": ["Ost Guruth", "Garth Agarwen", "Fornost", "Carn Dûm"],
+    "respuesta": "Garth Agarwen",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Quién era el lugarteniente de la torre de Barad-dûr, recordado en la historia como la 'Boca de Sauron'?",
+    "opciones": ["Un numenóreano negro", "Un espectro del Anillo", "Un orco de Mordor", "Un haradrim"],
+    "respuesta": "Un numenóreano negro",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llama el hobbit que fue elegido de forma unánime y recurrente como alcalde de Cavada Grande tras la Guerra del Anillo?",
+    "opciones": ["Samwise Gamyi", "Meriadoc Brandigamo", "Peregrin Tuk", "Faramir Tuk"],
+    "respuesta": "Samwise Gamyi",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Qué regalo de despedida le entregó Galadriel a Gimli en Lothlórien a petición del propio enano?",
+    "opciones": ["Tres cabellos de su cabeza", "Un hacha enana de plata", "Una gema elfa", "Un cinturón de oro"],
+    "respuesta": "Tres cabellos de su cabeza",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el hijo de Beorn que lideró a los Beórnidas y mantuvo seguros los pasos de las Montañas Nubladas tras la muerte de su padre?",
+    "opciones": ["Beorn", "Grimbeorn", "Radagast", "Ceorl"],
+    "respuesta": "Grimbeorn",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Qué variedad de tabaco de la Cuaderna del Sur era considerada la favorita absoluta de Bilbo Bolsón y Gandalf?",
+    "opciones": ["Hoja de la Cuaderna del Sur", "Estrella de la Comarca", "Viejo Tobey", "Valle Largo"],
+    "respuesta": "Viejo Tobey",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Quién gobernaba la fortaleza de Minas Morgul en nombre de Sauron directo durante los acontecimientos de la Guerra del Anillo?",
+    "opciones": ["El Rey Brujo de Angmar", "Khamûl", "La Boca de Sauron", "Gothmog"],
+    "respuesta": "El Rey Brujo de Angmar",
+    "dificultad": "normal",
+    "puntos": 20
+  },
+  {
+    "pregunta": "¿Quién fue el rey de los Elfos Sindar de Doriath y esposo de la mística Maia Melian?",
+    "opciones": ["Thingol", "Celeborn", "Thranduil", "Círdan"],
+    "respuesta": "Thingol",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Cómo se llama la joya verde brillante tallada con la forma de un águila que Galadriel le entregó a Aragorn como símbolo de esperanza?",
+    "opciones": ["Elessar", "Arkenstone", "Elendilmir", "Nauglamír"],
+    "respuesta": "Elessar",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Cuál es el verdadero nombre de pila del mago Gandalf en las tierras de Valinor antes de llegar a la Tierra Media?",
+    "opciones": ["Olórin", "Mithrandir", "Tharkûn", "Incánus"],
+    "respuesta": "Olórin",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Quién fue el elfo Noldor que construyó los barcos para cruzar Helcaraxë y lideró la primera gran rebelión contra los Valar?",
+    "opciones": ["Fëanor", "Fingolfin", "Finarfin", "Maedhros"],
+    "respuesta": "Fëanor",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Qué joya legendaria de la Primera Edad incrustaron los enanos de Nogrod en el collar Nauglamír por orden del rey Thingol?",
+    "opciones": ["Un Silmaril", "La Piedra del Arca", "La Elessar", "El Elendilmir"],
+    "respuesta": "Un Silmaril",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Quién fue el último Rey de Gondor de la línea legítima antes de la era de los Senescales, tras desaparecer en Minas Morgul?",
+    "opciones": ["Eärnur", "Eärnil II", "Ondoher", "Valandil"],
+    "respuesta": "Eärnur",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Cómo se llama el gran monte sagrado ubicado en el centro de Númenor donde se hacían las plegarias a Eru Ilúvatar?",
+    "opciones": ["Meneltarma", "Taniquetil", "Amon Sûl", "Mindolluin"],
+    "respuesta": "Meneltarma",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "En LOTRO, ¿cómo se llama el lugarteniente del Rey Brujo y jefe supremo de las fuerzas enemigas dentro de la instancia de Carn Dûm?",
+    "opciones": ["Mordrambor", "Mordirith", "Amarthiel", "Thaurlach"],
+    "respuesta": "Mordirith",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "En LOTRO, ¿cuál de los siguientes feudos costeros e históricos de Gondor alberga la hermosa ciudadela elfa y humana de Dol Amroth?",
+    "opciones": ["Belfalas", "Lebennin", "Lamedon", "Lossarnach"],
+    "respuesta": "Belfalas",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "En LOTRO, ¿cómo se llaman los objetos o reliquias antiguas que se canjean por reputación en la facción de la Sociedad de la Comarca (Mathom Society)?",
+    "opciones": ["Mathoms", "Monedas de la Comarca", "Fichas de Hobbitón", "Platas antiguas"],
+    "respuesta": "Mathoms",
+    "dificultad": "difícil",
+    "puntos": 30
+  },
+  {
+    "pregunta": "¿Cómo se llamaba el líder de los jinetes de Rohan (Éored) que interceptó y destruyó a las fuerzas Uruk-hai liberando involuntariamente a Merry y Pippin?",
+    "opciones": ["Éomer", "Théodred", "Gamling", "Elfhelm"],
+    "respuesta": "Éomer",
+    "dificultad": "normal",
+    "puntos": 20
   }
 ]
