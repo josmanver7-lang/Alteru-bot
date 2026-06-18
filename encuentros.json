@@ -257,7 +257,9 @@
     "categoria": "combate",
     "titulo": "Trasgos del Paso",
     "region": ["blackroot vale", "lamedon"],
-    "descripcion": "Una banda de trasgos baja en tropel desde un desfiladero poco vigilado. El ruido de sus pasos delata que llevan rato saqueando la zona.",
+    "descripcion": "Una banda de trasgos baja en tropel desde un desfiladero poco vigilado. El ruido de sus pasos delata que llevan rato emboscando la zona.",
+    "textoExito": "Son muchos y reúnes todo el coraje que puedes, recibes a los primeros y te enfrentas con frenesí y desición, te ves rodeado en varias ocasiones pero terminas saliendo de aquel repentino apuro.",
+    "textoFracaso": "Son muchos y a pesar de que reúnes todo el coraje y valor que puedes eres superado desde un comienzo, enfrentándote a ellos en retirada hasta que encuentras la oportunidad de escapar.",
     "peligro": 3,
     "xp": 15
   },
@@ -268,6 +270,8 @@
     "titulo": "Exploradores Hostiles",
     "region": ["lebennin", "lossarnach"],
     "descripcion": "Un grupo de exploradores enemigos avanza disperso por el camino, observando el terreno y buscando un punto débil para atacar.",
+    "textoExito": "Los desafias a la distancia y ellos aceptan, corren el uno contra el otro y se libra un combate intenso, logras evadir una peligrosa flecha de un arquero y acabas con el último de ellos.",
+    "textoFracaso": "Los desafias a la distancia y ellos aceptan, corren el uno contra el otro y se libra un feroz combate, pero una flecha de un arquero logra impactar en una zona vulnerable de tu cuerpo y quedas fuera de combate, huyendo o siendo rescatado.",
     "peligro": 3,
     "xp": 16
   },
