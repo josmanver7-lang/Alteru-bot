@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile"; // Modelo actualizado a 3.3 70b
 const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
 
 if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
@@ -26,7 +26,7 @@ async function chatWithAI({
   systemPrompt = "",
   messages = [],
   temperature = 0.85,
-  maxTokens = 250 // Aumentado para evitar recortes en mensajes de RP
+  maxTokens = 512 // Aumentado para evitar recortes en mensajes de RP y aprovechar la capacidad del modelo 70b
 }) {
   const payloadMessages = [];
 
@@ -112,7 +112,7 @@ async function chatWithAI({
     console.error("OpenRouter fallback error:", err);
     return "";
   }
-}
+        }
 
 // ================================
 // CUOTAS + TIEMPOS
