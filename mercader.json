@@ -11,7 +11,7 @@
       "rareza": "común",
       "material": "hierro",
       "precioBase": 60,
-      "efecto": { "damageBonus": 1, "successBonus": 0.01 }
+      "efecto": { "combatBonus": 0.01, "stealthBonus": 0.01 }
     },
     {
       "id": "daga_elfica_rivendel",
@@ -23,7 +23,7 @@
       "rareza": "superior",
       "material": "acero élfico",
       "precioBase": 880,
-      "efecto": { "damageBonus": 4, "successBonus": 0.06 }
+      "efecto": { "combatBonus": 0.03, "stealthBonus": 0.04 }
     },
     {
       "id": "cota_malla_enana_doble_anillo",
@@ -34,7 +34,7 @@
       "rareza": "superior",
       "material": "acero",
       "precioBase": 550,
-      "efecto": { "damageReduction": 0.1 }
+      "efecto": { "damageReduction": 0.04 "willpowerBonus": 0.02 }
     },
     {
       "id": "capa_galadhrim",
@@ -42,10 +42,10 @@
       "tipo": "armadura",
       "slot": "capa",
       "raza": ["elfo", "humano"],
-      "rareza": "raro",
+      "rareza": "superior",
       "material": "tela encantada",
       "precioBase": 1400,
-      "efecto": { "successBonus": 0.08, "damageReduction": 0.03 }
+      "efecto": { "explorationBonus": 0.05, "damageReduction": 0.03, "willpowerBonus": 0.04, "negotiationBonus": 0.02, "stealthBonus": 0.04 }
     },
     {
       "id": "anillo_calcedonia_rivendel",
@@ -307,4 +307,4 @@
       "efecto": { "explorationBonus": 0.25 }
     }
   ]
-    }
+}
