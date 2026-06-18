@@ -217,7 +217,7 @@
     "escenarioFinal": {
       "enabled": true,
       "titulo": "Sendero oculto",
-      "descripcion": "Tras derrotar a sus escoltas, el líder enemigo te esperaba con los niños a su espalda amarrados. '¿Así que llegó el rescate eh? Primero tendrás que vencerme'.",
+      "descripcion": "Tras derrotar a sus escoltas, llegas hasta el final de la cueva donde el líder enemigo te esperaba con los niños a su espalda amarrados. '¿Así que llegó el rescate eh? Primero tendrás que vencerme'.",
       "hasEnemies": true,
       "enemyLabel": "lider bandido",
       "enemyChance": 0.95,
