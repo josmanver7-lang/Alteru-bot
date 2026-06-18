@@ -103,7 +103,7 @@
   "nivelMin": 1,
   "nivelMax": 3,
   "descripcion": "Una caravana enana parece haber acampado junto al camino, beben cerveza y comparten bromas, no parecen agresivos, aunque un enano es un enano.",
-  "textoExito": "Te acercas a ellos y comparten historias y bromas, además comercian algunos artículos de los que obtienes cierta ganancia."
+  "textoExito": "Te acercas a ellos y comparten historias y bromas, además comercian algunos artículos de los que obtienes cierta ganancia.",
   "peligro": 0,
   "puntos": 40,
   "xp": 10
@@ -117,7 +117,7 @@
   "nivelMin": 1,
   "nivelMax": 3,
   "descripcion": "Un pequeño grupo de elfos observa el bosque desde las sombras, te miran con cautela mientras susurran palabras en su idioma",
-  "textoExito": "Decides acercarte a ellos y comparten muchas historias, te dicen que antes vivían en Edhellond y suelen explorar los alrededores de su antiguo hogar, este encuentro te llena de conocimiento.",
+  "textoExito": "Decides acercarte a ellos and comparten muchas historias, te dicen que antes vivían en Edhellond y suelen explorar los alrededores de su antiguo hogar, este encuentro te llena de conocimiento.",
   "peligro": 0,
   "xp": 25
 },
@@ -128,7 +128,7 @@
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
   "titulo": "Ruinas Antiguas",
   "descripcion": "Los restos de una construcción olvidada emergen entre la maleza.",
-  "textoExito": "Te acercas a comprobar los alrededores y luego inspeccionas la base de lo que pudo ser una estatua. Lees su inscripción que es interrumpida por moho y maleza y logras llenarte de conocimiento.",
+  "textoExito": "Te acercas a comprobar los alrededores and luego inspeccionas la base de lo que pudo ser una estatua. Lees su inscripción que es interrumpida por moho y maleza y logras llenarte de conocimiento.",
   "xp": 15
 },  
 {
@@ -326,7 +326,7 @@
     {
       "id": "claro_misterioso",
       "titulo": "Piedra en medio del claro",
-      "descripcion": "Llegas a un claro rodeado de árboles enfermos y ves una piedra justo en medio, te acercas cautelosamente y al inspeccionarlas vez entre sangre reseca una inscripción apenas legible 'Thûlazar' y sientes un terrible escalofrios y una punzada en el pecho, luego varios orcos encapuchados emergen entre los arboles.",
+      "descripcion": "Llegas a un claro rodeado de árboles enfermos y ves una piedra justo en medio, te acercas cautelosamente y al inspeccionarlas vez entre sangre reseca una inscripción apenas legible 'Thûlazar' and sientes un terrible escalofrios y una punzada en el pecho, luego varios orcos encapuchados emergen entre los arboles.",
       "peligro": 3,
       "xp": 10
     },
@@ -349,3 +349,4 @@
     "xp": 0
   }
 ]
+
