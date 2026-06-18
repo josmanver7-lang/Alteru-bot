@@ -5,11 +5,10 @@
   "tipo": "terreno",
   "titulo": "Pantano Profundo",
   "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
-  "descripcion":
-    "El terreno se vuelve cada vez más inestable y las aguas oscuras ocultan el camino.",
-
+  "descripcion": "El terreno se vuelve cada vez más inestable y las aguas oscuras ocultan el camino, sin quieres continuar debes atravesarlo.",
+  "textoExito": "Cruzas pesada y lentamente por el pantano llegando en ocasiones a estar casi sumergido, requerirse de mucho valor para llegar al otro lado. Miraste hacia atrás y te felicitaste por tu hazaña."
+  "textoFracaso": "Te adentras en la espesura del pantano y Avanzas cierto trayecto pero no logras continuar y decides volver, no sin antes sufrir heridas y quedar extenuado."
   "peligro": 2,
-
   "xp": 5
 },
 {
@@ -18,11 +17,10 @@
   "tipo": "combate",
   "titulo": "Asalto de Bandidos",
   "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
-  "descripcion":
-    "Mientras viajas tres bandidos se interponen en tu camino, uno de ellos rie con malicia mientras se acercan cada vez mas, llevando machetes y ropas andrajosas.",
-
+  "descripcion": "Mientras viajas tres bandidos se interponen en tu camino, uno de ellos rie con malicia mientras se acercan cada vez mas, llevando machetes y ropas andrajosas.",
+  "textoExito": "Luchas contra los tres haciendo el mejor uso de tus habilidades y manteniendo siempre la distancia para no dejarte rodear, finalmente logras acabar con ellos, riendo el último."
+  "textoFracaso": "Luchas contra los tres haciendo el mejor uso de tus habilidades y manteniendo siempre la distancia, pero uno de ellos te ataca por la espalda y te hiere con un puñal, obligandote a retirarte."
   "peligro": 2,
-
   "xp": 10
 },
 {
@@ -31,11 +29,8 @@
   "tipo": "terreno",
   "titulo": "Puente Derrumbado",
   "region": ["andrast"],
-  "descripcion":
-    "Un antiguo puente de piedra ha colapsado dejando un peligroso vacío.",
-
+  "descripcion": "Un antiguo puente de piedra ha colapsado dejando un peligroso vacío.",
   "peligro": 3,
-
   "xp": 10
 },
 {
@@ -44,11 +39,10 @@
   "categoria": "combate",
   "titulo": "Trasgos de las Colinas",
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
-  "descripcion":
-    "Al seguir unas huellas recientes descubres una pequeña banda de trasgos saqueando provisiones junto al camino.",
-
+  "descripcion": "Al seguir unas huellas recientes descubres una pequeña banda de trasgos reunidos en torno a una caravana que acababan de atacar.",
+  "textoExito": "Te bates en duelo contra contra los trasgos haciendo gala de tu habilidad y no permitiendoles tomar la iniciativa, vas derrotando uno a uno y un par de ellos logra escapar."
+  "textoFracaso": "Te bates en duelo contra contra los trasgos pero tu destreza no fue la suficiente para imponerte en el combate, optaste por retirarte y regresar al campamento."
   "peligro": 2,
-
   "xp": 10
 },
 {
@@ -57,11 +51,10 @@
   "categoria": "combate",
   "titulo": "Corsarios Rezagados",
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
-  "descripcion":
-    "Un grupo de corsarios mal armados conversan distraidos en un pequeño campamento, no se dan cuenta que alguien los observa.",
-
+  "descripcion": "Un grupo de corsarios mal armados conversan distraidos en un pequeño campamento, no se dan cuenta que alguien los observa.",
+  "textoExito": "Te lanzas al ataque contra los corsarios y escoges al más cercano para abatible con tu arma y luego continuas con los demás quienes no supieron ofrecer una digna resistencia."
+  "textoFracaso": "Te lanzas al ataque contra los corsarios pero uno de ellos logra darse cuenta a tiempo y te ofrece resistencia, quedando en desventaja y obligandote a retirarte."
   "peligro": 2,
-
   "xp": 10
 },
 {
@@ -70,9 +63,9 @@
   "categoria": "combate",
   "titulo": "Corsarios Exploradores",
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "ithilien"],
-  "descripcion":
-    "Un grupo de corsarios dispersos vigila el paso principal. Aún conservan armas y parecen dispuestos a luchar.",
-
+  "descripcion": "Un grupo de corsarios dispersos vigila el paso principal. Parecen disfrutar de cobrar peajes o directamente robar a los viajeros.",
+  "textoExito": "Haces un sonido para llamar su atención, preparas tu arma y estos en desorden corren hacia ti, te enfrentas al primero y lo vences, luego entras en combate con el resto, y a pesar de algunas complicaciones logras vencer."
+  "textoFracaso": "
   "peligro": 3,
 
   "xp": 15
@@ -96,8 +89,7 @@
   "categoria": "combate",
   "titulo": "Capitán Orco",
   "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
-  "descripcion":
-    "Un veterano capitán orco dirige a varios exploradores enemigos. Sus cicatrices revelan años de combate.",
+  "descripcion": "Un veterano capitán orco dirige a varios exploradores enemigos. Sus cicatrices revelan años de combate.",
 
   "peligro": 5,
 
@@ -111,9 +103,11 @@
   "titulo": "Mercader Enano",
   "nivelMin": 1,
   "nivelMax": 3,
-  "descripcion":
-    "Una caravana enana parece haber acampado junto al camino.",
-  "xp": 20
+  "descripcion": "Una caravana enana parece haber acampado junto al camino, beben cerveza y comparten bromas, no parecen agresivos, aunque un enano es un enano.",
+  "textoExito": "Te acercas a ellos y comparten historias y bromas, además comercian algunos artículos de los que obtienes cierta ganancia."
+  "peligro": 0
+  "puntos": 40
+  "xp": 10
 },
 {
   "id": "exploradores_elficos",
