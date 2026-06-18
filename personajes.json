@@ -16,37 +16,37 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo rectangular del Pelennor", 
-        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
         "nombre": "Placa metálica", 
-        "efecto": { "survivalBonus": 0.04, "willpowerBonus": 0.03 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.04 "willpowerBonus": 0.03 } 
       },
       { 
         "slot": "hombros", 
         "nombre": "Hombreras de placas ligeras", 
-        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "cabeza", 
         "nombre": "Yelmo de Cresta de Acero", 
-        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.04 } 
       },
       { 
         "slot": "brazos", 
         "nombre": "Brazalete metálico", 
-        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03, "combatBonus": 0.04 } 
       },
       { 
         "slot": "capa", 
         "nombre": "Capa de Cúridwan", 
-        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06, "explorationBonus": 0.06 } 
       },
       { 
         "slot": "piernas", 
         "nombre": "Grebas doradas ornamentadas", 
-        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.03, "damageReduction": 0.05 } 
       },
       { 
         "slot": "anillo", 
@@ -97,27 +97,27 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo Doncella del Cisne", 
-        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
         "nombre": "Armadura del Cisne", 
-        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.03 } 
+        "efecto": { "survivalBonus": 0.03, "willpowerBonus": 0.03, "damageReduction": 0.05 } 
       },
       { 
         "slot": "hombros", 
         "nombre": "Hombreras de placas", 
-        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "cabeza", 
         "nombre": "Casco de Doncella del Cisne", 
-        "efecto": { "survivalBonus": 0.04, "willpowerBonus": 0.04 } 
+        "efecto": { "survivalBonus": 0.03, "willpowerBonus": 0.04, "damageReduction": 0.05 } 
       },
       { 
         "slot": "brazos", 
         "nombre": "Grebas pesadas", 
-        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+        "efecto": { "survivalBonus": 0.03, "combatBonus": 0.01, "damageReduction": 0.04 } 
       },
       { 
         "slot": "capa", 
@@ -127,12 +127,17 @@
       { 
         "slot": "piernas", 
         "nombre": "Grebas pesadas metálicas", 
-        "efecto": { "willpowerBonus": 0.03, "survivalBonus": 0.05 } 
+        "efecto": { "willpowerBonus": 0.03, "survivalBonus": 0.03, "damageReduction": 0.04 } 
       },
       { 
         "slot": "anillo", 
         "nombre": "Anillo de compromiso", 
         "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+      },
+      { 
+        "slot": "accesorio", 
+        "nombre": "Collar de Ost Arndír con perla de jade", 
+        "efecto": { "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.03 } 
       }
     ],  
     "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
@@ -169,27 +174,27 @@
       { 
         "slot": "escudo", 
         "nombre": "Escudo del Árbol Blanco", 
-        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04 "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "pecho", 
         "nombre": "Gambeson Acolchado del Pelennor", 
-        "efecto": { "survivalBonus": 0.03, "willpowerBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.01, "damageReduction": 0.03, "willpowerBonus": 0.01 } 
       },
       { 
         "slot": "hombros", 
         "nombre": "Hombreras de placas ligeras", 
-        "efecto": { "survivalBonus": 0.03, "combatBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "cabeza", 
         "nombre": "Casco nasal", 
-        "efecto": { "survivalBonus": 0.02, "willpowerBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.01, "willpowerBonus": 0.01, "damageReduction": 0.03 } 
       },
       { 
         "slot": "brazos", 
         "nombre": "Guantes de cuero tachonado", 
-        "efecto": { "survivalBonus": 0.02, "combatBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.01, "combatBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "capa", 
@@ -199,7 +204,7 @@
       { 
         "slot": "piernas", 
         "nombre": "Botas de cuero reforzadas", 
-        "efecto": { "willpowerBonus": 0.01, "survivalBonus": 0.03 } 
+        "efecto": { "willpowerBonus": 0.01, "survivalBonus": 0.01, "damageReduction": 0.03 } 
       },
       { 
         "slot": "anillo", 
@@ -240,7 +245,7 @@
       { 
         "slot": "arma", 
         "nombre": "Mandoble templado", 
-        "efecto": { "combatBonus": 0.05, "willpowerBonus": 0.02 } 
+        "efecto": { "combatBonus": 0.05, "willpowerBonus": 0.02, "damageBonus": 2 } 
       },
       { 
         "slot": "arma", 
@@ -250,22 +255,22 @@
       { 
         "slot": "pecho", 
         "nombre": "Armadura acolchada reforzada", 
-        "efecto": { "survivalBonus": 0.04, "willpowerBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.02, "willpowerBonus": 0.02, "damageReduction": 0.04 } 
       },
       { 
         "slot": "hombros", 
         "nombre": "Hombreras pesadas", 
-        "efecto": { "survivalBonus": 0.04, "combatBonus": 0.01 } 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.04 } 
       },
       { 
         "slot": "cabeza", 
         "nombre": "Yelmo del Escolta", 
-        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+        "efecto": { "survivalBonus": 0.03, "willpowerBonus": 0.04, "damageReduction": 0.04 } 
       },
       { 
         "slot": "brazos", 
         "nombre": "Guanteletes pesados", 
-        "efecto": { "survivalBonus": 0.04, "combatBonus": 0.03 } 
+        "efecto": { "survivalBonus": 0.02, "combatBonus": 0.03, "damageReduction": 0.03 } 
       },
       { 
         "slot": "capa", 
@@ -275,7 +280,7 @@
       { 
         "slot": "piernas", 
         "nombre": "Grebas pesadas", 
-        "efecto": { "willpowerBonus": 0.03, "survivalBonus": 0.04 } 
+        "efecto": { "willpowerBonus": 0.03, "survivalBonus": 0.03, "damageReduction": 0.04 } 
       },
       { 
         "slot": "anillo", 
@@ -314,48 +319,58 @@
     "equipo": [
       { 
         "slot": "arma", 
-        "nombre": "Espada larga templada", 
-        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+        "nombre": "Arco compuesto de Rivendel", 
+        "efecto": { "combatBonus": 0.03, "perceptionBonus": 0.01 } 
       },
       { 
         "slot": "escudo", 
-        "nombre": "Escudo Doncella del Cisne", 
-        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+        "nombre": "nada", 
+        "efecto": { "survivalBonus": 0.00, "willpowerBonus": 0.00 } 
       },
       { 
         "slot": "pecho", 
-        "nombre": "Placa metálica", 
-        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+        "nombre": "Túnica de sabio explorador", 
+        "efecto": { "survivalBonus": 0.02, "willpowerBonus": 0.02, "healingBonus": 0.02, "explorationBonus": 0.02 } 
       },
       { 
         "slot": "hombros", 
-        "nombre": "Hombreras de placas ligeras", 
-        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+        "nombre": "nada", 
+        "efecto": { "survivalBonus": 0.00, "combatBonus": 0.00 } 
       },
       { 
         "slot": "cabeza", 
-        "nombre": "Yelmo de Cresta de Acero", 
-        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+        "nombre": "Aro Sindarin de plata", 
+        "efecto": { "negotiationBonus": 0.03, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "brazos", 
-        "nombre": "Brazalete metálico", 
-        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+        "nombre": "Brazalete de cuero", 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.02 } 
       },
       { 
         "slot": "capa", 
-        "nombre": "Capa de Cúridwan", 
-        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+        "nombre": "nada", 
+        "efecto": { "stealthBonus": 0.00, "willpowerBonus": 0.00 } 
       },
       { 
         "slot": "piernas", 
-        "nombre": "Grebas doradas ornamentadas", 
-        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+        "nombre": "Botas ligeras elficas", 
+        "efecto": { "willpowerBonus": 0.03, "explorationBonus": 0.02, "stealthBonus": 0.02 } 
+      },
+      { 
+        "slot": "accesorio", 
+        "nombre": "Cinturón del sanador", 
+        "efecto": { "healingBonus": 0.03, "explorationBonus": 0.02, "damageReduction": 0.01 } 
       },
       { 
         "slot": "anillo", 
-        "nombre": "Anillo de compromiso", 
-        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+        "nombre": "Anillo de concentración", 
+        "efecto": { "willpowerBonus": 0.02, "negotiationBonus": 0.02, "healingBonus": 0.04 } 
+      }, 
+      { 
+        "slot": "amuleto"
+        "nombre": "Runas de Etten", 
+        "efecto": { "willpowerBonus": 0.02, "negotiationBonus": 0.02, "survivalBonus": 0.04 } 
       } 
     ], 
     "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
@@ -392,48 +407,48 @@
     "equipo": [
       { 
         "slot": "arma", 
-        "nombre": "Espada larga templada", 
-        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+        "nombre": "Lanza larga", 
+        "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "escudo", 
-        "nombre": "Escudo Doncella del Cisne", 
-        "efecto": { "survivalBonus": 0.06, "willpowerBonus": 0.02 } 
+        "nombre": "Escudo de Broquel de Gondor", 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.02 } 
       },
       { 
         "slot": "pecho", 
-        "nombre": "Placa metálica", 
-        "efecto": { "survivalBonus": 0.07, "willpowerBonus": 0.03 } 
+        "nombre": "Gambeson Acolchado aencillo", 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "hombros", 
-        "nombre": "Hombreras de placas ligeras", 
-        "efecto": { "survivalBonus": 0.05, "combatBonus": 0.01 } 
+        "nombre": "nada", 
+        "efecto": { "survivalBonus": 0.00, "combatBonus": 0.00 } 
       },
       { 
         "slot": "cabeza", 
-        "nombre": "Yelmo de Cresta de Acero", 
-        "efecto": { "survivalBonus": 0.05, "willpowerBonus": 0.04 } 
+        "nombre": "Jubon de cuero", 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03 } 
       },
       { 
         "slot": "brazos", 
-        "nombre": "Brazalete metálico", 
-        "efecto": { "survivalBonus": 0.06, "combatBonus": 0.04 } 
+        "nombre": "Guantes de cuero", 
+        "efecto": { "survivalBonus": 0.01, "combatBonus": 0.01, "damageReduction": 0.02 } 
       },
       { 
         "slot": "capa", 
-        "nombre": "Capa de Cúridwan", 
-        "efecto": { "stealthBonus": 0.09, "willpowerBonus": 0.06 } 
+        "nombre": "nada", 
+        "efecto": { "stealthBonus": 0.00, "willpowerBonus": 0.00 } 
       },
       { 
         "slot": "piernas", 
-        "nombre": "Grebas doradas ornamentadas", 
-        "efecto": { "willpowerBonus": 0.04, "survivalBonus": 0.06 } 
+        "nombre": "Botas de cuero", 
+        "efecto": { "damageReduction": 0.02, "explorationBonus": 0.02, "stealthBonus": 0.03 } 
       },
       { 
         "slot": "anillo", 
-        "nombre": "Anillo de compromiso", 
-        "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
+        "nombre": "Anillo de cobre", 
+        "efecto": { "willpowerBonus": 0.01, "negotiationBonus": 0.01 } 
       }
     ], 
     "descripcion_fisica": "Piel clara, rostro atractivo y cabello rojizo, delgado, altura promedio.",
