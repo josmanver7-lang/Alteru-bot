@@ -81,7 +81,7 @@
       "slots": 3,
       "precioBase": 45,
       "descripcion": "Un trago fuerte.",
-      "efecto": { "fuerza": 5 }
+      "efecto": { "combatBonus": 0.02 }
     },
     {
       "id": "carne_seca",
@@ -93,49 +93,13 @@
       "efecto": { "salud": 30 }
     },
     {
-      "id": "libro_antiguo",
-      "nombre": "Libro antiguo",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 70,
-      "descripcion": "Regalo para estudiosos.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
       "id": "vino_dorwinion",
       "nombre": "Vino de Dorwinion",
       "tipo": "regalo",
       "slots": 1,
       "precioBase": 80,
       "descripcion": "Regalo para compañeros sociables.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "hierbas_curativas",
-      "nombre": "Hierbas curativas",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 75,
-      "descripcion": "Regalo sencillo.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "juguete_madera",
-      "nombre": "Juguete de madera",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 30,
-      "descripcion": "Pequeño regalo nostálgico.",
-      "efecto": { "afinidad": 3 }
-    },
-    {
-      "id": "amuleto_suerte",
-      "nombre": "Amuleto de buena suerte",
-      "tipo": "regalo",
-      "slots": 1,
-      "precioBase": 60,
-      "descripcion": "Para un compañero supersticioso.",
-      "efecto": { "afinidad": 3, "voluntad": 5 }
+      "efecto": { "negotiationBonus": 0.05 }
     },
     {
       "id": "pipa_madera",
