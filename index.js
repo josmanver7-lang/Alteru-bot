@@ -2502,6 +2502,7 @@ client.on("messageCreate", async (message) => {
   const content = message.content.trim();
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
+  console.log("CMD:", command);
   
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
@@ -2587,6 +2588,10 @@ client.on("messageCreate", async (message) => {
     const result = await handleOnboarding(message, profileForOnboarding);
     if (result) return result;
   }
+
+  if (command === "!exploracion") {
+  return handleExploracionCommand(message);
+}
 
   // Comandos de Perfil y Sistema de Estadísticas
   if (command === "!perfil") { 
