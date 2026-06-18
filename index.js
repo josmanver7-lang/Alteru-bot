@@ -218,38 +218,38 @@ function getExplorationClosingText(points, item, rarity) {
   const rarityKey = normalizeKey(rarity || "");
 
   if (!hasItem && points < 50) {
-    return "Fue un viaje mediocre. Perdí mi tiempo.";
+    return "*- Fue un viaje mediocre. Creo que mi tiempo.*";
   }
 
   if (!hasItem && points < 100) {
-    return "Fue un lindo paseo. Al menos disfruté las buenas vistas de Gondor.";
+    return "*- Fue un lindo paseo. Al menos pude disfrutar las buenas vistas de Gondor.*";
   }
 
   if (!hasItem && points < 150) {
-    return "No estuvo mal, para la próxima llevaré mas hoja de la cuaderna para calmar las ansias.";
+    return "*- No estuvo mal, para la próxima llevaré mas hoja de la cuaderna para calmar las ansias.*";
   }
 
   if (!hasItem) {
-    return "No me ha ido tan mal, debería considerar adentrarme en esas rutas que parecen peligrosas, a lo mejor encuentro alguna reliquia.";
+    return "*- No me ha ido tan mal, debería considerar adentrarme en rutas que parecen peligrosas, a lo mejor encuentro algo mejor.*";
   }
 
   if (rarityKey === "legendario" && points >= 150) {
-    return "Este fue el mejor día de mi vida.";
+    return "*- Este fue el mejor día de mi vida.*";
   }
 
   if (rarityKey === "legendario") {
-    return "La fortuna te sonrió y volviste con un hallazgo legendario.";
+    return "*- La fortuna te sonrió y volviste con un hallazgo legendario.*";
   }
 
   if (rarityKey === "superior") {
-    return "Fue un buen viaje. Deberías hacerlo más seguido.";
+    return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
   }
 
   if (rarityKey === "forjado") {
-    return "Fue un buen viaje. Deberías hacerlo más seguido.";
+    return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
   }
 
-  return "Fue un buen viaje. Deberías hacerlo más seguido.";
+  return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
 }
 async function handleExploracionCommand(message) {
   const state = await db.getQuotaState(
