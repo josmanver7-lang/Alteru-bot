@@ -3751,25 +3751,36 @@ async function handleExpedicionDesafiar(message) {
     }
 
     const encounters = await loadEncounters();
-    let activeEncounter =
-      encounters.find(e =>
-        normalizeKey(e.id) === normalizeKey(encounterId) ||
-        normalizeKey(e.titulo) === normalizeKey(encounterId)
-      ) || null;
+const destino = normalizeKey(expedition.mission.destino);
+const encounterType = normalizeKey(expedition.mission.encuentros?.[expedition.progress]);
 
-    if (!activeEncounter) {
-      activeEncounter = typeof encounterId === "object"
-        ? encounterId
-        : {
-            id: String(encounterId),
-            titulo: String(encounterId),
-            descripcion: "Un encuentro sin descripción cargada.",
-            tipo: "obstaculo",
-            peligro: 1,
-            xp: 10,
-            puntos: 5
-          };
-    }
+let lista = encounters.filter(e => {
+  const coincideTipo = normalizeKey(e.tipo) === encounterType;
+  const coincideCategoria = normalizeKey(e.categoria) === encounterType;
+  const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
+  return (coincideTipo || coincideCategoria) && coincideRegion;
+});
+
+if (!lista.length) {
+  const titleMap = {
+    enemigo_numeroso: "Enemigo numeroso",
+    enemigo_poderoso: "Enemigo poderoso",
+    obstaculo: "Obstáculo",
+    evento_especial: "Evento especial",
+    jefe: "Jefe"
+  };
+
+  lista = [{
+    id: `fallback_${encounterType}_${Date.now()}`,
+    titulo: titleMap[encounterType] || encounterType,
+    descripcion: "La expedición avanza hacia un desafío improvisado.",
+    tipo: encounterType,
+    categoria: encounterType,
+    peligro: Math.max(1, Math.min(10, nivelJugador)),
+    xp: 10,
+    puntos: 5
+  }];
+}
 
     if (!activeEncounter.subEncounter) {
       const subOptions = getEncounterSubOptions(activeEncounter, encounters);
