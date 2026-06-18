@@ -1341,7 +1341,7 @@
     "rareza": "superior",
     "precioBase": 950,
     "descripcion": "Reforzado con acero para proteger el torso bajo.",
-    "efecto": { "damageReduction": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "damageReduction": 0.04, "survivalBonus": 0.02, “explorationBonus”: 0.02 }
   },
   {
     "id": "cinturon_runico_enano",
@@ -1939,7 +1939,7 @@
     "rareza": "forjado",
     "precioBase": 450,
     "descripcion": "Cinturón robusto para colgar armas y bolsas.",
-    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "cinturon_viaje_hobbit",
@@ -1989,7 +1989,7 @@
     "rareza": "forjado",
     "precioBase": 750,
     "descripcion": "Robusto y funcional, cubre gran parte del rostro.",
-    "efecto": { "resilienceBonus": 0.03, "perceptionBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "yelmo_cuero_elfico",
@@ -1999,7 +1999,7 @@
     "rareza": "forjado",
     "precioBase": 600,
     "descripcion": "Ligero, ideal para exploradores.",
-    "efecto": { "resilienceBonus": 0.03, "perceptionBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "yelmo_guardia_gondor",
@@ -2009,7 +2009,7 @@
     "rareza": "forjado",
     "precioBase": 850,
     "descripcion": "Casco de acero con protector nasal reforzado.",
-    "efecto": { "resilienceBonus": 0.03, "perceptionBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "perceptionBonus": 0.01 }
   },
   {
     "id": "botas_cuero_elfico",
@@ -2029,7 +2029,7 @@
     "rareza": "superior",
     "precioBase": 1400,
     "descripcion": "Casi imposibles de perforar, muy estables.",
-    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "damageReduction ": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "botas_viaje_hombre",
@@ -2157,7 +2157,7 @@
     "rareza": "forjado",
     "precioBase": 250,
     "descripcion": "Escudo pequeño, rápido y sólido.",
-    "efecto": { "survilegendario": 0.03, "resilienceBonus": 0.01 }
+    "efecto": { "survilegendario": 0.03, "damageReduction ": 0.01 }
   },
   {
     "id": "hombreras_cuero_reforzado",
@@ -2167,7 +2167,7 @@
     "rareza": "forjado",
     "precioBase": 400,
     "descripcion": "Protección básica contra tajos.",
-    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "guanteletes_acero_templado",
@@ -2177,7 +2177,7 @@
     "rareza": "forjado",
     "precioBase": 550,
     "descripcion": "Guantes rígidos que ofrecen protección total.",
-    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "grebas_cuero_reforzado_hobbit",
@@ -2218,7 +2218,7 @@
     "rareza": "forjado",
     "precioBase": 300,
     "descripcion": "Un anillo sólido que mejora la resistencia física.",
-    "efecto": { "willpowerBonus": 0.03, "resilienceBonus": 0.01 }
+    "efecto": { "willpowerBonus": 0.03, "damageReduction ": 0.01 }
   },
   {
     "id": "espada_calenrist",
@@ -2350,7 +2350,7 @@
     "rareza": "superior",
     "precioBase": 2200,
     "descripcion": "Escudo grande y pesado con el emblema de Gondor.",
-    "efecto": { "survivalBonus": 0.04, "resilienceBonus": 0.02 }
+    "efecto": { "survivalBonus": 0.04, "damageReduction ": 0.02 }
   },
   {
     "id": "escudo_draconico_enano",
@@ -2361,7 +2361,7 @@
     "rareza": "legendario",
     "precioBase": 5200,
     "descripcion": "Hecho con placas de metal que resisten el fuego.",
-    "efecto": { "survivalBonus": 0.06, "resilienceBonus": 0.04 }
+    "efecto": { "survivalBonus": 0.06, "damageReduction ": 0.04 }
   },
   {
     "id": "cota_malla_plateada_elfo",
@@ -2371,7 +2371,7 @@
     "rareza": "superior",
     "precioBase": 3200,
     "descripcion": "Malla ligera que brilla como si fuera de plata pura.",
-    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "damageReduction ": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "coraza_acero_pesada",
@@ -2381,7 +2381,7 @@
     "rareza": "superior",
     "precioBase": 2800,
     "descripcion": "Gruesa coraza diseñada para soportar golpes directos.",
-    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "damageReduction ": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "capa_viaje_reforzada_roja",
@@ -2391,7 +2391,7 @@
     "rareza": "superior",
     "precioBase": 1400,
     "descripcion": "Capa teñida de rojo, resistente a las inclemencias.",
-    "efecto": { "stealthBonus": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "stealthBonus": 0.04, "survivalBonus": 0.02, “explorationBonus”: 0.01 }
   },
   {
     "id": "yelmo_guardia_gondor_elite",
@@ -2401,7 +2401,7 @@
     "rareza": "legendario",
     "precioBase": 4500,
     "descripcion": "El yelmo clásico con alas, símbolo de alto rango.",
-    "efecto": { "resilienceBonus": 0.06, "perceptionBonus": 0.04 }
+    "efecto": { "damageReduction ": 0.06, "perceptionBonus": 0.04 }
   },
   {
     "id": "grebas_placas_enano",
@@ -2411,7 +2411,7 @@
     "rareza": "superior",
     "precioBase": 1600,
     "descripcion": "Protección total para la parte inferior de las piernas.",
-    "efecto": { "resilienceBonus": 0.04, "survivalBonus": 0.02 }
+    "efecto": { "damageReduction ": 0.04, "survivalBonus": 0.02 }
   },
   {
     "id": "guanteletes_cuero_reforzado_elfo",
@@ -2421,7 +2421,7 @@
     "rareza": "superior",
     "precioBase": 1500,
     "descripcion": "Guantes finos que permiten gran destreza.",
-    "efecto": { "resilienceBonus": 0.04, "stealthBonus": 0.02 }
+    "efecto": { "damageReduction ": 0.04, "stealthBonus": 0.02 }
   },
   {
     "id": "cinturon_oro_antiguo",
@@ -2431,7 +2431,7 @@
     "rareza": "superior",
     "precioBase": 2500,
     "descripcion": "Un cinturón que denota riqueza y estatus.",
-    "efecto": { "negotiationBonus": 0.04, "willpowerBonus": 0.02 }
+    "efecto": { "negotiationBonus": 0.04, "willpowerBonus": 0.02, “explorationBonus”: 0.01 }
   },
   {
     "id": "botas_cuero_montaraz",
@@ -2451,7 +2451,7 @@
     "rareza": "forjado",
     "precioBase": 1200,
     "descripcion": "Hombreras que protegen contra ataques pesados.",
-    "efecto": { "resilienceBonus": 0.03, "survivalBonus": 0.01 }
+    "efecto": { "damageReduction ": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "amuleto_runa_antigua",
@@ -2461,7 +2461,7 @@
     "rareza": "legendario",
     "precioBase": 5500,
     "descripcion": "Un amuleto que contiene una runa de protección poderosa.",
-    "efecto": { "willpowerBonus": 0.06, "resilienceBonus": 0.04 }
+    "efecto": { "willpowerBonus": 0.06, "damageReduction ": 0.04 }
   },
   {
     "id": "cuchillo_lanzamiento_elfo",
@@ -2483,7 +2483,7 @@
     "rareza": "superior",
     "precioBase": 2400,
     "descripcion": "Un arma de asta intimidante.",
-    "efecto": { "combatBonus": 0.05 }
+    "efecto": { "combatBonus": 0.05, “damageBonus” 2 }
   },
   {
     "id": "mandoble_hierro_comun",
@@ -2527,7 +2527,7 @@
     "rareza": "legendario",
     "precioBase": 5500,
     "descripcion": "Punta de plata bendecida, legendaria en las batallas de defensa.",
-    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04, “damageBonus”: 3 }
   },
   {
     "id": "arco_elfo_comun",
@@ -2560,7 +2560,7 @@
     "rareza": "superior",
     "precioBase": 2200,
     "descripcion": "Espada de viaje, ligera y resistente.",
-    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02 }
+    "efecto": { "combatBonus": 0.04, "willpowerBonus": 0.02, “damageBonus”: 1 }
   },
   {
     "id": "hacha_doble_leyenda",
@@ -2571,7 +2571,7 @@
     "rareza": "legendario",
     "precioBase": 7000,
     "descripcion": "Un arma que brilla con la luz de los tesoros de Erebor.",
-    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04, “damageBonus”: 3 }
   },
   {
     "id": "mazo_hobbit_viajero",
@@ -2593,7 +2593,7 @@
     "rareza": "legendario",
     "precioBase": 6200,
     "descripcion": "Lanza larga que parece de hielo eterno.",
-    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04 }
+    "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.04, “damageBonus”: 3 }
   },
   {
     "id": "cuchillo_norteño",
@@ -2640,4 +2640,3 @@
     "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
   }
 ]
-
