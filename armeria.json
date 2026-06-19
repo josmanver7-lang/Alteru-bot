@@ -2783,6 +2783,76 @@
     descripcion: "Una reliquia moldeada bajo la luz estelar en Rivendel. Ignora por completo la fricción del viento, cobrando vidas en silencio antes de ser vista.",
     efecto: { damageBonus: 5, stealthBonus: 6, combatBonus: 2 }
   }
-];
-
+  },
+    id: "venablo_caza_gasto",
+    nombre: "Venablo de Caza Gasto",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "comun",
+    precioBase: 35,
+    descripcion: "Una vara simple de madera con la punta endurecida directamente al fuego. Cumple su función en la caza menor, aunque el peso no está perfectamente distribuido.",
+    efecto: { damageBonus: 1 }
+  },
+  {
+    id: "jabalina_fresno_marca",
+    nombre: "Jabalina de Fresno de la Marca",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "raro",
+    precioBase: 190,
+    descripcion: "Diseñada en Rohan para la guerra a caballo. El astil de fresno absorbe las vibraciones del galope y la punta de acero remachada tiene forma de hoja de sauce.",
+    efecto: { damageBonus: 2, combatBonus: 1 }
+  },
+  {
+    id: "cuchillo_vuelo_bosqueverde",
+    nombre: "Cuchillo de vuelo del Bosqueverde",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "raro",
+    precioBase: 185,
+    descripcion: "Una hoja larga y delgada perfectamente contrapesada en la empuñadura. Su acero está oscurecido intencionadamente para evitar destellos que delaten la posición del lanzador entre la maleza.",
+    efecto: { damageBonus: 2, stealthBonus: 2 }
+  },
+  {
+    id: "hacha_ala_colinas",
+    nombre: "Hacha de Ala de las Colinas de Hierro",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "enano",
+    rareza: "epico",
+    precioBase: 540,
+    descripcion: "La hoja de este hacha cuenta con un diseño aerodinámico curvado que estabiliza el giro en el aire, garantizando un impacto profundo incluso a distancias cortas.",
+    efecto: { damageBonus: 5, combatBonus: 2 }
+  },
+  {
+    id: "venablo_silbante_lorien",
+    nombre: "Venablo de Viento de Lórien",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "epico",
+    precioBase: 560,
+    descripcion: "Tallada en madera flexible de mallorn joven. Su aerodinámica es tan perfecta que hiende el aire con un susurro casi imperceptible, alcanzando rangos sobresalientes.",
+    efecto: { damageBonus: 4, stealthBonus: 3 }
+  },
+  {
+    id: "viento_este_rohan",
+    nombre: "El Viento del Este",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "legendario",
+    precioBase: 1500,
+    descripcion: "Jabalina legendaria cuyo astil lleva grabadas las crónicas de los Señores de los Caballos. Al ser arrojada a pleno galope, el acero produce un silbido ensordecedor que aterra a las monturas enemigas.",
+    efecto: { damageBonus: 6, combatBonus: 4 }
+  }
 ]
