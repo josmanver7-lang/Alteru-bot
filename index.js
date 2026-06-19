@@ -3156,7 +3156,7 @@ async function handleExpedicionDesafiar(message) {
   let affinityBonus = 0;
   for (const comp of owned) affinityBonus += getAffinityBonus(profile, comp);
 
-    let success = false;
+  let success = false;
   const esCombate = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.categoria) || 
                     ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.tipo);
 
@@ -3184,6 +3184,7 @@ async function handleExpedicionDesafiar(message) {
       }
       
       success = Math.random() < Math.min(baseSuccess, 0.95);
+  }
 
   if (success) {
     const xpGanada = activeEncounter.xp || 10;
