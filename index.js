@@ -607,7 +607,7 @@ function getAdventureBonuses(profile = {}, equipment = {}) {
     success: Number(totals.successBonus || 0),
     damageReduction: Number(totals.damageReduction || 0),
     combat: Number(totals.combatBonus || 0),
-    survival: Number(totals.survivalBonus || 0)
+    survival: Number(totals.survivalBonus || 0),
     // Modificadores de la Matriz Táctica
     ranged: Number(totals.rangedBonus || 0),
     thrown: Number(totals.thrownBonus || 0),
