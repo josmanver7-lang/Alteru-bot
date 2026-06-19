@@ -2780,51 +2780,45 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   if (pStats.cavalryBonus) playerMatrixText.push(`Caballería +${Math.round(pStats.cavalryBonus * 100)}%`);
   const playerMatrixStr = playerMatrixText.length ? playerMatrixText.join(" | ") : "Ninguno";
 
-  const party = getCompanionPowerDetails(profile);
-  const companionLines = party.details.length
-    ? party.details.map(c => {
-        let abilityText = "";
-        if (c.id === "alteru") abilityText = " | Hab: +20% Éxito gen.";
-        else if (c.id === "cirdil") abilityText = " | Hab: +15% vs Poderosos / Reducción daño";
-        else if (c.id === "duinor") abilityText = " | Hab: +25% vs Numerosos";
-        else if (c.id === "andaer") abilityText = " | Hab: 20% Bloqueo total";
-        else if (c.id === "montaraces") abilityText = " | Hab: +30% Éxito";
-        else if (c.id === "nieriel") abilityText = " | Hab: Evasión de peligro";
-        else if (c.id === "faelon") abilityText = " | Hab: Sanación +10";
+  // 1. Preparamos los datos de la party
+const party = getCompanionPowerDetails(profile);
 
-      // Asegúrate de que 'companions' sea tu array de compañeros
-let companionLines = companions.map(comp => {
-    // 1. Definimos los bonos (ajusta 'comp.bonosTacticos' según tu estructura real)
-    const t = comp.bonosTacticos || {}; 
-    
-    // 2. Creamos un array con los bonos que existan
-    let tacticas = [];
-    if (t.melee > 0) tacticas.push(`🗡️ +${t.melee}`);
-    if (t.ranged > 0) tacticas.push(`🏹 +${t.ranged}`);
-    if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
-    if (t.thrown > 0) tacticas.push(`🪓 +${t.thrown}`);
-    if (t.magic > 0) tacticas.push(`✨ +${t.magic}`);
-    
-    // 3. Formateamos la línea para cada compañero
-    let linea = `• **${comp.nombre}**:`;
-    if (tacticas.length > 0) {
-        linea += ` ${tacticas.join(" | ")}`;
-    } else {
-        linea += ` *(Sin bonos)*`;
-    }
-    return linea;
-}).join("\n");
+// 2. Procesamos las líneas de los compañeros de forma unificada
+const companionLines = party.details.length > 0
+  ? party.details.map(c => {
+      // Definimos la habilidad única según el ID
+      const abilities = {
+        "alteru": "Hab: +20% Éxito gen.",
+        "cirdil": "Hab: +15% vs Poderosos / Reducción daño",
+        "duinor": "Hab: +25% vs Numerosos",
+        "andaer": "Hab: 20% Bloqueo total",
+        "montaraces": "Hab: +30% Éxito",
+        "nieriel": "Hab: Evasión de peligro",
+        "faelon": "Hab: Sanación +10"
+      };
+      const abilityText = abilities[c.id] ? ` | ${abilities[c.id]}` : "";
 
+      // Calculamos bonos tácticos (asumiendo que 'c' tiene bonosTacticos)
+      const t = c.bonosTacticos || {};
+      let tacticas = [];
+      if (t.melee > 0) tacticas.push(`🗡️ +${t.melee}`);
+      if (t.ranged > 0) tacticas.push(`🏹 +${t.ranged}`);
+      if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
+      if (t.thrown > 0) tacticas.push(`🪓 +${t.thrown}`);
+      if (t.magic > 0) tacticas.push(`✨ +${t.magic}`);
 
-        return `• **${c.nombre}**: Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}`;
-      }).join("\n")
-    : "• Sin compañeros";
+      const tacticasStr = tacticas.length > 0 ? tacticas.join(" | ") : "Sin bonos";
 
-  const enemy = getEnemyPowerSummary(encounter);
-  const enemyTier = getDangerTierProfile(enemy.peligro);
+      // Retornamos la línea formateada
+      return `• **${c.nombre}**: ${tacticasStr} | Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}`;
+    }).join("\n")
+  : "• Sin compañeros";
 
-  let enemyTacticsStr = "";
-// Verificamos si el enemigo tiene bonos tácticos en su objeto
+// 3. Procesamos los enemigos (Lógica ya funcional)
+const enemy = getEnemyPowerSummary(encounter);
+const enemyTier = getDangerTierProfile(enemy.peligro);
+
+let enemyTacticsStr = "Ninguna";
 if (enemy.bonosTacticos) {
     const b = enemy.bonosTacticos;
     let parts = [];
@@ -2834,10 +2828,9 @@ if (enemy.bonosTacticos) {
     if (b.thrown > 0) parts.push(`🪓 +${b.thrown}`);
     if (b.magic > 0) parts.push(`✨ +${b.magic}`);
     
-    enemyTacticsStr = parts.length > 0 ? parts.join(" | ") : "Ninguna";
-} else {
-    enemyTacticsStr = "Ninguna";
+    if (parts.length > 0) enemyTacticsStr = parts.join(" | ");
 }
+
   const dmg = (encounter.peligro * 9) + (encounter.damageBonus || 0);
   
   let enemyStats = `Daño base: ${dmg}`;
