@@ -7,9 +7,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const EVENT_CHANNEL_ID = process.env.ANNOUNCEMENTS_CHANNEL_ID || "1514198998838284288";
+
+// ================================
+// VARIABLES PARA IA (ACTUALIZADAS)
+// ================================
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const MERCHANT_OPEN_MS = 2 * 60 * 60 * 1000;
@@ -62,6 +70,101 @@ Rango: ${obtenerRango(profile?.points || 0)}
 `.trim();
 }
 
+// ===============================================
+// FUNCIÓN PRINCIPAL DE IA (SINCRONIZADA CON INDEX)
+// ===============================================
+async function chatWithAI({
+  systemPrompt = "",
+  messages = [],
+  temperature = 0.85,
+  maxTokens = 512 
+}) {
+  const payloadMessages = [];
+
+  if (systemPrompt.trim()) {
+    payloadMessages.push({ role: "system", content: systemPrompt.trim() });
+  }
+
+  for (const msg of messages) {
+    if (!msg || !msg.content) continue;
+    payloadMessages.push({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: String(msg.content)
+    });
+  }
+
+  // 1) GROQ
+  try {
+    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY no configurada");
+
+    const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: payloadMessages,
+        temperature,
+        max_tokens: maxTokens
+      })
+    });
+
+    if (!res.ok) {
+      const details = await res.text().catch(() => "");
+      throw new Error(`Groq ${res.status}: ${details}`);
+    }
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    const clean = Array.isArray(text)
+      ? text.map(part => part?.text || "").join("").trim()
+      : String(text || "").trim();
+
+    if (clean && clean !== "undefined" && clean !== "null") return clean;
+  } catch (err) {
+    console.error("Groq error:", err);
+  }
+
+  // 2) OPERATOR / respaldo
+  try {
+    if (!OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY no configurada");
+
+    const res = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.OPENROUTER_REFERER || "https://chat.openai.com",
+        "X-Title": process.env.OPENROUTER_TITLE || "Campamento de Altéru"
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: payloadMessages,
+        temperature,
+        max_tokens: maxTokens
+      })
+    });
+
+    if (!res.ok) {
+      const details = await res.text().catch(() => "");
+      throw new Error(`OpenRouter ${res.status}: ${details}`);
+    }
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    const clean = Array.isArray(text)
+      ? text.map(part => part?.text || "").join("").trim()
+      : String(text || "").trim();
+
+    return clean || "";
+  } catch (err) {
+    console.error("OpenRouter fallback error:", err);
+    return "";
+  }
+}
+
 async function askGroq(userId, userMessage, lore) {
   const profile = await db.getProfile(userId);
   const systemPrompt = buildSystemPrompt(lore, profile);
@@ -75,21 +178,46 @@ async function askGroq(userId, userMessage, lore) {
   if (history.length > 10) history.shift();
 
   try {
-    const reply = await groqChat({
+    const reply = await chatWithAI({
       systemPrompt,
       messages: history,
       temperature: 0.85,
-      maxTokens: 250 // Aumentado para evitar respuestas cortadas
+      maxTokens: 300 // Actualizado para coincidir con index.js
     });
 
-    history.push({ role: "assistant", content: reply });
+    const finalReply = String(reply || "").trim() || "Altéru: *observa los senderos lejanos con suspicacia*";
+
+    history.push({ role: "assistant", content: finalReply });
     if (history.length > 10) history.shift();
 
-    return reply;
+    return finalReply;
   } catch {
     return "Altéru: *observa los senderos lejanos con suspicacia*";
   }
 }
+
+async function generateAITextStrict(prompt, maxTokens = 150) {
+  return await chatWithAI({
+    systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones.",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.9,
+    maxTokens
+  });
+}
+
+async function ai(prompt, maxTokens = 150) {
+  try {
+    const text = await generateAITextStrict(prompt, maxTokens);
+    const clean = String(text || "").trim();
+    return clean || "*observa en silencio*";
+  } catch {
+    return "*observa en silencio*";
+  }
+}
+
+// ==========================================
+// EL RESTO DEL CÓDIGO PERMANECE INTACTO
+// ==========================================
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -162,79 +290,6 @@ async function hydrateSchedulerPersonajesCache(loreCache) {
 async function fetchChannel(client) {
   const channel = await client.channels.fetch(EVENT_CHANNEL_ID).catch(() => null);
   return channel?.isTextBased() ? channel : null;
-}
-
-async function groqChat({
-  systemPrompt = "",
-  messages = [],
-  temperature = 0.9,
-  maxTokens = 150
-}) {
-  if (!GROQ_API_KEY) {
-    throw new Error("GROQ_API_KEY no está configurada");
-  }
-
-  const chatMessages = [];
-
-  if (systemPrompt.trim()) {
-    chatMessages.push({ role: "system", content: systemPrompt.trim() });
-  }
-
-  for (const msg of messages) {
-    if (!msg || !msg.content) continue;
-    chatMessages.push({
-      role: msg.role === "assistant" ? "assistant" : "user",
-      content: String(msg.content)
-    });
-  }
-
-  const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${GROQ_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      messages: chatMessages,
-      temperature,
-      max_tokens: maxTokens
-    })
-  });
-
-  if (!res.ok) {
-    const details = await res.text().catch(() => "");
-    throw new Error(`Groq ${res.status}: ${details}`);
-  }
-
-  const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content;
-
-  const clean = Array.isArray(text)
-    ? text.map(part => part?.text || "").join("").trim()
-    : String(text || "").trim();
-
-  if (!clean) throw new Error("Groq devolvió texto vacío");
-  return clean;
-}
-
-async function generateAITextStrict(prompt, maxTokens = 150) {
-  return await groqChat({
-    systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones.",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.9,
-    maxTokens
-  });
-}
-
-async function ai(prompt, maxTokens = 150) {
-  try {
-    const text = await generateAITextStrict(prompt, maxTokens);
-    const clean = String(text || "").trim();
-    return clean || "*observa en silencio*";
-  } catch {
-    return "*observa en silencio*";
-  }
 }
 
 function getCycleBounds(ms = Date.now()) {
@@ -415,10 +470,6 @@ async function announceDawnReset(client) {
   }
 }
 
-// ==========================================
-//         CARGA DE ARCHIVOS JSON/TEXT
-// ==========================================
-
 async function loadAlteruLore() {
   const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
   const lore = JSON.parse(loreRaw);
@@ -465,10 +516,6 @@ async function loadEncounters() {
     return [];
   }
 }
-
-// ==========================================
-//   FUNCIONES DE SELECCIÓN DE CATÁLOGO
-// ==========================================
 
 async function getCatalogSelection(key, fallbackItems, limit = 12) {
   const state = await db.getEventState(key);
