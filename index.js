@@ -2566,24 +2566,6 @@ function canEquipItem(profile, item, equipment = {}) {
   return { ok: true }; 
 }
 
-if (message.content.startsWith('!resetintro')) {
-  const userId = message.author.id;
-
-  try {
-    // Reiniciamos el progreso del onboarding en la base de datos
-    await db.updateTravelerData(userId, {
-      onboardingStage: "name", // Cambia "name" por tu stage inicial si es diferente
-      age: null                // Limpiamos la edad por si ya la había introducido
-    });
-
-    return message.reply("🔄 **Tu introducción ha sido reiniciada.** Puedes comenzar de nuevo desde el principio.");
-  } catch (error) {
-    console.error("Error al reiniciar el onboarding:", error);
-    return message.reply("❌ Hubo un error al intentar reiniciar tu introducción. Por favor, inténtalo de nuevo.");
-  }
-}
-
-
 async function handleOnboarding(message, profile) {
   const userId = message.author.id;
   const content = message.content.trim();
@@ -3475,6 +3457,23 @@ client.on("messageCreate", async (message) => {
   const content = message.content.trim();
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
+
+  if (message.content.startsWith('!resetintro')) {
+  const userId = message.author.id;
+
+  try {
+    // Reiniciamos el progreso del onboarding en la base de datos
+    await db.updateTravelerData(userId, {
+      onboardingStage: "name", // Cambia "name" por tu stage inicial si es diferente
+      age: null                // Limpiamos la edad por si ya la había introducido
+    });
+
+    return message.reply("🔄 **Tu introducción ha sido reiniciada.** Puedes comenzar de nuevo desde el principio.");
+  } catch (error) {
+    console.error("Error al reiniciar el onboarding:", error);
+    return message.reply("❌ Hubo un error al intentar reiniciar tu introducción. Por favor, inténtalo de nuevo.");
+  }
+  }
   
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
