@@ -938,10 +938,10 @@ function sumEquipmentTotals(equipment = {}) {
     totals.survivalBonus += stats.survivalBonus;
     totals.willpowerBonus += stats.willpowerBonus;
     totals.healingBonus += stats.healingBonus;
-    totals.rangedBonus += Stats.rangedBonus;
-    totals.thrownBonus += Stats.thrownBonus;
-    totals.magicBonus += Stats.magicBonus;
-    totals.cavalryBonus += Stats.cavalryBonus;
+    totals.rangedBonus += stats.rangedBonus;
+    totals.thrownBonus += stats.thrownBonus;
+    totals.magicBonus += stats.magicBonus;
+    totals.cavalryBonus += stats.cavalryBonus;
   }
 
   return totals;
