@@ -3291,8 +3291,8 @@ async function handleExpedicionDesafiar(message) {
 
       return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
     }
-
-    let danoEnemigo = activeEncounter.dano || Math.floor(Math.random() * 25) + 20;
+        // El daño base ahora escala con el nivel de peligro (mínimo asumido de 1 si no está definido)
+    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 8) + Math.floor(Math.random() * 15);
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
     danoEnemigo = Math.max(1, Math.floor(danoEnemigo * (1 - totalDmgRed)));
 
