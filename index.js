@@ -242,14 +242,14 @@ function getExplorationClosingText(points, item, rarity) {
   }
 
   if (rarityKey === "superior") {
-    return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
+    return "*- Fue un buen viaje. Debería hacerlo más seguido.*";
   }
 
   if (rarityKey === "forjado") {
-    return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
+    return "*- Fue un buen viaje. Debería hacerlo más seguido.*";
   }
 
-  return "*- Fue un buen viaje. Deberías hacerlo más seguido.*";
+  return "*- Fue un buen viaje. Debería hacerlo más seguido.*";
 }
 
 async function handleExploracionCommand(message) {
