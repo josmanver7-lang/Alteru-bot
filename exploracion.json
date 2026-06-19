@@ -91,9 +91,11 @@
     "precioBase": 2140,
     "descripcion": "Un arma casi mítica, cargada de presagio y poder.",
     "efecto": {
-      "damageBonus": 5,
+      "damageBonus": 3,
       "successBonus": 0.05,
-      "combatBonus": 0.05
+      "combatBonus": 0.05,
+      "willpowerBonus": 0.06
+      
     }
   },
 
@@ -245,7 +247,7 @@
     "precioBase": 320,
     "descripcion": "Un juramento tallado en plata antigua.",
     "efecto": {
-      "damageReduction": 0.03,
+      "negotiationBonus": 0.04,
       "successBonus": 0.03
     }
   },
