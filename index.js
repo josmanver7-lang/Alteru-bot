@@ -126,6 +126,82 @@ const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
 const EXPEDITION_LIMIT = 3;
 const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
 
+// ==========================================
+//      SISTEMA DE COMBATE: HUESTES MIXTAS
+// ==========================================
+
+const TABLA_TIPOS = {
+  melee:  { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 1.0 },
+  ranged: { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 2.0 },
+  thrown: { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 2.0 },
+  magic:  { melee: 2.0, ranged: 2.0, thrown: 2.0, magic: 1.0 }
+};
+
+function obtenerTipoCombate(efectos = {}) {
+  // Detecta dinámicamente el estilo del jugador leyendo las propiedades del arma
+  if (efectos.magicBonus || efectos.magicDamage || efectos.willpowerBonus) return 'magic';
+  if (efectos.rangedBonus || efectos.rangedDamage || efectos.perceptionBonus) return 'ranged';
+  if (efectos.throwBonus || efectos.throwDamage) return 'thrown';
+  
+  return 'melee'; // Por defecto o si usa combatBonus
+}
+
+function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCombat) {
+  const efectosArma = equipment?.arma?.efecto || {};
+  const tipoJugador = obtenerTipoCombate(efectosArma);
+  const nivelJugador = calculateLevelFromXP(profile.xp || 0);
+
+  // --- 1. PODER DEL JUGADOR ---
+  let danoPlanoJugador = 10 + (nivelJugador * 2) + (efectosArma.damageBonus || 0);
+  
+  let bonusPorcJugador = 0;
+  if (tipoJugador === 'magic') bonusPorcJugador = efectosArma.magicBonus || 0;
+  else if (tipoJugador === 'ranged') bonusPorcJugador = efectosArma.rangedBonus || 0;
+  else if (tipoJugador === 'thrown') bonusPorcJugador = efectosArma.throwBonus || 0;
+  else bonusPorcJugador = (efectosArma.meleeBonus || efectosArma.combatBonus || 0);
+
+  const classBonus = getPlayerClassBonus(profile);
+  let bonosExtra = (bonuses.captainBonus || 0) + 
+                   (affinityCombat.successBonus || 0) + 
+                   (classBonus.attackBonus || 0);
+
+  if (encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe") {
+      bonosExtra += bonuses.strongEnemyBonus || 0;
+  } else if (encounter.tipo === "enemigo_numeroso") {
+      bonosExtra += bonuses.numerousEnemyBonus || 0;
+  }
+
+  // --- 2. PODER DEL ENEMIGO (HUESTE MIXTA) ---
+  let danoPlanoEnemigo = (encounter.peligro * 12) + (encounter.damageBonus || 0);
+  let totalBonusEnemigo = 0;
+  
+  totalBonusEnemigo += (encounter.meleeBonus || 0) * (TABLA_TIPOS['melee'][tipoJugador] || 1.0);
+  totalBonusEnemigo += (encounter.rangedBonus || 0) * (TABLA_TIPOS['ranged'][tipoJugador] || 1.0);
+  totalBonusEnemigo += (encounter.throwBonus || 0) * (TABLA_TIPOS['thrown'][tipoJugador] || 1.0);
+  totalBonusEnemigo += (encounter.magicBonus || 0) * (TABLA_TIPOS['magic'][tipoJugador] || 1.0);
+
+  // --- 3. CÁLCULO FINAL ---
+  let efectividadJugador = 1.0;
+  if (tipoJugador === 'magic' && ((encounter.meleeBonus || 0) > 0 || (encounter.rangedBonus || 0) > 0)) efectividadJugador = 1.5;
+  if ((tipoJugador === 'ranged' || tipoJugador === 'thrown') && (encounter.magicBonus || 0) > 0) efectividadJugador = 1.5;
+
+  let poderFinalJugador = danoPlanoJugador * (1 + bonusPorcJugador + bonosExtra) * efectividadJugador;
+  let poderFinalEnemigo = danoPlanoEnemigo * (1 + totalBonusEnemigo);
+
+  // Varianza del 15% para que siga existiendo la "suerte de los dados"
+  const varianzaRNG = 0.85 + (Math.random() * 0.30);
+  poderFinalJugador *= varianzaRNG;
+
+  return {
+      exito: poderFinalJugador >= poderFinalEnemigo,
+      poderJugador: Math.round(poderFinalJugador),
+      poderEnemigo: Math.round(poderFinalEnemigo),
+      tipoJugador: tipoJugador
+  };
+}
+
+
+
 // ================================
 // MAPAS EN MEMORIA
 // ================================
@@ -2645,16 +2721,21 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const enemy = getEnemyPowerSummary(encounter);
   const enemyTier = getDangerTierProfile(enemy.peligro);
 
-  const dmg = encounter.dano || (enemy.peligro * 8 + (encounter.tipo === "jefe" ? 20 : 0));
-  const def = Math.min(85, enemy.peligro * 6 + (encounter.tipo === "jefe" ? 15 : 0));
+    const dmg = (encounter.peligro * 12) + (encounter.damageBonus || 0);
+  
+  let enemyStats = `Daño base: ${dmg}`;
+  if (encounter.meleeBonus) enemyStats += ` | Melee +${Math.round(encounter.meleeBonus * 100)}%`;
+  if (encounter.rangedBonus) enemyStats += ` | Rango +${Math.round(encounter.rangedBonus * 100)}%`;
+  if (encounter.magicBonus) enemyStats += ` | Magia +${Math.round(encounter.magicBonus * 100)}%`;
+  if (encounter.throwBonus) enemyStats += ` | Arrojo +${Math.round(encounter.throwBonus * 100)}%`;
 
-  let enemyStats = `Daño aprox. ${dmg} | Defensa ${def}%`;
   if (encounter.efectos || encounter.stats) {
      const stats = encounter.efectos || encounter.stats;
      if (stats.sigilo) enemyStats += ` | Sigilo ${stats.sigilo}%`;
      if (stats.percepcion) enemyStats += ` | Percepción ${stats.percepcion}%`;
      if (stats.voluntad) enemyStats += ` | Voluntad ${stats.voluntad}%`;
   }
+
 
   const expeditionTotal = traveler.score + eq.score + party.total;
   const enemyScore = (enemy.peligro * 15) + (encounter.tipo === "jefe" ? 30 : 0);
@@ -3075,39 +3156,34 @@ async function handleExpedicionDesafiar(message) {
   let affinityBonus = 0;
   for (const comp of owned) affinityBonus += getAffinityBonus(profile, comp);
 
-  let baseSuccess = 0.65 + bonuses.captainBonus + bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
-  baseSuccess += bonuses.baseSuccessBonus || 0;
-  baseSuccess += eqPower.totals.successBonus || 0;
+    let success = false;
+  const esCombate = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.categoria) || 
+                    ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.tipo);
 
-  if (activeEncounter.tipo === "enemigo_poderoso" || activeEncounter.tipo === "jefe" || (activeEncounter.peligro || 0) >= 4) {
-    baseSuccess += bonuses.strongEnemyBonus;
-  }
-  if (activeEncounter.tipo === "enemigo_numeroso") baseSuccess += bonuses.numerousEnemyBonus;
-  if (activeEncounter.tipo === "jefe") baseSuccess += 0.05;
-  if (activeEncounter.tipo === "evento_especial") baseSuccess += playerClassBonus.specialBonus || 0;
-  if (activeEncounter.tipo === "obstaculo") baseSuccess += playerClassBonus.explorationBonus || 0;
-  if (activeEncounter.tipo === "jefe" || activeEncounter.tipo === "enemigo_poderoso") baseSuccess += playerClassBonus.attackBonus || 0;
-
-  if (activeEncounter.tipo === "evento_especial") {
-    baseSuccess += utilTotals.negotiation * 0.90;
-    baseSuccess += utilTotals.willpower * 0.45;
-    baseSuccess += utilTotals.stealth * 0.15;
-  }
-  if (activeEncounter.tipo === "obstaculo") {
-    baseSuccess += utilTotals.exploration * 0.85;
-    baseSuccess += utilTotals.stealth * 0.20;
-    baseSuccess += utilTotals.willpower * 0.15;
-  }
-  if (activeEncounter.tipo === "enemigo_numeroso") {
-    baseSuccess += utilTotals.combat * 0.35;
-    baseSuccess += utilTotals.success * 0.20;
-  }
-  if (activeEncounter.tipo === "enemigo_poderoso" || activeEncounter.tipo === "jefe") {
-    baseSuccess += utilTotals.damageReduction * 0.25;
-    baseSuccess += utilTotals.success * 0.25;
-  }
-
-  const success = Math.random() < Math.min(baseSuccess, 0.95);
+  if (esCombate) {
+      // ⚔️ Usar el nuevo sistema matemático para combates
+      const resultadoCombate = resolverCombateMixto(profile, equipment, activeEncounter, bonuses, affinityCombat);
+      success = resultadoCombate.exito;
+      
+  } else {
+      // 🌿 Mantener el sistema original para Obstáculos y Eventos de Exploración
+      let baseSuccess = 0.65 + bonuses.captainBonus + bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
+      baseSuccess += bonuses.baseSuccessBonus || 0;
+      baseSuccess += eqPower.totals.successBonus || 0;
+      
+      if (activeEncounter.tipo === "evento_especial") {
+          baseSuccess += playerClassBonus.specialBonus || 0;
+          baseSuccess += utilTotals.negotiation * 0.90;
+          baseSuccess += utilTotals.willpower * 0.45;
+          baseSuccess += utilTotals.stealth * 0.15;
+      } else if (activeEncounter.tipo === "obstaculo") {
+          baseSuccess += playerClassBonus.explorationBonus || 0;
+          baseSuccess += utilTotals.exploration * 0.85;
+          baseSuccess += utilTotals.stealth * 0.20;
+          baseSuccess += utilTotals.willpower * 0.15;
+      }
+      
+      success = Math.random() < Math.min(baseSuccess, 0.95);
 
   if (success) {
     const xpGanada = activeEncounter.xp || 10;
