@@ -309,8 +309,8 @@
   {
     "id": "capa_viajero",
     "nombre": "Capa del Viajero",
-    "tipo": "accesorio",
-    "slot": "accesorio",
+    "tipo": "capa",
+    "slot": "capa",
     "raza": "general",
     "rareza": "comun",
     "precioBase": 50,
@@ -322,8 +322,8 @@
   {
     "id": "capa_sudario",
     "nombre": "Capa del Sudario",
-    "tipo": "accesorio",
-    "slot": "accesorio",
+    "tipo": "capa",
+    "slot": "capa",
     "raza": "general",
     "rareza": "forjado",
     "precioBase": 100,
