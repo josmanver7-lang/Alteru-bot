@@ -130,11 +130,12 @@ const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
 //      SISTEMA DE COMBATE: HUESTES MIXTAS
 // ==========================================
 
-const TABLA_TIPOS = {
-  melee:  { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 1.0 },
-  ranged: { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 2.0 },
-  thrown: { melee: 1.0, ranged: 1.0, thrown: 1.0, magic: 2.0 },
-  magic:  { melee: 2.0, ranged: 2.0, thrown: 2.0, magic: 1.0 }
+const COMBAT_MATRIX = {
+    meleeBonus:    { cavalryBonus: 2.0,  thrownBonus: -1.5, rangedBonus: -1.5, magicBonus: -2.0 },
+    rangedBonus:   { meleeBonus: 1.5,    magicBonus: 1.5,   thrownBonus: -1.5, cavalryBonus: -2.0 },
+    thrownBonus:   { rangedBonus: 1.5,   magicBonus: 1.5,   meleeBonus: 1.5,   cavalryBonus: -1.5 },
+    magicBonus:    { meleeBonus: 2.0,    rangedBonus: -1.5, thrownBonus: -1.5, cavalryBonus: -1.5 },
+    cavalryBonus:  { rangedBonus: 2.0,   thrownBonus: 1.5,  magicBonus: 1.5,   meleeBonus: -2.0 }
 };
 
 function obtenerTipoCombate(efectos = {}) {
@@ -142,6 +143,7 @@ function obtenerTipoCombate(efectos = {}) {
   if (efectos.magicBonus || efectos.magicDamage || efectos.willpowerBonus) return 'magic';
   if (efectos.rangedBonus || efectos.rangedDamage || efectos.perceptionBonus) return 'ranged';
   if (efectos.throwBonus || efectos.throwDamage) return 'thrown';
+  if (efectos.cavarlyBonus || efectos.cavarlyDamage) return 'cavarly';
   
   return 'melee'; // Por defecto o si usa combatBonus
 }
