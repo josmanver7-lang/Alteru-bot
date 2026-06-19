@@ -514,18 +514,18 @@ const companions = {
 
 const ITEM_TIER_VALUES = { ninguno: 0, none: 0, comun: 1, forjado: 2, superior: 3, legendario: 4 }; 
 const PLAYER_CLASS_BONUS = { 
-  guardian: { damageReduction: 0.06 }, 
-  vigilante: { explorationBonus: 0.06, successBonus: 0.03 }, 
-  campeon: { attackBonus: 0.08, successBonus: 0.03 }, 
-  cazador: { explorationBonus: 0.05, rangerBonus: 0.04 }, 
-  luchador: { attackBonus: 0.06, damageReduction: 0.02 }, 
-  bardo: { negotiationBonus: 0.08 }, 
-  guardian_runico: { specialBonus: 0.08, damageReduction: 0.04 }, 
+  guardian: { damageReduction: 0.06, meleeBonus: 0.03 }, 
+  vigilante: { explorationBonus: 0.06, thrownBonus: 0.03 }, 
+  campeon: { meleeBonus: 0.08, willpowerBonus: 0.03 }, 
+  cazador: { explorationBonus: 0.05, rangedBonus: 0.04 }, 
+  luchador: { meleeBonus: 0.06, damageReduction: 0.02 }, 
+  bardo: { negotiationBonus: 0.08, healingBonus: 0.06 }, 
+  guardian_runico: { magicBonus: 0.08, damageReduction: 0.04 }, 
   capitan: { negotiationBonus: 0.08, successBonus: 0.04 }, 
-  sabio: { specialBonus: 0.06, explorationBonus: 0.04 }, 
-  saqueador: { attackBonus: 0.05, explorationBonus: 0.03 }, 
-  marinero: { explorationBonus: 0.08, successBonus: 0.03 }, 
-  beornida: { attackBonus: 0.06, damageReduction: 0.04 } 
+  sabio: { magicBonus: 0.06, explorationBonus: 0.04 }, 
+  saqueador: { meleeBonus: 0.04, explorationBonus: 0.03, stealthBonus: 0.03 }, 
+  marinero: { explorationBonus: 0.04, willpowerBonus: 0.08 }, 
+  beornida: { meleeBonus: 0.06, damageReduction: 0.04 } 
 }; 
 
 const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades"];
@@ -578,10 +578,14 @@ function getEquipmentPowerSummary(equipment = {}, activeUtilities = []) {
       totals.stealthBonus += uStats.stealthBonus;
       totals.negotiationBonus += uStats.negotiationBonus;
       totals.perceptionBonus += uStats.perceptionBonus;
-      totals.combatBonus += uStats.combatBonus;
+      totals.meleeBonus += uStats.meleeBonus;
       totals.survivalBonus += uStats.survivalBonus;
       totals.willpowerBonus += uStats.willpowerBonus;
       totals.healingBonus += uStats.healingBonus;
+      totals.rangedBonus += uStats.rangedBonus;
+      totals.thrownBonus += uStats.thrownBonus;
+      totals.magicBonus += uStats.magicBonus;
+      totals.cavalryBonus += uStats.cavalryBonus;
   }
 
   const score = Math.max( 1, Math.round( ((totals.damageBonus || 0) * 5) + ((totals.successBonus || 0) * 100) + ((totals.damageReduction || 0) * 100) ) ); 
@@ -604,6 +608,14 @@ function getAdventureBonuses(profile = {}, equipment = {}) {
     damageReduction: Number(totals.damageReduction || 0),
     combat: Number(totals.combatBonus || 0),
     survival: Number(totals.survivalBonus || 0)
+    // Modificadores de la Matriz Táctica
+    ranged: Number(totals.rangedBonus || 0),
+    thrown: Number(totals.thrownBonus || 0),
+    magic: Number(totals.magicBonus || 0),
+    cavalry: Number(totals.cavalryBonus || 0),    
+    // Utilidades generales restantes
+    perception: Number(totals.perceptionBonus || 0),
+    healing: Number(totals.healingBonus || 0)
   };
 }
 
@@ -765,6 +777,11 @@ function getInventoryCategoryForItem(item) {
     return "permanentes";
   }
 
+  if (slot === "montura" || slot === "caballo") {
+    return "monturas"; 
+  }
+
+
   return "permanentes";
 }
 
@@ -807,6 +824,8 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   if (slot === "pies") return "pies";
   if (slot === "capa") return "capa";
 
+  if (slot === "montura" || slot === "caballo") return "montura";
+
   if (slot === "anillo") {
     if (!currentEquipment.anillo1) return "anillo1";
     if (!currentEquipment.anillo2) return "anillo2";
@@ -846,9 +865,15 @@ function getItemPower(effect = {}) {
     combatBonus: Number(effect.combatBonus || 0),
     survivalBonus: Number(effect.survivalBonus || 0),
     willpowerBonus: Number(effect.willpowerBonus || 0),
-    healingBonus: Number(effect.healingBonus || 0)
+    healingBonus: Number(effect.healingBonus || 0),
+    meleeBonus: Number(effect.meleeBonus || effect.combatBonus || 0),
+    rangedBonus: Number(effect.rangedBonus || 0),
+    thrownBonus: Number(effect.thrownBonus || effect.throwBonus || 0),
+    magicBonus: Number(effect.magicBonus || 0),
+    cavalryBonus: Number(effect.cavalryBonus || effect.mountedBonus || 0)
   };
 }
+
 
 function formatEffect(effect = {}) {
   const parts = [];
@@ -866,6 +891,11 @@ function formatEffect(effect = {}) {
   if (effect.survivalBonus) parts.push(`Resistencia +${Math.round(effect.survivalBonus * 100)}%`);
   if (effect.willpowerBonus) parts.push(`Voluntad +${Math.round(effect.willpowerBonus * 100)}%`);
   if (effect.healingBonus) parts.push(`Sanación +${Math.round(effect.healingBonus * 100)}%`);
+  if (effect.rangedBonus) parts.push(`Rango +${Math.round(effect.rangedBonus * 100)}%`);
+  if (effect.thrownBonus) parts.push(`Arrojo +${Math.round(effect.thrownBonus * 100)}%`);
+  if (effect.magicBonus) parts.push(`Magia +${Math.round(effect.magicBonus * 100)}%`);
+  if (effect.cavalryBonus) parts.push(`Caballería +${Math.round(effect.cavalryBonus * 100)}%`);
+
 
   if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
   if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
@@ -885,8 +915,12 @@ function sumEquipmentTotals(equipment = {}) {
     combatBonus: 0,
     survivalBonus: 0,
     willpowerBonus: 0,
-    healingBonus: 0
-  };
+    healingBonus: 0,
+    rangedBonus: 0,
+    thrownBonus: 0,
+    magicBonus: 0,
+    cavalryBonus: 0,
+    };
 
   for (const item of Object.values(equipment || {})) {
     if (!item) continue;
@@ -900,10 +934,14 @@ function sumEquipmentTotals(equipment = {}) {
     totals.stealthBonus += stats.stealthBonus;
     totals.negotiationBonus += stats.negotiationBonus;
     totals.perceptionBonus += stats.perceptionBonus;
-    totals.combatBonus += stats.combatBonus;
+    totals.meleeBonus += stats.meleeBonus;
     totals.survivalBonus += stats.survivalBonus;
     totals.willpowerBonus += stats.willpowerBonus;
     totals.healingBonus += stats.healingBonus;
+    totals.rangedBonus += uStats.rangedBonus;
+    totals.thrownBonus += uStats.thrownBonus;
+    totals.magicBonus += uStats.magicBonus;
+    totals.cavalryBonus += uStats.cavalryBonus;
   }
 
   return totals;
@@ -922,6 +960,11 @@ function formatEquipmentTotals(totals) {
   if (totals.survivalBonus) parts.push(`+${Math.round(totals.survivalBonus * 100)}% Supervivencia`);
   if (totals.willpowerBonus) parts.push(`+${Math.round(totals.willpowerBonus * 100)}% Voluntad`);
   if (totals.healingBonus) parts.push(`+${Math.round(totals.healingBonus * 100)}% Sanación`);
+  if (totals.rangedBonus) parts.push(`+${Math.round(totals.rangedBonus * 100)}% Rango`);
+  if (totals.thrownBonus) parts.push(`+${Math.round(totals.thrownBonus * 100)}% Arrojo`);
+  if (totals.magicBonus) parts.push(`+${Math.round(totals.magicBonus * 100)}% Magia`);
+  if (totals.cavalryBonus) parts.push(`+${Math.round(totals.cavalryBonus * 100)}% Caballería`);
+
 
   return parts.length ? parts.join(" | ") : "Sin bonos extra";
 }
@@ -1143,9 +1186,14 @@ function getCompanionEquipmentFromPersonaje(companionId) {
       }
     }
   } else {
-    Object.assign(formattedEq, {
-      arma: rawEq.arma || personaje.arma || "",
-      escudo: rawEq.escudo || personaje.escudo || "",
+    const armaEquipada = rawEq.arma || personaje.arma || "";
+// Detectamos si el arma tiene 2 manos o es del slot específico
+const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
+
+Object.assign(formattedEq, {
+      arma: armaEquipada,
+      // Si es de dos manos, forzamos que el escudo esté vacío ("")
+      escudo: esDosManos ? "" : (rawEq.escudo || personaje.escudo || ""),
       armadura: rawEq.armadura || personaje.armadura || "",
       guantes: rawEq.guantes || personaje.guantes || "",
       piernas: rawEq.piernas || personaje.piernas || "",
@@ -1156,8 +1204,9 @@ function getCompanionEquipmentFromPersonaje(companionId) {
       anillo1: rawEq.anillo1 || personaje.anillo1 || "",
       anillo2: rawEq.anillo2 || personaje.anillo2 || "",
       amuleto: rawEq.amuleto || personaje.amuleto || "",
-      accesorio: rawEq.accesorio || personaje.accesorio || ""
-    });
+      accesorio: rawEq.accesorio || personaje.accesorio || "",
+      montura: rawEq.montura || personaje.montura || ""
+});
   }
 
   return formattedEq;
