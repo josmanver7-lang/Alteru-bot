@@ -138,71 +138,88 @@ const COMBAT_MATRIX = {
     cavalryBonus:  { rangedBonus: 2.0,   thrownBonus: 1.5,  magicBonus: 1.5,   meleeBonus: -2.0 }
 };
 
-function obtenerTipoCombate(efectos = {}) {
-  // Detecta dinámicamente el estilo del jugador leyendo las propiedades del arma
-  if (efectos.magicBonus || efectos.magicDamage || efectos.willpowerBonus) return 'magic';
-  if (efectos.rangedBonus || efectos.rangedDamage || efectos.perceptionBonus) return 'ranged';
-  if (efectos.throwBonus || efectos.throwDamage) return 'thrown';
-  if (efectos.cavarlyBonus || efectos.cavarlyDamage) return 'cavarly';
-  
-  return 'melee'; // Por defecto o si usa combatBonus
+// Función auxiliar para leer los bonus del jugador/enemigo
+function mapStatsToMatrixKeys(statsObj = {}) {
+    return {
+        meleeBonus: statsObj.meleeBonus || statsObj.combatBonus || 0,
+        rangedBonus: statsObj.rangedBonus || 0,
+        thrownBonus: statsObj.thrownBonus || statsObj.throwBonus || 0,
+        magicBonus: statsObj.magicBonus || 0,
+        cavalryBonus: statsObj.cavalryBonus || statsObj.mountedBonus || 0
+    };
 }
 
 function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCombat) {
-  const efectosArma = equipment?.arma?.efecto || {};
-  const tipoJugador = obtenerTipoCombate(efectosArma);
-  const nivelJugador = calculateLevelFromXP(profile.xp || 0);
+    const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
+    const playerMatrixStats = mapStatsToMatrixKeys(eqPower.totals);
+    const classBonus = getPlayerClassBonus(profile);
+    
+    // Si el jugador no tiene ningún stat de combate definido, le damos un mínimo de melee para que la tabla funcione
+    if (Object.values(playerMatrixStats).every(v => v === 0)) playerMatrixStats.meleeBonus = 0.1;
 
-  // --- 1. PODER DEL JUGADOR ---
-  let danoPlanoJugador = 10 + (nivelJugador * 2) + (efectosArma.damageBonus || 0);
-  
-  let bonusPorcJugador = 0;
-  if (tipoJugador === 'magic') bonusPorcJugador = efectosArma.magicBonus || 0;
-  else if (tipoJugador === 'ranged') bonusPorcJugador = efectosArma.rangedBonus || 0;
-  else if (tipoJugador === 'thrown') bonusPorcJugador = efectosArma.throwBonus || 0;
-  else bonusPorcJugador = (efectosArma.meleeBonus || efectosArma.combatBonus || 0);
+    const enemyMatrixStats = mapStatsToMatrixKeys(encounter);
+    if (Object.values(enemyMatrixStats).every(v => v === 0)) enemyMatrixStats.meleeBonus = 0.1;
 
-  const classBonus = getPlayerClassBonus(profile);
-  let bonosExtra = (bonuses.captainBonus || 0) + 
-                   (affinityCombat.successBonus || 0) + 
-                   (classBonus.attackBonus || 0);
+    let modificadorPuntos = 0;
 
-  if (encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe") {
-      bonosExtra += bonuses.strongEnemyBonus || 0;
-  } else if (encounter.tipo === "enemigo_numeroso") {
-      bonosExtra += bonuses.numerousEnemyBonus || 0;
-  }
+    // 1. Choques en la matriz: Player ataca a Enemigo
+    for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
+        if (pVal > 0) {
+            for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
+                if (eVal > 0 && COMBAT_MATRIX[pKey]?.[eKey]) {
+                    modificadorPuntos += (COMBAT_MATRIX[pKey][eKey] * Math.min(pVal, eVal)); // Escala con el stat menor
+                }
+            }
+        }
+    }
 
-  // --- 2. PODER DEL ENEMIGO (HUESTE MIXTA) ---
-  let danoPlanoEnemigo = (encounter.peligro * 12) + (encounter.damageBonus || 0);
-  let totalBonusEnemigo = 0;
-  
-  totalBonusEnemigo += (encounter.meleeBonus || 0) * (TABLA_TIPOS['melee'][tipoJugador] || 1.0);
-  totalBonusEnemigo += (encounter.rangedBonus || 0) * (TABLA_TIPOS['ranged'][tipoJugador] || 1.0);
-  totalBonusEnemigo += (encounter.throwBonus || 0) * (TABLA_TIPOS['thrown'][tipoJugador] || 1.0);
-  totalBonusEnemigo += (encounter.magicBonus || 0) * (TABLA_TIPOS['magic'][tipoJugador] || 1.0);
+    // 2. Choques en la matriz: Enemigo ataca a Player
+    for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
+        if (eVal > 0) {
+            for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
+                if (pVal > 0 && COMBAT_MATRIX[eKey]?.[pKey]) {
+                    modificadorPuntos -= (COMBAT_MATRIX[eKey][pKey] * Math.min(eVal, pVal));
+                }
+            }
+        }
+    }
 
-  // --- 3. CÁLCULO FINAL ---
-  let efectividadJugador = 1.0;
-  if (tipoJugador === 'magic' && ((encounter.meleeBonus || 0) > 0 || (encounter.rangedBonus || 0) > 0)) efectividadJugador = 1.5;
-  if ((tipoJugador === 'ranged' || tipoJugador === 'thrown') && (encounter.magicBonus || 0) > 0) efectividadJugador = 1.5;
+    const nivelJugador = calculateLevelFromXP(profile.xp || 0);
+    
+    // 3. Calculamos el poder base de ambos
+    let danoPlanoJugador = 10 + (nivelJugador * 2) + (eqPower.totals.damageBonus || 0);
+    let bonosExtra = (bonuses.captainBonus || 0) + (affinityCombat.successBonus || 0) + (classBonus.attackBonus || 0);
 
-  let poderFinalJugador = danoPlanoJugador * (1 + bonusPorcJugador + bonosExtra) * efectividadJugador;
-  let poderFinalEnemigo = danoPlanoEnemigo * (1 + totalBonusEnemigo);
+    if (encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe") {
+        bonosExtra += bonuses.strongEnemyBonus || 0;
+    } else if (encounter.tipo === "enemigo_numeroso") {
+        bonosExtra += bonuses.numerousEnemyBonus || 0;
+    }
 
-  // Varianza del 15% para que siga existiendo la "suerte de los dados"
-  const varianzaRNG = 0.85 + (Math.random() * 0.30);
-  poderFinalJugador *= varianzaRNG;
+    let danoPlanoEnemigo = (encounter.peligro * 12) + (encounter.damageBonus || 0);
 
-  return {
-      exito: poderFinalJugador >= poderFinalEnemigo,
-      poderJugador: Math.round(poderFinalJugador),
-      poderEnemigo: Math.round(poderFinalEnemigo),
-      tipoJugador: tipoJugador
-  };
+    // 4. Aplicamos los multiplicadores
+    let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
+    let poderFinalEnemigo = danoPlanoEnemigo * (1 + (encounter.successBonus || 0));
+
+    // Si la matriz nos dio ventaja táctica (positivo) o desventaja (negativo) lo aplicamos
+    if (modificadorPuntos > 0) {
+        poderFinalJugador *= (1 + (modificadorPuntos * 0.25)); // +2 táctico se vuelve +50% poder real
+    } else if (modificadorPuntos < 0) {
+        poderFinalEnemigo *= (1 + (Math.abs(modificadorPuntos) * 0.25)); 
+    }
+
+    // Varianza del RNG (suerte de los dados)
+    const varianzaRNG = 0.85 + (Math.random() * 0.30);
+    poderFinalJugador *= varianzaRNG;
+
+    return {
+        exito: poderFinalJugador >= poderFinalEnemigo,
+        poderJugador: Math.round(poderFinalJugador),
+        poderEnemigo: Math.round(poderFinalEnemigo),
+        modificadorMatriz: modificadorPuntos
+    };
 }
-
-
 
 // ================================
 // MAPAS EN MEMORIA
