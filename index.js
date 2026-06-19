@@ -912,7 +912,7 @@ function sumEquipmentTotals(equipment = {}) {
     stealthBonus: 0,
     negotiationBonus: 0,
     perceptionBonus: 0,
-    combatBonus: 0,
+    meleeBonus: 0,
     survivalBonus: 0,
     willpowerBonus: 0,
     healingBonus: 0,
@@ -938,10 +938,10 @@ function sumEquipmentTotals(equipment = {}) {
     totals.survivalBonus += stats.survivalBonus;
     totals.willpowerBonus += stats.willpowerBonus;
     totals.healingBonus += stats.healingBonus;
-    totals.rangedBonus += uStats.rangedBonus;
-    totals.thrownBonus += uStats.thrownBonus;
-    totals.magicBonus += uStats.magicBonus;
-    totals.cavalryBonus += uStats.cavalryBonus;
+    totals.rangedBonus += Stats.rangedBonus;
+    totals.thrownBonus += Stats.thrownBonus;
+    totals.magicBonus += Stats.magicBonus;
+    totals.cavalryBonus += Stats.cavalryBonus;
   }
 
   return totals;
