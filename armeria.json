@@ -2638,5 +2638,151 @@
     "precioBase": 480,
     "descripcion": "Sólida y contundente, ideal para combate cerrado.",
     "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.01 }
+  },
+  {
+    "id": "cuchillo_caza_colinas",
+    "nombre": "Cuchillo de Caza de las Colinas",
+    "slot": "arma",
+    "hands": 1,
+    "tipo": "arma",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 80,
+    "descripcion": "Un cuchillo simple de hierro, desgastado por el barro de las marchas y el uso diario, pero afilado con regularidad para cortes rápidos.",
+    "efecto:" { "combatBonus": 0.01 }
+  },
+  {
+    id: "hacha_corta_herreria",
+    nombre: "Hacha Corta de Herrería",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "enano",
+    rareza: "comun",
+    precioBase: 45,
+    descripcion: "Herramienta tosca y pesada forjada en fraguas comunes, ideal para propiciar un impacto contundente a corta distancia.",
+    efecto: { damageBonus: 1 }
+  },
+  {
+    id: "daga_practica_lindon",
+    nombre: "Daga de Práctica de Lindon",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "comun",
+    precioBase: 50,
+    descripcion: "Una hoja ligera y equilibrada que los jóvenes elfos emplean para adiestrar el brazo en lanzamientos limpios.",
+    efecto: { damageBonus: 1, stealthBonus: 1 }
+  },
+  {
+    id: "venablo_montaraces",
+    nombre: "Venablo de los Montaraces",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "raro",
+    precioBase: 180,
+    descripcion: "Jabalina corta con punta de acero reforzado, diseñada para atravesar el cuero antes de que el enemigo logre acortar distancias en el campo de batalla.",
+    efecto: { damageBonus: 2, combatBonus: 1 }
+  },
+  {
+    id: "hacha_mano_erebor",
+    nombre: "Hacha de Mano de Erebor",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "enano",
+    rareza: "raro",
+    precioBase: 195,
+    descripcion: "Forjada en las profundidades de la Montaña Solitaria; el balance entre su mango de fresno y la hoja de acero templado es impecable.",
+    efecto: { damageBonus: 3, combatBonus: 1 }
+  },
+  {
+    id: "lanza_caza_lindon",
+    nombre: "Lanza de Caza de Lindon",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "raro",
+    precioBase: 210,
+    descripcion: "Artesanía esbelta de madera flexible y punta de hoja perfoliada que hiende el aire sin emitir silbido alguno.",
+    efecto: { damageBonus: 2, stealthBonus: 2 }
+  },
+  {
+    id: "jabalina_guardia_ciudad",
+    nombre: "Jabalina de la Guardia de la Ciudad",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "epico",
+    precioBase: 520,
+    descripcion: "Armamento pesado forjado en la capital de Gondor, capaz de astillar escudos de madera reforzada y romper filas de asalto orcas.",
+    efecto: { damageBonus: 4, combatBonus: 2 }
+  },
+  {
+    id: "hacha_lanzamiento_colinas_hierro",
+    nombre: "Hacha de Lanzamiento de las Colinas de Hierro",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "enano",
+    rareza: "epico",
+    precioBase: 550,
+    descripcion: "Una pieza maciza de metal oscuro y denso. Su brutal impacto hunde cotas de malla y parte huesos al primer contacto.",
+    efecto: { damageBonus: 5, combatBonus: 2 }
+  },
+  {
+    id: "daga_arrojadiza_bosque_negro",
+    nombre: "Daga Arrojadiza del Bosque Negro",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "epico",
+    precioBase: 580,
+    descripcion: "Una hoja oscurecida por completo para evitar reflejos de luz, idónea para las emboscadas letales bajo las copas más sombrías del bosque.",
+    efecto: { damageBonus: 3, stealthBonus: 4 }
+  },
+  {
+    id: "lanza_sagrada_torre",
+    nombre: "Lanza Sagrada de la Torre",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "hombre",
+    rareza: "legendario",
+    precioBase: 1450,
+    descripcion: "Un baluarte histórico custodiado en la Ciudadela; su punta pulida brilla con el orgullo inquebrantable de los Reyes de antaño.",
+    efecto: { damageBonus: 6, combatBonus: 4, negotiationBonus: 2 }
+  },
+  {
+    id: "hacha_runica_gran_trono",
+    nombre: "Hacha Rúnica del Gran Trono",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "enano",
+    rareza: "legendario",
+    precioBase: 1550,
+    descripcion: "Forjada en los días de gloria bajo la montaña. Sus runas grabadas laten levemente ante la presencia enemiga y posee un vuelo de precisión matemática.",
+    efecto: { damageBonus: 7, combatBonus: 4 }
+  },
+  {
+    id: "estilete_estelar_imladris",
+    nombre: "Estilete Estelar de Imladris",
+    slot: "arma",
+    hands: 1,
+    tipo: "arma",
+    raza: "elfo",
+    rareza: "legendario",
+    precioBase: 1650,
+    descripcion: "Una reliquia moldeada bajo la luz estelar en Rivendel. Ignora por completo la fricción del viento, cobrando vidas en silencio antes de ser vista.",
+    efecto: { damageBonus: 5, stealthBonus: 6, combatBonus: 2 }
   }
+];
+
 ]
