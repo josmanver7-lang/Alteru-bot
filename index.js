@@ -196,7 +196,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
         bonosExtra += bonuses.numerousEnemyBonus || 0;
     }
 
-    let danoPlanoEnemigo = (encounter.peligro * 12) + (encounter.damageBonus || 0);
+    let danoPlanoEnemigo = (encounter.peligro * 9) + (encounter.damageBonus || 0);
 
     // 4. Aplicamos los multiplicadores
     let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
@@ -2792,6 +2792,30 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
         else if (c.id === "nieriel") abilityText = " | Hab: Evasión de peligro";
         else if (c.id === "faelon") abilityText = " | Hab: Sanación +10";
 
+      // Asegúrate de que 'companions' sea tu array de compañeros
+let companionLines = companions.map(comp => {
+    // 1. Definimos los bonos (ajusta 'comp.bonosTacticos' según tu estructura real)
+    const t = comp.bonosTacticos || {}; 
+    
+    // 2. Creamos un array con los bonos que existan
+    let tacticas = [];
+    if (t.melee > 0) tacticas.push(`🗡️ +${t.melee}`);
+    if (t.ranged > 0) tacticas.push(`🏹 +${t.ranged}`);
+    if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
+    if (t.thrown > 0) tacticas.push(`🪓 +${t.thrown}`);
+    if (t.magic > 0) tacticas.push(`✨ +${t.magic}`);
+    
+    // 3. Formateamos la línea para cada compañero
+    let linea = `• **${comp.nombre}**:`;
+    if (tacticas.length > 0) {
+        linea += ` ${tacticas.join(" | ")}`;
+    } else {
+        linea += ` *(Sin bonos)*`;
+    }
+    return linea;
+}).join("\n");
+
+
         return `• **${c.nombre}**: Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}`;
       }).join("\n")
     : "• Sin compañeros";
@@ -2799,7 +2823,22 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const enemy = getEnemyPowerSummary(encounter);
   const enemyTier = getDangerTierProfile(enemy.peligro);
 
-  const dmg = (encounter.peligro * 12) + (encounter.damageBonus || 0);
+  let enemyTacticsStr = "";
+// Verificamos si el enemigo tiene bonos tácticos en su objeto
+if (enemy.bonosTacticos) {
+    const b = enemy.bonosTacticos;
+    let parts = [];
+    if (b.melee > 0) parts.push(`🗡️ +${b.melee}`);
+    if (b.ranged > 0) parts.push(`🏹 +${b.ranged}`);
+    if (b.caballeria > 0) parts.push(`🐎 +${b.caballeria}`);
+    if (b.thrown > 0) parts.push(`🪓 +${b.thrown}`);
+    if (b.magic > 0) parts.push(`✨ +${b.magic}`);
+    
+    enemyTacticsStr = parts.length > 0 ? parts.join(" | ") : "Ninguna";
+} else {
+    enemyTacticsStr = "Ninguna";
+}
+  const dmg = (encounter.peligro * 9) + (encounter.damageBonus || 0);
   
   let enemyStats = `Daño base: ${dmg}`;
   if (encounter.meleeBonus) enemyStats += ` | Melee +${Math.round(encounter.meleeBonus * 100)}%`;
@@ -2834,9 +2873,10 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 ${companionLines}
 
 **Enemigo (${enemy.tipo.replace(/_/g, " ")})**
-• Peligro: ${getDangerText(enemy.peligro)} (Tier ${enemy.peligro})
+• Peligro: ${getDangerText(enemy.peligro)} 
 • Armadura: ${enemyTier.armorRead}
 • Stats Enemigo: ${enemyStats}
+• Ventajas Tácticas: ${enemyTacticsStr}
 
 **Comparativa General**
 • Balance de Poder: ${comparison}`
