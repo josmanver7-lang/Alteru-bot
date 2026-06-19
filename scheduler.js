@@ -1112,7 +1112,7 @@ const companionScenes = [
 💬 Altéru: "Detrás de tu tienda, que sean a ti al primero que despierten."`
   },
   {
-    id: "escena_10",
+    id: "escena_21",
     order: 10,
     text: `*Cirdil y Altéru entrenaban como solían hacer, y como solía ocurrir Cirdil eran el vencedor, pero mientras pulian sus movimientos conversaban:*
 
@@ -1125,8 +1125,8 @@ const companionScenes = [
 💬 Altéru: "Casi sentí mi espalda romperse, pero estaré bien".`
   },
   {
-    id: "escena_11",
-    order: 11,
+    id: "escena_10",
+    order: 10,
     text: `*Nieriel le daba un masaje en la espalda a Altéru mientras él conversaba con sus compañeros en la tienda*
 
 💬 Cirdil: "Esos piel oscura eran unos verdaderos desquiciados, peleaban sin importarles su propia vida, nisiquiera llevaban armadura, casi no tenias tiempo de atacar a alguno porque otro podría noquearte con su garrote si te descuidas."
