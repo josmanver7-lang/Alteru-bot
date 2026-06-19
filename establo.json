@@ -1,0 +1,322 @@
+[
+  {
+    "id": "mula_carga_comun",
+    "nombre": "Mula de Carga",
+    "slot": "montura",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 300,
+    "descripcion": "Rústica y paciente, ideal para caminos cortos.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
+  },
+  {
+    "id": "pony_comarca_entrenado",
+    "nombre": "Pony de La Comarca",
+    "slot": "montura",
+    "raza": "hobbit",
+    "rareza": "entrenado",
+    "precioBase": 600,
+    "descripcion": "Robusto, acostumbrado a llevar provisiones.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+  },
+  {
+    "id": "pony_bree_superior",
+    "nombre": "Pony de Bree",
+    "slot": "montura",
+    "raza": "hobbit",
+    "rareza": "superior",
+    "precioBase": 1200,
+    "descripcion": "Más rápido y resistente al cansancio.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+  },
+  {
+    "id": "pony_sombra_legendario",
+    "nombre": "Pony de la Sombra",
+    "slot": "montura",
+    "raza": "hobbit",
+    "rareza": "legendario",
+    "precioBase": 2400,
+    "descripcion": "Ejemplar mítico, veloz y sin fatiga.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+  },
+  {
+    "id": "caballo_labor_comun",
+    "nombre": "Caballo de Labor",
+    "slot": "montura",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 300,
+    "descripcion": "Equino sencillo usado en granjas.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
+  },
+  {
+    "id": "corcel_rohan_entrenado",
+    "nombre": "Corcel de Rohan",
+    "slot": "montura",
+    "raza": "hombre",
+    "rareza": "entrenado",
+    "precioBase": 900,
+    "descripcion": "Caballo fuerte de las llanuras.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+  },
+  {
+    "id": "destrero_gondor_superior",
+    "nombre": "Destrero de Gondor",
+    "slot": "montura",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1900,
+    "descripcion": "Elegante, equipado para la carga.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+  },
+  {
+    "id": "alas_alba_legendario",
+    "nombre": "Alas del Alba",
+    "slot": "montura",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 4000,
+    "descripcion": "Descendiente de caballos de leyenda.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+  },
+  {
+    "id": "corcel_silvano_comun",
+    "nombre": "Corcel Silvano",
+    "slot": "montura",
+    "raza": "elfo",
+    "rareza": "comun",
+    "precioBase": 400,
+    "descripcion": "Ágil y silencioso en el bosque.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
+  },
+  {
+    "id": "caballo_lindon_entrenado",
+    "nombre": "Caballo de Lindon",
+    "slot": "montura",
+    "raza": "elfo",
+    "rareza": "entrenado",
+    "precioBase": 1200,
+    "descripcion": "Refinado, entrenado para patrullas.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+  },
+  {
+    "id": "destrero_rivendel_superior",
+    "nombre": "Destrero de Rivendel",
+    "slot": "montura",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 2300,
+    "descripcion": "Con una gracia casi espiritual.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+  },
+  {
+    "id": "ciervo_bosque_legendario",
+    "nombre": "Ciervo del Bosque",
+    "slot": "montura",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 5500,
+    "descripcion": "Majestuoso, usado por los reyes.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+  },
+  {
+    "id": "cabra_minas_comun",
+    "nombre": "Cabra de Minas",
+    "slot": "montura",
+    "raza": "enano",
+    "rareza": "comun",
+    "precioBase": 240,
+    "descripcion": "Pequeña y terca, gran agarre.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
+  },
+  {
+    "id": "cabra_montanesa_entrenado",
+    "nombre": "Cabra Montañesa",
+    "slot": "montura",
+    "raza": "enano",
+    "rareza": "entrenado",
+    "precioBase": 800,
+    "descripcion": "Robusta, para laderas escarpadas.",
+    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+  },
+  {
+    "id": "cabra_hierro_superior",
+    "nombre": "Cabra de Hierro",
+    "slot": "montura",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 2000,
+    "descripcion": "Resistente a impactos.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+  },
+  {
+    "id": "ariete_erebor_legendario",
+    "nombre": "Ariete de Erebor",
+    "slot": "montura",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 4700,
+    "descripcion": "Ancestral, de cuernos reforzados.",
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+  },
+  {
+    "id": "barda_simple_comun",
+    "nombre": "Silla Simple",
+    "slot": "barda",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 130,
+    "descripcion": "Una montura básica de cuero sin protección extra.",
+    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+  },
+  {
+    "id": "barda_forjada_forjado",
+    "nombre": "Silla Forjada",
+    "slot": "barda",
+    "raza": "hobbit",
+    "rareza": "forjado",
+    "precioBase": 400,
+    "descripcion": "Cuero reforzado con hebillas de hierro.",
+    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+  },
+  {
+    "id": "barda_superior_superior",
+    "nombre": "Silla de Bree Acolchada",
+    "slot": "barda",
+    "raza": "hobbit",
+    "rareza": "superior",
+    "precioBase": 1200,
+    "descripcion": "Protección acolchada que mejora la resistencia.",
+    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+  },
+  {
+    "id": "barda_legendaria_legendario",
+    "nombre": "Barda de la Comarca Dorada",
+    "slot": "barda",
+    "raza": "hobbit",
+    "rareza": "legendario",
+    "precioBase": 2400,
+    "descripcion": "Barda artesanal, ligera y excepcionalmente resistente.",
+    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+  },
+  {
+    "id": "barda_cuero_comun",
+    "nombre": "Silla de Viaje",
+    "slot": "barda",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 200,
+    "descripcion": "Silla de montar estándar para viajeros.",
+    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+  },
+  {
+    "id": "barda_hierro_forjado",
+    "nombre": "Silla con Refuerzos",
+    "slot": "barda",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 400,
+    "descripcion": "Silla con placas de hierro en los costados.",
+    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+  },
+  {
+    "id": "barda_gondor_superior",
+    "nombre": "Barda de los Caballeros de Gondor",
+    "slot": "barda",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1000,
+    "descripcion": "Protección clásica de la Guardia de la Ciudad.",
+    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+  },
+  {
+    "id": "barda_dolamroth_legendario",
+    "nombre": "Barda de los Cisnes de Dol Amroth",
+    "slot": "barda",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 2200,
+    "descripcion": "Armadura completa digna de los príncipes de Belfalas.",
+    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+  },
+  {
+    "id": "barda_elfica_comun",
+    "nombre": "Silla Ligera",
+    "slot": "barda",
+    "raza": "elfo",
+    "rareza": "comun",
+    "precioBase": 200,
+    "descripcion": "Silla minimalista de diseño elfo.",
+    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+  },
+  {
+    "id": "barda_patrulla_forjado",
+    "nombre": "Silla Reforzada Silvana",
+    "slot": "barda",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 500,
+    "descripcion": "Cuero tratado, endurecido en los bosques.",
+    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+  },
+  {
+    "id": "barda_rivendel_superior",
+    "nombre": "Barda de Rivendel",
+    "slot": "barda",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 1200,
+    "descripcion": "Protección elegante con filigrana elfa.",
+    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+  },
+  {
+    "id": "barda_galadhrim_legendario",
+    "nombre": "Barda de los Galadhrim",
+    "slot": "barda",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 2400,
+    "descripcion": "Armadura de placas ligeras infundida con magia.",
+    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+  },
+  {
+    "id": "barda_mina_comun",
+    "nombre": "Silla de Carga",
+    "slot": "barda",
+    "raza": "enano",
+    "rareza": "comun",
+    "precioBase": 140,
+    "descripcion": "Silla robusta diseñada para mineros.",
+    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+  },
+  {
+    "id": "barda_dura_forjado",
+    "nombre": "Silla de Metal",
+    "slot": "barda",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 500,
+    "descripcion": "Protección de acero forjado en yunques.",
+    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+  },
+  {
+    "id": "barda_erebor_superior",
+    "nombre": "Barda de Erebor",
+    "slot": "barda",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 900,
+    "descripcion": "Placas de acero grueso contra impactos.",
+    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+  },
+  {
+    "id": "barda_hierro_legendario",
+    "nombre": "Barda de Hierro Ancestral",
+    "slot": "barda",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 1900,
+    "descripcion": "Armadura completa forjada con técnicas olvidadas.",
+    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+  }
+]
