@@ -1271,7 +1271,7 @@ function getCompanionBonus(profile) {
       case "andaer": bonus.blockChance += 0.20; break;
       case "nieriel": bonus.nierielSafe = true; break;
       case "faelon": bonus.faelonHeal += 10; break;
-      case "montaraces": bonus.rangerBonus += 0.30; break;
+      case "montaraces": bonus.explorationBonus += 0.30; break;
     }
   }
 
@@ -2405,7 +2405,7 @@ const CLASS_KEY_TO_LABEL = {
 
 const STARTER_ITEMS_BY_CLASS = {
   guardian: { id: "espada_larga_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  vigilante: { id: "lanza_corta_tier1", nombre: "Lanza Corta", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
+  vigilante: { id: "jabalina_ligera", nombre: "Jabalina Ligera", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { thrownBonus: 0.03 } },
   campeon: { id: "mandoble_simple_tier1", nombre: "Mandoble Simple", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } },
   cazador: { id: "arco_caza_tier1", nombre: "Arco de Caza", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } },
   luchador: { id: "guantes_tachonados_tier1", nombre: "Guantes de Cuero Tachonado", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
@@ -2491,7 +2491,7 @@ function buildTourNoText() {
 
 function buildTourYesText() {
   return (
-`🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** y armarte para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites.
+`🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** y armarte para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites, si necesitas algún compañero para tus viajes allí tienes el !establo.
 
 🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.
 
@@ -2770,6 +2770,16 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const classText = getPlayerClassBonusText(profile);
   const eqText = formatEquipmentTotals(eq.totals);
 
+  // NUEVO: Extracción de Ventajas Tácticas (Jugador)
+  const pStats = mapStatsToMatrixKeys(eq.totals);
+  const playerMatrixText = [];
+  if (pStats.meleeBonus) playerMatrixText.push(`Melee +${Math.round(pStats.meleeBonus * 100)}%`);
+  if (pStats.rangedBonus) playerMatrixText.push(`Rango +${Math.round(pStats.rangedBonus * 100)}%`);
+  if (pStats.thrownBonus) playerMatrixText.push(`Arrojo +${Math.round(pStats.thrownBonus * 100)}%`);
+  if (pStats.magicBonus) playerMatrixText.push(`Magia +${Math.round(pStats.magicBonus * 100)}%`);
+  if (pStats.cavalryBonus) playerMatrixText.push(`Caballería +${Math.round(pStats.cavalryBonus * 100)}%`);
+  const playerMatrixStr = playerMatrixText.length ? playerMatrixText.join(" | ") : "Ninguno";
+
   const party = getCompanionPowerDetails(profile);
   const companionLines = party.details.length
     ? party.details.map(c => {
@@ -2789,13 +2799,15 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const enemy = getEnemyPowerSummary(encounter);
   const enemyTier = getDangerTierProfile(enemy.peligro);
 
-    const dmg = (encounter.peligro * 12) + (encounter.damageBonus || 0);
+  const dmg = (encounter.peligro * 12) + (encounter.damageBonus || 0);
   
   let enemyStats = `Daño base: ${dmg}`;
   if (encounter.meleeBonus) enemyStats += ` | Melee +${Math.round(encounter.meleeBonus * 100)}%`;
   if (encounter.rangedBonus) enemyStats += ` | Rango +${Math.round(encounter.rangedBonus * 100)}%`;
   if (encounter.magicBonus) enemyStats += ` | Magia +${Math.round(encounter.magicBonus * 100)}%`;
-  if (encounter.throwBonus) enemyStats += ` | Arrojo +${Math.round(encounter.throwBonus * 100)}%`;
+  if (encounter.throwBonus || encounter.thrownBonus) enemyStats += ` | Arrojo +${Math.round((encounter.throwBonus || encounter.thrownBonus) * 100)}%`;
+  // NUEVO: Agregar lectura de Caballería al enemigo
+  if (encounter.cavalryBonus || encounter.mountedBonus) enemyStats += ` | Caballería +${Math.round((encounter.cavalryBonus || encounter.mountedBonus) * 100)}%`;
 
   if (encounter.efectos || encounter.stats) {
      const stats = encounter.efectos || encounter.stats;
@@ -2803,7 +2815,6 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
      if (stats.percepcion) enemyStats += ` | Percepción ${stats.percepcion}%`;
      if (stats.voluntad) enemyStats += ` | Voluntad ${stats.voluntad}%`;
   }
-
 
   const expeditionTotal = traveler.score + eq.score + party.total;
   const enemyScore = (enemy.peligro * 15) + (encounter.tipo === "jefe" ? 30 : 0);
@@ -2817,7 +2828,7 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 • Nivel: ${traveler.level} | Salud: ${traveler.health}/100
 • **Stats de Clase**: ${classText !== "Sin bonos de clase" ? classText : "Ninguno"}
 • **Stats de Equipo**: ${eqText !== "Sin bonos extra" ? eqText : "Ninguno"}
-• **Poder Total Aprox.**: ${traveler.score + eq.score}
+• **Ventajas Tácticas**: ${playerMatrixStr}
 
 **Compañeros**
 ${companionLines}
@@ -2831,6 +2842,7 @@ ${companionLines}
 • Balance de Poder: ${comparison}`
   );
 }
+
 
 // ==========================================
 //        LÓGICA LIMPIA DE EXPEDICIONES
