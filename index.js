@@ -2822,11 +2822,11 @@ let enemyTacticsStr = "Ninguna";
 if (enemy.bonosTacticos) {
     const b = enemy.bonosTacticos;
     let parts = [];
-    if (b.melee > 0) parts.push(`🗡️ +${b.melee}`);
-    if (b.ranged > 0) parts.push(`🏹 +${b.ranged}`);
-    if (b.caballeria > 0) parts.push(`🐎 +${b.caballeria}`);
-    if (b.thrown > 0) parts.push(`🪓 +${b.thrown}`);
-    if (b.magic > 0) parts.push(`✨ +${b.magic}`);
+    if (b.meleeBonus > 0) parts.push(`🗡️ +${b.melee}`);
+    if (b.rangedBonus > 0) parts.push(`🏹 +${b.ranged}`);
+    if (b.cavalryBonus > 0) parts.push(`🐎 +${b.caballeria}`);
+    if (b.thrownBonus > 0) parts.push(`🪓 +${b.thrown}`);
+    if (b.magicBonus > 0) parts.push(`✨ +${b.magic}`);
     
     if (parts.length > 0) enemyTacticsStr = parts.join(" | ");
 }
@@ -2849,7 +2849,7 @@ if (enemy.bonosTacticos) {
   }
 
   const expeditionTotal = traveler.score + eq.score + party.total;
-  const enemyScore = (enemy.peligro * 15) + (encounter.tipo === "jefe" ? 30 : 0);
+  const enemyScore = (enemy.peligro * 8) + (encounter.tipo === "jefe" ? 30 : 0);
   const delta = expeditionTotal - enemyScore;
   const comparison = getPowerComparisonText(delta);
 
