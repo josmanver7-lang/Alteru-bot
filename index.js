@@ -2606,7 +2606,7 @@ async function handleOnboarding(message, profile) {
 
   if (stage === "age") {
     const age = Number.parseInt(content, 10);
-    if (!Number.isFinite(age) || age < 10 || age > 5000) {
+    if (!Number.isFinite(age) || age < 10 || age > 50000) {
       return message.reply("Escribe una edad válida en números.");
     }
 
