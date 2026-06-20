@@ -34,7 +34,7 @@
       "rareza": "superior",
       "material": "acero",
       "precioBase": 550,
-      "efecto": { "damageReduction": 0.04 "willpowerBonus": 0.02 }
+      "efecto": { "damageReduction": 0.04, "willpowerBonus": 0.02 }
     },
     {
       "id": "capa_galadhrim",
