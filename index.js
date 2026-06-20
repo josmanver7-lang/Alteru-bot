@@ -2559,7 +2559,7 @@ async function handleOnboarding(message, profile) {
 
   if (stage === "age") {
     const age = Number.parseInt(content, 10);
-    if (!Number.isFinite(age) || age < 10 || age > 50000) {
+    if (!Number.isFinite(age) || age < 10 || age > 50000000) {
       return message.reply("Escribe una edad válida en números.");
     }
 
@@ -3034,9 +3034,12 @@ async function handleExpedicionVolver(message) {
   await clearExpeditionParty(message.author.id);
   const utilMsg = await decrementUtilities(message.author.id);
 
-  return message.reply(`⛺ Regresas a salvo al campamento base.\n\n🏆 Recompensa obtenida: +${partialPoints} pts | +${partialXP} XP\n\nExpedición abortada.${utilMsg}`);
-}
+    const txtAfinidad = (typeof affinityGainedLoss !== 'undefined' && affinityGainedLoss.length) 
+      ? affinityGainedLoss.join("\n") 
+      : "• Ninguna";
 
+    return message.reply(`⛺ **Regresas a salvo al campamento base.**\n\n🏆 Recompensa obtenida: +${partialPoints} pts | +${partialXP} XP\n\n🤝 Afinidades obtenidas:\n${txtAfinidad}\n\nExpedición abortada.${utilMsg}`);
+}
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en ninguna expedición activa. Usa `!tablon`.");
@@ -3404,8 +3407,9 @@ async function handleExpedicionDesafiar(message) {
 
       // Si cae en combate, se le cura automáticamente la salud para que no quede trabado a futuro
       await db.updateTravelerData(message.author.id, { salud: 100 });
+      const textoFinalDerrota = activeEncounter.textoDerrota || textoFracaso;
 
-      return message.reply(`💀 **Has caído en combate**\n\n${textoFracaso}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
+      return message.reply(`💀 **Has caído en combate**\n\n${textoFinalDerrota}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
     await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
