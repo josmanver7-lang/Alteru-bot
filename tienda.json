@@ -199,6 +199,15 @@
       "precioBase": 15,
       "descripcion": "Ilumina zonas oscuras y facilita rastrear caminos complejos.",
       "efecto": { "explorationBonus": 0.10 }
+    },
+    {
+      "id": "cinturon_basico",
+      "nombre": "Cinturon de Sanador básico",
+      "tipo": "accesorio",
+      "slots": 1,
+      "precioBase": 540,
+      "descripcion": "Cinturón de semicuero con bolsas pequeñas para diferentes ingredientes de curación.",
+      "efecto": { "stealthBonus": 0.03 }
     }
   ]
 }
