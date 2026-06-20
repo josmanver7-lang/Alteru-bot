@@ -2718,102 +2718,117 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const validTypes = ["enemigo_numeroso", "enemigo_poderoso", "jefe", "escenario_final"];
   if (!validTypes.includes(encounter?.tipo) && !validTypes.includes(encounter?.categoria)) return "";
 
+  // ==========================================
   // 1. OBTENCIÓN DE DATOS CENTRALES
+  // ==========================================
   const traveler = getTravelerCorePower(profile);
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-  const classText = getPlayerClassBonusText(profile);
-  const eqText = formatEquipmentTotals(eq.totals);
+  const classText = getPlayerClassBonusText(profile) !== "Sin bonos de clase" ? getPlayerClassBonusText(profile) : "Ninguno";
+  const eqText = formatEquipmentTotals(eq.totals) !== "Sin bonos extra" ? formatEquipmentTotals(eq.totals) : "Ninguno";
 
-  // 2. EXTRACOCCIÓN DE VENTAJAS TÁCTICAS (JUGADOR)
+  // ==========================================
+  // 2. VENTAJAS TÁCTICAS (JUGADOR)
+  // ==========================================
   const pStats = mapStatsToMatrixKeys(eq.totals);
-  const playerMatrixText = [];
-  if (pStats.meleeBonus) playerMatrixText.push(`Melee +${Math.round(pStats.meleeBonus * 100)}%`);
-  if (pStats.rangedBonus) playerMatrixText.push(`Rango +${Math.round(pStats.rangedBonus * 100)}%`);
-  if (pStats.thrownBonus) playerMatrixText.push(`Arrojo +${Math.round(pStats.thrownBonus * 100)}%`);
-  if (pStats.magicBonus) playerMatrixText.push(`Magia +${Math.round(pStats.magicBonus * 100)}%`);
-  if (pStats.cavalryBonus) playerMatrixText.push(`Caballería +${Math.round(pStats.cavalryBonus * 100)}%`);
-  const playerMatrixStr = playerMatrixText.length ? playerMatrixText.join(" | ") : "Ninguno";
+  const playerTactics = [];
+  
+  if (pStats.meleeBonus) playerTactics.push(`🗡️ +${Math.round(pStats.meleeBonus * 100)}%`);
+  if (pStats.rangedBonus) playerTactics.push(`🏹 +${Math.round(pStats.rangedBonus * 100)}%`);
+  if (pStats.thrownBonus) playerTactics.push(`🪓 +${Math.round(pStats.thrownBonus * 100)}%`);
+  if (pStats.magicBonus) playerTactics.push(`✨ +${Math.round(pStats.magicBonus * 100)}%`);
+  if (pStats.cavalryBonus) playerTactics.push(`🐎 +${Math.round(pStats.cavalryBonus * 100)}%`);
+  
+  const playerMatrixStr = playerTactics.length > 0 ? playerTactics.join(" | ") : "Ninguna";
 
+  // ==========================================
   // 3. PROCESAMIENTO DE COMPAÑEROS (PARTY)
+  // ==========================================
   const party = getCompanionPowerDetails(profile);
+  
+  // Diccionario extraído fuera del map para mejor rendimiento
+  const companionAbilities = {
+    "alteru": "Hab: +20% Éxito gen.",
+    "cirdil": "Hab: +15% vs Poderosos / Red. daño",
+    "duinor": "Hab: +25% vs Numerosos",
+    "andaer": "Hab: 20% Bloqueo total",
+    "montaraces": "Hab: +30% Éxito",
+    "nieriel": "Hab: Evasión de peligro",
+    "faelon": "Hab: Sanación +10"
+  };
 
   const companionLines = party.details.length > 0
     ? party.details.map(c => {
-        const abilities = {
-          "alteru": "Hab: +20% Éxito gen.",
-          "cirdil": "Hab: +15% vs Poderosos / Reducción daño",
-          "duinor": "Hab: +25% vs Numerosos",
-          "andaer": "Hab: 20% Bloqueo total",
-          "montaraces": "Hab: +30% Éxito",
-          "nieriel": "Hab: Evasión de peligro",
-          "faelon": "Hab: Sanación +10"
-        };
-        const abilityText = abilities[c.id] ? ` | ${abilities[c.id]}` : "";
-
+        const abilityText = companionAbilities[c.id] ? ` | ${companionAbilities[c.id]}` : "";
         const t = c.bonosTacticos || {};
-        let tacticas = [];
+        const tacticas = [];
+        
         if (t.melee > 0) tacticas.push(`🗡️ +${t.melee}`);
         if (t.ranged > 0) tacticas.push(`🏹 +${t.ranged}`);
-        if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
         if (t.thrown > 0) tacticas.push(`🪓 +${t.thrown}`);
         if (t.magic > 0) tacticas.push(`✨ +${t.magic}`);
+        if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
 
         const tacticasStr = tacticas.length > 0 ? tacticas.join(" | ") : "Sin bonos";
+        const success = Math.round(c.base.successBonus * 100);
+        const defense = Math.round(c.base.damageReduction * 100);
 
-        return `• **${c.nombre}**: ${tacticasStr} \n  \`Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}\``;
+        return `• **${c.nombre}**: ${tacticasStr}\n  \`Éxito +${success}% | Defensa +${defense}%${abilityText}\``;
       }).join("\n")
-    : "• Sin compañeros en el grupo";
+    : "• *Sin compañeros en el grupo*";
 
-  // 4. PROCESAMIENTO DE ENEMIGOS
+  // ==========================================
+  // 4. DATOS Y VENTAJAS DEL ENEMIGO
+  // ==========================================
   const enemy = getEnemyPowerSummary(encounter);
   const enemyTier = getDangerTierProfile(enemy.peligro);
 
-  let enemyTacticsStr = "Ninguna";
-  // Añadimos salvaguarda por si b viene directamente o anidado
-  const b = enemy.bonosTacticos || encounter.bonosTacticos || encounter.stats || enemy;
-  if (b) {
-      let parts = [];
-      if (b.meleeBonus > 0 || b.melee > 0) parts.push(`🗡️ +${b.meleeBonus || b.melee}`);
-      if (b.rangedBonus > 0 || b.ranged > 0) parts.push(`🏹 +${b.rangedBonus || b.ranged}`);
-      if (b.cavalryBonus > 0 || b.cavalry > 0 || b.mountedBonus > 0) parts.push(`🐎 +${b.cavalryBonus || b.cavalry || b.mountedBonus}`);
-      if (b.thrownBonus > 0 || b.thrown > 0 || b.throwBonus > 0) parts.push(`🪓 +${b.thrownBonus || b.thrown || b.throwBonus}`);
-      if (b.magicBonus > 0 || b.magic > 0) parts.push(`✨ +${b.magicBonus || b.magic}`);
-      
-      if (parts.length > 0) enemyTacticsStr = parts.join(" | ");
-  }
+  // Extracción segura de bonos unificada (Cubre el objeto 'bonus' y corrige el typo del JSON)
+  const eBonus = encounter.bonus || encounter.bonosTacticos || encounter.stats || enemy || {};
+  const eMelee = eBonus.meleeBonus || eBonus.meeleBonus || eBonus.melee || 0;
+  const eRanged = eBonus.rangedBonus || eBonus.ranged || 0;
+  const eThrown = eBonus.thrownBonus || eBonus.throwBonus || eBonus.thrown || 0;
+  const eMagic = eBonus.magicBonus || eBonus.magic || 0;
+  const eCavalry = eBonus.cavalryBonus || eBonus.mountedBonus || eBonus.cavalry || 0;
 
-  // 5. ESTADÍSTICAS DEL ENEMIGO
-  const dmg = (encounter.peligro * 9) + (encounter.damageBonus || 0);
+  const enemyTactics = [];
+  if (eMelee > 0) enemyTactics.push(`🗡️ +${eMelee}`);
+  if (eRanged > 0) enemyTactics.push(`🏹 +${eRanged}`);
+  if (eThrown > 0) enemyTactics.push(`🪓 +${eThrown}`);
+  if (eMagic > 0) enemyTactics.push(`✨ +${eMagic}`);
+  if (eCavalry > 0) enemyTactics.push(`🐎 +${eCavalry}`);
   
-  let enemyStats = `Daño base: ${dmg}`;
-  if (encounter.meleeBonus) enemyStats += ` | Melee +${Math.round(encounter.meleeBonus * 100)}%`;
-  if (encounter.rangedBonus) enemyStats += ` | Rango +${Math.round(encounter.rangedBonus * 100)}%`;
-  if (encounter.magicBonus) enemyStats += ` | Magia +${Math.round(encounter.magicBonus * 100)}%`;
-  if (encounter.throwBonus || encounter.thrownBonus) enemyStats += ` | Arrojo +${Math.round((encounter.throwBonus || encounter.thrownBonus) * 100)}%`;
-  if (encounter.cavalryBonus || encounter.mountedBonus) enemyStats += ` | Caballería +${Math.round((encounter.cavalryBonus || encounter.mountedBonus) * 100)}%`;
+  const enemyTacticsStr = enemyTactics.length > 0 ? enemyTactics.join(" | ") : "Ninguna";
 
-  if (encounter.efectos || encounter.stats) {
-     const stats = encounter.efectos || encounter.stats;
-     if (stats.sigilo) enemyStats += ` | Sigilo ${stats.sigilo}%`;
-     if (stats.percepcion) enemyStats += ` | Percepción ${stats.percepcion}%`;
-     if (stats.voluntad) enemyStats += ` | Voluntad ${stats.voluntad}%`;
-  }
+  // ==========================================
+  // 5. ESTADÍSTICAS BASE DEL ENEMIGO
+  // ==========================================
+  const baseDmg = (encounter.peligro * 9) + (encounter.damageBonus || 0);
+  let enemyStats = `Daño base: ${baseDmg}`;
 
+  // Se extraen stats adicionales sin mezclar con los bonos de combate
+  const eStats = encounter.efectos || encounter.stats || {};
+  if (eStats.sigilo) enemyStats += ` | Sigilo ${eStats.sigilo}%`;
+  if (eStats.percepcion) enemyStats += ` | Percepción ${eStats.percepcion}%`;
+  if (eStats.voluntad) enemyStats += ` | Voluntad ${eStats.voluntad}%`;
+
+  // ==========================================
   // 6. CÁLCULO DE BALANCES GENERALES
+  // ==========================================
   const expeditionTotal = traveler.score + eq.score + party.total;
   const enemyScore = (enemy.peligro * 8) + (encounter.tipo === "jefe" ? 30 : 0);
   const delta = expeditionTotal - enemyScore;
   const comparison = getPowerComparisonText(delta);
 
+  // ==========================================
   // 7. RETORNO ESTÉTICO FORMATEADO PARA DISCORD
-  return (
-`
-      📊  **TABLA DE PODER Y ESTADÍSTICAS
+  // ==========================================
+  // Nota: La alineación a la izquierda es intencional para evitar bugs de formato en Discord.
+  return `📊 **TABLA DE PODER Y ESTADÍSTICAS**
       
 🛡️ **TU AVENTURERO**
 • **Estado**: Nivel ${traveler.level} | ❤️ ${traveler.health}/100
-• **Clase**: \`${classText !== "Sin bonos de clase" ? classText : "Ninguno"}\`
-• **Equipo**: \`${eqText !== "Sin bonos extra" ? eqText : "Ninguno"}\`
+• **Clase**: \`${classText}\`
+• **Equipo**: \`${eqText}\`
 • **Ventajas Tácticas**: ${playerMatrixStr}
 
 👥 **COMPAÑEROS DE EXPEDICIÓN**
@@ -2827,8 +2842,7 @@ ${companionLines}
 ───────────────────────────────
 ⚖️ **COMPARATIVA GENERAL**
 • **Balance de Poder**: ${comparison}
-───────────────────────────────`
-  );
+───────────────────────────────`;
 }
 
 // ==========================================
