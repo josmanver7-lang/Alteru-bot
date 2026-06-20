@@ -12,6 +12,18 @@
     "xp": 5
   },
   {
+    "id": "lobo_solitario",
+    "categoria": "enemigo_poderoso",
+    "tipo": "bestia",
+    "titulo": "Lobo Solitario",
+    "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
+    "descripcion": "Observas a un lobo vagando en solitario quien al observarte te evalúa para atacarte o ignorarte, ¿Decides alejarte o continuar por el camino principal?.",
+    "textoExito": "El lobo se lanza al ataque contra ti corriendo a toda velocidad y gruñendo, lo recibes con seguridad y tras un breve combate logras matarlo, le ahorras el sufrimiento asegurándote que no siga respirando.",
+    "textoFracaso": "El lobo se lanza al ataque contra ti corriendo a toda velocidad y gruñendo, lo recibes con panico y te enfrentas a el evitanto sus mordidas, recibes algunos arañazos y te vez obligado a retroceder para replantear tus opciones.",
+    "peligro": 1,
+    "xp": 5
+  },
+  {
     "id": "ataque_bandido",
     "categoria": "evento_especial",
     "tipo": "combate",
