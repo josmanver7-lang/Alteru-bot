@@ -81,7 +81,7 @@
       "slots": 3,
       "precioBase": 45,
       "descripcion": "Un trago fuerte.",
-      "efecto": { "combatBonus": 0.02 }
+      "efecto": { "willpowerBonus": 0.03 }
     },
     {
       "id": "carne_seca",
@@ -117,7 +117,7 @@
       "slots": 1,
       "precioBase": 40,
       "descripcion": "La mejor hierba de la Comarca. Su aroma reconforta el espíritu.",
-      "efecto": { "explorationBonus": 0.03, "magicBonus" 0.01 }
+      "efecto": { "explorationBonus": 0.03, "magicBonus": 0.01 }
     },
     {
       "id": "laud",
