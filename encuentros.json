@@ -16,7 +16,7 @@
     "categoria": "evento_especial",
     "tipo": "combate",
     "titulo": "Asalto de Bandidos",
-    "bonus": { "meeleBonus": 0.01, "rangedBonus": 0.01 },
+    "bonus": { "meleeBonus": 0.01, "rangedBonus": 0.01 },
     "region": ["lamedon", "pinnath gelin", "blackroot vale", "andrast", "belfalas"],
     "descripcion": "Mientras viajas tres bandidos se interponen en tu camino, uno de ellos rie con malicia mientras se acercan cada vez mas, llevando machetes y ropas andrajosas.",
     "textoExito": "Luchas contra los tres haciendo el mejor uso de tus habilidades y manteniendo siempre la distancia para no dejarte rodear, finalmente logras acabar con ellos, riendo el último.",
