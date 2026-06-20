@@ -3474,7 +3474,53 @@ client.on("messageCreate", async (message) => {
     return message.reply("❌ Hubo un error al intentar reiniciar tu introducción. Por favor, inténtalo de nuevo.");
   }
   }
-  
+  const establoData = require('./establo.json'); //[span_1](start_span)[span_1](end_span)
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'establo',
+    description: 'Muestra el catálogo rotatorio del establo (cambia cada 12 horas).',
+    execute(message, args) {
+        // Filtramos los objetos según su 'slot' en establo.json[span_2](start_span)[span_2](end_span)
+        const monturas = establoData.filter(item => item.slot === "montura"); //[span_3](start_span)[span_3](end_span)
+        const bardas = establoData.filter(item => item.slot === "barda"); //[span_4](start_span)[span_4](end_span)
+
+        // Calculamos un número de "ciclo" que cambiará exactamente cada 12 horas
+        const horasPorCiclo = 12;
+        const cicloActual = Math.floor(Date.now() / (horasPorCiclo * 60 * 60 * 1000));
+
+        // Seleccionamos 8 monturas rotatorias
+        const monturasEnVenta = [];
+        for (let i = 0; i < 8; i++) {
+            // Usamos el módulo (%) para evitar que el índice matemático se salga de la lista de objetos
+            monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]);
+        }
+
+        // Seleccionamos 4 bardas rotatorias
+        const bardasEnVenta = [];
+        for (let i = 0; i < 4; i++) {
+            bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]);
+        }
+
+        // Construimos la interfaz visual
+        const embed = new EmbedBuilder()
+            .setTitle('🐴 Establo del Campamento')
+            .setColor('#8B4513')
+            .addFields(
+                { 
+                    name: `Monturas en el corral (8)`, 
+                    value: monturasEnVenta.map(m => `**${m.nombre}** (${m.precioBase} oro) - *${m.rareza}*`).join('\n').substring(0, 1024) //[span_5](start_span)[span_5](end_span)
+                },
+                { 
+                    name: `Bridas y Bardas (4)`, 
+                    value: bardasEnVenta.map(b => `**${b.nombre}** (${b.precioBase} oro) - *${b.rareza}*`).join('\n').substring(0, 1024) //[span_6](start_span)[span_6](end_span)
+                }
+            )
+            .setFooter({ text: 'Usa tu comando de compra para adquirir uno de estos objetos antes de que cambie la rotación.' });
+
+        message.channel.send({ embeds: [embed] });
+    }
+};
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
   // ========================================
