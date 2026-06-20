@@ -3397,7 +3397,7 @@ async function handleExpedicionDesafiar(message) {
       if (line) reactions.push(`💬 ${line}`);
     }
 
-    const textoFracaso = activeEncounter.textoFracaso || `Recibes ${danoEnemigo} de daño en *${activeEncounter.titulo}*.`;
+        const textoFinalDerrota = activeEncounter.textoDerrota || textoFracaso;
 
     if (nuevaSalud <= 0) {
       const utilMsg = await decrementUtilities(message.author.id);
@@ -3407,14 +3407,28 @@ async function handleExpedicionDesafiar(message) {
 
       // Si cae en combate, se le cura automáticamente la salud para que no quede trabado a futuro
       await db.updateTravelerData(message.author.id, { salud: 100 });
-      const textoFinalDerrota = activeEncounter.textoDerrota || textoFracaso;
 
       return message.reply(`💀 **Has caído en combate**\n\n${textoFinalDerrota}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
-    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+    // =========================================================
+    // NUEVO: SISTEMA DE REGENERACIÓN POR HEALING BONUS (POST-COMBATE)
+    // =========================================================
+    const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
+    let saludConRegen = nuevaSalud;
+    let txtRegen = "";
 
-    return message.reply(`⚠️ **Recibes Daño**\n\n${textoFracaso}\n\n❤️ Salud restante: ${nuevaSalud}/100\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
+    if (healingBonusTotal > 0) {
+      // Multiplicamos por 100 (ej: 0.03 -> 3 HP, 0.08 -> 8 HP)
+      const vidaARecuperar = Math.floor(healingBonusTotal * 100);
+      saludConRegen = Math.min(100, nuevaSalud + vidaARecuperar);
+      txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te aumenta +${vidaARecuperar} HP.*`;
+    }
+
+    // Guardamos la salud final (ya con la curación aplicada)
+    await db.updateTravelerData(message.author.id, { salud: saludConRegen });
+
+    return message.reply(`⚠️ **Recibes Daño**\n\n${textoFracaso}\n\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
   }
 }
 
