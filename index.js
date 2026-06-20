@@ -406,7 +406,8 @@ const companions = {
     bonus: "`⚔️ +6% Combate` | `🧠 +7% Voluntad` | `🛡️ +8% Reducción de Daño`",
     equipo: "• Espada larga templada\n• Escudo rectangular del Pelennor\n• Placa metálica\n• Capa de Cúridwan",
     imagenUrl: "https://i.ibb.co/WN7S57R9/1000055154.png",
-    color: "#4A0E4E"
+    color: "#4A0E4E",
+    coste: "500"
   },
   nieriel: {
     nombre: "Nieriel",
@@ -419,7 +420,8 @@ const companions = {
     bonus: "`⚔️ +5% Daño` | `🏃 +6% Velocidad` | `🛡️ +4% Defensa`",
     equipo: "• Armadura y Capa del Cisne\n• Escudo Doncella del Cisne\n• Casco de Doncella del Cisne",
     imagenUrl: "https://i.ibb.co/MDvCKp9w/1000055150.png",
-    color: "#E5E4E2"
+    color: "#E5E4E2",
+    coste: "200"
   },
   cirdil: {
     nombre: "Cirdil",
@@ -432,7 +434,8 @@ const companions = {
     bonus: "`🛡️ +10% Defensa` | `❤️ +5% Vida Máxima` | `⚔️ +4% Combate`",
     equipo: "• Espada larga templada\n• Escudo del Árbol Blanco\n• Gambeson Acolchado del Pelennor",
     imagenUrl: "https://i.ibb.co/cK9xZJW6/1000055152.png",
-    color: "#5A5D64"
+    color: "#5A5D64",
+    coste: "250"
   },
   duinor: {
     nombre: "Duinor",
@@ -445,7 +448,8 @@ const companions = {
     bonus: "`⚔️ +12% Daño` | `💥 +5% Prob. Crítico` | `🏃 +3% Velocidad`",
     equipo: "• Mandoble templado (x2)\n• Armadura acolchada reforzada\n• Yelmo del Escolta",
     imagenUrl: "https://i.ibb.co/VcdMMQms/1000055149.png",
-    color: "#8B5A2B"
+    color: "#8B5A2B",
+    coste: "250"
   },
   faelon: {
     nombre: "Faelon",
@@ -458,7 +462,8 @@ const companions = {
     bonus: "`🔮 +10% Poder Mágico` | `💖 +8% Sanación` | `🧠 +5% Voluntad`",
     equipo: "• Arco compuesto de Rivendel\n• Túnica de sabio explorador\n• Runas de Etten",
     imagenUrl: "https://i.ibb.co/n834R2Xj/1000055153.png",
-    color: "#1F4E5B"
+    color: "#1F4E5B",
+    color: "100"
   },
   andaer: {
     nombre: "Andaer",
@@ -471,7 +476,8 @@ const companions = {
     bonus: "`⚔️ +5% Combate` | `👥 +6% Sigilo` | `🛡️ +2% Reducción de Daño`",
     equipo: "• Lanza larga\n• Escudo de Broquel de Gondor\n• Botas de cuero",
     imagenUrl: "https://i.ibb.co/jkqQbvn3/1000055151.png",
-    color: "#C67B5C"
+    color: "#C67B5C",
+    coste: "150"
   },
   montaraces: {
     nombre: "Montaraces",
@@ -484,7 +490,8 @@ const companions = {
     bonus: "`👥 +X% Sigilo` | `🏹 +X% Daño a Distancia` | `[Por completar]`",
     equipo: "• Arco largo de montaraz\n• Capa sombría con capucha\n• Espada corta de acero",
     imagenUrl: "https://i.ibb.co/LX9wtR7h/1000055148.png",
-    color: "#223322"
+    color: "#223322",
+    coste: "1000"
   }
 };
 
@@ -2827,7 +2834,7 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
     }
 
-    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 8) + Math.floor(Math.random() * 15);
+    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 6) + Math.floor(Math.random() * 15);
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
     danoEnemigo = Math.max(1, Math.floor(danoEnemigo * (1 - totalDmgRed)));
 
