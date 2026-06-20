@@ -1056,7 +1056,7 @@ function getCompanionEquipmentFromPersonaje(companionId) {
   } else {
     const armaEquipada = rawEq.arma || personaje.arma || "";
     const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
-    consol.logarmaequipada 
+    console.log(armaEquipada) 
     
     Object.assign(formattedEq, {
       arma: armaEquipada,
