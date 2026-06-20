@@ -2802,7 +2802,7 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   // ==========================================
   // 5. ESTADÍSTICAS BASE DEL ENEMIGO
   // ==========================================
-  const baseDmg = (encounter.peligro * 9) + (encounter.damageBonus || 0);
+  const baseDmg = (encounter.peligro * 5) + (encounter.damageBonus || 0);
   let enemyStats = `Daño base: ${baseDmg}`;
 
   // Se extraen stats adicionales sin mezclar con los bonos de combate
@@ -2815,7 +2815,7 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   // 6. CÁLCULO DE BALANCES GENERALES
   // ==========================================
   const expeditionTotal = traveler.score + eq.score + party.total;
-  const enemyScore = (enemy.peligro * 8) + (encounter.tipo === "jefe" ? 30 : 0);
+  const enemyScore = (enemy.peligro * 5) + (encounter.tipo === "jefe" ? 30 : 0);
   const delta = expeditionTotal - enemyScore;
   const comparison = getPowerComparisonText(delta);
 
