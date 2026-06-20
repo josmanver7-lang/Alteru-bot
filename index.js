@@ -460,59 +460,165 @@ function obtenerRangoNivel(level = 1) {
 // COMPAÑEROS Y BONIFICACIONES
 // ================================
 
-const companions = {
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
+});
+
+// BASE DE DATOS CORREGIDA Y COHERENTE (Fiel a tus especificaciones)
+const baseDeDatosCompañeros = {
   alteru: {
     nombre: "Altéru",
-    clase: "Capitán",
-    habilidad: "Rugido del León",
-    efecto: "+20% éxito general en expediciones.",
-    coste: 500,
-    nivel: 3
-  },
-  cirdil: {
-    nombre: "Círdil",
-    clase: "Guerrero",
-    habilidad: "Escudo de Gondor",
-    efecto: "+15% contra enemigos poderosos y reduce daño recibido.",
-    coste: 250
-  },
-  duinor: {
-    nombre: "Duinor",
-    clase: "Campeón",
-    habilidad: "Deseo de Lucha",
-    efecto: "+25% contra enemigos numerosos.",
-    coste: 200
-  },
-  andaer: {
-    nombre: "Andaer",
-    clase: "Guerrero",
-    habilidad: "Instinto Escudero",
-    efecto: "20% de bloquear un golpe por completo.",
-    coste: 150
+    titulo: "Capitán de las Colinas",
+    clase: "🛡️ Capitán",
+    origen: "Pinnath Gelin, Ost Ardnír, Gondor",
+    personalidad: "Desafiante, ambicioso, apasionado, cariñoso, guía, irónico, serio, observador, estoico.",
+    historia: "Nació en el año 2996 de la T.E. Se crió en Ost Ardnír y estudió en el colegio de Eruditos de Minas Tirith. Fue portavoz de Gondor y, tras grandes hazañas como derrotar al líder corsario Kardŭn, fue nombrado Capitán.",
+    habilidad: "🦁 **Rugido de León:** +20% Éxito.",
+    bonus: "`⚔️ +6% Combate` | `🧠 +7% Voluntad` | `🛡️ +8% Reducción de Daño`",
+    equipo: "• Espada larga templada\n• Escudo rectangular del Pelennor\n• Placa metálica\n• Capa de Cúridwan",
+    imagenUrl: "https://ibb.co/8nGFsGQ3",
+    color: "#4A0E4E"
   },
   nieriel: {
     nombre: "Nieriel",
-    clase: "Capitán",
-    habilidad: "Instinto de Supervivencia",
-    efecto: "Evita encontrar enemigos con peligro superior a tu nivel.",
-    coste: 150
+    titulo: "La novia de Altéru",
+    clase: "⚔️ Capitán / Duelista",
+    origen: "Dol Amroth",
+    personalidad: "Reservada, silenciosa, observadora, empática y amable. Destaca por su gran sensibilidad.",
+    historia: "Nació en el año 3002 de la T.E. Se crió en Dol Amroth, siendo hija de nobles descendientes del linaje de Galador. Conoció y se enamoró de Altéru en el banquete posterior a la batalla de Belfalas, acompañándolo en sus aventuras.",
+    habilidad: "🦢 **Doncella del Cisne:** Incrementa la evasión del grupo ante ataques a distancia.",
+    bonus: "`⚔️ +5% Daño` | `🏃 +6% Velocidad` | `🛡️ +4% Defensa`",
+    equipo: "• Armadura y Capa del Cisne\n• Escudo Doncella del Cisne\n• Casco de Doncella del Cisne",
+    imagenUrl: "https://ibb.co/bg0KYL7w",
+    color: "#E5E4E2"
+  },
+  cirdil: {
+    nombre: "Cirdil",
+    titulo: "El Escudo de Gondor",
+    clase: "🛡️ Guerrero / Tanque",
+    origen: "Minas Tirith",
+    personalidad: "Inquieto, carismático, impulsivo, social y cariñoso.",
+    historia: "Nació en el año 2996 de la T.E. Se crió en Minas Tirith, donde a temprana edad fue aprendiz de herrero. Es el mejor amigo de Altéru y lo acompañó como portavoz, destacando en la defensa de Ost Ardnír y Belfalas.",
+    habilidad: "🌳 **Escudo de Gondor:** +15% efectividad contra Enemigo Poderoso.",
+    bonus: "`🛡️ +10% Defensa` | `❤️ +5% Vida Máxima` | `⚔️ +4% Combate`",
+    equipo: "• Espada larga templada\n• Escudo del Árbol Blanco\n• Gambeson Acolchado del Pelennor",
+    imagenUrl: "https://ibb.co/Ngq7Jx09",
+    color: "#5A5D64"
+  },
+  duinor: {
+    nombre: "Duinor",
+    titulo: "El Paladín",
+    clase: "⚔️ Campeón",
+    origen: "Lamedon",
+    personalidad: "Calmado, amigable, cercano, social y cariñoso. Disfruta de la buena compañía y de la batalla.",
+    historia: "Nació en el año 2996 de la T.E. Se crió en Lamedon. Desde temprana edad fue rigurosamente entrenado para formar parte de la escolta personal del señor Angbor, uniéndose luego a Altéru en sus campañas.",
+    habilidad: "⚔️ **Deseo de Lucha:** +25% efectividad contra enemigo numeroso.",
+    bonus: "`⚔️ +12% Daño` | `💥 +5% Prob. Crítico` | `🏃 +3% Velocidad`",
+    equipo: "• Mandoble templado (x2)\n• Armadura acolchada reforzada\n• Yelmo del Escolta",
+    imagenUrl: "https://ibb.co/gLGttPVx",
+    color: "#8B5A2B"
   },
   faelon: {
     nombre: "Faelon",
-    clase: "Guardián Rúnico",
-    habilidad: "Sabiduría de Imladris",
-    efecto: "Restaura +10 de salud al final de cada encuentro.",
-    coste: 100
+    titulo: "El Elfo",
+    clase: "🔮 Guardián Rúnico",
+    origen: "Imladris (Rivendel)",
+    personalidad: "Calmado, amigable, cercano, social y atento.",
+    historia: "Nació en el año 2517 de la T.E. Se crió en Imladris (Rivendel), donde fue preparado en las artes de la curación y la escritura rúnica antigua, siendo testigo longevo de la historia de la Tierra Media.",
+    habilidad: "📜 **Sabiduría de Rivendel:** +10 de salud después de cada encuentro.",
+    bonus: "`🔮 +10% Poder Mágico` | `💖 +8% Sanación` | `🧠 +5% Voluntad`",
+    equipo: "• Arco compuesto de Rivendel\n• Túnica de sabio explorador\n• Runas de Etten",
+    imagenUrl: "https://ibb.co/cXbRx5WQ",
+    color: "#1F4E5B"
+  },
+  andaer: {
+    nombre: "Andaer",
+    titulo: "El Escudero",
+    clase: "🛡️ Guerrero",
+    origen: "Granjas de Belfalas",
+    personalidad: "Inquieto, amigable, servicial, social y diligente.",
+    historia: "Nació en el año 3002 de la T.E. Se crió en las granjas costeras de la región de Belfalas entrenando de manera independiente. Ve a Altéru como un mentor y modelo a seguir en escaramuzas.",
+    habilidad: "📌 **Lealtad del Escudero:** +20% de bloquear un ataque enemigo.",
+    bonus: "`⚔️ +5% Combate` | `👥 +6% Sigilo` | `🛡️ +2% Reducción de Daño`",
+    equipo: "• Lanza larga\n• Escudo de Broquel de Gondor\n• Botas de cuero",
+    imagenUrl: "https://ibb.co/VYbzJWfM",
+    color: "#C67B5C"
   },
   montaraces: {
-    nombre: "Montaraces de Arathir",
-    clase: "Cazadores",
-    habilidad: "Exploradores del Norte",
-    efecto: "+30% éxito en expediciones.",
-    coste: 1000,
-    nivel: 5
+    nombre: "Montaraces",
+    titulo: "Montaraces de Arathir",
+    clase: "🏹 Cazador",
+    origen: "Las Quebradas del Norte",
+    personalidad: "Sombríos, silenciosos, vigilantes y leales.",
+    historia: "Se criaron en las salvajes quebradas del norte. Su líder era Arathir, quien a su vez servía fielmente a Trancos. Protegen los caminos y las fronteras de las sombras que acechan en Eriador.",
+    habilidad: "🌲 **Exploradores del Norte:** +30$ éxito.",
+    bonus: "`👥 +X% Sigilo` | `🏹 +X% Daño a Distancia` | `[Por completar]`",
+    equipo: "• Arco largo de montaraz\n• Capa sombría con capucha\n• Espada corta de acero",
+    imagenUrl: "https://ibb.co/Q3YBNQwj",
+    color: "#223322" // Verde oscuro montaraz
   }
 };
+
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+
+  // 1. COMANDO GENERAL (!compañeros)
+  if (message.content.toLowerCase() === '!compañeros') {
+    const embedGeneral = new EmbedBuilder()
+      .setColor('#2F3136')
+      .setAuthor({ name: '⚔️ Campamento de Montaraces', iconURL: 'https://i.imgur.com/wSTFk9g.png' })
+      .setTitle('Montaraces de Arathir')
+      .setDescription('Lista de guerreros asignados al campamento disponibles para las expediciones. Usa `!compañero <nombre>` para desplegar su ficha técnica.')
+      .addFields({ 
+        name: '📜 Miembros del Campamento', 
+        value: '• `!compañero alteru`\n• `!compañero nieriel`\n• `!compañero cirdil`\n• `!compañero duinor`\n• `!compañero faelon`\n• `!compañero andaer`\n• `!compañero montaraces`', 
+        inline: false 
+      })
+      .setImage('https://ibb.co/Q3YBNQwj') // Imagen grupal de los montaraces abajo
+      .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
+
+    return message.reply({ embeds: [embedGeneral] });
+  }
+
+  // 2. COMANDO INDIVIDUAL DE FICHA TÉCNICA (!compañero <nombre>)
+  if (message.content.toLowerCase().startsWith('!compañero ')) {
+    const args = message.content.split(' ');
+    if (!args[1]) return message.reply('Por favor, especifica el nombre del compañero. Ejemplo: `!compañero alteru`');
+    
+    const nombreBusqueda = args[1].toLowerCase();
+    const datos = baseDeDatosCompañeros[nombreBusqueda];
+
+    if (!datos) return message.reply('Ese compañero o unidad no se encuentra en el campamento.');
+
+    const embedFicha = new EmbedBuilder()
+      .setColor(datos.color)
+      .setTitle(`${datos.nombre} — *${datos.titulo}*`)
+      .setThumbnail(datos.imagenUrl) // Retrato 512x512 limpio en la esquina derecha
+      .setDescription(
+        `📌 **Clase:** ${datos.clase}\n` +
+        `🌍 **Origen:** ${datos.origen}\n` +
+        `🎭 **Rasgos:** *${datos.personalidad}*\n\n` +
+        `---`
+      )
+      .addFields(
+        { name: '📖 Resumen de la Historia', value: datos.historia, inline: false },
+        { name: '🔥 Habilidad Activa', value: datos.habilidad, inline: false },
+        { name: '📊 Atributos y Bonus de Combate', value: datos.bonus, inline: false },
+        { name: '⚔️ Equipo Actual', value: datos.equipo, inline: false }
+      )
+      .setFooter({ text: `Usa !contratar ${datos.nombre.toLowerCase()} para sumarlo a tu grupo.` });
+
+    return message.reply({ embeds: [embedFicha] });
+  }
+});
+
+// client.login('TU_BOT_TOKEN');
 
 const ITEM_TIER_VALUES = { ninguno: 0, none: 0, comun: 1, forjado: 2, superior: 3, legendario: 4 }; 
 const PLAYER_CLASS_BONUS = { 
