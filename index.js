@@ -2807,10 +2807,9 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 
   // 7. RETORNO ESTÉTICO FORMATEADO PARA DISCORD
   return (
-`╔════════════════════════════════════════╗
-      📊  **TABLA DE PODER Y ESTADÍSTICAS**
-╚════════════════════════════════════════╝
-
+`
+      📊  **TABLA DE PODER Y ESTADÍSTICAS
+      
 🛡️ **TU AVENTURERO**
 • **Estado**: Nivel ${traveler.level} | ❤️ ${traveler.health}/100
 • **Clase**: \`${classText !== "Sin bonos de clase" ? classText : "Ninguno"}\`
@@ -2825,10 +2824,10 @@ ${companionLines}
 • **Atributos**: \`${enemyStats}\`
 • **Ventajas Tácticas**: ${enemyTacticsStr}
 
-──────────────────────────────────────────
+───────────────────────────────
 ⚖️ **COMPARATIVA GENERAL**
 • **Balance de Poder**: ${comparison}
-──────────────────────────────────────────`
+───────────────────────────────`
   );
 }
 
