@@ -373,5 +373,191 @@
       "willpowerBonus": 0.06,
       "negotiationBonus": 0.08
     }
+  },
+      {
+    "id": "aro_rocio_alba",
+    "nombre": "Aro del Rocío del Alba",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 40,
+    "descripcion": "Un sencillo aro de bronce místico que se lleva en la frente; aclara los sentidos y ayuda a canalizar el flujo curativo.",
+    "efecto": {
+      "healingBonus": 0.02
+    }
+  },
+  {
+    "id": "brazalete_espiras_misticas",
+    "nombre": "Brazalete de Espiras Místicas",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 85,
+    "descripcion": "Un brazalete que se ajusta a la muñeca. Sus grabados brillan con una tenue luz cuando se cierran las heridas.",
+    "efecto": {
+      "healingBonus": 0.04
+    }
+  },
+  {
+    "id": "anillo_savia_perpetua",
+    "nombre": "Anillo de la Savia Perpetua",
+    "tipo": "anillo",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "superior",
+    "precioBase": 260,
+    "descripcion": "Tallado en una madera extrañamente viva que nunca se seca, otorgando un flujo constante de vitalidad a los conjuros.",
+    "efecto": {
+      "healingBonus": 0.06,
+      "willpowerBonus": 0.02
+    }
+  },
+  {
+    "id": "fibula_resonancia_vital",
+    "nombre": "Broche Fíbula de Resonancia Vital",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 720,
+    "descripcion": "Una joya mística en forma de chapa que se encaja en el pecho de la vestimenta. Su poder latente magnifica las artes de sanación.",
+    "efecto": {
+      "healingBonus": 0.09,
+      "willpowerBonus": 0.04
+    }
+  },
+    {
+    "id": "anillo_cobre_desgastado",
+    "nombre": "Anillo de Cobre Desgastado",
+    "tipo": "anillo",
+    "slot": "anillo",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 15,
+    "descripcion": "Un aro de cobre simple, oscurecido por el tiempo y el uso. Apenas vale unas pocas monedas.",
+    "efecto": {
+      "negotiationBonus": 0.01
+    }
+  },
+  {
+    "id": "muneco_madera_tallado",
+    "nombre": "Muñeco Tallado de Madera",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 20,
+    "descripcion": "Una figura rústica hecha a mano que cabe en la palma de la mano. Transmite una extraña sensación de nostalgia.",
+    "efecto": {
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "brazalete_cobre_oxidado",
+    "nombre": "Brazalete de Cobre Oxidado",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 25,
+    "descripcion": "Un brazalete tosco con manchas verdosas de óxido. Perteneció a algún miliciano olvidado.",
+    "efecto": {
+      "damageReduction": 0.01
+    }
+  },
+  {
+    "id": "copa_bronce_abollada",
+    "nombre": "Copa de Bronce Abollada",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 35,
+    "descripcion": "Un antiguo trofeo de corte clásico que evoca los relatos de héroes de viejas epopeyas. Está bastante golpeado.",
+    "efecto": {
+      "negotiationBonus": 0.01
+    }
+  },
+  {
+    "id": "vaso_vidrio_ornamentado",
+    "nombre": "Vaso de Vidrio Ornamentado",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 20,
+    "descripcion": "Un vaso de cristal opaco con grabados desgastados. Es un milagro que no se haya roto en el camino.",
+    "efecto": {
+      "explorationBonus": 0.01
+    }
+  },
+  {
+    "id": "broche_edhellond_desgastado",
+    "nombre": "Broche de Edhelon Desgastado",
+    "tipo": "amuleto",
+    "slot": "amuleto",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 30,
+    "descripcion": "Un pequeño broche que imita el antiguo estilo de los elfos del norte, aunque su brillo se apagó hace mucho.",
+    "efecto": {
+      "stealthBonus": 0.01
+    }
+  },
+  {
+    "id": "piedra_hombres_pukel",
+    "nombre": "Fragmento de los Hombres Púkel",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 25,
+    "descripcion": "Un trozo de roca tosca tallada a semejanza de las extrañas estatuas guardianas que vigilan los senderos de montaña.",
+    "efecto": {
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "reliquia_tallada_numenor",
+    "nombre": "Piedra Tallada de Númenor",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "comun",
+    "precioBase": 45,
+    "descripcion": "Una roca marina gastada por el oleaje, tallada burdamente con la forma de estrella de cinco puntas de la Isla Caída.",
+    "efecto": {
+      "survivalBonus": 0.01
+    }
+  },
+  {
+    "id": "estatuilla_anarion_miniatura",
+    "nombre": "Estatuilla de Anárion en Miniatura",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 120,
+    "descripcion": "Una pequeña réplica de bronce que representa al hermano fundador de Gondor. Tiene un acabado tosco pero firme.",
+    "efecto": {
+      "willpowerBonus": 0.02,
+      "combatBonus": 0.01
+    }
+  },
+  {
+    "id": "replica_piedra_argonath",
+    "nombre": "Réplica en Piedra de los Argonath",
+    "tipo": "reliquia",
+    "slot": "reliquia",
+    "raza": "general",
+    "rareza": "forjado",
+    "precioBase": 145,
+    "descripcion": "Un tallado minucioso de uno de los Reyes Pilares. Es un amuleto muy estimado entre los viajeros de los ríos.",
+    "efecto": {
+      "explorationBonus": 0.02,
+      "willpowerBonus": 0.01
+    }
   }
 ]
