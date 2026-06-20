@@ -5,8 +5,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf.",
-    "puntos": 50,
-    "xp": 100,
+    "puntos": 100,
+    "xp": 50,
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -44,8 +44,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
-    "puntos": 50,
-    "xp": 100,
+    "puntos": 100,
+    "xp": 50,
     "encuentros": [
       "enemigo_numeroso",
       "enemigo_numeroso",
@@ -83,8 +83,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Viajeros informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab. Vigilar el camino principal e informar al Capitán.",
-    "puntos": 50,
-    "xp": 80,
+    "puntos": 90,
+    "xp": 40,
     "encuentros": [
       "evento_especial",
       "evento_especial",
@@ -122,8 +122,8 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, tenemos que liberarlos.",
-    "puntos": 100,
-    "xp": 150,
+    "puntos": 150,
+    "xp": 100,
     "encuentros": [
       "enemigo_numeroso",
       "evento_especial",
@@ -167,8 +167,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Se han visto huellas y señales extrañas en los alrededores de la aldea de Lothgobel. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
-    "puntos": 40,
-    "xp": 80,
+    "puntos": 90,
+    "xp": 50,
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
@@ -207,8 +207,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros.",
-    "puntos": 50,
-    "xp": 90,
+    "puntos": 90,
+    "xp": 40,
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -248,8 +248,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Se habla de criaturas viles acechando en la oscuridad de las noches, secuestrando y asaltando a quienes encuentren en el camino, rastrearlos y darles caza, llevar antorchas.",
-    "puntos": 50,
-    "xp": 90,
+    "puntos": 90,
+    "xp": 40,
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -289,8 +289,8 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuándo pero hay que esperarlos.",
-    "puntos": 60,
-    "xp": 110,
+    "puntos": 150,
+    "xp": 80,
     "encuentros": [
       "obstaculo",
       "obstaculo",
@@ -330,8 +330,8 @@
     "destino": "Lamedon",
     "nivel": 4,
     "descripcion": "Tarlang's Neck es un paso útil y peligroso; hay señales de bandidos y viejos restos de combate. Custodia el paso y elimina la amenaza si aparece.",
-    "puntos": 120,
-    "xp": 180,
+    "puntos": 340,
+    "xp": 200,
     "encuentros": [
       "evento_especial",
       "enemigo_numeroso",
@@ -377,8 +377,8 @@
     "destino": "Blackroot Vale",
     "nivel": 3,
     "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos and neutraliza al jefe menor si aparece.",
-    "puntos": 95,
-    "xp": 150,
+    "puntos": 200,
+    "xp": 120,
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -424,8 +424,8 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "La ribera del Celos guarda rastros de un campamento reciente. Averigua quién pasó por allí y si quedan prisioneros o botín.",
-    "puntos": 90,
-    "xp": 145,
+    "puntos": 150,
+    "xp": 90,
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
@@ -471,8 +471,8 @@
     "destino": "Belfalas",
     "nivel": 3,
     "descripcion": "Una caravana debe llegar hasta Tadrent por una ruta inquieta. La escolta puede acabar en emboscada, negociación o combate abierto.",
-    "puntos": 120,
-    "xp": 200,
+    "puntos": 230,
+    "xp": 140,
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -517,9 +517,9 @@
     "id": "eco_stone_erech",
     "titulo": "Eco de la Stone of Erech",
     "destino": "Blackroot Vale",
-    "nivel": 3,
+    "nivel": 5,
     "descripcion": "Al pie de la Stone of Erech circulan rumores de un eco antiguo. Investiga las ruinas, soporta la amenaza y resuelve la situación.",
-    "puntos": 130,
+    "puntos": 430,
     "xp": 210,
     "encuentros": [
       "obstaculo",
@@ -567,8 +567,8 @@
     "destino": "Belfalas",
     "nivel": 3,
     "descripcion": "En la frontera de Belfalas, algunos días basta con vigilar; otros, una amenaza se manifiesta y obliga a actuar. Completa la misión incluso si el peligro nunca da la cara.",
-    "puntos": 140,
-    "xp": 220,
+    "puntos": 200,
+    "xp": 110,
     "encuentros": [
       "evento_especial",
       "obstaculo",
@@ -615,8 +615,8 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Los sanadores del campamento necesitan Athelas y otras raíces raras que solo crecen en las faldas de las Ered Nimrais. Investiga la zona botánica y recolecta las muestras.",
-    "puntos": 50,
-    "xp": 100,
+    "puntos": 80,
+    "xp": 40,
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -635,19 +635,15 @@
       "affinityBonus": 0,
       "allowedActions": [
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
         "explorar": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
-        "infiltrar": "Te mueves con cuidado y recuperas lo necesario sin incidentes.",
-        "negociar": "Hablas con los pocos presentes y obtienes acceso sin problemas.",
         "retirarse": "Decides informar y volver sin seguir removiendo la zona."
       },
       "completionText": {
         "success": "Recolectas las hierbas necesarias y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "failure": "No lograste identificar las hierbas adecuadas obligandote a retirarse antes de completar la misión."
       }
     }
   }
