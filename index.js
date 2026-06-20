@@ -2145,6 +2145,7 @@ function findInventoryItemLoose(inventory, query) {
       const id = normalizeKey(item?.id || "");
       const nombre = normalizeKey(item?.nombre || "");
 
+      // Verifica coincidencia exacta en ID/Nombre o si el nombre contiene la búsqueda
       if (id === q || nombre === q || nombre.includes(q)) {
         return { category, item };
       }
@@ -2153,6 +2154,7 @@ function findInventoryItemLoose(inventory, query) {
 
   return null;
 }
+
 
 function saveResolvedEquipment(profile = {}, equipment = {}) {
   const payload = {
