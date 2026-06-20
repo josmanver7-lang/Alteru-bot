@@ -15,8 +15,9 @@ if (!DISCORD_TOKEN) throw new Error('Missing DISCORD_TOKEN');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
+// ================================
 // VARIABLES PARA IA
+// ================================
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
@@ -782,7 +783,6 @@ function getInventoryCategoryForItem(item) {
     return "monturas"; 
   }
 
-
   return "permanentes";
 }
 
@@ -875,7 +875,6 @@ function getItemPower(effect = {}) {
   };
 }
 
-
 function formatEffect(effect = {}) {
   const parts = [];
 
@@ -896,7 +895,6 @@ function formatEffect(effect = {}) {
   if (effect.thrownBonus) parts.push(`Arrojo +${Math.round(effect.thrownBonus * 100)}%`);
   if (effect.magicBonus) parts.push(`Magia +${Math.round(effect.magicBonus * 100)}%`);
   if (effect.cavalryBonus) parts.push(`Caballería +${Math.round(effect.cavalryBonus * 100)}%`);
-
 
   if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
   if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
@@ -966,7 +964,6 @@ function formatEquipmentTotals(totals) {
   if (totals.magicBonus) parts.push(`+${Math.round(totals.magicBonus * 100)}% Magia`);
   if (totals.cavalryBonus) parts.push(`+${Math.round(totals.cavalryBonus * 100)}% Caballería`);
 
-
   return parts.length ? parts.join(" | ") : "Sin bonos extra";
 }
 
@@ -1003,7 +1000,6 @@ async function getCatalogPool() {
 
   return pool;
 }
-
 
 async function findCatalogItemByQuery(query) {
   const q = normalizeKey(query);
@@ -1180,10 +1176,10 @@ function getCompanionEquipmentFromPersonaje(companionId) {
     }
   } else {
     const armaEquipada = rawEq.arma || personaje.arma || "";
-// Detectamos si el arma tiene 2 manos o es del slot específico
-const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
+    // Detectamos si el arma tiene 2 manos o es del slot específico
+    const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
 
-Object.assign(formattedEq, {
+    Object.assign(formattedEq, {
       arma: armaEquipada,
       // Si es de dos manos, forzamos que el escudo esté vacío ("")
       escudo: esDosManos ? "" : (rawEq.escudo || personaje.escudo || ""),
@@ -1199,7 +1195,7 @@ Object.assign(formattedEq, {
       amuleto: rawEq.amuleto || personaje.amuleto || "",
       accesorio: rawEq.accesorio || personaje.accesorio || "",
       montura: rawEq.montura || personaje.montura || ""
-});
+    });
   }
 
   return formattedEq;
@@ -2058,7 +2054,6 @@ Clase: ${profile?.class || "desconocida"}
 Puntos: ${profile?.points || 0}
 `.trim();
 }
-  
 
 // ==========================================
 //         CARGA DE ARCHIVOS JSON/TEXT
@@ -2154,7 +2149,6 @@ function findInventoryItemLoose(inventory, query) {
 
   return null;
 }
-
 
 function saveResolvedEquipment(profile = {}, equipment = {}) {
   const payload = {
@@ -2525,60 +2519,6 @@ async function grantStarterItem(userId, profile, classKey) {
   return starterItem;
 }
 
-function canEquipItem(profile, item, equipment = {}) { 
-  const race = normalizeKey(profile?.race || ""); 
-  const classKey = normalizeKey(profile?.class || ""); 
-  
-  if (!race || !classKey) { 
-    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." }; 
-  } 
-  
-  function canEquipItem(profile, item, equipment = {}) { 
-  const race = normalizeKey(profile?.race || ""); 
-  const classKey = normalizeKey(profile?.class || ""); 
-  
-  if (!race || !classKey) { 
-    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." }; 
-  } 
-  
-  const itemRace = normalizeKey(item?.raza || item?.race || ""); 
-  const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : []; 
-  const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : []; 
-  const hands = Number(item?.hands || 1); 
-  const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null; 
-  // NUEVA REGLA: Restricción inmersiva exclusiva para monturas
-  if (item?.slot === "montura") {
-    if (itemRace && itemRace !== "general" && itemRace !== "none" && itemRace !== "ninguno" && itemRace !== race) {
-      return { 
-        ok: false, 
-        reason: `🐴 Un **${profile.race}** no puede montar esto. Esta montura es exclusiva para la raza: **${item.raza || item.race}**.` 
-      };
-    }
-  }
-
-  if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) { 
-    return { ok: false, reason: "Tu raza no puede usar ese objeto." }; 
-  } 
-  
-  if (itemRace && itemRace !== "general" && itemRace !== "none" && itemRace !== "ninguno" && itemRace !== race) { 
-    return { ok: false, reason: "Tu raza no puede usar ese objeto." }; 
-  } 
-  
-  if (itemClasses.length && !itemClasses.includes(classKey)) { 
-    return { ok: false, reason: "Tu clase no puede usar ese objeto." }; 
-  } 
-  
-  if (hands === 2 && offhand) { 
-    return { ok: false, reason: "No puedes usar un arma de dos manos junto con un objeto de mano secundaria." }; 
-  } 
-  
-  if (item?.slot === "escudo" && Number(equipment?.arma?.hands || 1) === 2) { 
-    return { ok: false, reason: "No puedes usar escudo con un arma de dos manos." }; 
-  } 
-  
-  return { ok: true }; 
-}
-
 async function handleOnboarding(message, profile) {
   const userId = message.author.id;
   const content = message.content.trim();
@@ -2778,66 +2718,6 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const validTypes = ["enemigo_numeroso", "enemigo_poderoso", "jefe", "escenario_final"];
   if (!validTypes.includes(encounter?.tipo) && !validTypes.includes(encounter?.categoria)) return "";
 
-  const traveler = getTravelerCorePower(profile);
-  const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-  const classText = getPlayerClassBonusText(profile);
-  const eqText = formatEquipmentTotals(eq.totals);
-
-  // NUEVO: Extracción de Ventajas Tácticas (Jugador)
-  const pStats = mapStatsToMatrixKeys(eq.totals);
-  const playerMatrixText = [];
-  if (pStats.meleeBonus) playerMatrixText.push(`Melee +${Math.round(pStats.meleeBonus * 100)}%`);
-  if (pStats.rangedBonus) playerMatrixText.push(`Rango +${Math.round(pStats.rangedBonus * 100)}%`);
-  if (pStats.thrownBonus) playerMatrixText.push(`Arrojo +${Math.round(pStats.thrownBonus * 100)}%`);
-  if (pStats.magicBonus) playerMatrixText.push(`Magia +${Math.round(pStats.magicBonus * 100)}%`);
-  if (pStats.cavalryBonus) playerMatrixText.push(`Caballería +${Math.round(pStats.cavalryBonus * 100)}%`);
-  const playerMatrixStr = playerMatrixText.length ? playerMatrixText.join(" | ") : "Ninguno";
-
-  // 1. Preparamos los datos de la party
-const party = getCompanionPowerDetails(profile);
-
-// 2. Procesamos las líneas de los compañeros de forma unificada
-const companionLines = party.details.length > 0
-  ? party.details.map(c => {
-      // Definimos la habilidad única según el ID
-      const abilities = {
-        "alteru": "Hab: +20% Éxito gen.",
-        "cirdil": "Hab: +15% vs Poderosos / Reducción daño",
-        "duinor": "Hab: +25% vs Numerosos",
-        "andaer": "Hab: 20% Bloqueo total",
-        "montaraces": "Hab: +30% Éxito",
-        "nieriel": "Hab: Evasión de peligro",
-        "faelon": "Hab: Sanación +10"
-      };
-      const abilityText = abilities[c.id] ? ` | ${abilities[c.id]}` : "";
-
-      // Calculamos bonos tácticos (asumiendo que 'c' tiene bonosTacticos)
-      const t = c.bonosTacticos || {};
-      let tacticas = [];
-      if (t.melee > 0) tacticas.push(`🗡️ +${t.melee}`);
-      if (t.ranged > 0) tacticas.push(`🏹 +${t.ranged}`);
-      if (t.caballeria > 0) tacticas.push(`🐎 +${t.caballeria}`);
-      if (t.thrown > 0) tacticas.push(`🪓 +${t.thrown}`);
-      if (t.magic > 0) tacticas.push(`✨ +${t.magic}`);
-
-      const tacticasStr = tacticas.length > 0 ? tacticas.join(" | ") : "Sin bonos";
-
-      // Retornamos la línea formateada
-      return `• **${c.nombre}**: ${tacticasStr} | Éxito +${Math.round(c.base.successBonus * 100)}% | Defensa +${Math.round(c.base.damageReduction * 100)}%${abilityText}`;
-    }).join("\n")
-  : "• Sin compañeros";
-
-// 3. Procesamos los enemigos (Lógica ya funcional)
-const enemy = getEnemyPowerSummary(encounter);
-const enemyTier = getDangerTierProfile(enemy.peligro);
-
-let enemyTacticsStr = "Ninguna";
-if (enemy.bonosTacticos) {
-    const b = enemy.bonosTacticos;
-function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {} }) {
-  const validTypes = ["enemigo_numeroso", "enemigo_poderoso", "jefe", "escenario_final"];
-  if (!validTypes.includes(encounter?.tipo) && !validTypes.includes(encounter?.categoria)) return "";
-
   // 1. OBTENCIÓN DE DATOS CENTRALES
   const traveler = getTravelerCorePower(profile);
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
@@ -2951,8 +2831,6 @@ ${companionLines}
 ──────────────────────────────────────────`
   );
 }
-
-
 
 // ==========================================
 //        LÓGICA LIMPIA DE EXPEDICIONES
