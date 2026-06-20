@@ -2854,5 +2854,75 @@
     "precioBase": 1500,
     "descripcion": "Jabalina legendaria cuyo astil lleva grabadas las crónicas de los Señores de los Caballos. Al ser arrojada a pleno galope, el acero produce un silbido ensordecedor que aterra a las monturas enemigas.",
     "efecto": { "willpowerBonus": 0.06, "thrownBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05, "perceptionBonus": 0.06 }
+  },
+    {
+    "id": "tunica_seguidor_orden",
+    "nombre": "Túnica de Seguidor de la Orden",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 180,
+    "descripcion": "Una vestidura simple utilizada por los aspirantes y sabios menores de las tierras del norte.",
+    "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02, "healingBonus": 0.01 }
+  },
+  {
+    "id": "tunica_erudito_comarca",
+    "nombre": "Túnica de Erudito de la Comarca",
+    "slot": "pecho",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 150,
+    "descripcion": "Cómoda, holgada y con amplios bolsillos perfectos para guardar pergaminos, notas o un poco de hierba de pipa.",
+    "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02, "stealthBonus": 0.02, "healingBonus": 0.01 }
+  },
+  {
+    "id": "tunica_antigua_nandor",
+    "nombre": "Túnica Antigua de los Nandor",
+    "slot": "pecho",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 480,
+    "descripcion": "Tejida por los elfos que abandonaron la Gran Marcha antes de cruzar las montañas, impregnada con la magia sutil de los bosques originarios.",
+    "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "stealthBonus": 0.03, "healingBonus": 0.02 }
+  },
+  {
+    "id": "chaleco_magico_cantero",
+    "nombre": "Chaleco Mágico del Cantero de Khazad-dûm",
+    "slot": "pecho",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 520,
+    "descripcion": "Hecho de cuero grueso curtido. Canaliza la energía rúnica de la piedra sin la incomodidad ni la ridiculez de una túnica larga.",
+    "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "survivalBonus": 0.02, "healingBonus": 0.02 }
+  },
+  {
+    "id": "tunica_sabio_gondor",
+    "nombre": "Túnica del Consejo de Sabios de Gondor",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1250,
+    "descripcion": "Vestidura reservada para aquellos que desentierran las viejas crónicas en los archivos más profundos de la Ciudadela.",
+    "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "negotiationBonus": 0.02, "healingBonus": 0.03 }
+  },
+  {
+    "id": "chaleco_geomante_moria",
+    "nombre": "Chaleco Rúnico del Geomante de Moria",
+    "slot": "pecho",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 1400,
+    "descripcion": "Una prenda robusta reforzada con láminas de bronce que resuena con los cánticos antiguos de las raíces del mundo.",
+    "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "survivalBonus": 0.04, "healingBonus": 0.03 }
+  },
+  {
+    "id": "manto_ancestral_teleri",
+    "nombre": "Manto Ancestral de la Estirpe Teleri",
+    "slot": "pecho",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 4200,
+    "descripcion": "Una pieza legendaria de la Primera Edad, tejida con hilos de luz por los Elfos del Mar que jamás pisaron las tierras de Beleriand.",
+    "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "stealthBonus": 0.05, "healingBonus": 0.05, "damageReduction": 0.02 }
   }
 ]
