@@ -62,7 +62,7 @@
         "slot": "brida", 
         "nombre": "Barda del rizo perfecto",
         "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
-      {
+      }
     ],   
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
     "personalidad": "Desafiante, ambicioso, apasionado, cariñoso, guía, irónico, serio, observador, estoico.",
@@ -73,7 +73,7 @@
       "Lideró el rompimiento del bloqueo de la desembocadura del Gilrain.",
       "Participó en varias escaramuzas y dio discursos que alentaron a los gondorianos.",
       "Derrotó al líder corsario Kardŭn y lo empalizó frente a sus hombres a quienes luego ejecutó.",
-      "Fue nombrado Capitán por Hirluin el Hermoso y destacó en la defensa de Ost Anrdir.",
+      "Fue nombrado Capitán por Hirluin el Hermoso y destacó en la defense de Ost Anrdir.",
       "Participó y destacó en la batalla de Belfalas liderando la última carga.",
       "En el banquete del día siguiente conoció y se enamoró de su amada Nieriel.",
       "Creó una hueste personal acompañado de Duinor, Andaer, Cirdil, Berendir y Berenil, hicieron una campaña de limpieza y acabaron con muchos invasores.",
@@ -159,7 +159,7 @@
         "slot": "brida", 
         "nombre": "Caparazón de las Olas de Belfalas",
         "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
-      {
+      }
     ],  
     "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
     "personalidad": "Reservada, silenciosa, observadora, empática y amable. Sabe cuándo expresarse gracias a su gran sensibilidad.",
