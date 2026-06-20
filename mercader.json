@@ -30,7 +30,7 @@
       "nombre": "Cota de Malla Enana Remachada",
       "tipo": "armadura",
       "slot": "pecho",
-      "raza": ["enano", "humano"],
+      "raza": "enano",
       "rareza": "superior",
       "material": "acero",
       "precioBase": 550,
