@@ -3548,25 +3548,25 @@ client.on("messageCreate", async (message) => {
     return message.channel.send({ embeds: [embed] });
   }
 
-  client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+  else if (command === "!compañeros") {
+  const embedGeneral = new EmbedBuilder()
+    .setColor('#2F3136')
+    .setAuthor({ name: '⚔️ Campamento de Altéru' })
+    .setDescription(
+      "Lista de guerreros asignados al campamento y disponibles para expediciones.\n\n" +
+      "• `!compañero alteru`\n" +
+      "• `!compañero nieriel`\n" +
+      "• `!compañero cirdil`\n" +
+      "• `!compañero duinor`\n" +
+      "• `!compañero faelon`\n" +
+      "• `!compañero andaer`\n" +
+      "• `!compañero montaraces`"
+    )
+    .setImage('https://ibb.co/23JV5s5r') 
+    .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
 
-  if (message.content.toLowerCase() === '!compañeros') {
-    const embedGeneral = new EmbedBuilder()
-      .setColor('#2F3136')
-      .setAuthor({ name: '⚔️ Campamento de Montaraces', iconURL: 'https://i.imgur.com/wSTFk9g.png' })
-      .setTitle('Montaraces de Arathir')
-      .setDescription('Lista de guerreros asignados al campamento disponibles para las expediciones. Usa `!compañero <nombre>` para desplegar su ficha técnica.')
-      .addFields({ 
-        name: '📜 Miembros del Campamento', 
-        value: '• `!compañero alteru`\n• `!compañero nieriel`\n• `!compañero cirdil`\n• `!compañero duinor`\n• `!compañero faelon`\n• `!compañero andaer`\n• `!compañero montaraces`', 
-        inline: false 
-      })
-      .setImage('https://ibb.co/Q3YBNQwj') // Imagen grupal de los montaraces abajo
-      .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
-
-    return message.reply({ embeds: [embedGeneral] });
-  }
+  return message.reply({ embeds: [embedGeneral] });
+}
 
   // 2. COMANDO INDIVIDUAL DE FICHA TÉCNICA (!compañero <nombre>)
   if (message.content.toLowerCase().startsWith('!compañero ')) {
