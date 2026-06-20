@@ -3401,7 +3401,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       if (!comp) continue;
       const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno";
       texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`;
-      texto += `Habilidad: ${comp.habilidad}\nEfecto: ${comp.efecto || "N/A"}\nCoste: ${comp.coste || 0} pts\nRequisito: ${req}\n`;
+      texto += `Habilidad: ${comp.habilidad}\nCoste: ${comp.coste || 0} pts\nRequisito: ${req}\n`;
     }
     texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>`";
     return replyLong(message, texto);
