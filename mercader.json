@@ -7,7 +7,7 @@
       "tipo": "arma",
       "slot": "arma",
       "hand": 1,
-      "raza": { "humano", "enano", "elfo" },
+      "raza": ["humano", "enano", "elfo"],
       "rareza": "común",
       "material": "hierro",
       "precioBase": 60,
@@ -30,7 +30,7 @@
       "nombre": "Cota de Malla Enana Remachada",
       "tipo": "armadura",
       "slot": "pecho",
-      "raza": "enano",
+      "raza": ["enano"],
       "rareza": "superior",
       "material": "acero",
       "precioBase": 550,
@@ -307,7 +307,7 @@
       "efecto": { "explorationBonus": 0.25 }
     },
     {
-    "id": "amuleto_sindar_oxidado",
+      "id": "amuleto_sindar_oxidado",
       "nombre": "Amuleto Sindar Oxidado",
       "tipo": "utilidad",
       "slot": "accesorio",
