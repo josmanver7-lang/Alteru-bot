@@ -2311,7 +2311,7 @@ function getDefaultSlots(catalogName, item = {}) {
   const tipo = normalizeKey(item.tipo || "");
   const slot = normalizeKey(item.slot || "");
 
-  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") || catalogName === "establo") {
+  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2" || catalogName === "establo") {
     return 1;
   }
 
