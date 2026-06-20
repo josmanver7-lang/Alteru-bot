@@ -460,17 +460,6 @@ function obtenerRangoNivel(level = 1) {
 // COMPAÑEROS Y BONIFICACIONES
 // ================================
 
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
-});
-
-// BASE DE DATOS CORREGIDA Y COHERENTE (Fiel a tus especificaciones)
 const baseDeDatosCompañeros = {
   alteru: {
     nombre: "Altéru",
@@ -617,8 +606,6 @@ client.on('messageCreate', async (message) => {
     return message.reply({ embeds: [embedFicha] });
   }
 });
-
-// client.login('TU_BOT_TOKEN');
 
 const ITEM_TIER_VALUES = { ninguno: 0, none: 0, comun: 1, forjado: 2, superior: 3, legendario: 4 }; 
 const PLAYER_CLASS_BONUS = { 
