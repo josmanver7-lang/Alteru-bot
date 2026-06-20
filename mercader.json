@@ -188,14 +188,14 @@
       "nombre": "Especias del Lejano Harad",
       "tipo": "consumible",
       "precioBase": 300,
-      "efecto": { "combatBonus": 0.03 }
+      "efecto": { "willpowerBonus": 0.04 }
     },
     {
       "id": "vino_oscuro_orco",
       "nombre": "Vino añejo del Norte",
       "tipo": "consumible",
       "precioBase": 120,
-      "efecto": { "combatBonus": 0.02, "salud": -10 }
+      "efecto": { "willpowerBonus": 0.02, "salud": -10 }
     },
     {
       "id": "flauta_hueso_harad",
@@ -263,7 +263,7 @@
       "rareza": "superior",
       "material": "cuero",
       "precioBase": 900,
-      "efecto": { "stealthBonus": 0.08 }
+      "efecto": { "stealthBonus": 0.03 }
     },
     {
       "id": "cuerno_gondor",
@@ -305,6 +305,14 @@
       "slot": "accesorio",
       "precioBase": 6000,
       "efecto": { "explorationBonus": 0.25 }
+    },
+    {
+    "id": "amuleto_sindar_oxidado",
+      "nombre": "Amuleto Sindar Oxidado",
+      "tipo": "utilidad",
+      "slot": "accesorio",
+      "precioBase": 240,
+      "efecto": { "stealthBonus": 0.03 }
     }
   ]
 }
