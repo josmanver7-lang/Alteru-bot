@@ -1,6 +1,6 @@
 import * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -235,6 +235,7 @@ const conversationMemory = new Map();
 let tiendaCache = null;
 let armeriaCache = null;
 let mercaderCache = null;
+let establoCache = null;
 
 // ================================
 // EXPLORACIÓN
@@ -979,28 +980,19 @@ async function getCatalogPool() {
 
   const tienda = tiendaCache || await loadCatalog("tienda.json").catch(() => null);
   const armeria = armeriaCache || await loadCatalog("armeria.json").catch(() => null);
+  const establo = establoCache || await loadCatalog("establo.json").catch(() => null); // Añadido
   const merchantState = await db.getEventState("merchant").catch(() => null);
 
-  const tiendaItems = Array.isArray(tienda)
-    ? tienda
-    : Array.isArray(tienda?.items)
-      ? tienda.items
-      : [];
+  const tiendaItems = Array.isArray(tienda) ? tienda : Array.isArray(tienda?.items) ? tienda.items : [];
+  const armeriaItems = Array.isArray(armeria) ? armeria : Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : [];
+  const establoItems = Array.isArray(establo) ? establo : Array.isArray(establo?.items) ? establo.items : []; // Añadido
 
-  const armeriaItems = Array.isArray(armeria)
-    ? armeria
-    : Array.isArray(armeria?.items)
-      ? armeria.items
-      : Array.isArray(armeria?.equipo)
-        ? armeria.equipo
-        : [];
-
-  for (const item of tiendaItems) {
-    pool.push({ ...item, catalogName: "tienda" });
-  }
-
-  for (const item of armeriaItems) {
-    pool.push({ ...item, catalogName: "armeria" });
+  for (const item of tiendaItems) pool.push({ ...item, catalogName: "tienda" });
+  for (const item of armeriaItems) pool.push({ ...item, catalogName: "armeria" });
+  
+  // Añadido: Registramos los ítems del establo
+  for (const item of establoItems) {
+    pool.push({ ...item, catalogName: "establo" });
   }
 
   if (merchantState?.active && Array.isArray(merchantState.stock)) {
@@ -1011,6 +1003,7 @@ async function getCatalogPool() {
 
   return pool;
 }
+
 
 async function findCatalogItemByQuery(query) {
   const q = normalizeKey(query);
@@ -2278,6 +2271,7 @@ client.once("ready", async () => {
   tiendaCache = await loadCatalog("tienda.json");
   armeriaCache = await loadCatalog("armeria.json");
   mercaderCache = await loadCatalog("mercader.json");
+  establoCache = await loadCatalog("establo.json");
 
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
@@ -2317,7 +2311,7 @@ function getDefaultSlots(catalogName, item = {}) {
   const tipo = normalizeKey(item.tipo || "");
   const slot = normalizeKey(item.slot || "");
 
-  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") {
+  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") || catalogName === "establo") {
     return 1;
   }
 
@@ -2537,12 +2531,29 @@ function canEquipItem(profile, item, equipment = {}) {
     return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." }; 
   } 
   
+  function canEquipItem(profile, item, equipment = {}) { 
+  const race = normalizeKey(profile?.race || ""); 
+  const classKey = normalizeKey(profile?.class || ""); 
+  
+  if (!race || !classKey) { 
+    return { ok: false, reason: "Debes definir tu raza y clase en tu perfil antes de equipar." }; 
+  } 
+  
   const itemRace = normalizeKey(item?.raza || item?.race || ""); 
   const itemRaces = Array.isArray(item?.allowedRaces) ? item.allowedRaces.map(normalizeKey) : []; 
   const itemClasses = Array.isArray(item?.allowedClasses) ? item.allowedClasses.map(normalizeKey) : []; 
   const hands = Number(item?.hands || 1); 
   const offhand = equipment?.escudo || equipment?.offhand || equipment?.segundaMano || null; 
-  
+  // NUEVA REGLA: Restricción inmersiva exclusiva para monturas
+  if (item?.slot === "montura") {
+    if (itemRace && itemRace !== "general" && itemRace !== "none" && itemRace !== "ninguno" && itemRace !== race) {
+      return { 
+        ok: false, 
+        reason: `🐴 Un **${profile.race}** no puede montar esto. Esta montura es exclusiva para la raza: **${item.raza || item.race}**.` 
+      };
+    }
+  }
+
   if (itemRaces.length && !itemRaces.includes("general") && !itemRaces.includes(race)) { 
     return { ok: false, reason: "Tu raza no puede usar ese objeto." }; 
   } 
@@ -3474,55 +3485,53 @@ client.on("messageCreate", async (message) => {
     return message.reply("❌ Hubo un error al intentar reiniciar tu introducción. Por favor, inténtalo de nuevo.");
   }
   }
-  import { EmbedBuilder } from 'discord.js';
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-// Configuramos la ruta para encontrar el archivo JSON
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    else if (command === "!establo") {
+    // Usamos tu función loadCatalog en lugar de require()
+    const rawData = await loadCatalog('establo.json');
+    const establoItems = Array.isArray(rawData) ? rawData : (rawData?.items || []);
 
-export default {
-    name: 'establo',
-    description: 'Muestra el catálogo rotatorio del establo.',
-    async execute(message, args) {
-        try {
-            // Leemos el archivo JSON de forma asíncrona
-            const data = await readFile(path.join(__dirname, 'establo.json'), 'utf-8');
-            const establoData = JSON.parse(data);
-
-            const monturas = establoData.filter(item => item.slot === "montura");
-            const bardas = establoData.filter(item => item.slot === "barda");
-
-            const horasPorCiclo = 12;
-            const cicloActual = Math.floor(Date.now() / (horasPorCiclo * 60 * 60 * 1000));
-
-            const monturasEnVenta = [];
-            for (let i = 0; i < 8; i++) {
-                monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]);
-            }
-
-            const bardasEnVenta = [];
-            for (let i = 0; i < 4; i++) {
-                bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]);
-            }
-
-            const embed = new EmbedBuilder()
-                .setTitle('🐴 Establo del Campamento')
-                .setColor('#8B4513')
-                .addFields(
-                    { name: 'Monturas (8)', value: monturasEnVenta.map(m => `**${m.nombre}** - ${m.precioBase} oro`).join('\n') },
-                    { name: 'Bardas (4)', value: bardasEnVenta.map(b => `**${b.nombre}** - ${b.precioBase} oro`).join('\n') }
-                );
-
-            message.channel.send({ embeds: [embed] });
-
-        } catch (error) {
-            console.error("Error al cargar el establo:", error);
-            message.reply("Hubo un error al intentar abrir el establo.");
-        }
+    if (!establoItems.length) {
+      return message.reply("El establo está cerrado en este momento.");
     }
-};
+
+    const monturas = establoItems.filter(item => item.slot === "montura");
+    const bardas = establoItems.filter(item => item.slot === "barda");
+
+    const horasPorCiclo = 12;
+    const cicloActual = Math.floor(Date.now() / (horasPorCiclo * 60 * 60 * 1000));
+
+    const monturasEnVenta = [];
+    if (monturas.length > 0) {
+      for (let i = 0; i < 8; i++) {
+        monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]);
+      }
+    }
+
+    const bardasEnVenta = [];
+    if (bardas.length > 0) {
+      for (let i = 0; i < 4; i++) {
+        bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]);
+      }
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle('🐴 Establo del Campamento')
+      .setColor('#8B4513')
+      .addFields(
+        { 
+          name: `Monturas en el corral (8)`, 
+          value: monturasEnVenta.length ? monturasEnVenta.map(m => `**${m.nombre}** (${m.precioBase} pts) - *${m.rareza}*`).join('\n').substring(0, 1024) : "Ninguna"
+        },
+        { 
+          name: `Bridas y Bardas (4)`, 
+          value: bardasEnVenta.length ? bardasEnVenta.map(b => `**${b.nombre}** (${b.precioBase} pts) - *${b.rareza}*`).join('\n').substring(0, 1024) : "Ninguna"
+        }
+      )
+      .setFooter({ text: 'Usa !comprar para adquirir la montura de tu preferencia.' });
+
+    return message.channel.send({ embeds: [embed] });
+  }
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
