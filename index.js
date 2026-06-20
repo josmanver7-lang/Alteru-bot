@@ -3545,10 +3545,10 @@ client.on("messageCreate", async (message) => {
       triviaGames.delete(message.author.id);
 
       const points =
-        game.difficulty === "facil" ? 10 :
-        game.difficulty === "normal" ? 20 :
-        game.difficulty === "dificil" ? 40 :
-        game.difficulty === "legendario" ? 80 :
+        game.difficulty === "facil" ? 20 :
+        game.difficulty === "normal" ? 40 :
+        game.difficulty === "dificil" ? 80 :
+        game.difficulty === "legendario" ? 200 :
         20;
 
       await db.addCorrectAnswer(message.author.id, points);
@@ -3773,6 +3773,14 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     let replyMsg = "";
 
+    const itemIdClean = (item?.id || "").toLowerCase();
+    const itemNombreClean = (item?.nombre || "").toLowerCase();
+
+    if (itemIdClean.includes("tabaco") || itemIdClean.includes("hierba") || itemNombreClean.includes("tabaco")) {
+      return message.reply("💨 **No puedes usar esto aquí**\n\nPara consumir este ítem necesitas tener una **Pipa** equipada y usar `!fumar`.");
+    }
+    // =========================================================
+                                         
     if (item.efecto?.salud) {
       const saludActual = profile.salud !== undefined ? profile.salud : 100;
       if (saludActual >= 100) return message.reply("Ya tienes la salud al máximo.");
@@ -3784,7 +3792,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       if (activeUtils.some(u => normalizeKey(u.id) === normalizeKey(item.id))) {
         return message.reply(`Ya tienes **${item.nombre}** activo.`);
       }
-      
+
       let uses = 1;
       if (item.tipo === "utilidad" || normalizeKey(item.nombre).includes("cuerda") || normalizeKey(item.nombre).includes("cantimplora")) uses = 3;
       if (normalizeKey(item.nombre).includes("pipa") || normalizeKey(item.nombre).includes("tabaco")) uses = 1;
@@ -3810,6 +3818,68 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     return message.reply(replyMsg);
   }
+
+  else if (command === "!fumar") {
+  const userId = message.author.id;
+  const profile = await db.getProfile(userId);
+
+  const equipmentRaw = await db.getEquipment?.(userId).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const accesorioEquipado = equipment?.accesorio;
+
+  const tienePipa = accesorioEquipado && (
+    (accesorioEquipado.id || "").toLowerCase().includes("pipa") || 
+    (accesorioEquipado.nombre || "").toLowerCase().includes("pipa")
+  );
+
+  if (!tienePipa) {
+    return message.reply("💨 **No puedes fumar**\n\nNecesitas tener una **Pipa** equipada en tu ranura de accesorios para encender el tabaco. No basta con llevarla en el inventario.");
+  }
+  const tabacoIndex = profile.inventario.findIndex(i => 
+    (i.id || "").toLowerCase().includes("tabaco") || 
+    (i.nombre || "").toLowerCase().includes("tabaco") ||
+    (i.id || "").toLowerCase().includes("hierba")
+  );
+
+  if (tabacoIndex === -1 || profile.inventario[tabacoIndex].cantidad <= 0) {
+    return message.reply("🍂 **Sin provisiones**\n\nNo te queda **Hierba de tabaco** en tu inventario para llenar la pipa.");
+  }
+  const itemTabaco = profile.inventario[tabacoIndex];
+  if (itemTabaco.cantidad > 1) {
+    itemTabaco.cantidad -= 1;
+  } else {
+    profile.inventario.splice(tabacoIndex, 1);
+  }
+  await db.updateTravelerData(userId, { inventario: profile.inventario });
+
+  const lineasBonus = [];
+  const camposBonus = ['negotiationBonus', 'explorationBonus', 'willpowerBonus', 'negotiation', 'exploration', 'willpower'];
+  
+  camposBonus.forEach(campo => {
+    if (itemTabaco[campo] && Number(itemTabaco[campo]) > 0) {
+      const valorPorcentaje = Math.round(Number(itemTabaco[campo]) * 100);
+      
+      let nombreBonito = campo;
+      if (campo.includes('negotiation')) nombreBonito = 'Negociación';
+      if (campo.includes('exploration')) nombreBonito = 'Exploración';
+      if (campo.includes('willpower')) nombreBonito = 'Voluntad';
+      
+      lineasBonus.push(`🔹 +${valorPorcentaje}% de ${nombreBonito}`);
+    }
+  });
+
+  let pipaNombre = accesorioEquipado.nombre || "tu pipa";
+  
+  let textoFumar = `💨 **Enciendes ${pipaNombre}...**\n\n`;
+  textoFumar += `Te tomas un momento de introspección observando las volutas de humo elevarse en el aire. Logras calmar tu mente durante unos minutos y reflexionar en silencio sobre la situación en la que te encuentras, recuperando el vigor.\n\n`;
+  
+  if (lineasBonus.length > 0) {
+    textoFumar += lineasBonus.join("\n") + `\n\n`;
+  }
+  textoFumar += `*Consumiste 1x ${itemTabaco.nombre}.*`;
+
+  return message.reply(textoFumar);
+}
   else if (command === "!info" || command === "!ayuda") { 
     return message.reply( 
 `📜 Campamento de Altéru 
