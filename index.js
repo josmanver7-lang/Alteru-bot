@@ -479,7 +479,7 @@ const Companions = {
     habilidad: "🦁 **Rugido de León:** +20% Éxito.",
     bonus: "`⚔️ +6% Combate` | `🧠 +7% Voluntad` | `🛡️ +8% Reducción de Daño`",
     equipo: "• Espada larga templada\n• Escudo rectangular del Pelennor\n• Placa metálica\n• Capa de Cúridwan",
-    imagenUrl: "https://ibb.co/8nGFsGQ3",
+    imagenUrl: "https://i.ibb.co/WN7S57R9/1000055154.png",
     color: "#4A0E4E"
   },
   nieriel: {
@@ -492,7 +492,7 @@ const Companions = {
     habilidad: "🦢 **Doncella del Cisne:** Incrementa la evasión del grupo ante ataques a distancia.",
     bonus: "`⚔️ +5% Daño` | `🏃 +6% Velocidad` | `🛡️ +4% Defensa`",
     equipo: "• Armadura y Capa del Cisne\n• Escudo Doncella del Cisne\n• Casco de Doncella del Cisne",
-    imagenUrl: "https://ibb.co/bg0KYL7w",
+    imagenUrl: "https://i.ibb.co/MDvCKp9w/1000055150.png",
     color: "#E5E4E2"
   },
   cirdil: {
@@ -505,7 +505,7 @@ const Companions = {
     habilidad: "🌳 **Escudo de Gondor:** +15% efectividad contra Enemigo Poderoso.",
     bonus: "`🛡️ +10% Defensa` | `❤️ +5% Vida Máxima` | `⚔️ +4% Combate`",
     equipo: "• Espada larga templada\n• Escudo del Árbol Blanco\n• Gambeson Acolchado del Pelennor",
-    imagenUrl: "https://ibb.co/Ngq7Jx09",
+    imagenUrl: "https://i.ibb.co/cK9xZJW6/1000055152.png",
     color: "#5A5D64"
   },
   duinor: {
@@ -518,7 +518,7 @@ const Companions = {
     habilidad: "⚔️ **Deseo de Lucha:** +25% efectividad contra enemigo numeroso.",
     bonus: "`⚔️ +12% Daño` | `💥 +5% Prob. Crítico` | `🏃 +3% Velocidad`",
     equipo: "• Mandoble templado (x2)\n• Armadura acolchada reforzada\n• Yelmo del Escolta",
-    imagenUrl: "https://ibb.co/gLGttPVx",
+    imagenUrl: "https://i.ibb.co/VcdMMQms/1000055149.png",
     color: "#8B5A2B"
   },
   faelon: {
@@ -531,7 +531,7 @@ const Companions = {
     habilidad: "📜 **Sabiduría de Rivendel:** +10 de salud después de cada encuentro.",
     bonus: "`🔮 +10% Poder Mágico` | `💖 +8% Sanación` | `🧠 +5% Voluntad`",
     equipo: "• Arco compuesto de Rivendel\n• Túnica de sabio explorador\n• Runas de Etten",
-    imagenUrl: "https://ibb.co/cXbRx5WQ",
+    imagenUrl: "https://i.ibb.co/n834R2Xj/1000055153.png",
     color: "#1F4E5B"
   },
   andaer: {
@@ -544,7 +544,7 @@ const Companions = {
     habilidad: "📌 **Lealtad del Escudero:** +20% de bloquear un ataque enemigo.",
     bonus: "`⚔️ +5% Combate` | `👥 +6% Sigilo` | `🛡️ +2% Reducción de Daño`",
     equipo: "• Lanza larga\n• Escudo de Broquel de Gondor\n• Botas de cuero",
-    imagenUrl: "https://ibb.co/VYbzJWfM",
+    imagenUrl: "https://i.ibb.co/jkqQbvn3/1000055151.png",
     color: "#C67B5C"
   },
   montaraces: {
@@ -557,8 +557,8 @@ const Companions = {
     habilidad: "🌲 **Exploradores del Norte:** +30$ éxito.",
     bonus: "`👥 +X% Sigilo` | `🏹 +X% Daño a Distancia` | `[Por completar]`",
     equipo: "• Arco largo de montaraz\n• Capa sombría con capucha\n• Espada corta de acero",
-    imagenUrl: "https://ibb.co/Q3YBNQwj",
-    color: "#223322" // Verde oscuro montaraz
+    imagenUrl: "https://i.ibb.co/LX9wtR7h/1000055148.png",
+    color: "#223322"
   }
 };
 
@@ -3562,7 +3562,7 @@ client.on("messageCreate", async (message) => {
       "• `!compañero andaer`\n" +
       "• `!compañero montaraces`"
     )
-    .setImage('https://ibb.co/23JV5s5r') 
+    .setImage('https://i.ibb.co/B2kWwrwJ/ef4b6d9e-cd53-4057-8b00-ab7ea114b0aa.png') 
     .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
 
   return message.reply({ embeds: [embedGeneral] });
