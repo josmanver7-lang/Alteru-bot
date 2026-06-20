@@ -2352,14 +2352,6 @@ const ALLOWED_CHANNEL_IDS = new Set([
   "1514198998838284288",
   "1512731937473560622"
 ]);
-  
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
-});
 
 client.once("ready", async () => {
   await db.connectDB();
