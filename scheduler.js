@@ -1159,19 +1159,6 @@ const companionScenes = [
 💬 Altéru: "Detrás de tu tienda, que sean a ti al primero que despierten."`
   },
   {
-    id: "escena_21",
-    order: 10,
-    text: `*Cirdil y Altéru entrenaban como solían hacer, y como solía ocurrir Cirdil eran el vencedor, pero mientras pulian sus movimientos conversaban:*
-
-💬 Cirdil: "Ya que hablamos sobre eso ¿Has sabido algo de Berenil? Había oído que le ha estado yendo bien en su negocio."
-
-💬 Altéru: "Si, también lo escuché, me alegro mucho por él, pasamos por situaciones lamentables en Harad, espero que eso lo ayude a recuperar su confianza, aunque estoy convencido de que no es así."
-
-*Una vez más Cirdil derribó a Altéru quien cayó de espaldas contra el suelo con mucha fuerza. Preocupado lo ayudó a reincorporarse.*
-
-💬 Altéru: "Casi sentí mi espalda romperse, pero estaré bien".`
-  },
-  {
     id: "escena_10",
     order: 10,
     text: `*Nieriel le daba un masaje en la espalda a Altéru mientras él conversaba con sus compañeros en la tienda*
