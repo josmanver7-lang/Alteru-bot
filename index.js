@@ -1120,8 +1120,8 @@ function getCompanionBasePower(companionId) {
 function getCompanionBonus(profile) {
   const list = getOwnedCompanions(profile);
   const bonus = {
-    captainBonus: 0, strongEnemyBonus: 0, numerousEnemyBonus: 0,
-    blockChance: 0, rangerBonus: 0, damageReduction: 0,
+    captainBonus: 0, strongEnemyBonus: 0, numerousEnemyBonus: 0, explorationBonus: 0,
+    blockChance: 0, damageReduction: 0,
     faelonHeal: 0, nierielSafe: false, baseSuccessBonus: 0, baseDamageReduction: 0
   };
 
