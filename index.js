@@ -468,7 +468,7 @@ function obtenerRangoNivel(level = 1) {
 // COMPAÑEROS Y BONIFICACIONES
 // ================================
 
-const baseDeDatosCompañeros = {
+const Companions = {
   alteru: {
     nombre: "Altéru",
     titulo: "Capitán de las Colinas",
@@ -561,59 +561,6 @@ const baseDeDatosCompañeros = {
     color: "#223322" // Verde oscuro montaraz
   }
 };
-
-client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-
-  // 1. COMANDO GENERAL (!compañeros)
-  if (message.content.toLowerCase() === '!compañeros') {
-    const embedGeneral = new EmbedBuilder()
-      .setColor('#2F3136')
-      .setAuthor({ name: '⚔️ Campamento de Montaraces', iconURL: 'https://i.imgur.com/wSTFk9g.png' })
-      .setTitle('Montaraces de Arathir')
-      .setDescription('Lista de guerreros asignados al campamento disponibles para las expediciones. Usa `!compañero <nombre>` para desplegar su ficha técnica.')
-      .addFields({ 
-        name: '📜 Miembros del Campamento', 
-        value: '• `!compañero alteru`\n• `!compañero nieriel`\n• `!compañero cirdil`\n• `!compañero duinor`\n• `!compañero faelon`\n• `!compañero andaer`\n• `!compañero montaraces`', 
-        inline: false 
-      })
-      .setImage('https://ibb.co/Q3YBNQwj') // Imagen grupal de los montaraces abajo
-      .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
-
-    return message.reply({ embeds: [embedGeneral] });
-  }
-
-  // 2. COMANDO INDIVIDUAL DE FICHA TÉCNICA (!compañero <nombre>)
-  if (message.content.toLowerCase().startsWith('!compañero ')) {
-    const args = message.content.split(' ');
-    if (!args[1]) return message.reply('Por favor, especifica el nombre del compañero. Ejemplo: `!compañero alteru`');
-    
-    const nombreBusqueda = args[1].toLowerCase();
-    const datos = baseDeDatosCompañeros[nombreBusqueda];
-
-    if (!datos) return message.reply('Ese compañero o unidad no se encuentra en el campamento.');
-
-    const embedFicha = new EmbedBuilder()
-      .setColor(datos.color)
-      .setTitle(`${datos.nombre} — *${datos.titulo}*`)
-      .setThumbnail(datos.imagenUrl) // Retrato 512x512 limpio en la esquina derecha
-      .setDescription(
-        `📌 **Clase:** ${datos.clase}\n` +
-        `🌍 **Origen:** ${datos.origen}\n` +
-        `🎭 **Rasgos:** *${datos.personalidad}*\n\n` +
-        `---`
-      )
-      .addFields(
-        { name: '📖 Resumen de la Historia', value: datos.historia, inline: false },
-        { name: '🔥 Habilidad Activa', value: datos.habilidad, inline: false },
-        { name: '📊 Atributos y Bonus de Combate', value: datos.bonus, inline: false },
-        { name: '⚔️ Equipo Actual', value: datos.equipo, inline: false }
-      )
-      .setFooter({ text: `Usa !contratar ${datos.nombre.toLowerCase()} para sumarlo a tu grupo.` });
-
-    return message.reply({ embeds: [embedFicha] });
-  }
-});
 
 const ITEM_TIER_VALUES = { ninguno: 0, none: 0, comun: 1, forjado: 2, superior: 3, legendario: 4 }; 
 const PLAYER_CLASS_BONUS = { 
@@ -3601,6 +3548,58 @@ client.on("messageCreate", async (message) => {
     return message.channel.send({ embeds: [embed] });
   }
 
+  client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+
+  if (message.content.toLowerCase() === '!compañeros') {
+    const embedGeneral = new EmbedBuilder()
+      .setColor('#2F3136')
+      .setAuthor({ name: '⚔️ Campamento de Montaraces', iconURL: 'https://i.imgur.com/wSTFk9g.png' })
+      .setTitle('Montaraces de Arathir')
+      .setDescription('Lista de guerreros asignados al campamento disponibles para las expediciones. Usa `!compañero <nombre>` para desplegar su ficha técnica.')
+      .addFields({ 
+        name: '📜 Miembros del Campamento', 
+        value: '• `!compañero alteru`\n• `!compañero nieriel`\n• `!compañero cirdil`\n• `!compañero duinor`\n• `!compañero faelon`\n• `!compañero andaer`\n• `!compañero montaraces`', 
+        inline: false 
+      })
+      .setImage('https://ibb.co/Q3YBNQwj') // Imagen grupal de los montaraces abajo
+      .setFooter({ text: 'Campamento Altéru — Gestión de Compañeros' });
+
+    return message.reply({ embeds: [embedGeneral] });
+  }
+
+  // 2. COMANDO INDIVIDUAL DE FICHA TÉCNICA (!compañero <nombre>)
+  if (message.content.toLowerCase().startsWith('!compañero ')) {
+    const args = message.content.split(' ');
+    if (!args[1]) return message.reply('Por favor, especifica el nombre del compañero. Ejemplo: `!compañero alteru`');
+    
+    const nombreBusqueda = args[1].toLowerCase();
+    const datos = baseDeDatosCompañeros[nombreBusqueda];
+
+    if (!datos) return message.reply('Ese compañero o unidad no se encuentra en el campamento.');
+
+    const embedFicha = new EmbedBuilder()
+      .setColor(datos.color)
+      .setTitle(`${datos.nombre} — *${datos.titulo}*`)
+      .setThumbnail(datos.imagenUrl) // Retrato 512x512 limpio en la esquina derecha
+      .setDescription(
+        `📌 **Clase:** ${datos.clase}\n` +
+        `🌍 **Origen:** ${datos.origen}\n` +
+        `🎭 **Rasgos:** *${datos.personalidad}*\n\n` +
+        `---`
+      )
+      .addFields(
+        { name: '📖 Resumen de la Historia', value: datos.historia, inline: false },
+        { name: '🔥 Habilidad Activa', value: datos.habilidad, inline: false },
+        { name: '📊 Atributos y Bonus de Combate', value: datos.bonus, inline: false },
+        { name: '⚔️ Equipo Actual', value: datos.equipo, inline: false }
+      )
+      .setFooter({ text: `Usa !contratar ${datos.nombre.toLowerCase()} para sumarlo a tu grupo.` });
+
+    return message.reply({ embeds: [embedFicha] });
+  }
+});
+
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
   // ========================================
@@ -3779,7 +3778,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
         texto += `• ${util.nombre} (${util.usesLeft} usos)\n`;
       }
     }
-    
     texto += `\n⚔️ **Poder total del equipo**: ${eqPower.score}\n`; 
     texto += `✨ **Índice añadido total**\n${formatEquipmentTotals(eqPower.totals)}\n`; 
     return message.reply(texto); 
@@ -4010,22 +4008,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     if (target.id !== message.author.id && message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permiso para reiniciar a otro usuario.");
     await db.resetQuotaState(target.id, "expedicion", EXPEDITION_WINDOW_MS);
     return message.reply(`🔄 Expediciones reiniciadas para <@${target.id}>.`);
-  }
-  else if (command === "!companeros" || command === "!compañeros" || command === "!campamento") { 
-    let texto = "🤝 **Compañeros disponibles**\n\n"; 
-    const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"]; 
-    for (const id of orden) { 
-      const comp = companions[id]; 
-      const req = comp.nivel ? `Nivel ${comp.nivel}` : "Ninguno"; 
-      texto += `${getCompanionIcon(id)} **${comp.nombre}** — ${comp.clase}\n`; 
-      texto += `Habilidad: ${comp.habilidad}\n`; 
-      texto += `Poder base: ${getCompanionBaseSummary(id)}\n`; 
-      texto += `Efecto: ${comp.efecto}\n`; 
-      texto += `Coste: ${comp.coste} pts\n`; 
-      texto += `Requisito: ${req}\n`; 
-      texto += `Personalidad: ${getPersonalityText(id)}\n\n`; 
-    } 
-    return message.reply(texto); 
   }
   else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
