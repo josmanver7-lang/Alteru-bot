@@ -7,7 +7,7 @@
       "tipo": "arma",
       "slot": "arma",
       "hand": 1,
-      "raza": ["humano", "enano", "elfo"],
+      "raza": { "humano", "enano", "elfo" },
       "rareza": "común",
       "material": "hierro",
       "precioBase": 60,
