@@ -52,7 +52,17 @@
         "slot": "anillo", 
         "nombre": "Anillo de compromiso", 
         "efecto": { "willpowerBonus": 0.05, "negotiationBonus": 0.04 } 
-      }
+      },
+      { 
+        "slot": "montura", 
+        "nombre": "Vidante",
+        "efecto": { "explorationBonus": 0.05, "negotiationBonus": 0.03, "cavalryBonus": 0.06, "WillpowerBonus": 0.02 } 
+      },
+      {
+        "slot": "brida", 
+        "nombre": "Barda del rizo perfecto",
+        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
+      {
     ],   
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
     "personalidad": "Desafiante, ambicioso, apasionado, cariñoso, guía, irónico, serio, observador, estoico.",
@@ -139,7 +149,17 @@
         "slot": "accesorio", 
         "nombre": "Collar de Ost Arndír con perla de jade", 
         "efecto": { "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.03 } 
-      }
+      },
+      { 
+        "slot": "montura", 
+        "nombre": "Scarla",
+        "efecto": { "explorationBonus": 0.04, "negotiationBonus": 0.02, "cavalryBonus": 0.05, "WillpowerBonus": 0.01 } 
+      },
+      {
+        "slot": "brida", 
+        "nombre": "Caparazón de las Olas de Belfalas",
+        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
+      {
     ],  
     "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
     "personalidad": "Reservada, silenciosa, observadora, empática y amable. Sabe cuándo expresarse gracias a su gran sensibilidad.",
@@ -321,7 +341,7 @@
       { 
         "slot": "arma", 
         "nombre": "Arco compuesto de Rivendel", 
-        "efecto": { "combatBonus": 0.03, "perceptionBonus": 0.01 } 
+        "efecto": { "rangedBonus": 0.03, "perceptionBonus": 0.01 } 
       },
       { 
         "slot": "escudo", 
@@ -331,7 +351,7 @@
       { 
         "slot": "pecho", 
         "nombre": "Túnica de sabio explorador", 
-        "efecto": { "survivalBonus": 0.02, "willpowerBonus": 0.02, "healingBonus": 0.02, "explorationBonus": 0.02 } 
+        "efecto": { "survivalBonus": 0.02, "willpowerBonus": 0.02, "healingBonus": 0.02, "magicBonus": 0.03 } 
       },
       { 
         "slot": "hombros", 
@@ -341,7 +361,7 @@
       { 
         "slot": "cabeza", 
         "nombre": "Aro Sindarin de plata", 
-        "efecto": { "negotiationBonus": 0.03, "willpowerBonus": 0.02 } 
+        "efecto": { "negotiationBonus": 0.03, "willpowerBonus": 0.02, "magicBonus": 0.01 } 
       },
       { 
         "slot": "brazos", 
@@ -371,7 +391,7 @@
       { 
         "slot": "amuleto",
         "nombre": "Runas de Etten", 
-        "efecto": { "willpowerBonus": 0.02, "negotiationBonus": 0.02, "survivalBonus": 0.04 } 
+        "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "survivalBonus": 0.04 } 
       } 
     ], 
     "descripcion_fisica": "Piel clara, rostro simple y cabello largo negro, delgado, alto.",
