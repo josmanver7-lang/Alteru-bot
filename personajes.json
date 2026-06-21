@@ -9,12 +9,12 @@
     "Habilidad": "Rugido del León",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Espada larga templada", 
         "efecto": { "meleeBonus": 0.06, "willpowerBonus": 0.02 } 
       },
       { 
-        "slot": "escudo", 
+        "slot": "hand2", 
         "nombre": "Escudo rectangular del Pelennor", 
         "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.02 } 
       },
@@ -98,15 +98,15 @@
     "raza": "Humano",
     "clase": "Capitán",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "habilidad": "Senda del Cisne",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Espada larga templada", 
         "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
       },
       { 
-        "slot": "escudo", 
+        "slot": "hand2", 
         "nombre": "Escudo Doncella del Cisne", 
         "efecto": { "survivalBonus": 0.03, "damageReduction": 0.04, "willpowerBonus": 0.02 } 
       },
@@ -185,10 +185,10 @@
     "raza": "Humano",
     "clase": "Guardián",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "habilidad": "Escudo de Gondor",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Espada larga templada", 
         "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
       },
@@ -261,16 +261,16 @@
     "raza": "Humano",
     "clase": "Campeón",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "habilidad": "Deseo de Lucha",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Mandoble templado", 
         "efecto": { "combatBonus": 0.05, "willpowerBonus": 0.02, "damageBonus": 2 } 
       },
       { 
-        "slot": "arma", 
-        "nombre": "Mandoble templado", 
+        "slot": "hand2", 
+        "nombre": "Nada", 
         "efecto": { "survivalBonus": 0.00, "willpowerBonus": 0.00 } 
       },
       { 
@@ -336,15 +336,15 @@
     "raza": "Humano",
     "clase": "Guardian Rúnico",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "habilidad": "Sabiduria de Rivendel",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Arco compuesto de Rivendel", 
         "efecto": { "rangedBonus": 0.03, "perceptionBonus": 0.01 } 
       },
       { 
-        "slot": "escudo", 
+        "slot": "hand2", 
         "nombre": "nada", 
         "efecto": { "survivalBonus": 0.00, "willpowerBonus": 0.00 } 
       },
@@ -424,15 +424,15 @@
     "raza": "Humano",
     "clase": "Guardián",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "habilidad": "Impulso del Escudero",
     "equipo": [
       { 
-        "slot": "arma", 
+        "slot": "hand1", 
         "nombre": "Lanza larga", 
         "efecto": { "combatBonus": 0.03, "willpowerBonus": 0.02 } 
       },
       { 
-        "slot": "escudo", 
+        "slot": "hand2", 
         "nombre": "Escudo de Broquel de Gondor", 
         "efecto": { "survivalBonus": 0.03, "damageReduction": 0.02 } 
       },
@@ -492,5 +492,69 @@
       "Faelon": "Muy amigable y humilde; una buena compañía aunque algon distante.",
       "Cirdil": "Algo impulsivo, pero de buen corazón, no hay demasiada afinidad."
     }
+  },
+  {
+    "nombre": "Montaraces de Arathir",
+    "titulo": "Exploradores del Norte",
+    "raza": "Humano",
+    "clase": "Cazador",
+    "alineamiento": "Aliado",
+    "habilidad": "Impulso del Escudero",
+    "equipo": [
+      { 
+        "slot": "hand1", 
+        "nombre": "Arco de las Quebradas", 
+        "efecto": { "rangedBonus": 0.06, "willpowerBonus": 0.04 } 
+      },
+      { 
+        "slot": "hand2", 
+        "nombre": "Nada", 
+        "efecto": { "survivalBonus": 0.00, "damageReduction": 0.00 } 
+      },
+      { 
+        "slot": "pecho", 
+        "nombre": "Gambeson de cuero reforzado", 
+        "efecto": { "survivalBonus": 0.02, "damageReduction": 0.03, "stealthBonus": 0.02 } 
+      },
+      { 
+        "slot": "hombros", 
+        "nombre": "Pauldron de cuero hervido", 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.02 } 
+      },
+      { 
+        "slot": "cabeza", 
+        "nombre": "Cofia de malla", 
+        "efecto": { "survivalBonus": 0.03, "damageReduction": 0.03 } 
+      },
+      { 
+        "slot": "brazos", 
+        "nombre": "Guantes de cuero de ciervo", 
+        "efecto": { "survivalBonus": 0.01, "combatBonus": 0.01, "damageReduction": 0.02, "stealthBonus": 0.02 } 
+      },
+      { 
+        "slot": "capa", 
+        "nombre": "Capa del Montaraz", 
+        "efecto": { "stealthBonus": 0.04, "willpowerBonus": 0.02, "survivalBonus": 0.04 } 
+      },
+      { 
+        "slot": "piernas", 
+        "nombre": "Botas de cuero", 
+        "efecto": { "damageReduction": 0.02, "explorationBonus": 0.02, "stealthBonus": 0.03 } 
+      },
+      { 
+        "slot": "accesorio", 
+        "nombre": "Cinturon de exploración", 
+        "efecto": { "explorationBonus": 0.04, "stealthBonus": 0.02, "healingBonus": 0.03 } 
+      },
+      { 
+        "slot": "amuleto", 
+        "nombre": "Broche del montaraz", 
+        "efecto": { "willpowerBonus": 0.04 } 
+      }
+    ], 
+    "descripcion_fisica": "Rasgos fisicos comunes de Dúnedain.",
+    "personalidad": "Profesionales, unidos, leales, sentimentales.",
+    "historia": "Nacieron entre el 2930 y el 2962, provenientes de lejanas tierras, poco cuentan de sus historias, liderados anteriormente por el Montaraz Arathir.",
+    "relacion_con_alteru": "Capitán y líder",
   }
 ]
