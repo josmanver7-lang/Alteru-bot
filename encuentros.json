@@ -34,6 +34,7 @@
     "descripcion": "Mientras viajas tres bandidos se interponen en tu camino, uno de ellos rie con malicia mientras se acercan cada vez mas, llevando machetes y ropas andrajosas.",
     "textoExito": "Luchas contra los tres haciendo el mejor uso de tus habilidades y manteniendo siempre la distancia para no dejarte rodear, finalmente logras acabar con ellos, riendo el último.",
     "textoFracaso": "Luchas contra los tres haciendo el mejor uso de tus habilidades y manteniendo siempre la distancia, pero uno de ellos te ataca por la espalda y te hiere con un puñal, obligandote a retroceder.",
+    "textoDerrota": "Agotado y desmoralizado intentas defenderte en desventaja numérica pero no dudas un instante en encontrar el mejor momento para escapar y huir de ellos.",
     "peligro": 2,
     "xp": 10
   },
@@ -57,6 +58,7 @@
     "descripcion": "Al seguir unas huellas recientes descubres una pequeña banda de trasgos reunidos en torno a una caravana que acababan de atacar.",
     "textoExito": "Te bates en duelo contra los trasgos haciendo gala de tu habilidad y no permitiendoles tomar la iniciativa, vas derrotando uno a uno y un par de ellos logra escapar.",
     "textoFracaso": "Te bates en duelo contra los trasgos pero tu destreza no fue la suficiente para imponerte en el combate, optaste por retroceder y respirar un poco.",
+    "textoDerrota": "Derrotaste a unos cuantos pero la superioridad numérica era evidente, herido y agotado das vuelta atras para huir de los trasgos.",
     "peligro": 2,
     "xp": 10
   },
@@ -70,6 +72,7 @@
     "descripcion": "Un grupo de corsarios mal armados conversan distraidos en un pequeño campamento, no se dan cuenta que alguien los observa.",
     "textoExito": "Te lanzas al ataque contra los corsarios y escoges al más cercano para abatirlo con tu arma y luego continuas con los demás quienes no supieron ofrecer una digna resistencia.",
     "textoFracaso": "Te lanzas al ataque contra los corsarios pero uno de ellos logra darse cuenta a tiempo y te ofrece resistencia, quedando en desventaja y obligandote a retroceder.",
+    "textoDerrota": "Tu aguante y resistencia mengua dando la oportunidad a uno de los enemigos a inmovilizarte y tirandote contra el suelo recibes una paliza.",
     "peligro": 2,
     "xp": 10
   },
@@ -83,6 +86,7 @@
     "descripcion": "Un grupo de corsarios dispersos vigila el paso principal. Parecen disfrutar de cobrar peajes o directamente robar a los viajeros.",
     "textoExito": "Haces un sonido para llamar su atención, preparas tu arma y estos en desorden corren hacia ti, te enfrentas al primero y lo vences, luego entras en combate con el resto, y a pesar de algunas complicaciones logras vencer.",
     "textoFracaso": "Cargas contra ellos y de manera desordenada entras en un frenético combate, Luchas lo mejor que puedes pero al poco tiempo te das cuenta que no podrás vencer. Retrocedes y replanteas tu estrategia",
+    "textoDerrota": "Tu cuerpo dejó de responder a tu ya debilitada moral y tu mente se descompuso optando por una retirada antes de caer en las manos del enemigo.",
     "peligro": 3,
     "xp": 15
   },
@@ -120,7 +124,8 @@
     "nivelMax": 3,
     "descripcion": "Una caravana enana parece haber acampado junto al camino, beben cerveza y comparten bromas, no parecen agresivos, aunque un enano es un enano.",
     "textoExito": "Te acercas a ellos y comparten historias y bromas, además comercian algunos artículos de los que obtienes cierta ganancia.",
-    "peligro": 0,
+    "textoDerrota": "Te acercas a ellos e intentas ser amistoso pero tus esfuerzos no dieron buenos resultados, los enanos no te ven con buenos ojos e ignoran tu presencia. Te retiras y regresas al camino sin más.",
+    "peligro": 1,
     "puntos": 40,
     "xp": 10
   },
