@@ -127,7 +127,7 @@ async function chatWithAI({
 // CUOTAS + TIEMPOS
 // ================================
 
-const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID;
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID || "276922628613079040";
 
 const TRIVIA_LIMIT = 3;
 const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
