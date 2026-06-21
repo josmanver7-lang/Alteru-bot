@@ -1,6 +1,6 @@
 [
   {
-    "id": "mula_carga_comun",
+    "id": "mula_carga",
     "nombre": "Mula de Carga",
     "slot": "montura",
     "raza": "hobbit",
@@ -10,7 +10,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
   },
   {
-    "id": "pony_comarca_entrenado",
+    "id": "pony_comarca",
     "nombre": "Pony de La Comarca",
     "slot": "montura",
     "raza": "hobbit",
@@ -20,7 +20,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
-    "id": "pony_bree_superior",
+    "id": "pony_bree",
     "nombre": "Pony de Bree",
     "slot": "montura",
     "raza": "hobbit",
@@ -30,7 +30,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
-    "id": "pony_sombra_legendario",
+    "id": "pony_sombra",
     "nombre": "Pony de la Sombra",
     "slot": "montura",
     "raza": "hobbit",
@@ -40,7 +40,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
   },
   {
-    "id": "caballo_labor_comun",
+    "id": "caballo_labor",
     "nombre": "Caballo de Labor",
     "slot": "montura",
     "raza": "hombre",
@@ -50,7 +50,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
   },
   {
-    "id": "corcel_rohan_entrenado",
+    "id": "corcel_rohan",
     "nombre": "Corcel de Rohan",
     "slot": "montura",
     "raza": "hombre",
@@ -60,7 +60,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
-    "id": "destrero_gondor_superior",
+    "id": "destrero_gondor",
     "nombre": "Destrero de Gondor",
     "slot": "montura",
     "raza": "hombre",
@@ -70,7 +70,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
-    "id": "alas_alba_legendario",
+    "id": "alas_alba",
     "nombre": "Alas del Alba",
     "slot": "montura",
     "raza": "hombre",
@@ -80,7 +80,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
   },
   {
-    "id": "corcel_silvano_comun",
+    "id": "corcel_silvano",
     "nombre": "Corcel Silvano",
     "slot": "montura",
     "raza": "elfo",
@@ -90,7 +90,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
   },
   {
-    "id": "caballo_lindon_entrenado",
+    "id": "caballo_lindon",
     "nombre": "Caballo de Lindon",
     "slot": "montura",
     "raza": "elfo",
@@ -100,7 +100,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
-    "id": "destrero_rivendel_superior",
+    "id": "destrero_rivendel",
     "nombre": "Destrero de Rivendel",
     "slot": "montura",
     "raza": "elfo",
@@ -110,7 +110,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
-    "id": "ciervo_bosque_legendario",
+    "id": "ciervo_bosque",
     "nombre": "Ciervo del Bosque",
     "slot": "montura",
     "raza": "elfo",
@@ -120,7 +120,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
   },
   {
-    "id": "cabra_minas_comun",
+    "id": "cabra_minas",
     "nombre": "Cabra de Minas",
     "slot": "montura",
     "raza": "enano",
@@ -130,7 +130,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.01, "defenseBonus": 0.01 }
   },
   {
-    "id": "cabra_montanesa_entrenado",
+    "id": "cabra_montanesa",
     "nombre": "Cabra Montañesa",
     "slot": "montura",
     "raza": "enano",
@@ -140,7 +140,7 @@
     "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
-    "id": "cabra_hierro_superior",
+    "id": "cabra_hierro",
     "nombre": "Cabra de Hierro",
     "slot": "montura",
     "raza": "enano",
@@ -150,7 +150,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
-    "id": "ariete_erebor_legendario",
+    "id": "ariete_erebor",
     "nombre": "Ariete de Erebor",
     "slot": "montura",
     "raza": "enano",
@@ -160,7 +160,7 @@
     "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
   },
   {
-    "id": "barda_simple_comun",
+    "id": "barda_simple",
     "nombre": "Silla Simple",
     "slot": "barda",
     "raza": "hobbit",
@@ -170,7 +170,7 @@
     "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
   },
   {
-    "id": "barda_forjada_forjado",
+    "id": "silla_forjada",
     "nombre": "Silla Forjada",
     "slot": "barda",
     "raza": "hobbit",
@@ -180,7 +180,7 @@
     "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
   },
   {
-    "id": "barda_superior_superior",
+    "id": "silla_bree",
     "nombre": "Silla de Bree Acolchada",
     "slot": "barda",
     "raza": "hobbit",
@@ -190,7 +190,7 @@
     "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
   },
   {
-    "id": "barda_legendaria_legendario",
+    "id": "barda_comarca",
     "nombre": "Barda de la Comarca Dorada",
     "slot": "barda",
     "raza": "hobbit",
@@ -200,7 +200,7 @@
     "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
   },
   {
-    "id": "barda_cuero_comun",
+    "id": "silla_viaje",
     "nombre": "Silla de Viaje",
     "slot": "barda",
     "raza": "hombre",
@@ -210,7 +210,7 @@
     "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
   },
   {
-    "id": "barda_hierro_forjado",
+    "id": "silla_refuerzos",
     "nombre": "Silla con Refuerzos",
     "slot": "barda",
     "raza": "hombre",
@@ -220,7 +220,7 @@
     "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
   },
   {
-    "id": "barda_gondor_superior",
+    "id": "barda_gondor",
     "nombre": "Barda de los Caballeros de Gondor",
     "slot": "barda",
     "raza": "hombre",
@@ -230,8 +230,8 @@
     "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
   },
   {
-    "id": "barda_dolamroth_legendario",
-    "nombre": "Barda de los Cisnes de Dol Amroth",
+    "id": "barda_cisne",
+    "nombre": "Barda de los caballeros del Cisne",
     "slot": "barda",
     "raza": "hombre",
     "rareza": "legendario",
@@ -240,7 +240,7 @@
     "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
   },
   {
-    "id": "barda_elfica_comun",
+    "id": "silla_ligera",
     "nombre": "Silla Ligera",
     "slot": "barda",
     "raza": "elfo",
@@ -250,7 +250,7 @@
     "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
   },
   {
-    "id": "barda_patrulla_forjado",
+    "id": "silla_reforzada_silvana",
     "nombre": "Silla Reforzada Silvana",
     "slot": "barda",
     "raza": "elfo",
@@ -260,7 +260,7 @@
     "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
   },
   {
-    "id": "barda_rivendel_superior",
+    "id": "barda_rivendel",
     "nombre": "Barda de Rivendel",
     "slot": "barda",
     "raza": "elfo",
@@ -270,7 +270,7 @@
     "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
   },
   {
-    "id": "barda_galadhrim_legendario",
+    "id": "barda_galadhrim",
     "nombre": "Barda de los Galadhrim",
     "slot": "barda",
     "raza": "elfo",
@@ -280,7 +280,7 @@
     "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
   },
   {
-    "id": "barda_mina_comun",
+    "id": "silla_carga",
     "nombre": "Silla de Carga",
     "slot": "barda",
     "raza": "enano",
@@ -290,7 +290,7 @@
     "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
   },
   {
-    "id": "barda_dura_forjado",
+    "id": "silla_metal",
     "nombre": "Silla de Metal",
     "slot": "barda",
     "raza": "enano",
@@ -300,7 +300,7 @@
     "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
   },
   {
-    "id": "barda_erebor_superior",
+    "id": "barda_erebor",
     "nombre": "Barda de Erebor",
     "slot": "barda",
     "raza": "enano",
@@ -310,7 +310,7 @@
     "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
   },
   {
-    "id": "barda_hierro_legendario",
+    "id": "barda_hierro",
     "nombre": "Barda de Hierro Ancestral",
     "slot": "barda",
     "raza": "enano",
