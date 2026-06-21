@@ -66,7 +66,8 @@ export async function getRanking() {
 export async function getProfile(userId) {
   const database = await connectDB();
   const user = await database.collection("puntos").findOne({ userId });
-  return user || {
+  
+  const defaultProfile = {
     userId,
     points: 0,
     xp: 0,
@@ -82,7 +83,12 @@ export async function getProfile(userId) {
     activeCompanions: [],
     affinity: {}
   };
+
+  // Combinamos: Los valores de 'user' sobreescriben a los por defecto, 
+  // pero si falta un campo en la BD, se mantendrá el valor por defecto.
+  return { ...defaultProfile, ...(user || {}) };
 }
+
 
 export async function addCorrectAnswer(userId, points) {
   const database = await connectDB();
