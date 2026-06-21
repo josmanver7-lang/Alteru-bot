@@ -3718,29 +3718,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
   }
 
-  // ==========================================
+    // ==========================================
   // COMANDO: DAR PUNTOS
   // ==========================================
   else if (command === "!darpuntos") {
-    // Comprobación opcional por si quieres que solo tú puedas usarlo (pon tu ID de Discord)
+    // Solo tú puedes usarlo con tu ID
     if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
 
-    const targetId = args[1]; // Corrección de índice
-    const cantidad = parseInt(args[2]); // Corrección de índice
+    const targetId = args[1]; 
+    const cantidad = parseInt(args[2]); 
 
     if (!targetId || isNaN(cantidad)) {
       return message.reply("Uso correcto: `!darpuntos <ID_Usuario> <Cantidad>`");
     }
 
     try {
-      // Obtenemos el perfil del usuario objetivo de la base de datos
-      const targetProfile = await db.getProfile(targetId);
-      if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
-
-      // Cambia 'points' o 'puntos' por el nombre exacto de la columna/propiedad de tu DB
-      targetProfile.points = (targetProfile.points || 0) + cantidad; 
-      await targetProfile.save(); // O el método que uses para guardar en tu db (ej. db.updateProfile)
-
+      // Usamos directamente tu función de database.js
+      await db.addPoints(targetId, cantidad);
       return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: ${targetId}.`);
     } catch (err) {
       console.error("Error en !darpuntos:", err);
@@ -3752,29 +3746,25 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   // COMANDO: DAR EXPERIENCIA
   // ==========================================
   else if (command === "!darexp") {
-    // if (message.author.id !== "TU_ID_DE_DISCORD") return message.reply("No tienes permisos para usar este comando.");
+    if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
 
-    const targetId = args[1]; // Corrección de índice
-    const cantidad = parseInt(args[2]); // Corrección de índice
+    const targetId = args[1]; 
+    const cantidad = parseInt(args[2]); 
 
     if (!targetId || isNaN(cantidad)) {
       return message.reply("Uso correcto: `!darexp <ID_Usuario> <Cantidad>`");
     }
 
     try {
-      const targetProfile = await db.getProfile(targetId);
-      if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
-
-      // Cambia 'xp' o 'experiencia' por la propiedad exacta de tu DB
-      targetProfile.xp = (targetProfile.xp || 0) + cantidad;
-      await targetProfile.save();
-
+      // Usamos directamente tu función de database.js
+      await db.addXP(targetId, cantidad);
       return message.reply(`✨ Se han añadido **${cantidad}** de EXP al usuario con ID: \`${targetId}\`.`);
     } catch (err) {
       console.error("Error en !darexp:", err);
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
+
 });
 
 client.login(DISCORD_TOKEN);
