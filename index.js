@@ -1972,11 +1972,12 @@ function getDefaultSlots(catalogName, item = {}) {
   const tipo = normalizeKey(item.tipo || "");
   const slot = normalizeKey(item.slot || "");
 
-  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2" || catalogName === "establo") return 1;
+  if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") return 1;
   if (catalogName === "tienda") return (tipo === "regalo") ? 1 : 3;
   if (catalogName === "mercader") return (tipo === "regalo") ? 1 : 3;
+  if (catalogName === "establo") return 1;
 
-  if (slot === "arma" || slot === "pecho" || slot === "armadura" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "pies") {
+  if (slot === "arma" || slot === "pecho" || slot === "armadura" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura" {
     return 1;
   }
   return 1;
