@@ -3738,7 +3738,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     targetProfile.points = (targetProfile.points || 0) + cantidad; 
     await targetProfile.save(); // O el método que uses para guardar en tu db (ej. db.updateProfile)
 
-    return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: `${targetId}`.`);
+    return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: ${targetId}.`);
   } catch (err) {
     console.error("Error en !darpuntos:", err);
     return message.reply("Hubo un error al intentar otorgar los puntos.");
