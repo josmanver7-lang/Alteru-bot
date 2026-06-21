@@ -1977,7 +1977,7 @@ function getDefaultSlots(catalogName, item = {}) {
   if (catalogName === "mercader") return (tipo === "regalo") ? 1 : 3;
   if (catalogName === "establo") return 1;
 
-  if (slot === "arma" || slot === "pecho" || slot === "armadura" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura" {
+  if (slot === "arma" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura") {
     return 1;
   }
   return 1;
