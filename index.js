@@ -3240,7 +3240,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
   }
-});
   else if (command === "!usar") {
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!usar <nombre del objeto>`.");
