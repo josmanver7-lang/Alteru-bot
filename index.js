@@ -2876,10 +2876,7 @@ async function handleExpedicionDesafiar(message) {
       if (line) reactions.push(`💬 ${line}`);
     }
 
-    const textoFinalDerrota = activeEncounter.textoDerrota || "El enemigo fue superior esta vez.";
-
-        // Prioriza TextoFracaso para errores comunes, luego TextoDerrota.
-    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El enemigo o el obstáculo te superó esta vez.";
+    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El enemigo te superó esta vez.";
 
     if (nuevaSalud <= 0) {
       const utilMsg = await decrementUtilities(message.author.id);
