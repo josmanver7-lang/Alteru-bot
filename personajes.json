@@ -2,16 +2,16 @@
   {
     "id": "alteru",
     "nombre": "Altéru",
-    "titulo": "Capitán de Gondor",
+    "titulo": "Capitán de las Colinas",
     "raza": "Humano",
     "clase": "Capitán",
     "alineamiento": "Aliado",
-    "estado": "Vivo",
+    "Habilidad": "Rugido del León",
     "equipo": [
       { 
         "slot": "arma", 
         "nombre": "Espada larga templada", 
-        "efecto": { "combatBonus": 0.06, "willpowerBonus": 0.02 } 
+        "efecto": { "meleeBonus": 0.06, "willpowerBonus": 0.02 } 
       },
       { 
         "slot": "escudo", 
