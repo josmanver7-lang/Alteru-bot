@@ -405,13 +405,13 @@ const companions = {
     habilidad: "🦁 **Rugido de León:** +20% Éxito.",
     bonus: "`⚔️ +6% Combate` | `🧠 +7% Voluntad` | `🛡️ +8% Reducción de Daño`",
     equipo: "• Espada larga templada\n• Escudo rectangular del Pelennor\n• Placa metálica\n• Capa de Cúridwan",
-    imagenUrl: "https://i.ibb.co/WN7S57R9/1000055154.png",
+    imagenUrl: "https://i.ibb.co/6RM6QWb9/Grid-Art-20260620-142725615.png",
     color: "#4A0E4E",
     coste: "500"
   },
   nieriel: {
     nombre: "Nieriel",
-    titulo: "La novia de Altéru",
+    titulo: "La Dama del Cisne",
     clase: "⚔️ Capitán / Duelista",
     origen: "Dol Amroth",
     personalidad: "Reservada, silenciosa, observadora, empática y amable. Destaca por su gran sensibilidad.",
@@ -419,7 +419,7 @@ const companions = {
     habilidad: "🦢 **Doncella del Cisne:** Incrementa la evasión del grupo ante ataques a distancia.",
     bonus: "`⚔️ +5% Daño` | `🏃 +6% Velocidad` | `🛡️ +4% Defensa`",
     equipo: "• Armadura y Capa del Cisne\n• Escudo Doncella del Cisne\n• Casco de Doncella del Cisne",
-    imagenUrl: "https://i.ibb.co/MDvCKp9w/1000055150.png",
+    imagenUrl: "https://i.imgur.com/2XyOeOh.png",
     color: "#E5E4E2",
     coste: "200"
   },
@@ -433,7 +433,7 @@ const companions = {
     habilidad: "🌳 **Escudo de Gondor:** +15% efectividad contra Enemigo Poderoso.",
     bonus: "`🛡️ +10% Defensa` | `❤️ +5% Vida Máxima` | `⚔️ +4% Combate`",
     equipo: "• Espada larga templada\n• Escudo del Árbol Blanco\n• Gambeson Acolchado del Pelennor",
-    imagenUrl: "https://i.ibb.co/cK9xZJW6/1000055152.png",
+    imagenUrl: "https://i.ibb.co/Rkw50cmp/Grid-Art-20260620-191209576.png",
     color: "#5A5D64",
     coste: "250"
   },
@@ -447,7 +447,7 @@ const companions = {
     habilidad: "⚔️ **Deseo de Lucha:** +25% efectividad contra enemigo numeroso.",
     bonus: "`⚔️ +12% Daño` | `💥 +5% Prob. Crítico` | `🏃 +3% Velocidad`",
     equipo: "• Mandoble templado (x2)\n• Armadura acolchada reforzada\n• Yelmo del Escolta",
-    imagenUrl: "https://i.ibb.co/VcdMMQms/1000055149.png",
+    imagenUrl: "https://i.ibb.co/RG7fKbF2/Grid-Art-20260620-191346086.png",
     color: "#8B5A2B",
     coste: "250"
   },
@@ -461,7 +461,7 @@ const companions = {
     habilidad: "📜 **Sabiduría de Rivendel:** +10 de salud después de cada encuentro.",
     bonus: "`🔮 +10% Poder Mágico` | `💖 +8% Sanación` | `🧠 +5% Voluntad`",
     equipo: "• Arco compuesto de Rivendel\n• Túnica de sabio explorador\n• Runas de Etten",
-    imagenUrl: "https://i.ibb.co/n834R2Xj/1000055153.png",
+    imagenUrl: "https://i.ibb.co/RTKfSm1Z/Grid-Art-20260620-192402418.png",
     color: "#1F4E5B",
     color: "100"
   },
@@ -475,7 +475,7 @@ const companions = {
     habilidad: "📌 **Lealtad del Escudero:** +20% de bloquear un ataque enemigo.",
     bonus: "`⚔️ +5% Combate` | `👥 +6% Sigilo` | `🛡️ +2% Reducción de Daño`",
     equipo: "• Lanza larga\n• Escudo de Broquel de Gondor\n• Botas de cuero",
-    imagenUrl: "https://i.ibb.co/jkqQbvn3/1000055151.png",
+    imagenUrl: "https://i.ibb.co/KcfQpXvW/Grid-Art-20260620-191648786.png",
     color: "#C67B5C",
     coste: "150"
   },
@@ -489,7 +489,7 @@ const companions = {
     habilidad: "🌲 **Exploradores del Norte:** +30$ éxito.",
     bonus: "`👥 +X% Sigilo` | `🏹 +X% Daño a Distancia` | `[Por completar]`",
     equipo: "• Arco largo de montaraz\n• Capa sombría con capucha\n• Espada corta de acero",
-    imagenUrl: "https://i.ibb.co/LX9wtR7h/1000055148.png",
+    imagenUrl: "https://i.ibb.co/d4r6DWTy/Grid-Art-20260620-192213159.png",
     color: "#223322",
     coste: "1000"
   }
