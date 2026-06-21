@@ -3720,7 +3720,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 // ==========================================
   else if (command === "!darpuntos") {
   // Comprobación opcional por si quieres que solo tú puedas usarlo (pon tu ID de Discord)
-  if (message.author.id !== "#5952") return message.reply("No tienes permisos para usar este comando.");
+  if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
 
   const targetId = args[0];
   const cantidad = parseInt(args[1]);
