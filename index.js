@@ -3051,8 +3051,8 @@ client.on("messageCreate", async (message) => {
         `📌 **Clase:** ${datos.clase}\n` +
         `🌍 **Origen:** ${datos.origen}\n` +
         `🎭 **Rasgos:** *${datos.personalidad}*\n` +
-        `💰 **Coste:** ${datos.coste || 0} pts\n` +
-        `👬 **Afinidad:** ${aff} pts\n\n` +
+        `🎖 **Coste:** ${datos.coste || 0} pts\n` +
+        `🤝 **Afinidad:** ${aff} pts\n\n` +
         `---`
       )
       .addFields(
