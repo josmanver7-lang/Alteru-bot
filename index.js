@@ -3160,12 +3160,14 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []); 
     let texto = "🛡️ **EQUIPO EQUIPADO**\n\n"; 
     
-    const slots = [ 
-      ["arma", "Arma"], ["escudo", "Escudo"], ["armadura", "Armadura"], ["casco", "Casco"], 
-      ["hombros", "Hombros"], ["brazos", "Brazos"], ["piernas", "Piernas"], 
-      ["pies", "Pies"], ["capa", "Capa"], ["anillo1", "Anillo 1"], 
-      ["anillo2", "Anillo 2"], ["amuleto", "Amuleto"], ["accesorio", "Accesorio"] 
-    ]; 
+    const slots = [
+      ["arma", "Arma"], ["escudo", "Escudo"], ["armadura", "Armadura"], ["casco", "Casco"],
+      ["hombros", "Hombros"], ["brazos", "Brazos"], ["piernas", "Piernas"],
+      ["pies", "Pies"], ["capa", "Capa"], ["anillo1", "Anillo 1"],
+      ["anillo2", "Anillo 2"], ["amuleto", "Amuleto"], ["accesorio", "Accesorio"],
+      ["montura", "Montura"], ["barda", "Barda"] // <-- AÑADIDOS AQUÍ
+    ];
+
     
     for (const [slotKey, label] of slots) { 
       const item = equipment?.[slotKey]; 
@@ -3209,6 +3211,22 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const equipSlot = getEquipSlotForItem(item, equipment);
     if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
 
+    // --- NUEVA LÓGICA DE VALIDACIÓN (DOS MANOS) ---
+    if (item.slot === "arma" && item.hands === 2) {
+      // Si el jugador intenta equipar un arma de dos manos, desequipamos el escudo si existe
+      if (equipment["escudo"]) {
+        const escudoEquipado = equipment["escudo"];
+        // Regresamos el escudo al inventario
+        const catEscudo = getInventoryCategoryForItem(escudoEquipado);
+        inventory[catEscudo].push(normalizeItemEntry(escudoEquipado, { cantidad: 1, recuperadoPor: "auto_desequip_escudo" }));
+        equipment["escudo"] = null; // Vaciamos el slot
+        message.channel.send("🛡️ *Como tu nueva arma requiere dos manos, has guardado tu escudo en el inventario.*");
+      }
+    }
+
+    if (equipSlot === "escudo" && equipment["arma"]?.hands === 2) {
+      return message.reply("❌ **No puedes equipar un escudo** mientras tienes un arma de dos manos equipada. Desequipa tu arma primero.");
+}
     const equippedBefore = equipment[equipSlot] || null;
 
     if (item.cantidad > 1 && !isStackableItem(item)) {
@@ -3458,7 +3476,6 @@ resetear"
     }
   }
 
-
   else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
@@ -3550,6 +3567,17 @@ resetear"
      
     const catalogName = found.catalogName || "tienda";
     let actualCatalogName = catalogName;
+
+        let catalogItems = [];
+    if (catalogName === "mercader") {
+      catalogItems = JSON.parse(await readFile(path.join(__dirname, "items.json"), "utf-8"));
+    } else if (catalogName === "mercado_negro") {
+      catalogItems = JSON.parse(await readFile(path.join(__dirname, "mercado_negro.json"), "utf-8"));
+    } else if (catalogName === "armeria") {
+      catalogItems = JSON.parse(await readFile(path.join(__dirname, "armeria.json"), "utf-8"));
+    } else if (catalogName === "establo") {
+      catalogItems = JSON.parse(await readFile(path.join(__dirname, "establo.json"), "utf-8")); 
+    }
 
     if (catalogName === "armeria") {
       const state1 = await db.getEventState("armeria1").catch(() => null);
