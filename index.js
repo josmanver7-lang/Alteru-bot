@@ -463,7 +463,7 @@ const companions = {
     equipo: "• Arco compuesto de Rivendel\n• Túnica de sabio explorador\n• Runas de Etten",
     imagenUrl: "https://i.ibb.co/RTKfSm1Z/Grid-Art-20260620-192402418.png",
     color: "#1F4E5B",
-    color: "100"
+    coste: "100"
   },
   andaer: {
     nombre: "Andaer",
@@ -3040,6 +3040,9 @@ client.on("messageCreate", async (message) => {
     const datos = companions[nombreBusqueda];
     if (!datos) return message.reply('Ese compañero o unidad no se encuentra en el campamento.');
 
+    const profile = await db.getProfile(message.author.id);
+    const aff = (profile?.affinity || {})[nombreBusqueda] || 0;
+
     const embedFicha = new EmbedBuilder()
       .setColor(datos.color)
       .setTitle(`${datos.nombre} — *${datos.titulo}*`)
@@ -3048,7 +3051,7 @@ client.on("messageCreate", async (message) => {
         `📌 **Clase:** ${datos.clase}\n` +
         `🌍 **Origen:** ${datos.origen}\n` +
         `🎭 **Rasgos:** *${datos.personalidad}*\n` +
-        `💰 **Coste:** ${comp.coste || 0} pts\n` +
+        `💰 **Coste:** ${datos.coste || 0} pts\n` +
         `👬 **Afinidad:** ${aff} pts\n\n` +
         `---`
       )
@@ -3715,62 +3718,62 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
   }
 
-    // ==========================================
-// COMANDO: DAR PUNTOS
-// ==========================================
+  // ==========================================
+  // COMANDO: DAR PUNTOS
+  // ==========================================
   else if (command === "!darpuntos") {
-  // Comprobación opcional por si quieres que solo tú puedas usarlo (pon tu ID de Discord)
-  if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
+    // Comprobación opcional por si quieres que solo tú puedas usarlo (pon tu ID de Discord)
+    if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
 
-  const targetId = args[0];
-  const cantidad = parseInt(args[1]);
+    const targetId = args[1]; // Corrección de índice
+    const cantidad = parseInt(args[2]); // Corrección de índice
 
-  if (!targetId || isNaN(cantidad)) {
-    return message.reply("Uso correcto: `!darpuntos <ID_Usuario> <Cantidad>`");
+    if (!targetId || isNaN(cantidad)) {
+      return message.reply("Uso correcto: `!darpuntos <ID_Usuario> <Cantidad>`");
+    }
+
+    try {
+      // Obtenemos el perfil del usuario objetivo de la base de datos
+      const targetProfile = await db.getProfile(targetId);
+      if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
+
+      // Cambia 'points' o 'puntos' por el nombre exacto de la columna/propiedad de tu DB
+      targetProfile.points = (targetProfile.points || 0) + cantidad; 
+      await targetProfile.save(); // O el método que uses para guardar en tu db (ej. db.updateProfile)
+
+      return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: ${targetId}.`);
+    } catch (err) {
+      console.error("Error en !darpuntos:", err);
+      return message.reply("Hubo un error al intentar otorgar los puntos.");
+    }
   }
 
-  try {
-    // Obtenemos el perfil del usuario objetivo de la base de datos
-    const targetProfile = await db.getProfile(targetId);
-    if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
+  // ==========================================
+  // COMANDO: DAR EXPERIENCIA
+  // ==========================================
+  else if (command === "!darexp") {
+    // if (message.author.id !== "TU_ID_DE_DISCORD") return message.reply("No tienes permisos para usar este comando.");
 
-    // Cambia 'points' o 'puntos' por el nombre exacto de la columna/propiedad de tu DB
-    targetProfile.points = (targetProfile.points || 0) + cantidad; 
-    await targetProfile.save(); // O el método que uses para guardar en tu db (ej. db.updateProfile)
+    const targetId = args[1]; // Corrección de índice
+    const cantidad = parseInt(args[2]); // Corrección de índice
 
-    return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: ${targetId}.`);
-  } catch (err) {
-    console.error("Error en !darpuntos:", err);
-    return message.reply("Hubo un error al intentar otorgar los puntos.");
-  }
-}
+    if (!targetId || isNaN(cantidad)) {
+      return message.reply("Uso correcto: `!darexp <ID_Usuario> <Cantidad>`");
+    }
 
-// ==========================================
-// COMANDO: DAR EXPERIENCIA
-// ==========================================
-else if (command === "!darexp") {
-  // if (message.author.id !== "TU_ID_DE_DISCORD") return message.reply("No tienes permisos para usar este comando.");
+    try {
+      const targetProfile = await db.getProfile(targetId);
+      if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
 
-  const targetId = args[0];
-  const cantidad = parseInt(args[1]);
+      // Cambia 'xp' o 'experiencia' por la propiedad exacta de tu DB
+      targetProfile.xp = (targetProfile.xp || 0) + cantidad;
+      await targetProfile.save();
 
-  if (!targetId || isNaN(cantidad)) {
-    return message.reply("Uso correcto: `!darexp <ID_Usuario> <Cantidad>`");
-  }
-
-  try {
-    const targetProfile = await db.getProfile(targetId);
-    if (!targetProfile) return message.reply("Ese usuario no está registrado en la base de datos.");
-
-    // Cambia 'xp' o 'experiencia' por la propiedad exacta de tu DB
-    targetProfile.xp = (targetProfile.xp || 0) + cantidad;
-    await targetProfile.save();
-
-    return message.reply(`✨ Se han añadido **${cantidad}** de EXP al usuario con ID: `${targetId}`.`);
-  } catch (err) {
-    console.error("Error en !darexp:", err);
-    return message.reply("Hubo un error al intentar otorgar la experiencia.");
-  }
+      return message.reply(`✨ Se han añadido **${cantidad}** de EXP al usuario con ID: \`${targetId}\`.`);
+    } catch (err) {
+      console.error("Error en !darexp:", err);
+      return message.reply("Hubo un error al intentar otorgar la experiencia.");
+    }
   }
 });
 
