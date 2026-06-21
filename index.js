@@ -200,10 +200,23 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
         bonosExtra += bonuses.numerousEnemyBonus || 0;
     }
 
+    // Nota: El multiplicador "9" original aquí es seguro dejarlo, 
+    // porque el daño de área equilibrará la balanza de forma natural.
     let danoPlanoEnemigo = (encounter.peligro * 9) + (encounter.damageBonus || 0);
 
     let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
     let poderFinalEnemigo = danoPlanoEnemigo * (1 + (encounter.successBonus || 0));
+
+    // 🔥 NUEVA LÓGICA: DAÑO DE ÁREA (AoE) CONTRA ENEMIGOS NUMEROSOS 🔥
+    if (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") {
+        // Un 35% de tu poder actúa como "salpicadura", dañando a varios enemigos a la vez.
+        // Esto debilita enormemente el poder grupal del enemigo antes del choque final.
+        let danoDeArea = poderFinalJugador * 0.35; 
+        poderFinalEnemigo -= danoDeArea;
+        
+        // Nos aseguramos de que el poder enemigo nunca sea menor a 1 por fallos matemáticos.
+        if (poderFinalEnemigo < 1) poderFinalEnemigo = 1;
+    }
 
     if (modificadorPuntos > 0) {
         poderFinalJugador *= (1 + (modificadorPuntos * 0.25)); 
@@ -221,6 +234,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
         modificadorMatriz: modificadorPuntos
     };
 }
+
 
 // ================================
 // MAPAS EN MEMORIA
@@ -2836,7 +2850,7 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
     }
 
-    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 4) + Math.floor(Math.random() * 15);
+    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 7) + Math.floor(Math.random() * 15);
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
     danoEnemigo = Math.max(1, Math.floor(danoEnemigo * (1 - totalDmgRed)));
 
@@ -3367,23 +3381,77 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
 📚 TRIVIA 
 !trivia <facil/normal/dificil/legendario> (O puedes dejarlo vacío para aleatorio)
-
+resetear"
 🔥 ROLEPLAY 
 !a <mensaje> (Hablar con Altéru) o directos (!al, !c, !d, !an, !n, !f)` 
     ); 
   }
-  else if (command === "!resetear") {
-    const target = message.mentions.users.first() || message.author;
-    if (target.id !== message.author.id && message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permiso para resetear a otro usuario.");
-    await db.resetQuotaState(target.id, "trivia", TRIVIA_WINDOW_MS);
-    return message.reply(`🔄 Trivia reiniciada para <@${target.id}>.`);
+
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID;
+
+if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
+  
+  if (message.author.id !== ADMIN_USER_ID) {
+    return message.reply("❌ No tienes permiso para usar este comando de administración.");
   }
-  else if (command === "!reiniciar") {
-    const target = message.mentions.users.first() || message.author;
-    if (target.id !== message.author.id && message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permiso para reiniciar a otro usuario.");
-    await db.resetQuotaState(target.id, "expedicion", EXPEDITION_WINDOW_MS);
-    return message.reply(`🔄 Expediciones reiniciadas para <@${target.id}>.`);
+
+  const targetUser = message.mentions.users.first();
+  if (!targetUser) {
+    return message.reply(`⚠️ Debes mencionar a un usuario. Ejemplo: \`${command} @usuario\``);
   }
+  
+  const targetId = targetUser.id;
+
+  // Comando: !reset (Trivias)
+  if (command === "!reset") {
+    await db.setQuotaState(targetId, "trivia", 0, 0);
+    return message.reply(`✅ El tiempo para las **Trivias** de ${targetUser.username} ha sido reiniciado.`);
+  }
+
+  // Comando: !reiniciar (Expediciones)
+  if (command === "!reiniciar") {
+    await db.setQuotaState(targetId, "expedicion", 0, 0);
+    return message.reply(`✅ El tiempo de **Expediciones** para ${targetUser.username} ha sido reiniciado.`);
+  }
+
+  if (command === "!resetexplorer") {
+    await db.setQuotaState(targetId, "exploracion", 0, 0);
+    return message.reply(`✅ El tiempo de **Exploración** para ${targetUser.username} ha sido reiniciado.`);
+  }
+
+  // Comando: !asignarraza (Sobrescribe / Asigna la Raza)
+  if (command === "!asignarraza") {
+    const nuevaRaza = args.slice(2).join(" ").trim(); // Toma lo que va después de !asignarraza @mencion
+    if (!nuevaRaza) return message.reply("⚠️ Debes especificar la raza. Ejemplo: `!asignarraza @usuario Elfo`");
+
+    // Formatear la primera letra en mayúscula para que coincida con tu base de datos
+    const razaFormateada = nuevaRaza.charAt(0).toUpperCase() + nuevaRaza.slice(1).toLowerCase();
+    
+    if (!VALID_RACES.includes(razaFormateada)) {
+      return message.reply(`⚠️ Raza no válida. Opciones permitidas: ${VALID_RACES.join(", ")}`);
+    }
+
+    await db.updateTravelerData(targetId, { race: razaFormateada });
+    return message.reply(`✅ La raza de ${targetUser.username} se ha actualizado correctamente a **${razaFormateada}**.`);
+  }
+
+  // Comando: !asignarclase (Sobrescribe / Asigna la Clase)
+  if (command === "!asignarclase") {
+    const nuevaClaseInput = args.slice(2).join(" ").trim();
+    if (!nuevaClaseInput) return message.reply("⚠️ Debes especificar la clase. Ejemplo: `!asignarclase @usuario Guardián Rúnico`");
+
+    // Usar tu función parseClassChoice para validar y normalizar la entrada
+    const classKey = parseClassChoice(nuevaClaseInput);
+    if (!classKey) {
+      return message.reply(`⚠️ Clase no válida. Opciones permitidas: ${VALID_CLASSES.join(", ")}`);
+    }
+
+    const claseAsignada = CLASS_KEY_TO_LABEL[classKey];
+    await db.updateTravelerData(targetId, { class: claseAsignada });
+    return message.reply(`✅ La clase de ${targetUser.username} se ha actualizado correctamente a **${claseAsignada}**.`);
+  }
+}
+
   else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
@@ -3471,8 +3539,9 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const inventory = normalizeInventory(profile.inventory);
     const found = await findCatalogItemByQuery(query);
 
-    if (!found) return message.reply("No encuentro ese objeto en la tienda, la armería o el mercader.");
-
+    if (!found) return message.reply("No encuentro ese objeto en la tienda, la armería, el mercader o el establo.");
+     
+}
     const catalogName = found.catalogName || "tienda";
     let actualCatalogName = catalogName;
 
