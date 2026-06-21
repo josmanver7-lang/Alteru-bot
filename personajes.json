@@ -181,9 +181,9 @@
   },
   {
     "nombre": "Cirdil",
-    "titulo": "El Escudo de Gondor",
+    "titulo": "Escudo de Gondor",
     "raza": "Humano",
-    "clase": "Guerrero",
+    "clase": "Guardián",
     "alineamiento": "Aliado",
     "estado": "Vivo",
     "equipo": [
@@ -334,7 +334,7 @@
     "nombre": "Faelon",
     "titulo": "El Elfo",
     "raza": "Humano",
-    "clase": "Guardián de Runas",
+    "clase": "Guardian Rúnico",
     "alineamiento": "Aliado",
     "estado": "Vivo",
     "equipo": [
@@ -422,7 +422,7 @@
     "nombre": "Andaer",
     "titulo": "El escudero",
     "raza": "Humano",
-    "clase": "Guerrero",
+    "clase": "Guardián",
     "alineamiento": "Aliado",
     "estado": "Vivo",
     "equipo": [
