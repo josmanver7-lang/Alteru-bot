@@ -3371,7 +3371,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 !ranking 
 
 🤝 COMPAÑEROS 
-!companeros, !contratar <nombre>, !grupo 
+!compañeros, !contratar <nombre>, !grupo 
 
 🗺️ EXPEDICIONES 
 !tablon, !expedicion <numero>, !desafiar, !interactuar, !exploracion, !volver, !curar 
@@ -3387,9 +3387,7 @@ resetear"
     ); 
   }
 
-const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID;
-
-if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
+else if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
   
   if (message.author.id !== ADMIN_USER_ID) {
     return message.reply("❌ No tienes permiso para usar este comando de administración.");
@@ -3541,7 +3539,6 @@ if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].
 
     if (!found) return message.reply("No encuentro ese objeto en la tienda, la armería, el mercader o el establo.");
      
-}
     const catalogName = found.catalogName || "tienda";
     let actualCatalogName = catalogName;
 
