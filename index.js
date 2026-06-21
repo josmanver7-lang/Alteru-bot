@@ -2389,53 +2389,56 @@ async function handleExpedicionInteract(message) {
 
   special.interacted = true;
   const profile = await db.getProfile(message.author.id);
-
   const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
   const equipment = getResolvedEquipment(profile, equipmentRaw);
   const bonuses = getAdventureBonuses(profile, equipment);
 
-  const rewardMultiplier = 1 + Math.min(
-    0.45,
-    (bonuses.negotiation * 1.10) + (bonuses.willpower * 0.60) + (bonuses.exploration * 0.25) + (bonuses.stealth * 0.15)
-  );
+  // Probabilidad de éxito base 70%, sube con Negociación/Voluntad, baja con el Peligro
+  const probExito = 0.70 + (bonuses.negotiation * 0.80) + (bonuses.willpower * 0.30) - ((special.peligro || 1) * 0.05);
+  const success = Math.random() < Math.min(probExito, 0.95);
 
-  const xpGanada = Math.max(1, Math.round((special.xp || 10) * rewardMultiplier));
-  const puntosGanados = Math.max(0, Math.round((special.puntos || 5) * rewardMultiplier));
-
-  expedition.xpEarned += xpGanada;
-  expedition.pointsEarned += puntosGanados;
   expedition.progress += 1;
-
-  const specialText = special.textoInteractuar || special.textoExito || special.descripcion || special.description || `Has intervenido en el suceso de *${special.titulo}* y lo has resuelto con éxito.`;
-
-  let textoVictoria = `🌟 **Interacción completada**\n\n${specialText}\n\n+${xpGanada} XP`;
-  if (puntosGanados > 0) textoVictoria += `\n+${puntosGanados} Puntos`;
+  let textoFinalInteraccion = "";
 
   const ownedComps = getOwnedCompanions(profile);
   const affinityGained = [];
+  const reactions = [];
+
   for (const cid of [...new Set(ownedComps)]) {
-    const result = await addAffinityWithRankMessage(message.author.id, cid, special, "victoria", "victoria");
+    const result = await addAffinityWithRankMessage(message.author.id, cid, special, success ? "victoria" : "derrota", success ? "victoria" : "derrota");
     expedition.affinityLog[cid] = (expedition.affinityLog[cid] || 0) + result.gain;
-    affinityGained.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+    if (result.gain > 0) affinityGained.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
     if (result.rankMessage) affinityGained.push(`  ${result.rankMessage}`);
   }
 
-  if (affinityGained.length) textoVictoria += `\n\n🤝 Afinidad ganada:\n${affinityGained.join("\n")}`;
-
-  const reactionIds = [...new Set(ownedComps)].slice(0, 3);
-  const reactions = [];
-  for (const cid of reactionIds) {
-    const line = await companionReaction(cid, { ...special, userId: message.author.id }, "victoria");
+  for (const cid of [...new Set(ownedComps)].slice(0, 3)) {
+    const line = await companionReaction(cid, { ...special, userId: message.author.id }, success ? "victoria" : "derrota");
     if (line) reactions.push(`💬 ${line}`);
   }
-  if (reactions.length) textoVictoria += `\n\n${reactions.join("\n")}`;
 
-  expedition.currentEncounter = null;
+  if (success) {
+    const rewardMultiplier = 1 + Math.min(0.45, (bonuses.negotiation * 1.10) + (bonuses.willpower * 0.60) + (bonuses.exploration * 0.25) + (bonuses.stealth * 0.15));
+    const xpGanada = Math.max(1, Math.round((special.xp || 10) * rewardMultiplier));
+    const puntosGanados = Math.max(0, Math.round((special.puntos || 5) * rewardMultiplier));
+
+    expedition.xpEarned += xpGanada;
+    expedition.pointsEarned += puntosGanados;
+
+    const specialText = special.textoExito || special.textoInteractuar || special.descripcion || `Has intervenido en el evento y lo has resuelto con éxito.`;
+    textoFinalInteraccion = `🌟 **Interacción Exitosa**\n\n${specialText}\n\n+${xpGanada} XP`;
+    if (puntosGanados > 0) textoFinalInteraccion += `\n+${puntosGanados} Puntos`;
+  } else {
+    const specialText = special.textoFracaso || special.textoDerrota || `Tus intentos de intervenir no dieron buenos frutos.`;
+    textoFinalInteraccion = `❌ **Interacción Fallida**\n\n${specialText}\n\n*(No obtienes recompensas de este evento)*`;
+  }
+
+  if (affinityGained.length) textoFinalInteraccion += `\n\n🤝 Afinidad afectada:\n${affinityGained.join("\n")}`;
+  if (reactions.length) textoFinalInteraccion += `\n\n${reactions.join("\n")}`;
+
   const totalEncuentros = expedition.mission.encuentros?.length || 0;
-
   if (expedition.progress < totalEncuentros) {
-    textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa \`!desafiar\` para seguir viajando.`;
-    return message.reply(textoVictoria);
+    textoFinalInteraccion += `\n\n🛤️ El camino continúa.\n\nUsa \`!desafiar\` para seguir viajando.`;
+    return message.reply(textoFinalInteraccion);
   }
 
   if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
@@ -2450,10 +2453,11 @@ async function handleExpedicionInteract(message) {
       enemyPresent,
       allowedActions: enemyPresent ? expedition.finalScenario.allowedActions : ["retirarse"]
     };
-    textoVictoria += `\n\n⚠️ **Has llegado al final de la expedición.** Usa \`!desafiar\` para encarar el último escenario.`;
-    return message.reply(textoVictoria);
+    textoFinalInteraccion += `\n\n⚠️ **Has llegado al final de la expedición.** Usa \`!desafiar\` para encarar el último escenario.`;
+    return message.reply(textoFinalInteraccion);
   }
 
+  // === Lógica de finalización de misión ===
   const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
   const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
 
@@ -2485,13 +2489,13 @@ async function handleExpedicionInteract(message) {
   expedition.pendingFinalScenario = false;
   expeditions.delete(message.author.id);
 
-  textoVictoria += `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada total:\n${finalAffinityText}`;
-  if (afterLevel > beforeLevel) textoVictoria += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
-  if (afterRank !== beforeRank) textoVictoria += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango **${afterRank}**.`;
-  if (finalReactions.length) textoVictoria += `\n\n${finalReactions.join("\n")}`;
+  textoFinalInteraccion += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || "¡Has llegado al final del recorrido!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada total:\n${finalAffinityText}`;
+  if (afterLevel > beforeLevel) textoFinalInteraccion += `\n\n📚 **Ascenso de nivel**\n¡Felicidades! Has subido al nivel **${afterLevel}**.`;
+  if (afterRank !== beforeRank) textoFinalInteraccion += `\n🏅 **Ascenso de rango**\n¡Felicidades! Has ascendido de rango **${afterRank}**.`;
+  if (finalReactions.length) textoFinalInteraccion += `\n\n${finalReactions.join("\n")}`;
 
-  textoVictoria += utilMsg;
-  return message.reply(textoVictoria);
+  textoFinalInteraccion += utilMsg;
+  return message.reply(textoFinalInteraccion);
 }
 
 async function handleExpedicionVolver(message) {
@@ -2733,12 +2737,14 @@ async function handleExpedicionDesafiar(message) {
           baseSuccess += utilTotals.negotiation * 0.90;
           baseSuccess += utilTotals.willpower * 0.45;
           baseSuccess += utilTotals.stealth * 0.15;
-      } else if (activeEncounter.tipo === "obstaculo") {
-          baseSuccess += playerClassBonus.explorationBonus || 0;
-          baseSuccess += utilTotals.exploration * 0.85;
-          baseSuccess += utilTotals.stealth * 0.20;
-          baseSuccess += utilTotals.willpower * 0.15;
-      }
+        } else if (activeEncounter.tipo === "obstaculo") {
+      // 70% Base. El peligro reduce directamente tu probabilidad (Peligro 5 = -20% éxito)
+      let baseSuccess = 0.70 - ((activeEncounter.peligro || 1) * 0.04);
+      baseSuccess += playerClassBonus.explorationBonus || 0;
+      baseSuccess += utilTotals.exploration * 0.85;
+      baseSuccess += utilTotals.stealth * 0.20;
+      baseSuccess += utilTotals.willpower * 0.15;
+      baseSuccess += bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
       
       success = Math.random() < Math.min(baseSuccess, 0.95);
   }
@@ -2872,6 +2878,9 @@ async function handleExpedicionDesafiar(message) {
 
     const textoFinalDerrota = activeEncounter.textoDerrota || "El enemigo fue superior esta vez.";
 
+        // Prioriza TextoFracaso para errores comunes, luego TextoDerrota.
+    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El enemigo o el obstáculo te superó esta vez.";
+
     if (nuevaSalud <= 0) {
       const utilMsg = await decrementUtilities(message.author.id);
       await clearExpeditionParty(message.author.id);
@@ -2880,7 +2889,10 @@ async function handleExpedicionDesafiar(message) {
 
       await db.updateTravelerData(message.author.id, { salud: 100 });
 
-      return message.reply(`💀 **Has caído en combate**\n\n${textoFinalDerrota}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
+      // Si la vida llega a 0, usa textoDerrotaTotal si existe
+      const textoMuerte = activeEncounter.textoDerrotaTotal || textoFinalDerrota;
+
+      return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
     const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
@@ -3387,68 +3399,65 @@ resetear"
     ); 
   }
 
-else if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
-  
-  if (message.author.id !== ADMIN_USER_ID) {
-    return message.reply("❌ No tienes permiso para usar este comando de administración.");
-  }
-
-  const targetUser = message.mentions.users.first();
-  if (!targetUser) {
-    return message.reply(`⚠️ Debes mencionar a un usuario. Ejemplo: \`${command} @usuario\``);
-  }
-  
-  const targetId = targetUser.id;
-
-  // Comando: !reset (Trivias)
-  if (command === "!reset") {
-    await db.setQuotaState(targetId, "trivia", 0, 0);
-    return message.reply(`✅ El tiempo para las **Trivias** de ${targetUser.username} ha sido reiniciado.`);
-  }
-
-  // Comando: !reiniciar (Expediciones)
-  if (command === "!reiniciar") {
-    await db.setQuotaState(targetId, "expedicion", 0, 0);
-    return message.reply(`✅ El tiempo de **Expediciones** para ${targetUser.username} ha sido reiniciado.`);
-  }
-
-  if (command === "!resetexplorer") {
-    await db.setQuotaState(targetId, "exploracion", 0, 0);
-    return message.reply(`✅ El tiempo de **Exploración** para ${targetUser.username} ha sido reiniciado.`);
-  }
-
-  // Comando: !asignarraza (Sobrescribe / Asigna la Raza)
-  if (command === "!asignarraza") {
-    const nuevaRaza = args.slice(2).join(" ").trim(); // Toma lo que va después de !asignarraza @mencion
-    if (!nuevaRaza) return message.reply("⚠️ Debes especificar la raza. Ejemplo: `!asignarraza @usuario Elfo`");
-
-    // Formatear la primera letra en mayúscula para que coincida con tu base de datos
-    const razaFormateada = nuevaRaza.charAt(0).toUpperCase() + nuevaRaza.slice(1).toLowerCase();
+  else if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
     
-    if (!VALID_RACES.includes(razaFormateada)) {
-      return message.reply(`⚠️ Raza no válida. Opciones permitidas: ${VALID_RACES.join(", ")}`);
+    if (message.author.id !== ADMIN_USER_ID) {
+      return message.reply("❌ No tienes permiso para usar este comando de administración.");
     }
-
-    await db.updateTravelerData(targetId, { race: razaFormateada });
-    return message.reply(`✅ La raza de ${targetUser.username} se ha actualizado correctamente a **${razaFormateada}**.`);
+  
+    const targetUser = message.mentions.users.first();
+    // Toma la ID de la mención o usa el número directo si se proporcionó una ID cruda
+    const targetId = targetUser ? targetUser.id : args[1];
+    
+    if (!targetId || targetId.length < 15) {
+      return message.reply(`⚠️ Debes mencionar a un usuario válido o poner su ID. Ejemplo: \`${command} @usuario\` o \`${command} 1234567890123456\``);
+    }
+    
+    const displayName = targetUser ? targetUser.username : `la ID ${targetId}`;
+  
+    if (command === "!reset") {
+      await db.setQuotaState(targetId, "trivia", 0, 0);
+      return message.reply(`✅ El tiempo para las **Trivias** de ${displayName} ha sido reiniciado.`);
+    }
+  
+    if (command === "!reiniciar") {
+      await db.setQuotaState(targetId, "expedicion", 0, 0);
+      return message.reply(`✅ El tiempo de **Expediciones** para ${displayName} ha sido reiniciado.`);
+    }
+  
+    if (command === "!resetexplorer") {
+      await db.setQuotaState(targetId, "exploracion", 0, 0);
+      return message.reply(`✅ El tiempo de **Exploración** para ${displayName} ha sido reiniciado.`);
+    }
+  
+    if (command === "!asignarraza") {
+      const nuevaRaza = args.slice(2).join(" ").trim();
+      if (!nuevaRaza) return message.reply("⚠️ Debes especificar la raza.");
+  
+      const razaFormateada = nuevaRaza.charAt(0).toUpperCase() + nuevaRaza.slice(1).toLowerCase();
+      if (!VALID_RACES.includes(razaFormateada)) {
+        return message.reply(`⚠️ Raza no válida. Opciones permitidas: ${VALID_RACES.join(", ")}`);
+      }
+  
+      await db.updateTravelerData(targetId, { race: razaFormateada });
+      return message.reply(`✅ La raza de ${displayName} se ha actualizado correctamente a **${razaFormateada}**.`);
+    }
+  
+    if (command === "!asignarclase") {
+      const nuevaClaseInput = args.slice(2).join(" ").trim();
+      if (!nuevaClaseInput) return message.reply("⚠️ Debes especificar la clase.");
+  
+      const classKey = parseClassChoice(nuevaClaseInput);
+      if (!classKey) {
+        return message.reply(`⚠️ Clase no válida. Opciones permitidas: ${VALID_CLASSES.join(", ")}`);
+      }
+  
+      const claseAsignada = CLASS_KEY_TO_LABEL[classKey];
+      await db.updateTravelerData(targetId, { class: claseAsignada });
+      return message.reply(`✅ La clase de ${displayName} se ha actualizado correctamente a **${claseAsignada}**.`);
+    }
   }
 
-  // Comando: !asignarclase (Sobrescribe / Asigna la Clase)
-  if (command === "!asignarclase") {
-    const nuevaClaseInput = args.slice(2).join(" ").trim();
-    if (!nuevaClaseInput) return message.reply("⚠️ Debes especificar la clase. Ejemplo: `!asignarclase @usuario Guardián Rúnico`");
-
-    // Usar tu función parseClassChoice para validar y normalizar la entrada
-    const classKey = parseClassChoice(nuevaClaseInput);
-    if (!classKey) {
-      return message.reply(`⚠️ Clase no válida. Opciones permitidas: ${VALID_CLASSES.join(", ")}`);
-    }
-
-    const claseAsignada = CLASS_KEY_TO_LABEL[classKey];
-    await db.updateTravelerData(targetId, { class: claseAsignada });
-    return message.reply(`✅ La clase de ${targetUser.username} se ha actualizado correctamente a **${claseAsignada}**.`);
-  }
-}
 
   else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
@@ -3785,71 +3794,58 @@ else if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarcla
     }
   }
 
-      // ==========================================
-  // COMANDO: DAR PUNTOS (Y REPARAR BUG NaN)
+        // ==========================================
+  // COMANDO: DAR PUNTOS
   // ==========================================
   else if (command === "!darpuntos") {
-    if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
+    if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos para usar este comando.");
 
-    const targetId = args[1]; 
+    const mention = message.mentions.users.first();
+    const targetId = mention ? mention.id : args[1];
     const cantidad = parseInt(args[2]); 
 
-    if (!targetId || isNaN(cantidad)) {
-      return message.reply("Uso correcto: `!darpuntos <ID_Usuario> <Cantidad>`");
-    }
+    if (!targetId || isNaN(cantidad)) return message.reply("Uso correcto: `!darpuntos <@Usuario o ID> <Cantidad>`");
+    if (targetId.length < 15) return message.reply("⚠️ Usa una ID válida de Discord o la mención con `@`. ¡No escribas el nombre del personaje!");
 
     try {
-      // 1. Buscamos el perfil completo
       const targetProfile = await db.getProfile(targetId);
+      let ptsActuales = Number(targetProfile.points);
       
-      // 2. Extraemos los puntos y forzamos que sea un número real. 
-      // Si detecta el bug NaN, lo limpia convirtiéndolo a 0.
-      let puntosActuales = Number(targetProfile.points);
-      if (isNaN(puntosActuales)) {
-          puntosActuales = 0;
+      if (isNaN(ptsActuales)) {
+          await db.updateTravelerData(targetId, { points: cantidad }); 
+      } else {
+          await db.addPoints(targetId, cantidad);
       }
-
-      // 3. Sumamos la cantidad
-      const nuevosPuntos = puntosActuales + cantidad;
-
-      // 4. Forzamos la sobreescritura en la base de datos para borrar el bug
-      await db.updateTravelerData(targetId, { points: nuevosPuntos });
-
-      return message.reply(`✅ Se ha reparado el perfil y añadido los puntos. \`${targetId}\` tiene ahora **${nuevosPuntos}** puntos.`);
+      return message.reply(`✅ Se han añadido **${cantidad}** puntos a <@${targetId}>.`);
     } catch (err) {
-      console.error("Error en !darpuntos:", err);
       return message.reply("Hubo un error al intentar otorgar los puntos.");
     }
   }
 
   // ==========================================
-  // COMANDO: DAR EXPERIENCIA (Y REPARAR BUG NaN)
+  // COMANDO: DAR EXPERIENCIA
   // ==========================================
   else if (command === "!darexp") {
-    if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
+    if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos.");
 
-    const targetId = args[1]; 
+    const mention = message.mentions.users.first();
+    const targetId = mention ? mention.id : args[1];
     const cantidad = parseInt(args[2]); 
 
-    if (!targetId || isNaN(cantidad)) {
-      return message.reply("Uso correcto: `!darexp <ID_Usuario> <Cantidad>`");
-    }
+    if (!targetId || isNaN(cantidad)) return message.reply("Uso correcto: `!darexp <@Usuario o ID> <Cantidad>`");
+    if (targetId.length < 15) return message.reply("⚠️ Usa una ID válida de Discord o la mención con `@`.");
 
     try {
       const targetProfile = await db.getProfile(targetId);
-      
       let xpActual = Number(targetProfile.xp);
+      
       if (isNaN(xpActual)) {
-          xpActual = 0;
+          await db.updateTravelerData(targetId, { xp: cantidad });
+      } else {
+          await db.addXP(targetId, cantidad);
       }
-
-      const nuevaXp = xpActual + cantidad;
-
-      await db.updateTravelerData(targetId, { xp: nuevaXp });
-
-      return message.reply(`✨ Se ha reparado el perfil y añadido la experiencia. \`${targetId}\` tiene ahora **${nuevaXp}** de XP.`);
+      return message.reply(`✨ Se han añadido **${cantidad}** de XP a <@${targetId}>.`);
     } catch (err) {
-      console.error("Error en !darexp:", err);
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
