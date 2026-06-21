@@ -3049,7 +3049,7 @@ client.on("messageCreate", async (message) => {
         `🌍 **Origen:** ${datos.origen}\n` +
         `🎭 **Rasgos:** *${datos.personalidad}*\n` +
         `💰 **Coste:** ${comp.coste || 0} pts\n` +
-        `👬 **Afinidad:** ${aff} pts\n\n`;
+        `👬 **Afinidad:** ${aff} pts\n\n` +
         `---`
       )
       .addFields(
