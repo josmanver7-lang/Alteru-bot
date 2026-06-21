@@ -3718,11 +3718,10 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
   }
 
-    // ==========================================
-  // COMANDO: DAR PUNTOS
+      // ==========================================
+  // COMANDO: DAR PUNTOS (Y REPARAR BUG NaN)
   // ==========================================
   else if (command === "!darpuntos") {
-    // Solo tú puedes usarlo con tu ID
     if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
 
     const targetId = args[1]; 
@@ -3733,9 +3732,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
 
     try {
-      // Usamos directamente tu función de database.js
-      await db.addPoints(targetId, cantidad);
-      return message.reply(`✅ Se han añadido **${cantidad}** puntos al usuario con ID: ${targetId}.`);
+      // 1. Buscamos el perfil completo
+      const targetProfile = await db.getProfile(targetId);
+      
+      // 2. Extraemos los puntos y forzamos que sea un número real. 
+      // Si detecta el bug NaN, lo limpia convirtiéndolo a 0.
+      let puntosActuales = Number(targetProfile.points);
+      if (isNaN(puntosActuales)) {
+          puntosActuales = 0;
+      }
+
+      // 3. Sumamos la cantidad
+      const nuevosPuntos = puntosActuales + cantidad;
+
+      // 4. Forzamos la sobreescritura en la base de datos para borrar el bug
+      await db.updateTravelerData(targetId, { points: nuevosPuntos });
+
+      return message.reply(`✅ Se ha reparado el perfil y añadido los puntos. \`${targetId}\` tiene ahora **${nuevosPuntos}** puntos.`);
     } catch (err) {
       console.error("Error en !darpuntos:", err);
       return message.reply("Hubo un error al intentar otorgar los puntos.");
@@ -3743,7 +3756,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
   }
 
   // ==========================================
-  // COMANDO: DAR EXPERIENCIA
+  // COMANDO: DAR EXPERIENCIA (Y REPARAR BUG NaN)
   // ==========================================
   else if (command === "!darexp") {
     if (message.author.id !== "276922628613079040") return message.reply("No tienes permisos para usar este comando.");
@@ -3756,15 +3769,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
 
     try {
-      // Usamos directamente tu función de database.js
-      await db.addXP(targetId, cantidad);
-      return message.reply(`✨ Se han añadido **${cantidad}** de EXP al usuario con ID: \`${targetId}\`.`);
+      const targetProfile = await db.getProfile(targetId);
+      
+      let xpActual = Number(targetProfile.xp);
+      if (isNaN(xpActual)) {
+          xpActual = 0;
+      }
+
+      const nuevaXp = xpActual + cantidad;
+
+      await db.updateTravelerData(targetId, { xp: nuevaXp });
+
+      return message.reply(`✨ Se ha reparado el perfil y añadido la experiencia. \`${targetId}\` tiene ahora **${nuevaXp}** de XP.`);
     } catch (err) {
       console.error("Error en !darexp:", err);
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
-
 });
 
 client.login(DISCORD_TOKEN);
