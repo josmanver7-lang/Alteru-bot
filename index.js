@@ -3713,6 +3713,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       console.error("Unhandled Error during !a process:", err);
       return message.reply("¿Qué dijiste? No te oí.");
     }
+  }
 
     // ==========================================
 // COMANDO: DAR PUNTOS
