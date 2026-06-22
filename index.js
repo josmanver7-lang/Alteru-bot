@@ -3485,13 +3485,13 @@ client.on("messageCreate", async (message) => {
 
     const monturasEnVenta = [];
     if (monturas.length > 0) {
-      for (let i = 0; i < 8; i++) monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]);
+      for (let i = 0; i < 10; i++) monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]);
     }
 
 
     const bardasEnVenta = [];
     if (bardas.length > 0) {
-      for (let i = 0; i < 4; i++) bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]);
+      for (let i = 0; i < 6; i++) bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]);
     }
 
 
