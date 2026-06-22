@@ -2924,5 +2924,83 @@
     "precioBase": 4200,
     "descripcion": "Una pieza legendaria de la Primera Edad, tejida con hilos de luz por los Elfos del Mar que jamás pisaron las tierras de Beleriand.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "stealthBonus": 0.05, "healingBonus": 0.05, "damageReduction": 0.02 }
+  },
+  {
+    "id": "lanza_muro_rohirrim",
+    "nombre": "Lanza de Muro de Escudos",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "común",
+    "material": "fresno y hierro",
+    "precioBase": 120,
+    "descripcion": "Una lanza robusta con punta alada, diseñada para mantener la formación a pie junto a tus compañeros.",
+    "efecto": { "meleeBonus": 0.01, "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "lanza_falange_folc",
+    "nombre": "Lanza Corta de Falange del Folc",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "superior",
+    "material": "roble reforzado",
+    "precioBase": 450,
+    "descripcion": "Lanza de infantería ligera balanceada para el combate cerrado a una mano.",
+    "efecto": { "meleeBonus": 0.04, "damageBonus": 1, "willpowerBonus": 0.03, "negotiationBonus": 0.03, "survivalBonus": 0.03 }
+  },
+  {
+    "id": "lanza_jinete_fresno",
+    "nombre": "Lanza de Jinete de Fresno",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "común",
+    "material": "fresno",
+    "precioBase": 150,
+    "descripcion": "Ligera, flexible y balanceada para ser empuñada al galope con una sola mano.",
+    "efecto": { "meleeBonus": 0.01, "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "lanza_carga_forjada",
+    "nombre": "Lanza de Carga Forjada",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "forjado",
+    "material": "acero de la marca",
+    "precioBase": 680,
+    "descripcion": "Una lanza de caballería con punta de aguja pulida, optimizada para el impacto inicial.",
+    "efecto": { "meleeBonus": 0.02, "willpowerBonus": 0.02, "negotiationBonus": 0.02, "survivalBonus": 0.02 }
+  },
+  {
+    "id": "lanza_ala_mariscal",
+    "nombre": "Lanza Real de Mariscal",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "superior",
+    "material": "acero templado y oro",
+    "precioBase": 1850,
+    "descripcion": "Portada por los líderes de los Éored. Su presencia en la vanguardia infunde un valor inquebrantable.",
+    "efecto": { "meleeBonus": 0.04, "damageBonus": 1, "willpowerBonus": 0.03, "negotiationBonus": 0.03, "survivalBonus": 0.03 }
+  },
+  {
+    "id": "lanza_eorlingas_gloria",
+    "nombre": "Lanza de los Éorlingas",
+    "tipo": "arma",
+    "slot": "arma",
+    "hand": 1,
+    "raza": ["humano"],
+    "rareza": "legendario",
+    "material": "madera ancestral y mithril bajo",
+    "precioBase": 5200,
+    "descripcion": "Una reliquia forjada en los días de Eorl el Joven. Rompe las filas enemigas como un rayo verde y dorado.",
+    "efecto": { "meleeBonus": 0.06, "damageBonus": 2, "willpowerBonus": 0.04, "negotiationBonus": 0.04, "survivalBonus": 0.04 }
   }
 ]
