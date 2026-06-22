@@ -3609,13 +3609,10 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       ["montura", "Montura"], ["barda", "Barda"] // <-- AÑADIDOS AQUÍ
     ];
 
-
-    
     for (const [slotKey, label] of slots) { 
       const item = equipment?.[slotKey]; 
       texto += `${label}: ${item?.nombre || "—"}\n`; 
     } 
-
 
     const utils = profile.activeUtilities || [];
     if (utils.length > 0) {
@@ -3634,38 +3631,49 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     if (!profile.race || !profile.class) { 
       return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar."); 
     }
-    // En la lógica de tu comando !equipar
-    const found = findInventoryItem(inventory, nombreItem);
-    if (!found) {
-     return message.reply("No tienes ese objeto en tu inventario.");
-     }
-    const item = found.item;
-    const category = found.category; // ¡Esto ahora sí encontrará 'monturas'!
 
+    // 1. Obtener el nombre del objeto que el usuario quiere equipar (Ej: corcel_rohan)
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
+    
+    const nombreItem = query; // Asignamos el query a la variable nombreItem
 
+    // 2. Inicializar y normalizar el inventario ANTES de usarlo
     const inventory = normalizeInventory(profile.inventory);
 
-    if (!found) return message.reply("No tienes ese objeto en el inventario.");
+    // 3. Ahora sí, buscar el objeto en el inventario
+    const found = findInventoryItem(inventory, nombreItem);
+    
+    if (!found) {
+        return message.reply("No tienes ese objeto en tu inventario.");
+    }
 
+    const item = found.item;
+    const category = found.category; // Ahora encontrará correctamente 'monturas'
+
+    // 4. Validar el tipo de objeto
     if (item.tipo === "utilidad" || item.tipo === "consumible") {
       return message.reply(`Ese objeto es un consumible o utilidad. Usa \`!usar <nombre>\`.`);
     }
 
+    // 5. Procesar el equipamiento
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-const equipment = getResolvedEquipment(profile, equipmentRaw);
+    const equipment = getResolvedEquipment(profile, equipmentRaw);
 
-const equipSlot = getEquipSlotForItem(item, equipment);
-if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
+    const equipSlot = getEquipSlotForItem(item, equipment);
+    if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
 
-if (equipSlot === "barda" && !equipment.montura) {
-  return message.reply("🐎 No tienes ninguna montura equipada para colocarle una barda.");
-}
+    if (equipSlot === "barda" && !equipment.montura) {
+      return message.reply("🐎 No tienes ninguna montura equipada para colocarle una barda.");
+    }
 
-if (!["montura", "caballo", "barda", "brida"].includes(normalizeKey(item.slot))) {
-  const equipCheck = canEquipItem(profile, item, equipment);
-  if (!equipCheck.ok) return message.reply(equipCheck.reason);
+    if (!["montura", "caballo", "barda", "brida"].includes(normalizeKey(item.slot))) {
+      const equipCheck = canEquipItem(profile, item, equipment);
+      if (!equipCheck.ok) return message.reply(equipCheck.reason);
+    }
+    
+    // NOTA: A partir de aquí debes incluir la lógica para guardar el objeto en la base de datos
+    // y removerlo del inventario.
 }
 
     // --- NUEVA LÓGICA DE VALIDACIÓN (DOS MANOS) ---
