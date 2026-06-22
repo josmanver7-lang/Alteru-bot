@@ -3674,7 +3674,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     
     // NOTA: A partir de aquí debes incluir la lógica para guardar el objeto en la base de datos
     // y removerlo del inventario.
-}
 
     // --- NUEVA LÓGICA DE VALIDACIÓN (DOS MANOS) ---
     if (item.slot === "arma" && item.hands === 2) {
