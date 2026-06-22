@@ -3697,12 +3697,19 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
 
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
+const equipment = getResolvedEquipment(profile, equipmentRaw);
 
+const equipSlot = getEquipSlotForItem(item, equipment);
+if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
 
-    const equipSlot = getEquipSlotForItem(item, equipment);
-    if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
+if (equipSlot === "barda" && !equipment.montura) {
+  return message.reply("🐎 No tienes ninguna montura equipada para colocarle una barda.");
+}
 
+if (!["montura", "caballo", "barda", "brida"].includes(normalizeKey(item.slot))) {
+  const equipCheck = canEquipItem(profile, item, equipment);
+  if (!equipCheck.ok) return message.reply(equipCheck.reason);
+}
 
     // --- NUEVA LÓGICA DE VALIDACIÓN (DOS MANOS) ---
     if (item.slot === "arma" && item.hands === 2) {
