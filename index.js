@@ -1,4 +1,4 @@
-⁷import * as db from "./database.js";
+import * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
 import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import { readFile } from 'node:fs/promises';
