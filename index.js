@@ -2971,7 +2971,7 @@ async function handleExpedicionDesafiar(message) {
         // Daño por fallar un obstáculo (Peligro x 4)
         danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
       } else {
-        danoBase = (activeEncounter.peligro || 1) * 4 + (activeEncounter.damageBonus || 0); 
+        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0); 
       }
       
       // Aplicamos tu reducción de daño al daño base
