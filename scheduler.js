@@ -349,7 +349,7 @@ function stripCompanionPrefix(text, companionName) {
   return raw.replace(re, "").trim();
 }
 
-function compactLine(text, maxWords = 40) {
+function compactLine(text, maxWords = 60) {
   const words = String(text || "")
     .replace(/\s+/g, " ")
     .trim()
@@ -412,7 +412,7 @@ ${descripcion}
 
 Instrucciones:
 - Responde con una sola línea corta.
-- Máximo 40 palabras.
+- Máximo 60 palabras.
 - El nombre debe aparecer solo una vez al inicio.
 - Si es combate, menciona el arma o la postura.
 - Si es obstáculo, reacciona al terreno o al riesgo.
@@ -517,7 +517,7 @@ async function loadEncounters() {
   }
 }
 
-async function getCatalogSelection(key, fallbackItems, limit = 12) {
+async function getCatalogSelection(key, fallbackItems, limit = 15) {
   const state = await db.getEventState(key);
   if (Array.isArray(state?.selection) && state.selection.length) {
     return state.selection.slice(0, limit);
@@ -690,19 +690,6 @@ function getCompanionEffect(id) {
   return companionNames[id]?.efecto || "Sin efecto definido.";
 }
 
-function obtenerRango(puntos) {
-  if (puntos >= 10000) return "Leyenda de la Tierra Media";
-  if (puntos >= 7000) return "Sabio de Rivendel";
-  if (puntos >= 5000) return "Señor de los Dúnedain";
-  if (puntos >= 3500) return "Mariscal de la Marca";
-  if (puntos >= 2500) return "Capitán de Gondor";
-  if (puntos >= 1750) return "Guardián de Arnor";
-  if (puntos >= 1000) return "Montaraz del Norte";
-  if (puntos >= 500) return "Explorador de Eriador";
-  if (puntos >= 250) return "Viajero de Bree";
-  return "Hobbit Curioso";
-}
-
 function getAffinityRank(value) {
   if (value >= 100) return "Compañero de Confianza";
   if (value >= 75) return "Amigo Cercano";
@@ -798,7 +785,7 @@ async function ensureCatalogStates() {
   const existingArmeria1 = await db.getEventState("armeria1").catch(() => null);
   if (!existingArmeria1?.selection?.length) {
     await db.setEventState("armeria1", {
-      selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 15),
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
@@ -833,53 +820,69 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const currentArmeria1 = await db.getEventState("armeria1").catch(() => null);
   const currentArmeria2 = await db.getEventState("armeria2").catch(() => null);
   const currentMercader = await db.getEventState("mercader").catch(() => null);
+  const currentEstablo = await db.getEventState("establo").catch(() => null); // 1. Registro del establo actual
 
   if (
     currentTienda?.cycleId === cycleStartAt &&
     currentArmeria1?.cycleId === cycleStartAt &&
     currentArmeria2?.cycleId === cycleStartAt &&
     currentMercader?.cycleId === cycleStartAt &&
+    currentEstablo?.cycleId === cycleStartAt && // 2. Verificación del ciclo del establo
     Array.isArray(currentTienda?.selection) &&
     Array.isArray(currentArmeria1?.selection) &&
     Array.isArray(currentArmeria2?.selection) &&
-    Array.isArray(currentMercader?.selection)
+    Array.isArray(currentMercader?.selection) &&
+    Array.isArray(currentEstablo?.selection) // 3. Verificación de selección del establo
   ) {
     return;
   }
 
-  const [tienda, armeria, mercader] = await Promise.all([
+  // 4. Añadimos la carga de establo.json en el Promise.all
+  const [tienda, armeria, mercader, establo] = await Promise.all([
     loadJson("tienda.json").catch(() => ({})),
     loadJson("armeria.json").catch(() => ({})),
-    loadJson("mercader.json").catch(() => ({}))
+    loadJson("mercader.json").catch(() => ({})),
+    loadJson("establo.json").catch(() => ({}))
   ]);
 
   const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
   const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
+  // 5. Mapeo de items del archivo del establo
+  const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
 
+  // CAMBIO GENERAL: Todos los .slice se expandieron de 12 a 15
   await db.setEventState("tienda", {
-    selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 15),
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
   }).catch(() => {});
 
   await db.setEventState("armeria1", {
-    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 15),
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
   }).catch(() => {});
 
   await db.setEventState("armeria2", {
-    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(12, 24),
+    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(15, 30), // Ajustado para el nuevo corte de la armería 1
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
   }).catch(() => {});
 
   await db.setEventState("mercader", {
-    selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 12),
+    selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 15),
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+
+  // 6. Guardamos el estado y la selección aleatoria de 15 elementos para el Establo
+  await db.setEventState("establo", {
+    selection: [...establoItems].sort(() => Math.random() - 0.5).slice(0, 15),
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
@@ -890,8 +893,10 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
     await db.rerollMarketPrices("armeria1", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("armeria2", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
+    await db.rerollMarketPrices("establo", establoItems).catch(() => {}); // 7. Reroll de precios para el establo
   }
 }
+
 
 async function closeMerchant(client) {
   const state = await db.getEventState("merchant").catch(() => null);
@@ -935,7 +940,7 @@ async function openMerchant(client) {
 
   try {
     const aiText = await generateAITextStrict(
-      `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} hacia ${destination}. Español.`,
+      `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} y aclarando que luego debe partir hacia ${destination}. (No confundir con la ubicación del campamento) Español.`,
       150 // Aumentado para evitar corte
     );
     if (aiText?.trim()) intro = `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${aiText.trim()}`;
@@ -1011,6 +1016,7 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `- Español.\n` +
       `- No pongas título.\n` +
       `- No menciones que es una IA.`,
+      `- Usa solo información a la que tengas acceso respecto al personaje. No inventes nada.`,
       350 // CORREGIDO DE 24 A 350. Un diálogo de 140 palabras consume cerca de 200 tokens. 
     );
   } catch (err) {
@@ -1301,7 +1307,7 @@ const companionScenes = [
 ];
 
 const COMPANION_SCENES_KEY = "companion_scenes";
-const COMPANION_SCENE_HISTORY_LIMIT = 8;
+const COMPANION_SCENE_HISTORY_LIMIT = 15;
 const COMPANION_SCENES_PER_CYCLE = 2;
 
 const COMPANION_SCENE_WINDOWS = [
@@ -1441,7 +1447,7 @@ const FIXED_AUTO_SLOTS = [
   { id: "relation_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
   { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
   { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
-  { id: "relation_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
+  { id: "dialogue_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
   // Descomenta el siguiente para enviar el diálogo diario a una hora específica. Ej: 12:00 PM
   // { id: "dialogue_1200", type: "dialogue", hour: 12, minute: 0 } 
 ];
