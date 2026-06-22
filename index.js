@@ -2906,7 +2906,7 @@ async function handleExpedicionDesafiar(message) {
         // Daño por fallar un obstáculo (Peligro x 4)
         danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
     } else {
-        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0); 
+        danoBase = (activeEncounter.peligro || 1) * 4 + (activeEncounter.damageBonus || 0); 
     }
     // Aplicamos tu reducción de daño al daño base
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
@@ -2966,7 +2966,7 @@ async function handleExpedicionDesafiar(message) {
 
     // Adaptamos el texto de reintento según el tipo de encuentro
     const txtReintento = isObstacle 
-        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a intentar una acción para superarlo o usa `!volver` para retirarte.*"
+        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a usar !desafiar para intentar superarlo o usa `!volver` para retirarte.*"
         : "⚠️ *El enemigo sigue en pie. Usa `!desafiar` para reintentar el combate o `!volver` para huir.*";
 
     // Respuesta final de supervivencia
