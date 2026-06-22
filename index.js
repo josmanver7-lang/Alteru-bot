@@ -2257,7 +2257,6 @@ client.once("ready", async () => {
   mercaderCache = await loadCatalog("mercader.json");
   establoCache = await loadCatalog("establo.json");
 
-
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
     const parsed = JSON.parse(raw);
@@ -2267,7 +2266,6 @@ client.once("ready", async () => {
   } catch {
     personajesCache = {};
   }
-
 
   await refreshTablonSelection();
   await startSchedulers(client, loreCache);
@@ -2282,28 +2280,23 @@ function getCatalogItems(data) {
   return data?.items || data?.equipo || [];
 }
 
-
 function getDefaultSlots(catalogName, item = {}) {
   const explicitSlots = Number(item.slots ?? item.maxSlots ?? item.cupos ?? item.limite);
   if (Number.isFinite(explicitSlots) && explicitSlots > 0) return explicitSlots;
 
-
   const tipo = normalizeKey(item.tipo || "");
   const slot = normalizeKey(item.slot || "");
-
 
   if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") return 1;
   if (catalogName === "tienda") return 3;
   if (catalogName === "mercader") return 3;
   if (catalogName === "establo") return 1;
 
-
-  if (slot === "hands" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura") || slot === "barda") {
+  if (slot === "hands" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura" || slot === "barda") {
     return 1;
   }
   return 1;
 }
-
 
 function ensureCatalogUsage(profile, catalogName, cycleId) {
   const current = profile.catalogUsage || {};
@@ -2798,7 +2791,6 @@ async function handleExpedicionInteract(message) {
     return message.reply(textoFinalInteraccion);
   }
 
-
   if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
     expedition.finalScenarioShown = true;
     expedition.pendingFinalScenario = true;
@@ -3266,9 +3258,7 @@ async function handleExpedicionDesafiar(message) {
       if (line) finalReactions.push(`💬 ${line}`);
     }
 
-
     const utilMsg = await decrementUtilities(message.author.id);
-
 
     await clearExpeditionParty(message.author.id);
     expedition.pendingFinalScenario = false;
@@ -3298,14 +3288,10 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
     }
 
-
-    let danoEnemigo = activeEncounter.dano || ((activeEncounter.peligro || 1) * 7) + Math.floor(Math.random() * 15);
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
     danoEnemigo = Math.max(1, Math.floor(danoEnemigo * (1 - totalDmgRed)));
 
-
     const nuevaSalud = saludActual - danoEnemigo;
-
 
     const affinityGainedLoss = [];
     for (const cid of [...new Set(owned)]) {
@@ -3314,14 +3300,12 @@ async function handleExpedicionDesafiar(message) {
       if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
     }
 
-
     const reactionIds = [...new Set(owned)].slice(0, 3);
     const reactions = [];
     for (const cid of reactionIds) {
       const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "derrota");
       if (line) reactions.push(`💬 ${line}`);
     }
-
 
     const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El enemigo te superó esta vez.";
 
@@ -3331,7 +3315,6 @@ async function handleExpedicionDesafiar(message) {
       await clearExpeditionParty(message.author.id);
       expedition.pendingFinalScenario = false;
       expeditions.delete(message.author.id);
-
 
       await db.updateTravelerData(message.author.id, { salud: 100 });
 
