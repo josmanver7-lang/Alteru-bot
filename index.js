@@ -2914,7 +2914,13 @@ if (isObstacle) {
 
   const totalEncuentros = expedition.mission.encuentros?.length || 0;
 
-  let textoVictoria = `✅ **Obstáculo superado**\n\nHas logrado avanzar sin perder el rumbo.`;
+  const rewardXP = Math.max(5, (activeEncounter.peligro || 1) * 6);
+  const rewardPoints = Math.max(3, (activeEncounter.peligro || 1) * 4);
+
+  expedition.xpEarned = (expedition.xpEarned || 0) + rewardXP;
+  expedition.pointsEarned = (expedition.pointsEarned || 0) + rewardPoints;
+
+  let textoVictoria = `✅ **Obstáculo superado**\n\n🏆 Recompensa: +${rewardPoints} pts | +${rewardXP} XP`;
 
   if (expedition.progress < totalEncuentros) {
     textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa \`!desafiar\` para seguir viajando.`;
