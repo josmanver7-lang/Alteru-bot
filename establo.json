@@ -17,7 +17,7 @@
     "rareza": "entrenado",
     "precioBase": 600,
     "descripcion": "Robusto, acostumbrado a llevar provisiones.",
-    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
     "id": "pony_bree",
@@ -27,7 +27,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Más rápido y resistente al cansancio.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+    "efecto": { "cavalryBonus": 0.03, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
     "id": "pony_sombra",
@@ -37,7 +37,7 @@
     "rareza": "legendario",
     "precioBase": 2400,
     "descripcion": "Ejemplar mítico, veloz y sin fatiga.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+    "efecto": { "cavalryBonus": 0.04, "explorationBonus": 0.04, "defenseBonus": 0.03 }
   },
   {
     "id": "caballo_labor",
@@ -57,7 +57,7 @@
     "rareza": "entrenado",
     "precioBase": 900,
     "descripcion": "Caballo fuerte de las llanuras.",
-    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
     "id": "destrero_gondor",
@@ -67,7 +67,7 @@
     "rareza": "superior",
     "precioBase": 1900,
     "descripcion": "Elegante, equipado para la carga.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+    "efecto": { "cavalryBonus": 0.03, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
     "id": "alas_alba",
@@ -77,7 +77,7 @@
     "rareza": "legendario",
     "precioBase": 4000,
     "descripcion": "Descendiente de caballos de leyenda.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+    "efecto": { "cavalryBonus": 0.04, "explorationBonus": 0.04, "defenseBonus": 0.04 }
   },
   {
     "id": "corcel_silvano",
@@ -97,7 +97,7 @@
     "rareza": "entrenado",
     "precioBase": 1200,
     "descripcion": "Refinado, entrenado para patrullas.",
-    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
     "id": "destrero_rivendel",
@@ -107,7 +107,7 @@
     "rareza": "superior",
     "precioBase": 2300,
     "descripcion": "Con una gracia casi espiritual.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+    "efecto": { "cavalryBonus": 0.03, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
     "id": "ciervo_bosque",
@@ -117,7 +117,7 @@
     "rareza": "legendario",
     "precioBase": 5500,
     "descripcion": "Majestuoso, usado por los reyes.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+    "efecto": { "cavalryBonus": 0.04, "explorationBonus": 0.04, "defenseBonus": 0.03 }
   },
   {
     "id": "cabra_minas",
@@ -137,7 +137,7 @@
     "rareza": "entrenado",
     "precioBase": 800,
     "descripcion": "Robusta, para laderas escarpadas.",
-    "efecto": { "cavalryBonus": 0.01, "explorationBonus": 0.02, "defenseBonus": 0.02 }
+    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.02, "defenseBonus": 0.02 }
   },
   {
     "id": "cabra_hierro",
@@ -147,7 +147,7 @@
     "rareza": "superior",
     "precioBase": 2000,
     "descripcion": "Resistente a impactos.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.03, "defenseBonus": 0.03 }
+    "efecto": { "cavalryBonus": 0.03, "explorationBonus": 0.03, "defenseBonus": 0.03 }
   },
   {
     "id": "ariete_erebor",
@@ -157,7 +157,7 @@
     "rareza": "legendario",
     "precioBase": 4700,
     "descripcion": "Ancestral, de cuernos reforzados.",
-    "efecto": { "cavalryBonus": 0.02, "explorationBonus": 0.04, "defenseBonus": 0.04 }
+    "efecto": { "cavalryBonus": 0.04, "explorationBonus": 0.04, "defenseBonus": 0.03 }
   },
   {
     "id": "barda_simple",
@@ -167,7 +167,7 @@
     "rareza": "comun",
     "precioBase": 130,
     "descripcion": "Una montura básica de cuero sin protección extra.",
-    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+    "efecto": { "cavalryBonus": 0.01, "damageReduction": 0.01, "explorationBonus": 0.01 }
   },
   {
     "id": "silla_forjada",
@@ -177,7 +177,7 @@
     "rareza": "forjado",
     "precioBase": 400,
     "descripcion": "Cuero reforzado con hebillas de hierro.",
-    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.02, "damageReduction": 0.02, "explorationBonus": 0.02 }
   },
   {
     "id": "silla_bree",
@@ -187,7 +187,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Protección acolchada que mejora la resistencia.",
-    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.03, "damageReduction": 0.03, "explorationBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "barda_comarca",
@@ -197,7 +197,7 @@
     "rareza": "legendario",
     "precioBase": 2400,
     "descripcion": "Barda artesanal, ligera y excepcionalmente resistente.",
-    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+    "efecto": { "cavalryBonus": 0.04, "damageReduction": 0.04, "explorationBonus": 0.03, "survivalBonus": 0.2 }
   },
   {
     "id": "silla_viaje",
@@ -207,7 +207,7 @@
     "rareza": "comun",
     "precioBase": 200,
     "descripcion": "Silla de montar estándar para viajeros.",
-    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+    "efecto": { "cavalryBonus": 0.01, "damageReduction": 0.01, "explorationBonus": 0.01 }
   },
   {
     "id": "silla_refuerzos",
@@ -217,27 +217,27 @@
     "rareza": "forjado",
     "precioBase": 400,
     "descripcion": "Silla con placas de hierro en los costados.",
-    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.02, "damageReduction": 0.02, "explorationBonus": 0.02 }
   },
   {
-    "id": "barda_gondor",
-    "nombre": "Barda de los Caballeros de Gondor",
+    "id": "barda_proteccion",
+    "nombre": "Barda con Protección Superior",
     "slot": "barda",
     "raza": "hombre",
     "rareza": "superior",
     "precioBase": 1000,
-    "descripcion": "Protección clásica de la Guardia de la Ciudad.",
-    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+    "descripcion": "Protección superior en zonas vitales.",
+    "efecto": { "cavalryBonus": 0.03, "damageReduction": 0.03, "explorationBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
-    "id": "barda_cisne",
-    "nombre": "Barda de los caballeros del Cisne",
+    "id": "barda_caballero",
+    "nombre": "Barda del Caballero",
     "slot": "barda",
     "raza": "hombre",
     "rareza": "legendario",
     "precioBase": 2200,
-    "descripcion": "Armadura completa digna de los príncipes de Belfalas.",
-    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+    "descripcion": "Armadura completa con telas decoradas.",
+    "efecto": { "cavalryBonus": 0.04, "damageReduction": 0.04, "explorationBonus": 0.02, "survivalBonus": 0.02 }
   },
   {
     "id": "silla_ligera",
@@ -247,7 +247,7 @@
     "rareza": "comun",
     "precioBase": 200,
     "descripcion": "Silla minimalista de diseño elfo.",
-    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+    "efecto": { "cavalryBonus": 0.01, "damageReduction": 0.01, "explorationBonus": 0.01 }
   },
   {
     "id": "silla_reforzada_silvana",
@@ -257,7 +257,7 @@
     "rareza": "forjado",
     "precioBase": 500,
     "descripcion": "Cuero tratado, endurecido en los bosques.",
-    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.02, "damageReduction": 0.02, "explorationBonus": 0.02 }
   },
   {
     "id": "barda_rivendel",
@@ -267,7 +267,7 @@
     "rareza": "superior",
     "precioBase": 1200,
     "descripcion": "Protección elegante con filigrana elfa.",
-    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.03, "damageReduction": 0.3, "explorationBonus": 0.03, "survivalBonus": 0.01 }
   },
   {
     "id": "barda_galadhrim",
@@ -277,7 +277,7 @@
     "rareza": "legendario",
     "precioBase": 2400,
     "descripcion": "Armadura de placas ligeras infundida con magia.",
-    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+    "efecto": { "cavalryBonus": 0.04, "magicBonus": 0.01, "damageReduction": 0.04, "explorationBonus": 0.02, "survivalBonus": 0.02 }
   },
   {
     "id": "silla_carga",
@@ -287,7 +287,7 @@
     "rareza": "comun",
     "precioBase": 140,
     "descripcion": "Silla robusta diseñada para mineros.",
-    "efecto": { "damageReduction": 0.1, "explorationBonus": 0.05 }
+    "efecto": { "cavalryBonus": 0.01, "damageReduction": 0.01, "explorationBonus": 0.01 }
   },
   {
     "id": "silla_metal",
@@ -297,7 +297,7 @@
     "rareza": "forjado",
     "precioBase": 500,
     "descripcion": "Protección de acero forjado en yunques.",
-    "efecto": { "damageReduction": 0.2, "explorationBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.02, "damageReduction": 0.02, "explorationBonus": 0.02 }
   },
   {
     "id": "barda_erebor",
@@ -307,7 +307,7 @@
     "rareza": "superior",
     "precioBase": 900,
     "descripcion": "Placas de acero grueso contra impactos.",
-    "efecto": { "damageReduction": 0.3, "explorationBonus": 0.15, "survivalBonus": 0.1 }
+    "efecto": { "cavalryBonus": 0.03, "damageReduction": 0.03, "explorationBonus": 0.02, "survivalBonus": 0.01 }
   },
   {
     "id": "barda_hierro",
@@ -317,6 +317,6 @@
     "rareza": "legendario",
     "precioBase": 1900,
     "descripcion": "Armadura completa forjada con técnicas olvidadas.",
-    "efecto": { "damageReduction": 0.4, "explorationBonus": 0.2, "survivalBonus": 0.2 }
+    "efecto": { "cavalryBonus": 0.04, "damageReduction": 0.04, "explorationBonus": 0.02, "survivalBonus": 0.02 }
   }
 ]
