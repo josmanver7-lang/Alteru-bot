@@ -603,7 +603,7 @@ const PLAYER_CLASS_BONUS = {
 }; 
 
 
-const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades", “monturas”, “bardas”];
+const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades", "monturas", "bardas"];
 
 
 // ==========================================
