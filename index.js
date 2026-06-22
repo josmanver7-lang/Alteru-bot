@@ -603,7 +603,7 @@ const PLAYER_CLASS_BONUS = {
 }; 
 
 
-const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades",  “montura”, “barda”];
+const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades", “monturas”, “bardas”];
 
 
 // ==========================================
@@ -841,7 +841,7 @@ function getInventoryCategoryForItem(item) {
   if (["pecho", "armadura", "casco", "hombros", "brazos", "piernas"].includes(slot)) return "armaduras";
   if (["capa", "anillo", "reliquia", "amuleto", "accesorio"].includes(slot)) return "permanentes";
   if (slot === "montura" || slot === "caballo") return "monturas"; 
-
+  if (slot === "barda" || slot === "brida") return "bardas";
 
   return "permanentes";
 }
