@@ -3257,23 +3257,33 @@ async function handleExpedicionDesafiar(message) {
     return message.reply(textoVictoria);
 
 
-  } else {
+    } else {
     const saludActual = profile.salud !== undefined ? profile.salud : 100;
-
 
     if (owned.length > 0 && Math.random() < 0.15) {
       const salvadorId = owned[Math.floor(Math.random() * owned.length)];
       const salvador = companions[salvadorId]?.nombre || "Un compañero";
       const reaction = await companionReaction(salvadorId, { ...activeEncounter, userId: message.author.id }, "salvacion");
 
-
-      return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, bloqueando el ataque de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
+      return message.reply(`🛡️ **¡Salvado por los pelos!**\n\n${salvador} interviene en el último segundo, rescatándote de *${activeEncounter.titulo}*.\n\n❤️ Salud intacta: ${saludActual}/100\n\n${reaction ? `💬 ${reaction}\n\n` : ""}Usa \`!desafiar\` para intentarlo de nuevo o \`!volver\` para huir.`);
     }
 
-    const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
-    danoEnemigo = Math.max(1, Math.floor(danoEnemigo * (1 - totalDmgRed)));
+    // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
+    let danoBase = 10;
+    if (activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo") {
+        // Daño por fallar un obstáculo (Peligro x 4)
+        danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
+    } else {
+        // Daño por perder un combate (Peligro x 7 + bonos del enemigo)
+        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0); 
+    }
 
-    const nuevaSalud = saludActual - danoEnemigo;
+    // Aplicamos tu reducción de daño al daño base
+    const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
+    const danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
+
+    // Calculamos la nueva salud
+    const nuevaSalud = saludActual - danoFinalRecibido;
 
     const affinityGainedLoss = [];
     for (const cid of [...new Set(owned)]) {
@@ -3289,9 +3299,9 @@ async function handleExpedicionDesafiar(message) {
       if (line) reactions.push(`💬 ${line}`);
     }
 
-    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El enemigo te superó esta vez.";
+    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El desafío te superó esta vez.";
 
-
+    // Lógica si te quedas sin salud (Muerte/Rescate)
     if (nuevaSalud <= 0) {
       const utilMsg = await decrementUtilities(message.author.id);
       await clearExpeditionParty(message.author.id);
@@ -3300,19 +3310,15 @@ async function handleExpedicionDesafiar(message) {
 
       await db.updateTravelerData(message.author.id, { salud: 100 });
 
-
-      // Si la vida llega a 0, usa textoDerrotaTotal si existe
       const textoMuerte = activeEncounter.textoDerrotaTotal || textoFinalDerrota;
-
 
       return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
-
+    // Lógica si sobrevives con heridas
     const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
     let saludConRegen = nuevaSalud;
     let txtRegen = "";
-
 
     if (healingBonusTotal > 0) {
       const vidaARecuperar = Math.floor(healingBonusTotal * 100);
@@ -3320,14 +3326,11 @@ async function handleExpedicionDesafiar(message) {
       txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te aumenta +${vidaARecuperar} HP.*`;
     }
 
-
     await db.updateTravelerData(message.author.id, { salud: saludConRegen });
 
-
-    return message.reply(`⚠️ **Recibes Daño**\n\n${textoFinalDerrota}\n\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
+    return message.reply(`⚠️ **Recibes Daño**\n\n${textoFinalDerrota}\n\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
   }
 }
-
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
