@@ -943,11 +943,6 @@ function getItemPower(effect = {}) {
   };
 }
 
-
-function formatEffect(effect = {}) {
-  const parts = [];
-
-
   function formatEffect(effect = {}) {
   const parts = [];
 
