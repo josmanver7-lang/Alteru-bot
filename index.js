@@ -2720,6 +2720,7 @@ async function handleExpedicionDesafiar(message) {
       baseSuccess += bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
       
       success = Math.random() < Math.min(baseSuccess, 0.95);
+          }
   }
 
   if (success) {
@@ -3196,7 +3197,8 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
 
     if (equipSlot === "escudo" && equipment["arma"]?.hands === 2) {
       return message.reply("❌ **No puedes equipar un escudo** mientras tienes un arma de dos manos equipada. Desequipa tu arma primero.");
-}
+    }
+    
     const equippedBefore = equipment[equipSlot] || null;
 
     if (item.cantidad > 1 && !isStackableItem(item)) {
