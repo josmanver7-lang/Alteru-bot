@@ -236,7 +236,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
 
     // Nota: El multiplicador "9" original aquí es seguro dejarlo, 
     // porque el daño de área equilibrará la balanza de forma natural.
-    let danoPlanoEnemigo = (encounter.peligro * 9) + (encounter.damageBonus || 0);
+    let danoPlanoEnemigo = (encounter.peligro * 7) + (encounter.damageBonus || 0);
 
 
     let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
