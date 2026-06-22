@@ -3499,14 +3499,24 @@ client.on("messageCreate", async (message) => {
       .setTitle('🐴 Establo del Campamento')
       .setColor('#8B4513')
       .addFields(
-        { name: `Monturas en el corral (8)`, value: monturasEnVenta.length ? monturasEnVenta.map(m => `**${m.nombre}** (${m.precioBase} pts) - *${m.rareza}*`).join('\n').substring(0, 1024) : "Ninguna" },
-        { name: `Bridas y Bardas (4)`, value: bardasEnVenta.length ? bardasEnVenta.map(b => `**${b.nombre}** (${b.precioBase} pts) - *${b.rareza}*`).join('\n').substring(0, 1024) : "Ninguna" }
+        { 
+          name: `Monturas en el corral (${monturasEnVenta.length})`, 
+          value: monturasEnVenta.length 
+            ? monturasEnVenta.map(m => `• **${m.nombre}** (ID: \`${m.id}\`) (${m.precioBase} pts) - *${m.rareza}*${m.raza ? ` [Raza: ${m.raza}]` : ''}`).join('\n').substring(0, 1024) 
+            : "Ninguna" 
+        },
+        { 
+          name: `Sillas y Bridas (${bardasEnVenta.length})`, 
+          value: bardasEnVenta.length 
+            ? bardasEnVenta.map(b => `• **${b.nombre}** (ID: \`${b.id}\`) (${b.precioBase} pts) - *${b.rareza}*${b.raza ? ` [Raza: ${b.raza}]` : ''}`).join('\n').substring(0, 1024) 
+            : "Ninguna" 
+        }
       )
       .setFooter({ text: 'Usa !comprar para adquirir la montura de tu preferencia.' });
 
-
     return message.channel.send({ embeds: [embed] });
   }
+
   else if (command === "!compañeros") {
     const embedGeneral = new EmbedBuilder()
       .setColor('#2F3136')
