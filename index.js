@@ -2162,28 +2162,49 @@ function saveResolvedEquipment(profile = {}, equipment = {}) {
 }
 
 
-async function renderCatalog(catalogName, items, title, profile = {}, cycleId = 0) {
-  let texto = `🏪 **${title}**\n\n`;
+async function renderCatalogEmbed(catalogName, items, title, profile = {}, cycleId = 0, customHeader = "") {
+  let emoji = "⚔️";
+  let color = "#4A5568"; // Gris acero (Armerías)
 
+  if (catalogName === "tienda") {
+    emoji = "🏪";
+    color = "#2F855A"; // Verde bosque
+  } else if (catalogName === "mercader") {
+    emoji = "🚚"; 
+    color = "#D69E2E"; // Dorado/Ámbar
+  }
+
+  const embed = new EmbedBuilder()
+    .setTitle(`${emoji} ${title}`)
+    .setColor(color)
+    .setFooter({ text: 'Usa !comprar <id>, !equipar <id> o !usar <id>.' });
+
+  // Comenzamos la descripción con el header personalizado (si existe)
+  let descripcion = customHeader;
 
   for (const item of items) {
     const price = await db.getDynamicPrice(catalogName, item);
     const remaining = profile ? getItemRemainingSlots(profile, catalogName, item, cycleId) : null;
     const maxSlots = getDefaultSlots(catalogName, item);
 
-
-    texto += `• **${item.nombre}**\nID: ${item.id}\n`;
-    if (item.tipo) texto += `Tipo: ${item.tipo}\n`;
-    if (item.slot) texto += `Slot: ${item.slot}\n`;
-    texto += `Precio: ${formatPrice(price)}\nSlots: ${remaining}/${maxSlots}\nEfecto: ${formatEffect(item.efecto)}\n`;
-    if (item.descripcion && catalogName !== "armeria" && catalogName !== "armeria1" && catalogName !== "armeria2") {
-      texto += `Descripción: ${item.descripcion}\nRareza: ${item.rareza || "comun"}\n`;
+    descripcion += `• **${item.nombre}** (ID: \`${item.id}\`)\n`;
+    
+    if (item.tipo || item.slot) {
+      descripcion += `  *${item.tipo || ''}${item.tipo && item.slot ? ' | ' : ''}${item.slot || ''}*\n`;
     }
-    texto += `\n`;
+    
+    if (item.descripcion && catalogName !== "armeria" && catalogName !== "armeria1" && catalogName !== "armeria2") {
+      descripcion += `  *📖 ${item.descripcion}*\n  **Rareza:** ${item.rareza || "comun"}\n`;
+    }
+    
+    descripcion += `  **Precio:** ${formatPrice(price)} | **Slots:** ${remaining}/${maxSlots}\n`;
+    descripcion += `  **Efecto:** ${formatEffect(item.efecto)}\n\n`;
   }
-  texto += `Más adelante podrás usar \`!comprar <id>\`, \`!equipar <id>\` o \`!usar <id>\`.`;
-  return texto;
+
+  embed.setDescription(descripcion || 'No hay objetos disponibles en este catálogo.');
+  return embed;
 }
+
 
 
 function chunkDiscordText(text, limit = 1900) {
@@ -2636,7 +2657,6 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   if (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") {
     texto += `\n───────────────────────────────\n💥 **REPORTE DE TÁCTICA GRUPAL**\n*Al ser un enemigo numeroso, el 35% del poder de la Alianza impactó como Daño de Área, mermando las fuerzas rivales antes del choque.*`;
   }
-
 
   return texto;
 }
@@ -4019,29 +4039,31 @@ resetear"
     texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>`";
     return replyLong(message, texto);
   }
-  else if (command === "!tienda") {
+    else if (command === "!tienda") {
     const data = tiendaCache || await loadCatalog("tienda.json");
     const catalogItems = getCatalogItems(data);
     if (!catalogItems.length) return message.reply("La tienda está vacía o no está disponible.");
 
-
     const profile = await db.getProfile(message.author.id);
     const { state, items } = await getCatalogStateItems("tienda", catalogItems);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    const limitedItems = items.slice(0, 12);
+    const limitedItems = items.slice(0, 15);
 
-
-    const texto = await renderCatalog("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
-    return replyLong(message, texto);
+    // LÍNEAS NUEVAS: Cambiamos renderCatalog por renderCatalogEmbed
+    const embed = await renderCatalogEmbed("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
+    return message.reply({ embeds: [embed] });
   }
+
   else if (command === "!armeria1") {
     const state = await db.getEventState("armeria1").catch(() => null);
     const items = Array.isArray(state?.selection) ? state.selection : [];
     if (!items.length) return message.reply("No hay objetos disponibles en Armería 1.");
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    const texto = await renderCatalog("armeria1", items, "ARMERÍA 1", profile, cycleId);
-    return replyLong(message, texto);
+    
+    // Cambiamos renderCatalog por renderCatalogEmbed
+    const embed = await renderCatalogEmbed("armeria1", items, "ARMERÍA 1", profile, cycleId);
+    return message.reply({ embeds: [embed] });
   }
   else if (command === "!armeria2") {
     const state = await db.getEventState("armeria2").catch(() => null);
@@ -4049,32 +4071,37 @@ resetear"
     if (!items.length) return message.reply("No hay objetos disponibles en Armería 2.");
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    const texto = await renderCatalog("armeria2", items, "ARMERÍA 2", profile, cycleId);
-    return replyLong(message, texto);
+    
+    // Cambiamos renderCatalog por renderCatalogEmbed
+    const embed = await renderCatalogEmbed("armeria2", items, "ARMERÍA 2", profile, cycleId);
+    return message.reply({ embeds: [embed] });
   }
+
   else if (command === "!armeria") {
     return message.reply("La armería está dividida en dos partes: usa `!armeria1` o `!armeria2`.");
   }
-  else if (command === "!mercader") {
+    else if (command === "!mercader") {
     const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return message.reply("El mercader ambulante no está en el campamento en este momento.");
-
 
     const catalog = mercaderCache || await loadCatalog("mercader.json");
     const catalogItems = getCatalogItems(catalog);
     if (!catalogItems.length) return message.reply("El mercader no tiene mercancía disponible.");
 
-
     const stock = Array.isArray(state.stock) && state.stock.length ? state.stock : catalogItems;
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
-    const items = stock.slice(0, 12);
+    const items = stock.slice(0, 10);
 
+    // Creamos un encabezado limpio y estilizado para el Mercader
+    const mercaderHeader = `👤 **Nombre:** ${state.name || "Desconocido"}\n📍 **Destino próximo:** ${state.destination || "Desconocido"}\n⏳ **Tiempo restante:** ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n───────────────────\n\n`;
 
-    const header = `🚚 **MERCADER AMBULANTE**\n\nNombre: **${state.name || "Desconocido"}**\nDestino próximo: ${state.destination || "Desconocido"}\nTiempo restante: ${formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n`;
-    const texto = header + await renderCatalog("mercader", items, "MERCADER AMBULANTE", profile, cycleId);
-    return replyLong(message, texto);
+    // Pasamos 'mercaderHeader' como el 6to argumento de la función
+    const embed = await renderCatalogEmbed("mercader", items, "MERCADER AMBULANTE", profile, cycleId, mercaderHeader);
+    
+    return message.reply({ embeds: [embed] });
   }
+
   else if (command === "!comprar") {
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!comprar <nombre o id>`.");
