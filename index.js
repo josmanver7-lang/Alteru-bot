@@ -3290,7 +3290,10 @@ async function handleExpedicionDesafiar(message) {
 
     // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
     let danoBase = 10;
-    if (activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo") {
+        const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
+    let danoBase;
+
+    if (isObstacle) {
         // Daño por fallar un obstáculo (Peligro x 4)
         danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
     } else {
@@ -3305,6 +3308,7 @@ async function handleExpedicionDesafiar(message) {
     // Calculamos la nueva salud
     const nuevaSalud = saludActual - danoFinalRecibido;
 
+    // Procesamos la afinidad
     const affinityGainedLoss = [];
     for (const cid of [...new Set(owned)]) {
       const result = await recordAffinity(cid, activeEncounter, "derrota", "derrota");
@@ -3312,6 +3316,7 @@ async function handleExpedicionDesafiar(message) {
       if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
     }
 
+    // Procesamos las reacciones
     const reactionIds = [...new Set(owned)].slice(0, 3);
     const reactions = [];
     for (const cid of reactionIds) {
@@ -3324,6 +3329,8 @@ async function handleExpedicionDesafiar(message) {
     // Lógica si te quedas sin salud (Muerte/Rescate)
     if (nuevaSalud <= 0) {
       const utilMsg = await decrementUtilities(message.author.id);
+      
+      // Aquí el jugador cae: se limpia la expedición
       await clearExpeditionParty(message.author.id);
       expedition.pendingFinalScenario = false;
       expeditions.delete(message.author.id);
@@ -3335,22 +3342,29 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
-    // Lógica si sobrevives con heridas
+    // Lógica si sobrevives con heridas (NO se borra la expedición)
     const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
     let saludConRegen = nuevaSalud;
     let txtRegen = "";
 
+    // Regeneración por equipamiento
     if (healingBonusTotal > 0) {
       const vidaARecuperar = Math.floor(healingBonusTotal * 100);
       saludConRegen = Math.min(100, nuevaSalud + vidaARecuperar);
-      txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te aumenta +${vidaARecuperar} HP.*`;
+      txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te recupera +${vidaARecuperar} HP.*`;
     }
 
+    // Guardamos la salud resultante en la base de datos
     await db.updateTravelerData(message.author.id, { salud: saludConRegen });
 
-    return message.reply(`⚠️ **Recibes Daño**\n\n${textoFinalDerrota}\n\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\nUsa \`!desafiar\` para reintentar o \`!volver\` para huir.${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
-  }
-}
+    // Adaptamos el texto de reintento según el tipo de encuentro
+    const txtReintento = isObstacle 
+        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a intentar una acción para superarlo o usa `!volver` para retirarte.*"
+        : "⚠️ *El enemigo sigue en pie. Usa `!desafiar` para reintentar el combate o `!volver` para huir.*";
+
+    // Respuesta final de supervivencia
+    return message.reply(`❌ **Intento fallido**\n\n${textoFinalDerrota}\n\nRecibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
+
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
