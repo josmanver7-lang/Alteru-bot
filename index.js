@@ -2898,19 +2898,36 @@ async function handleExpedicionDesafiar(message) {
     }
 
     // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
-    let danoBase = 10;
         const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
-    danoBase;
 
+    // 🟢 NUEVA LÓGICA: Probabilidad de evadir el daño al fallar un obstáculo
+    let evadioDano = false;
     if (isObstacle) {
+      // 15% de probabilidad base de salir ileso pese a fallar
+      let probEvadir = 0.15; 
+      probEvadir += (utilTotals.exploration || 0) * 0.40;
+      probEvadir += (utilTotals.survival || 0) * 0.50;
+      probEvadir += (utilTotals.willpower || 0) * 0.30;
+
+      // Tope máximo del 85% para que siempre exista un pequeño riesgo
+      evadioDano = Math.random() < Math.min(probEvadir, 0.85);
+    }
+
+    let danoFinalRecibido = 0;
+
+    if (!evadioDano) {
+      let danoBase = 10;
+      if (isObstacle) {
         // Daño por fallar un obstáculo (Peligro x 4)
         danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
-    } else {
+      } else {
         danoBase = (activeEncounter.peligro || 1) * 4 + (activeEncounter.damageBonus || 0); 
+      }
+      
+      // Aplicamos tu reducción de daño al daño base
+      const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
+      danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
     }
-    // Aplicamos tu reducción de daño al daño base
-    const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
-    const danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
 
     // Calculamos la nueva salud
     const nuevaSalud = saludActual - danoFinalRecibido;
@@ -2946,7 +2963,7 @@ async function handleExpedicionDesafiar(message) {
 
       const textoMuerte = activeEncounter.textoDerrotaTotal || textoFinalDerrota;
 
-      return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad ganada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
+      return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
     }
 
     // Lógica si sobrevives con heridas (NO se borra la expedición)
@@ -2954,8 +2971,8 @@ async function handleExpedicionDesafiar(message) {
     let saludConRegen = nuevaSalud;
     let txtRegen = "";
 
-    // Regeneración por equipamiento
-    if (healingBonusTotal > 0) {
+    // Regeneración por equipamiento (Solo si realmente recibiste daño)
+    if (healingBonusTotal > 0 && danoFinalRecibido > 0) {
       const vidaARecuperar = Math.floor(healingBonusTotal * 100);
       saludConRegen = Math.min(100, nuevaSalud + vidaARecuperar);
       txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te recupera +${vidaARecuperar} HP.*`;
@@ -2966,13 +2983,20 @@ async function handleExpedicionDesafiar(message) {
 
     // Adaptamos el texto de reintento según el tipo de encuentro
     const txtReintento = isObstacle 
-        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a usar !desafiar para intentar superarlo o usa `!volver` para retirarte.*"
+        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a usar `!desafiar` para intentar superarlo o usa `!volver` para retirarte.*"
         : "⚠️ *El enemigo sigue en pie. Usa `!desafiar` para reintentar el combate o `!volver` para huir.*";
 
+    // Adaptamos el texto de daño para reflejar si evadió el impacto
+    let reporteDano = "";
+    if (evadioDano) {
+      reporteDano = `Lograste evitar salir lastimado gracias a tus instintos de supervivencia y voluntad, pero el problema persiste.\n❤️ Salud intacta: ${saludConRegen}/100`;
+    } else {
+      reporteDano = `Recibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}`;
+    }
+
     // Respuesta final de supervivencia
-    return message.reply(`❌ **Intento fallido**\n\n${textoFinalDerrota}\n\nRecibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
-  }
-}
+    return message.reply(`❌ **Intento fallido**\n\n${textoFinalDerrota}\n\n${reporteDano}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
+
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
