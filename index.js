@@ -2760,9 +2760,15 @@ async function handleExpedicionDesafiar(message) {
   for (const comp of owned) affinityBonus += getAffinityBonus(profile, comp);
 
   let success = false;
-  const esCombate = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.categoria) || 
-                    ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(activeEncounter.tipo);
+  
+  const tipo = normalizeKey(activeEncounter.tipo);
+  const categoria = normalizeKey(activeEncounter.categoria);
+  const esObstaculo = tipo === "obstaculo" || categoria === "obstaculo";
 
+  const esCombate = !esObstaculo && (
+  ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(tipo) ||
+  ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(categoria)
+  );
   if (esCombate) {
       const resultadoCombate = resolverCombateMixto(profile, equipment, activeEncounter, bonuses, affinityCombat);
       success = resultadoCombate.exito;
