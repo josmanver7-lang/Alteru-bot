@@ -1057,7 +1057,10 @@ function getAffinityBonus(profile, companionId) {
 }
 
 function getCompanionEquipmentFromPersonaje(companionId) {
-  const personaje = personajesCache[normalizeKey(companionId)] || null;
+  const key = normalizeKey(companionId);
+  // Revisa la caché primero, si no, usa los datos harcodeados
+  const personaje = personajesCache[key] || companions[key] || null; 
+  
   if (!personaje) return {};
 
   const rawEq = personaje.equipo || personaje.armamento || personaje.equipment || personaje.items || {};
@@ -1067,10 +1070,13 @@ function getCompanionEquipmentFromPersonaje(companionId) {
     for (const item of rawEq) {
       if (item && item.slot) formattedEq[item.slot] = item;
     }
+  } else if (typeof rawEq === 'string') {
+     // Maneja el caso donde el equipo es un string (como en tu objeto companions hardcodeado)
+     // Si el equipo es solo texto descriptivo, no podemos extraer stats matemáticos de él aquí.
+     // Se asume vacío para stats específicos, el poder base se calculará con la lógica antigua.
   } else {
     const armaEquipada = rawEq.arma || personaje.arma || "";
     const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
-    console.log(armaEquipada) 
     
     Object.assign(formattedEq, {
       arma: armaEquipada,
@@ -1092,6 +1098,7 @@ function getCompanionEquipmentFromPersonaje(companionId) {
 
   return formattedEq;
 }
+
 
 function getCompanionBasePower(companionId) {
   const key = normalizeKey(companionId);
