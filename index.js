@@ -885,33 +885,27 @@ function isStackableItem(item) {
 function getEquipSlotForItem(item, currentEquipment = {}) {
   const slot = normalizeKey(item?.slot || item?.tipo || "");
 
-
-  if (slot === "arma_2_manos") return "arma";
-
-
-  if (["arma", "arma_1_mano", "daga", "daga_1_mano", "hands"].includes(slot)) {
-    if (!currentEquipment.hand1) return "hand1";
-    if (!currentEquipment.hand2) return "hand2";
-    return null;
+  // 1. Armas: Todo lo que sea un arma va directo a la ranura visible "arma"
+  if (["arma", "arma_1_mano", "arma_2_manos", "daga", "daga_1_mano", "hands"].includes(slot)) {
+    return "arma";
   }
-
-
+  // 2. Armaduras y Monturas
   if (slot === "escudo") return "escudo";
   if (slot === "pecho" || slot === "armadura") return "armadura";
   if (slot === "casco") return "casco";
-  if (slot === "hombros" || slot === "brazos") return "brazos";
-  if (slot === "piernas") return "piernas";
+  if (slot === "hombros") return "hombros"; // ¡Conflicto corregido!
+  if (slot === "brazos") return "brazos";   // ¡Conflicto corregido!
+  if (slot === "piernas") return "piernas";       
   if (slot === "capa") return "capa";
   if (slot === "montura" || slot === "caballo") return "montura";
   if (slot === "barda" || slot === "brida") return "barda";
 
-
+  // 3. Anillos y Accesorios
   if (slot === "anillo") {
     if (!currentEquipment.anillo1) return "anillo1";
     if (!currentEquipment.anillo2) return "anillo2";
     return null;
   }
-
 
   if (slot === "amuleto") {
     if (!currentEquipment.amuleto) return "amuleto";
@@ -919,17 +913,14 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
     return null;
   }
 
-
-  if (slot === "accesorio" || slot === "reliquia") {
+  if (slot === "accesorio" || slot === "reliquia" ) {
     if (!currentEquipment.accesorio) return "accesorio";
     if (!currentEquipment.amuleto) return "amuleto";
     return null;
   }
 
-
   return null;
 }
-
 
 function getItemPower(effect = {}) {
   return {
