@@ -761,36 +761,75 @@ No menciones que es una IA.
 }
 
 async function ensureCatalogStates() {
-  const [tienda, armeria, mercader] = await Promise.all([
+  // 🟢 CAMBIO: Añadido establo.json
+  const [tienda, armeria, mercader, establo] = await Promise.all([
     loadJson("tienda.json").catch(() => ({})),
     loadJson("armeria.json").catch(() => ({})),
-    loadJson("mercader.json").catch(() => ({}))
+    loadJson("mercader.json").catch(() => ({})),
+    loadJson("establo.json").catch(() => ({})) 
   ]);
 
   const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
   const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
+  const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
+
+  // 🟢 CAMBIO: Barajar armería una vez
+  const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
   const existingTienda = await db.getEventState("tienda").catch(() => null);
   if (!existingTienda?.selection?.length) {
     await db.setEventState("tienda", {
-      selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 12),
+      selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 15), // Ajustado a 15
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
     }).catch(() => {});
   }
 
-  // --- SEPARACIÓN DE ARMERÍA 1 ---
   const existingArmeria1 = await db.getEventState("armeria1").catch(() => null);
   if (!existingArmeria1?.selection?.length) {
     await db.setEventState("armeria1", {
-      selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 15),
+      selection: armeriaShuffled.slice(0, 15),
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
     }).catch(() => {});
   }
+
+  const existingArmeria2 = await db.getEventState("armeria2").catch(() => null);
+  if (!existingArmeria2?.selection?.length) {
+    // 🟢 CAMBIO: Reemplazado slice(12, 24) por slice(15, 30) usando la lista unificada
+    await db.setEventState("armeria2", {
+      selection: armeriaShuffled.slice(15, 30),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
+  }
+
+  const existingMercader = await db.getEventState("mercader").catch(() => null);
+  if (!existingMercader?.selection?.length) {
+    await db.setEventState("mercader", {
+      selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 15), // Ajustado a 15
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
+  }
+
+  // 🟢 CAMBIO: Inicialización de establo
+  const existingEstablo = await db.getEventState("establo").catch(() => null);
+  if (!existingEstablo?.selection?.length) {
+    await db.setEventState("establo", {
+      selection: [...establoItems].sort(() => Math.random() - 0.5).slice(0, 15),
+      lastAt: Date.now(),
+      nextAt: Date.now() + TWELVE_HOURS,
+      cycleId: Date.now()
+    }).catch(() => {});
+  }
+}
+
 
   // --- SEPARACIÓN DE ARMERÍA 2 ---
   const existingArmeria2 = await db.getEventState("armeria2").catch(() => null);
@@ -822,6 +861,20 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const currentMercader = await db.getEventState("mercader").catch(() => null);
   const currentEstablo = await db.getEventState("establo").catch(() => null); // 1. Registro del establo actual
 
+await db.setEventState("armeria1", {
+    selection: armeriaShuffled.slice(0, 15), 
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+
+  await db.setEventState("armeria2", {
+    selection: armeriaShuffled.slice(15, 30), 
+    lastAt: cycleStartAt,
+    nextAt: cycleStartAt + TWELVE_HOURS,
+    cycleId: cycleStartAt
+  }).catch(() => {});
+      
   if (
     currentTienda?.cycleId === cycleStartAt &&
     currentArmeria1?.cycleId === cycleStartAt &&
@@ -1513,20 +1566,24 @@ async function processFixedAutoSlots(client, loreCache) {
   try {
     const now = new Date();
     const nowMs = now.getTime();
-    const dateKey = getUTCDateKey(now);
-    const dayStartMs = getUTCMidnightMs(now);
+    
+    // 🟢 CAMBIO: Usar el ciclo de 12 horas en lugar del día calendario
+    const { cycleStartAt } = getCycleBounds(nowMs);
+    const cycleKey = `cycle-${cycleStartAt}`;
 
     const state = ensureFixedAutoStateShape(await getFixedAutoState());
 
-    if (state.dateKey !== dateKey) {
-      state.dateKey = dateKey;
+    // 🟢 CAMBIO: Comparar el cycleKey para rotar cada 12 horas
+    if (state.dateKey !== cycleKey) {
+      state.dateKey = cycleKey;
       state.fired = [];
       state.updatedAt = Date.now();
       await saveFixedAutoState(state);
 
-      await refreshTablonSelection(client, loreCache, dayStartMs).catch(console.error);
-      await refreshCatalogPricesAndSelections(dayStartMs).catch(console.error);
+      await refreshTablonSelection(client, loreCache, cycleStartAt).catch(console.error);
+      await refreshCatalogPricesAndSelections(cycleStartAt).catch(console.error);
     }
+   
 
     for (const slot of FIXED_AUTO_SLOTS) {
       const slotTime = Date.UTC(
