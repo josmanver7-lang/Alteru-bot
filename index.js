@@ -3362,8 +3362,8 @@ async function handleExpedicionDesafiar(message) {
 
     // Respuesta final de supervivencia
     return message.reply(`❌ **Intento fallido**\n\n${textoFinalDerrota}\n\nRecibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
-    {
-  {
+  }
+}
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
