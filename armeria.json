@@ -1346,7 +1346,7 @@
   {
     "id": "cinturon_runico_enano",
     "nombre": "Cinturón Rúnico de Piedra",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "enano",
     "rareza": "legendario",
     "precioBase": 2800,
@@ -1356,7 +1356,7 @@
   {
     "id": "cinturon_seda_elfica",
     "nombre": "Cinturón Trenzado de Lothlórien",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "elfo",
     "rareza": "superior",
     "precioBase": 1100,
@@ -1914,7 +1914,7 @@
   {
     "id": "cinturon_placas_enano",
     "nombre": "Cinturón de Placas Rúnicas",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "enano",
     "rareza": "forjado",
     "precioBase": 700,
@@ -1924,7 +1924,7 @@
   {
     "id": "cinturon_sedoso_elfo",
     "nombre": "Cinturón de Seda Trenzada",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "elfo",
     "rareza": "forjado",
     "precioBase": 550,
@@ -1934,7 +1934,7 @@
   {
     "id": "cinturon_guerra_hombre",
     "nombre": "Cinturón de Guerra de los Hombres",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "hombre",
     "rareza": "forjado",
     "precioBase": 450,
@@ -1944,7 +1944,7 @@
   {
     "id": "cinturon_viaje_hobbit",
     "nombre": "Cinturón de Viaje de Cuero",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "hobbit",
     "rareza": "comun",
     "precioBase": 90,
@@ -2426,7 +2426,7 @@
   {
     "id": "cinturon_oro_antiguo",
     "nombre": "Cinturón con Hebilla de Oro",
-    "slot": "cintura",
+    "slot": "accesorio",
     "raza": "general",
     "rareza": "superior",
     "precioBase": 2500,
