@@ -3648,8 +3648,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const inventory = normalizeInventory(profile.inventory);
 
     if (!found) return message.reply("No tienes ese objeto en el inventario.");
-    const { category, item } = found;
-
 
     if (item.tipo === "utilidad" || item.tipo === "consumible") {
       return message.reply(`Ese objeto es un consumible o utilidad. Usa \`!usar <nombre>\`.`);
