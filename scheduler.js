@@ -182,7 +182,7 @@ async function askGroq(userId, userMessage, lore) {
       systemPrompt,
       messages: history,
       temperature: 0.85,
-      maxTokens: 300 // Actualizado para coincidir con index.js
+      maxTokens: 300
     });
 
     const finalReply = String(reply || "").trim() || "Altéru: *observa los senderos lejanos con suspicacia*";
@@ -216,7 +216,7 @@ async function ai(prompt, maxTokens = 150) {
 }
 
 // ==========================================
-// EL RESTO DEL CÓDIGO PERMANECE INTACTO
+// UTILERÍAS
 // ==========================================
 
 function pick(arr) {
@@ -421,7 +421,7 @@ Instrucciones:
 `.trim();
 
   try {
-    const raw = await generateAITextStrict(prompt, 120); // Aumentado de 60 a 120
+    const raw = await generateAITextStrict(prompt, 120); 
     if (!raw || !String(raw).trim()) {
       return `${nombre}: *observa en silencio*`;
     }
@@ -739,7 +739,6 @@ No menciones que es una IA.
 
   let text;
   try {
-    // Aumentado a 250 tokens para no quedarse corto con 90 palabras
     text = await generateAITextStrict(prompt, 250); 
   } catch (err) {
     console.error("Error generando texto IA del tablón:", err);
@@ -760,8 +759,11 @@ No menciones que es una IA.
   await channel.send(`🌅 **ACTUALIZACIÓN DEL TABLÓN** 🌅\n\n${truncate(text)}`);
 }
 
+// ==========================================
+// INICIALIZACIÓN DE INVENTARIOS (CORREGIDA)
+// ==========================================
+
 async function ensureCatalogStates() {
-  // 🟢 CAMBIO: Añadido establo.json
   const [tienda, armeria, mercader, establo] = await Promise.all([
     loadJson("tienda.json").catch(() => ({})),
     loadJson("armeria.json").catch(() => ({})),
@@ -774,13 +776,13 @@ async function ensureCatalogStates() {
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
   const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
 
-  // 🟢 CAMBIO: Barajar armería una vez
+  // Barajamos la armería una única vez para que no se pisen los inventarios
   const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
   const existingTienda = await db.getEventState("tienda").catch(() => null);
   if (!existingTienda?.selection?.length) {
     await db.setEventState("tienda", {
-      selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 15), // Ajustado a 15
+      selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 15), 
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
@@ -799,7 +801,6 @@ async function ensureCatalogStates() {
 
   const existingArmeria2 = await db.getEventState("armeria2").catch(() => null);
   if (!existingArmeria2?.selection?.length) {
-    // 🟢 CAMBIO: Reemplazado slice(12, 24) por slice(15, 30) usando la lista unificada
     await db.setEventState("armeria2", {
       selection: armeriaShuffled.slice(15, 30),
       lastAt: Date.now(),
@@ -811,14 +812,13 @@ async function ensureCatalogStates() {
   const existingMercader = await db.getEventState("mercader").catch(() => null);
   if (!existingMercader?.selection?.length) {
     await db.setEventState("mercader", {
-      selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 15), // Ajustado a 15
+      selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 15), 
       lastAt: Date.now(),
       nextAt: Date.now() + TWELVE_HOURS,
       cycleId: Date.now()
     }).catch(() => {});
   }
 
-  // 🟢 CAMBIO: Inicialización de establo
   const existingEstablo = await db.getEventState("establo").catch(() => null);
   if (!existingEstablo?.selection?.length) {
     await db.setEventState("establo", {
@@ -830,67 +830,32 @@ async function ensureCatalogStates() {
   }
 }
 
-
-  // --- SEPARACIÓN DE ARMERÍA 2 ---
-  const existingArmeria2 = await db.getEventState("armeria2").catch(() => null);
-  if (!existingArmeria2?.selection?.length) {
-    const secondPool = [...armeriaItems].sort(() => Math.random() - 0.5).slice(12, 24);
-    await db.setEventState("armeria2", {
-      selection: secondPool,
-      lastAt: Date.now(),
-      nextAt: Date.now() + TWELVE_HOURS,
-      cycleId: Date.now()
-    }).catch(() => {});
-  }
-
-  const existingMercader = await db.getEventState("mercader").catch(() => null);
-  if (!existingMercader?.selection?.length) {
-    await db.setEventState("mercader", {
-      selection: [...mercaderItems].sort(() => Math.random() - 0.5).slice(0, 12),
-      lastAt: Date.now(),
-      nextAt: Date.now() + TWELVE_HOURS,
-      cycleId: Date.now()
-    }).catch(() => {});
-  }
-}
+// ==========================================
+// ROTACIÓN DE INVENTARIOS CADA 12H (CORREGIDA)
+// ==========================================
 
 async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const currentTienda = await db.getEventState("tienda").catch(() => null);
   const currentArmeria1 = await db.getEventState("armeria1").catch(() => null);
   const currentArmeria2 = await db.getEventState("armeria2").catch(() => null);
   const currentMercader = await db.getEventState("mercader").catch(() => null);
-  const currentEstablo = await db.getEventState("establo").catch(() => null); // 1. Registro del establo actual
+  const currentEstablo = await db.getEventState("establo").catch(() => null); 
 
-await db.setEventState("armeria1", {
-    selection: armeriaShuffled.slice(0, 15), 
-    lastAt: cycleStartAt,
-    nextAt: cycleStartAt + TWELVE_HOURS,
-    cycleId: cycleStartAt
-  }).catch(() => {});
-
-  await db.setEventState("armeria2", {
-    selection: armeriaShuffled.slice(15, 30), 
-    lastAt: cycleStartAt,
-    nextAt: cycleStartAt + TWELVE_HOURS,
-    cycleId: cycleStartAt
-  }).catch(() => {});
-      
   if (
     currentTienda?.cycleId === cycleStartAt &&
     currentArmeria1?.cycleId === cycleStartAt &&
     currentArmeria2?.cycleId === cycleStartAt &&
     currentMercader?.cycleId === cycleStartAt &&
-    currentEstablo?.cycleId === cycleStartAt && // 2. Verificación del ciclo del establo
+    currentEstablo?.cycleId === cycleStartAt && 
     Array.isArray(currentTienda?.selection) &&
     Array.isArray(currentArmeria1?.selection) &&
     Array.isArray(currentArmeria2?.selection) &&
     Array.isArray(currentMercader?.selection) &&
-    Array.isArray(currentEstablo?.selection) // 3. Verificación de selección del establo
+    Array.isArray(currentEstablo?.selection) 
   ) {
     return;
   }
 
-  // 4. Añadimos la carga de establo.json en el Promise.all
   const [tienda, armeria, mercader, establo] = await Promise.all([
     loadJson("tienda.json").catch(() => ({})),
     loadJson("armeria.json").catch(() => ({})),
@@ -901,10 +866,11 @@ await db.setEventState("armeria1", {
   const tiendaItems = Array.isArray(tienda?.items) ? tienda.items : Array.isArray(tienda) ? tienda : [];
   const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
-  // 5. Mapeo de items del archivo del establo
   const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
 
-  // CAMBIO GENERAL: Todos los .slice se expandieron de 12 a 15
+  // Barajamos la armería una única vez
+  const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
+
   await db.setEventState("tienda", {
     selection: [...tiendaItems].sort(() => Math.random() - 0.5).slice(0, 15),
     lastAt: cycleStartAt,
@@ -913,14 +879,14 @@ await db.setEventState("armeria1", {
   }).catch(() => {});
 
   await db.setEventState("armeria1", {
-    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(0, 15),
+    selection: armeriaShuffled.slice(0, 15),
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
   }).catch(() => {});
 
   await db.setEventState("armeria2", {
-    selection: [...armeriaItems].sort(() => Math.random() - 0.5).slice(15, 30), // Ajustado para el nuevo corte de la armería 1
+    selection: armeriaShuffled.slice(15, 30), 
     lastAt: cycleStartAt,
     nextAt: cycleStartAt + TWELVE_HOURS,
     cycleId: cycleStartAt
@@ -933,7 +899,6 @@ await db.setEventState("armeria1", {
     cycleId: cycleStartAt
   }).catch(() => {});
 
-  // 6. Guardamos el estado y la selección aleatoria de 15 elementos para el Establo
   await db.setEventState("establo", {
     selection: [...establoItems].sort(() => Math.random() - 0.5).slice(0, 15),
     lastAt: cycleStartAt,
@@ -946,10 +911,13 @@ await db.setEventState("armeria1", {
     await db.rerollMarketPrices("armeria1", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("armeria2", armeriaItems).catch(() => {});
     await db.rerollMarketPrices("mercader", mercaderItems).catch(() => {});
-    await db.rerollMarketPrices("establo", establoItems).catch(() => {}); // 7. Reroll de precios para el establo
+    await db.rerollMarketPrices("establo", establoItems).catch(() => {}); 
   }
 }
 
+// ==========================================
+// MERCADER AMBULANTE
+// ==========================================
 
 async function closeMerchant(client) {
   const state = await db.getEventState("merchant").catch(() => null);
@@ -994,7 +962,7 @@ async function openMerchant(client) {
   try {
     const aiText = await generateAITextStrict(
       `Escribe una frase corta y ambientada de llegada del mercader ${merchantName} y aclarando que luego debe partir hacia ${destination}. (No confundir con la ubicación del campamento) Español.`,
-      150 // Aumentado para evitar corte
+      150 
     );
     if (aiText?.trim()) intro = `🚚 **LLEGA EL MERCADER AMBULANTE**\n\n${aiText.trim()}`;
   } catch (err) {
@@ -1021,6 +989,10 @@ async function openMerchant(client) {
   if (merchantCloseTimer) clearTimeout(merchantCloseTimer);
   merchantCloseTimer = setTimeout(() => closeMerchant(client), MERCHANT_OPEN_MS);
 }
+
+// ==========================================
+// CONVERSACIONES Y ESCENAS
+// ==========================================
 
 async function companionDialogue(client, loreCache, slotId = null) {
   const channel = await fetchChannel(client);
@@ -1070,7 +1042,7 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `- No pongas título.\n` +
       `- No menciones que es una IA.`,
       `- Usa solo información a la que tengas acceso respecto al personaje. No inventes nada.`,
-      350 // CORREGIDO DE 24 A 350. Un diálogo de 140 palabras consume cerca de 200 tokens. 
+      350 
     );
   } catch (err) {
     console.error("Error generando diálogo entre compañeros:", err);
@@ -1501,8 +1473,6 @@ const FIXED_AUTO_SLOTS = [
   { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
   { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
   { id: "dialogue_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
-  // Descomenta el siguiente para enviar el diálogo diario a una hora específica. Ej: 12:00 PM
-  // { id: "dialogue_1200", type: "dialogue", hour: 12, minute: 0 } 
 ];
 
 const FIXED_AUTO_STATE_KEY = "fixed_auto_scheduler_v1";
@@ -1567,13 +1537,14 @@ async function processFixedAutoSlots(client, loreCache) {
     const now = new Date();
     const nowMs = now.getTime();
     
-    // 🟢 CAMBIO: Usar el ciclo de 12 horas en lugar del día calendario
+    // Recuperamos la variable que se había borrado
+    const dayStartMs = getUTCMidnightMs(now); 
+
     const { cycleStartAt } = getCycleBounds(nowMs);
     const cycleKey = `cycle-${cycleStartAt}`;
 
     const state = ensureFixedAutoStateShape(await getFixedAutoState());
 
-    // 🟢 CAMBIO: Comparar el cycleKey para rotar cada 12 horas
     if (state.dateKey !== cycleKey) {
       state.dateKey = cycleKey;
       state.fired = [];
@@ -1583,7 +1554,6 @@ async function processFixedAutoSlots(client, loreCache) {
       await refreshTablonSelection(client, loreCache, cycleStartAt).catch(console.error);
       await refreshCatalogPricesAndSelections(cycleStartAt).catch(console.error);
     }
-   
 
     for (const slot of FIXED_AUTO_SLOTS) {
       const slotTime = Date.UTC(
