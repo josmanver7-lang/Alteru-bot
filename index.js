@@ -2904,11 +2904,11 @@ async function handleExpedicionDesafiar(message) {
     }
 
     // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
-        const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
+const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
 
-    // 🟢 NUEVA LÓGICA: Probabilidad de evadir el daño al fallar un obstáculo
-    let evadioDano = false;
-    if (isObstacle) {
+// 🟢 NUEVA LÓGICA: Probabilidad de evadir el daño al fallar un obstáculo
+let evadioDano = false;
+if (isObstacle) {
   expedition.progress += 1;
   expedition.currentEncounter = null;
 
@@ -2952,32 +2952,30 @@ async function handleExpedicionDesafiar(message) {
   return message.reply(
     `${textoVictoria}\n\n🎉 **Misión completada**\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`
   );
-      }
-      // 15% de probabilidad base de salir ileso pese a fallar
-      let probEvadir = 0.15; 
-      probEvadir += (utilTotals.exploration || 0) * 0.40;
-      probEvadir += (utilTotals.survival || 0) * 0.50;
-      probEvadir += (utilTotals.willpower || 0) * 0.30;
-
-      // Tope máximo del 85% para que siempre exista un pequeño riesgo
-      evadioDano = Math.random() < Math.min(probEvadir, 0.85);
     }
 
-    let danoFinalRecibido = 0;
+  let probEvadir = 0.15;
+  probEvadir += (utilTotals.exploration || 0) * 0.40;
+  probEvadir += (utilTotals.survival || 0) * 0.50;
+  probEvadir += (utilTotals.willpower || 0) * 0.30;
 
-    if (!evadioDano) {
-      let danoBase = 10;
-      if (isObstacle) {
-        // Daño por fallar un obstáculo (Peligro x 4)
-        danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
-      } else {
-        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0); 
-      }
-      
-      // Aplicamos tu reducción de daño al daño base
-      const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
-      danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
-    }
+  // Tope máximo del 85% para que siempre exista un pequeño riesgo
+  evadioDano = Math.random() < Math.min(probEvadir, 0.85);
+}
+
+let danoFinalRecibido = 0;
+
+if (!evadioDano) {
+  let danoBase = 10;
+  if (isObstacle) {
+    danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4);
+  } else {
+    danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0);
+  }
+
+  const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
+  danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
+}
 
     // Calculamos la nueva salud
     const nuevaSalud = saludActual - danoFinalRecibido;
