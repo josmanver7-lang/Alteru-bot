@@ -948,17 +948,25 @@ function formatEffect(effect = {}) {
   const parts = [];
 
 
+  function formatEffect(effect = {}) {
+  const parts = [];
+
   if (effect.salud) parts.push(`Salud +${effect.salud}`);
   if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
   if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
   if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
 
-
   if (effect.explorationBonus) parts.push(`Exploración +${Math.round(effect.explorationBonus * 100)}%`);
   if (effect.stealthBonus) parts.push(`Sigilo +${Math.round(effect.stealthBonus * 100)}%`);
   if (effect.negotiationBonus) parts.push(`Negociación +${Math.round(effect.negotiationBonus * 100)}%`);
   if (effect.perceptionBonus) parts.push(`Visión +${Math.round(effect.perceptionBonus * 100)}%`);
-  if (effect.combatBonus) parts.push(`Combate +${Math.round(effect.combatBonus * 100)}%`);
+  
+  // 🔥 CORRECCIÓN AQUÍ:
+  if (effect.meleeBonus || effect.combatBonus) {
+    const meleeVal = effect.meleeBonus || effect.combatBonus;
+    parts.push(`Melé +${Math.round(meleeVal * 100)}%`);
+  }
+
   if (effect.survivalBonus) parts.push(`Resistencia +${Math.round(effect.survivalBonus * 100)}%`);
   if (effect.willpowerBonus) parts.push(`Voluntad +${Math.round(effect.willpowerBonus * 100)}%`);
   if (effect.healingBonus) parts.push(`Sanación +${Math.round(effect.healingBonus * 100)}%`);
@@ -967,10 +975,8 @@ function formatEffect(effect = {}) {
   if (effect.magicBonus) parts.push(`Magia +${Math.round(effect.magicBonus * 100)}%`);
   if (effect.cavalryBonus) parts.push(`Caballería +${Math.round(effect.cavalryBonus * 100)}%`);
 
-
   if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
   if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
-
 
   return parts.length ? parts.join(" | ") : "Sin efecto definido";
 }
@@ -1020,7 +1026,7 @@ function formatEquipmentTotals(totals) {
   if (totals.stealthBonus) parts.push(`+${Math.round(totals.stealthBonus * 100)}% Sigilo`);
   if (totals.negotiationBonus) parts.push(`+${Math.round(totals.negotiationBonus * 100)}% Negociación`);
   if (totals.perceptionBonus) parts.push(`+${Math.round(totals.perceptionBonus * 100)}% Percepción`);
-  if (totals.combatBonus) parts.push(`+${Math.round(totals.combatBonus * 100)}% Combate`);
+  if (totals.meleeBonus) parts.push(`+${Math.round(totals.meleeBonus * 100)}% Melé`);
   if (totals.survivalBonus) parts.push(`+${Math.round(totals.survivalBonus * 100)}% Supervivencia`);
   if (totals.willpowerBonus) parts.push(`+${Math.round(totals.willpowerBonus * 100)}% Voluntad`);
   if (totals.healingBonus) parts.push(`+${Math.round(totals.healingBonus * 100)}% Sanación`);
@@ -1029,9 +1035,9 @@ function formatEquipmentTotals(totals) {
   if (totals.magicBonus) parts.push(`+${Math.round(totals.magicBonus * 100)}% Magia`);
   if (totals.cavalryBonus) parts.push(`+${Math.round(totals.cavalryBonus * 100)}% Caballería`);
 
-
   return parts.length ? parts.join(" | ") : "Sin bonos extra";
 }
+
 
 
 function formatInventoryLine(item) {
