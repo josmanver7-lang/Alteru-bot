@@ -3297,9 +3297,8 @@ async function handleExpedicionDesafiar(message) {
         // Daño por fallar un obstáculo (Peligro x 4)
         danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4); 
     } else {
-        // Daño por perder un combate (Peligro x 7 + bonos del enemigo) 
+        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0); ) 
     }
-
     // Aplicamos tu reducción de daño al daño base
     const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
     const danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
