@@ -3646,7 +3646,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
 
     const inventory = normalizeInventory(profile.inventory);
-    const found = findInventoryItemLoose(inventory, query);
 
     if (!found) return message.reply("No tienes ese objeto en el inventario.");
     const { category, item } = found;
