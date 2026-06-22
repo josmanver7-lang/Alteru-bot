@@ -846,7 +846,6 @@ function getInventoryCategoryForItem(item) {
   return "permanentes";
 }
 
-
 function findInventoryItem(inventory, query) {
   const q = normalizeKey(query);
   for (const cat of INVENTORY_CATEGORIES) {
@@ -858,12 +857,30 @@ function findInventoryItem(inventory, query) {
   return null;
 }
 
+function canEquipItem(profile, item, currentEquipment = {}) {
+  // 1. Normalizamos los datos para evitar problemas de mayúsculas/espacios
+  const itemRaza = normalizeKey(item.raza || "general");
+  const playerRaza = normalizeKey(profile.race || "");
+
+  // 2. Verificamos si el objeto tiene restricción de raza
+  if (itemRaza !== "general" && itemRaza !== "ninguno" && itemRaza !== "todos") {
+    if (itemRaza !== playerRaza) {
+      // Si la raza del objeto no coincide con la del jugador, denegamos el equipamiento
+      return { 
+        ok: false, 
+        reason: `❌ No puedes equipar **${item.nombre}**. Este objeto está diseñado específicamente para la raza **${item.raza}** y tú eres **${profile.race}**.` 
+      };
+    }
+  }
+
+  // Si pasa todas las validaciones, permitimos equiparlo
+  return { ok: true, reason: "" };
+}
 
 function isStackableItem(item) {
   const tipo = normalizeKey(item?.tipo || "");
   return tipo === "consumible" || tipo === "regalo" || tipo === "utilidad";
 }
-
 
 function getEquipSlotForItem(item, currentEquipment = {}) {
   const slot = normalizeKey(item?.slot || item?.tipo || "");
