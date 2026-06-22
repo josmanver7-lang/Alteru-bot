@@ -4056,7 +4056,7 @@ resetear"
 
   else if (command === "!armeria1") {
     const state = await db.getEventState("armeria1").catch(() => null);
-    const items = Array.isArray(state?.selection) ? state.selection : [];
+    const items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
     if (!items.length) return message.reply("No hay objetos disponibles en Armería 1.");
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
@@ -4067,7 +4067,7 @@ resetear"
   }
   else if (command === "!armeria2") {
     const state = await db.getEventState("armeria2").catch(() => null);
-    const items = Array.isArray(state?.selection) ? state.selection : [];
+    const items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
     if (!items.length) return message.reply("No hay objetos disponibles en Armería 2.");
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
