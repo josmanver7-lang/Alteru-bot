@@ -6,7 +6,7 @@
     "raza": "Humano",
     "clase": "Capitán",
     "alineamiento": "Aliado",
-    "Habilidad": "Rugido del León",
+    "habilidad": "Rugido del León",
     "equipo": [
       { 
         "slot": "hand1", 
@@ -56,12 +56,12 @@
       { 
         "slot": "montura", 
         "nombre": "Vidante",
-        "efecto": { "explorationBonus": 0.05, "negotiationBonus": 0.03, "cavalryBonus": 0.06, "WillpowerBonus": 0.02 } 
+        "efecto": { "explorationBonus": 0.05, "negotiationBonus": 0.03, "cavalryBonus": 0.06, "willpowerBonus": 0.02 } 
       },
       {
         "slot": "brida", 
         "nombre": "Barda del rizo perfecto",
-        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
+        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "willpowerBonus": 0.02 } 
       }
     ],   
     "descripcion_fisica": "Piel clara, rostro hermoso juvenil cabello marrón oscuro largo hasta el cuello, mide 177 cm y pesa 73 kg.",
@@ -153,12 +153,12 @@
       { 
         "slot": "montura", 
         "nombre": "Scarla",
-        "efecto": { "explorationBonus": 0.04, "negotiationBonus": 0.02, "cavalryBonus": 0.05, "WillpowerBonus": 0.01 } 
+        "efecto": { "explorationBonus": 0.04, "negotiationBonus": 0.02, "cavalryBonus": 0.05, "willpowerBonus": 0.01 } 
       },
       {
         "slot": "brida", 
         "nombre": "Caparazón de las Olas de Belfalas",
-        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "WillpowerBonus": 0.02 } 
+        "efecto": { "damageReduction": 0.06, "negotiationBonus": 0.03, "cavalryBonus": 0.02, "willpowerBonus": 0.02 } 
       }
     ],  
     "descripcion_fisica": "Piel clara, rostro hermoso que destaca por sus mejillas, cabello dorado y movimientos que recuerdan a los de un cisne.",
@@ -555,6 +555,6 @@
     "descripcion_fisica": "Rasgos fisicos comunes de Dúnedain.",
     "personalidad": "Profesionales, unidos, leales, sentimentales.",
     "historia": "Nacieron entre el 2930 y el 2962, provenientes de lejanas tierras, poco cuentan de sus historias, liderados anteriormente por el Montaraz Arathir.",
-    "relacion_con_alteru": "Capitán y líder",
+    "relacion_con_alteru": "Capitán y líder"
   }
 ]
