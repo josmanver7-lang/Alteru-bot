@@ -2909,6 +2909,50 @@ async function handleExpedicionDesafiar(message) {
     // 🟢 NUEVA LÓGICA: Probabilidad de evadir el daño al fallar un obstáculo
     let evadioDano = false;
     if (isObstacle) {
+  expedition.progress += 1;
+  expedition.currentEncounter = null;
+
+  const totalEncuentros = expedition.mission.encuentros?.length || 0;
+
+  let textoVictoria = `✅ **Obstáculo superado**\n\nHas logrado avanzar sin perder el rumbo.`;
+
+  if (expedition.progress < totalEncuentros) {
+    textoVictoria += `\n\n🛤️ El camino continúa.\n\nUsa \`!desafiar\` para seguir viajando.`;
+    return message.reply(textoVictoria);
+  }
+
+  if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
+    expedition.finalScenarioShown = true;
+    expedition.pendingFinalScenario = true;
+
+    const enemyPresent = rollFinalScenarioEnemyPresence(expedition.finalScenario);
+    expedition.currentEncounter = {
+      ...expedition.finalScenario,
+      tipo: "escenario_final",
+      categoria: "final",
+      active: true,
+      enemyPresent,
+      allowedActions: enemyPresent ? expedition.finalScenario.allowedActions : ["retirarse"]
+    };
+
+    textoVictoria += `\n\n⚠️ **Has llegado al final de la expedición.** Usa \`!desafiar\` para encarar el último escenario.`;
+    return message.reply(textoVictoria);
+  }
+
+  const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
+  const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
+
+  await db.addXP(message.author.id, xpTotal);
+  await db.addPoints(message.author.id, puntosTotal);
+
+  expedition.pendingFinalScenario = false;
+  expeditions.delete(message.author.id);
+  await clearExpeditionParty(message.author.id);
+
+  return message.reply(
+    `${textoVictoria}\n\n🎉 **Misión completada**\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}`
+  );
+      }
       // 15% de probabilidad base de salir ileso pese a fallar
       let probEvadir = 0.15; 
       probEvadir += (utilTotals.exploration || 0) * 0.40;
