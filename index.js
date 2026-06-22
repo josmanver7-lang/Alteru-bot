@@ -3291,7 +3291,7 @@ async function handleExpedicionDesafiar(message) {
     // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
     let danoBase = 10;
         const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
-    let danoBase;
+    danoBase;
 
     if (isObstacle) {
         // Daño por fallar un obstáculo (Peligro x 4)
