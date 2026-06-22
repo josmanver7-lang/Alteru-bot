@@ -1469,7 +1469,7 @@ async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cyc
 }
 
 const FIXED_AUTO_SLOTS = [
-  { id: "relation_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
+  { id: "dialogue_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
   { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
   { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
   { id: "dialogue_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
