@@ -836,7 +836,7 @@ function getInventoryCategoryForItem(item) {
      if (tipo === "utilidad") return "utilidades";
     return "consumibles";
   }
-  if (["arma", "arma_1_mano", "arma_2_manos", "daga", "daga_1_mano"].includes(slot)) return "armas";
+  if (["arma", "arma_1_mano", "arma_2_manos", "daga", "daga_1_mano", "hands"].includes(slot)) return "armas";
   if (slot === "escudo") return "armaduras"; 
   if (["pecho", "armadura", "casco", "hombros", "brazos", "piernas"].includes(slot)) return "armaduras";
   if (["capa", "anillo", "reliquia", "amuleto", "accesorio"].includes(slot)) return "permanentes";
@@ -872,9 +872,9 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   if (slot === "arma_2_manos") return "arma";
 
 
-  if (["arma", "arma_1_mano", "daga", "daga_1_mano"].includes(slot)) {
-    if (!currentEquipment.arma1) return "arma1";
-    if (!currentEquipment.arma2) return "arma2";
+  if (["arma", "arma_1_mano", "daga", "daga_1_mano", "hands"].includes(slot)) {
+    if (!currentEquipment.hand1) return "hand1";
+    if (!currentEquipment.hand2) return "hand2";
     return null;
   }
 
@@ -884,9 +884,9 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   if (slot === "casco") return "casco";
   if (slot === "hombros" || slot === "brazos") return "brazos";
   if (slot === "piernas") return "piernas";
-  if (slot === "pies") return "pies";
   if (slot === "capa") return "capa";
   if (slot === "montura" || slot === "caballo") return "montura";
+  if (slot === "barda" || slot === "brida") return "barda";
 
 
   if (slot === "anillo") {
@@ -1240,7 +1240,8 @@ function getCompanionEquipmentFromPersonaje(companionId) {
     const esDosManos = armaEquipada && (armaEquipada.hands === 2 || armaEquipada.slot === "arma_2_manos");
     
     Object.assign(formattedEq, {
-      arma: armaEquipada,
+      hand1: armaEquipada,
+      hand2: armaEquipada,
       escudo: esDosManos ? "" : (rawEq.escudo || personaje.escudo || ""),
       armadura: rawEq.armadura || personaje.armadura || "",
       guantes: rawEq.guantes || personaje.guantes || "",
@@ -1253,16 +1254,14 @@ function getCompanionEquipmentFromPersonaje(companionId) {
       anillo2: rawEq.anillo2 || personaje.anillo2 || "",
       amuleto: rawEq.amuleto || personaje.amuleto || "",
       accesorio: rawEq.accesorio || personaje.accesorio || "",
-      montura: rawEq.montura || personaje.montura || ""
+      montura: rawEq.montura || personaje.montura || "",
+      barda: rawEq.barda || personaje.barda || ""
     });
   }
 
 
   return formattedEq;
 }
-
-
-
 
 function getCompanionBasePower(companionId) {
   const key = normalizeKey(companionId);
@@ -2049,6 +2048,7 @@ function buildSystemPrompt(lore, profile) {
 * Tu carácter es el de un líder veterano: directo, observador y con humor sobrio.
 * No hablas como una máquina: conversas como alguien que conoce el campamento y sus riesgos.
 * Mantén siempre el diálogo vivo por encima del formato de un bot tradicional.
+* No inventes datos que no estén en tu base de datos. 
 
 
 ## 2. REGLAS DE ORO
@@ -2293,12 +2293,12 @@ function getDefaultSlots(catalogName, item = {}) {
 
 
   if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") return 1;
-  if (catalogName === "tienda") return (tipo === "regalo") ? 1 : 3;
-  if (catalogName === "mercader") return (tipo === "regalo") ? 1 : 3;
+  if (catalogName === "tienda") return 3;
+  if (catalogName === "mercader") return 3;
   if (catalogName === "establo") return 1;
 
 
-  if (slot === "arma" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura") {
+  if (slot === "hands" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura") || slot === "barda") {
     return 1;
   }
   return 1;
@@ -2337,18 +2337,18 @@ const CLASS_KEY_TO_LABEL = {
 
 
 const STARTER_ITEMS_BY_CLASS = {
-  guardian: { id: "espada_larga_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
+  guardian: { id: "espada_larga_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, damageBonus: 1 } },
   vigilante: { id: "jabalina_ligera", nombre: "Jabalina Ligera", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { thrownBonus: 0.03 } },
-  campeon: { id: "mandoble_simple_tier1", nombre: "Mandoble Simple", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } },
-  cazador: { id: "arco_caza_tier1", nombre: "Arco de Caza", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } },
-  luchador: { id: "guantes_tachonados_tier1", nombre: "Guantes de Cuero Tachonado", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  bardo: { id: "daga_bronce_tier1", nombre: "Daga de Bronce", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  capitan: { id: "espada_larga_capitan_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  guardian_runico: { id: "espada_larga_runica_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  sabio: { id: "baston_magico_tier1", nombre: "Bastón Mágico", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } },
-  saqueador: { id: "daga_bronce_saqueador_tier1", nombre: "Daga de Bronce", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  marinero: { id: "espada_larga_marinero_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 1 } },
-  beornida: { id: "hacha_pesada_leñador_tier1", nombre: "Hacha Pesada de Leñador", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { damageBonus: 2 } }
+  campeon: { id: "mandoble_simple_tier1", nombre: "Mandoble Simple", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.01, damageBonus: 2 } },
+  cazador: { id: "arco_caza_tier1", nombre: "Arco de Caza", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { rangedBonus: 0.02, damageBonus: 1 } },
+  luchador: { id: "guantes_tachonados_tier1", nombre: "Guantes de Cuero Tachonado", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, damageBonus: 1 } },
+  bardo: { id: "daga_bronce_tier1", nombre: "Daga de Bronce", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, stealthBonus: 0.01 } },
+  capitan: { id: "espada_larga_capitan_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, damageBonus: 1 } },
+  guardian_runico: { id: "espada_larga_runica_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.01, magicBonus: 0.01, damageBonus: 1 } },
+  sabio: { id: "baston_magico_tier1", nombre: "Bastón Mágico", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { magicBonus 0.02, damageBonus: 1 } },
+  saqueador: { id: "daga_bronce_saqueador_tier1", nombre: "Daga de Bronce", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, stealthBonus: 0.01 } },
+  marinero: { id: "espada_larga_marinero_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, damageBonus: 1 } },
+  beornida: { id: "hacha_pesada_leñador_tier1", nombre: "Hacha Pesada de Leñador", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.01, damageBonus: 2 } }
 };
 
 
