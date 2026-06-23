@@ -4,9 +4,13 @@
     "titulo": "Campamento Corsario Abandonado",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf.",
+    "descripcion": "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf, habrá muchos cadáveres y un denso pantano.",
     "puntos": 100,
     "xp": 50,
+    "conclusionGeneral": {
+      "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
+      "fracaso": "La situación probó ser demasiado para ti en esta ocasión. El regreso al campamento es amargo, marcado por el agotamiento. Al entregar tu informe, no hay recompensa hoy, solo la dura lección de que en estas tierras un error de cálculo puede costar caro."
+    },
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -14,27 +18,45 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Campamento corsario",
-      "descripcion": "Has llegado a los restos del campamento. Hay mucho pantano alrededor. Puedes explorar o retirarte con el informe.",
+      "titulo": "Restos putrefactos",
+      "descripcion": "El hedor a ciénaga y carne vieja inunda el aire. Las tiendas están rasgadas y el silencio es demasiado absoluto. Puedes remover la mugre buscando el botín o retirarte e informar el estado del lugar.",
       "hasEnemies": false,
-      "enemyLabel": "corsarios",
-      "enemyChance": 0.75,
       "peligro": 1,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
       "allowedActions": [
         "explorar",
         "retirarse"
       ],
       "actionText": {
-        "explorar": "Con dificultad pasaste sobre cadáveres y registraste todo el lugar buscando objetos de valor para cargarlos y llevarlos al campamento.",
-        "retirarse": "Decides volver con lo que viste hasta ahora antes de arriesgar más al grupo."
+        "explorar": "Comienzas a pisar entre pantano y cadáveres descompuestos, revisas minuciosamente cada rincón cargando todo lo que puedes llevar, armaduras, armas, informes de guerra y otras reliquias, todo esto ignorando un ligero escalofrío que sentiste desde que llegaste al lugar.",
+        "retirarse": "Te regresas al campamento descartando la opción de adentrarte en aquel lugar desagradable, informarás lo que viste."
       },
       "completionText": {
-        "success": "Encuentras más de lo que buscabas: mapas, planes de guerra, armas, armaduras y muchos objetos de valor. Cargando con lo que podías, volviste al campamento.",
-        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+        "success": "Regresas al campamento ileso. Entregas tu informe y es recibido con indiferencia.",
+        "failure": "Regresas al campamento ileso. Entregas tu informe y es recibido con indignación."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Extraña sensación",
+          "descripcion": "Figuras espectrales surgen del fango y los muertos, lucen amenazantes y su presencia infunde no solo el terror visual sino un poder maligno que debilita el espíritu.",
+          "hasEnemies": true,
+          "enemyLabel": "fantasmas del pantano",
+          "enemyChance": 0.65,
+          "peligro": 2,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "magicBonus": 0.02 },
+          "allowedActions": [
+            "atacar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Desenvainas tu arma. Guiado por tu instinto de supervivencia atacas al más cercano y ofreces una valerosa resistencia ante los otros que rápidamente se acercaron para rodearte.",
+            "retirarse": "Huyes por el pantano, dejando que el fango retrase a la muerte a tus espaldas."
+          },
+          "completionText": {
+            "success": "Los espíritus aunque aterradores, no estuvieron al nivel de tu destreza y uno a uno fueron cayendo bajo tu arma, te moviste lenta pero asertivamente entre el pantano. Al final no quedó ninguno luego de aquel espantoso encuentro.",
+            "failure": "Te superan en número y brutalidad. Te arrastras de vuelta al campamento dejando un rastro de tu propia sangre."
+          }
+        }
       }
     }
   },
@@ -46,34 +68,58 @@
     "descripcion": "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
     "puntos": 100,
     "xp": 50,
+    "conclusionGeneral": {
+      "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
+      "fracaso": "La situación probó ser demasiado para ti en esta ocasión. El regreso al campamento es amargo, marcado por el agotamiento. Al entregar tu informe, no hay recompensa hoy, solo la dura lección de que en estas tierras un error de cálculo puede costar caro."
+    },
     "encuentros": [
-      "enemigo_numeroso",
+      "evento_especial",
       "enemigo_numeroso",
       "enemigo_numeroso"
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Entrada a la cueva",
-      "descripcion": "Has llegado al cubil enemigo. Puedes atacar, o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "trasgos",
-      "enemyChance": 0.95,
-      "peligro": 2,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Las fauces de la piedra",
+      "descripcion": "La oscuridad de la caverna devora la poca luz de tu antorcha. Escuchas aullidos de trasgos y ecos de pasos apresurados. Puedes infiltrarte abrazando las sombras o reportar la cueva y devolverte al campamento.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
+        "infiltrar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Te enfrentas a un numeroso grupo de trasgos al final de la cueva haciendo el mayor uso de tu habilidad e ingenio para derrotarlos.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "infiltrar": "Te infiltras por la piedra húmeda y fría. El hedor y los sonidos te advierten del peligro, escuchas un silbido pasar junto a ti ¿eso fue una flecha?.",
+        "retirarse": "Un paso atrás es una vida más. El informe bastará por hoy."
       },
       "completionText": {
-        "success": "Desentierras tu arma del último trasgo y, observando los cadáveres alrededor, suspiras de alivio por haber sobrevivido. Luego decides volver e informar de tu éxito.",
-        "failure": "El choque sale peor de lo esperado y recibes una dura respuesta, por suerte lograron rescatarte antes de algo peor."
+        "success": "Te preparas para lo inevitable y ante tus ojos ahora acostumbrados a la penumbra observas a las dispersas criaturas de poco tamaño y apenas armados como esperando tu llegada.",
+        "failure": "No logras encontrar el camino adecuado y tus pasos te llevaron de nuevo a la entrada de la cueva."
+      },
+      "subEscenarios": {
+        "infiltrar": {
+          "titulo": "El nido",
+          "descripcion": "Te encuentras un amplio espacio, la morada de los trasgos. Sus miradas amarillentas te contemplan con ansias y se preparan para atacarte saltando de un lado a otro como pequeños demonios.",
+          "hasEnemies": true,
+          "enemyLabel": "horda de trasgos",
+          "enemyChance": 0.95,
+          "peligro": 2,
+          "categoria": "enemigo_numeroso"
+          "bonus": { "rangedBonus": 0.01, "meleeBonus": 0.01 },
+            "allowedActions": [
+            "atacar",
+            "rodear",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "No hay tiempo para estrategias, elevas tus sentidos y luchas valientemente en medio la oscuridad, atacas con rapidez y te mueves constantemente para evitar ser rodeado.",
+            "rodear": "Aprovechas una estalagmita para rebanar el cuello del primero antes de que el resto reaccione.",
+            "retirarse": "Te lanzas hacia la salida antes de que el enjambre te devore vivo."
+          },
+          "completionText": {
+            "success": "Pisas los cuerpos destrozados para no resbalar en su sangre negra. Sobreviviste al infierno cavernoso.",
+            "failure": "Sus filos oxidados y sucias garras te alcanzan. Te sacan arrastrado de milagro."
+          }
+        }
       }
     }
   },
@@ -82,9 +128,13 @@
     "titulo": "Vigilar el camino a Dinadab",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Viajeros informan de un pequeño grupo de bandidos rondando por las rutas hacia la aldea de Dinadab. Vigilar el camino principal e informar al Capitán.",
+    "descripcion": "Viajeros informan de un grupo de bandidos rondando por las rutas a Dinadab. La tarea es vigilar la ruta al norte e informar si hay alguna novedad o señales que indagar.",
     "puntos": 90,
     "xp": 40,
+    "conclusionGeneral": {
+      "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
+      "fracaso": "La situación probó ser demasiado para ti en esta ocasión. El regreso al campamento es amargo, marcado por el agotamiento. Al entregar tu informe, no hay recompensa hoy, solo la dura lección de que en estas tierras un error de cálculo puede costar caro."
+    },
     "encuentros": [
       "evento_especial",
       "evento_especial",
@@ -92,83 +142,109 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Ruta hacia Dinadab",
-      "descripcion": "Cumples con el objetivo de la misión pero en la lejanía observas una débil columna de humo entre los matorrales ¿Qué decides?",
-      "hasEnemies": true,
-      "enemyLabel": "enemigos",
-      "enemyChance": 0.7,
-      "peligro": 3,
-      "rewardMultiplier": 1,
-      "xpBonus": 10,
-      "pointsBonus": 0,
-      "affinityBonus": 0,
+      "titulo": "Un humo negro",
+      "descripcion": "La ruta parece segura. Pero una débil columna de humo alcanzas a ver entre los matorrales al oeste del camino. Puedes explorar su origen o cumplir la orden o retirarte y entregar el informe.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
         "explorar",
         "retirarse"
       ],
       "actionText": {
-        "explorar": "Llegas al lugar de donde procedía aquel humo y no ves a nadie, pero unos ruidos extraños a tu espalda llaman tu atención.",
-        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+        "explorar": "Además del humo, encuentras rastros. Avanzas a través de la espesura decidido a encontrar a quien enfrentar.",
+        "retirarse": "Vuelves al campamento luego de dos dias de vigilancia, tu informe es recibido en la tienda del capitán y obtienes tu recompensa."
       },
       "completionText": {
-        "success": "¡Buen trabajo! Regresas al campamento tras cumplir la vigilancia y entregar el informe sobre lo ocurrido.",
-        "failure": "Eran muchos enemigos y decides escapar antes de caer derrotado en inferioridad."
+        "success": "Avanzas con decisión y te preparas para erradicar la raíz del problema, te imaginas a unos pocos miserables mal armados para recrearte.",
+        "failure": "Incluso retirarse tiene su riesgo; rumores corrieron de bandidos asaltando la ruta que vigilaste, lo que daña tu reputación."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Botín manchado",
+          "descripcion": "Encuentras a los bandidos riendo y repartiéndose el oro de algún viajero desafortunado cuyo cadáver estaba cerca. Eres la justicia no deseada.",
+          "hasEnemies": true,
+          "enemyLabel": "asaltantes",
+          "enemyChance": 0.80,
+          "peligro": 2,
+          "categoria"; "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.02 },
+          "allowedActions": [
+            "atacar",
+            "infiltrar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Cargas apareciendo entre la maleza. El primero cae ante ti con una sonrisa congelada en su rostro.",
+            "infiltrar": "Como una sombra venenosa, cortas la cuerda de su tienda sobre ellos creando el caos antes de golpear.",
+            "retirarse": "Retrocedes en silencio. Tienen superioridad y tú tienes instinto de supervivencia."
+          },
+          "completionText": {
+            "success": "Jadeas agotado pero la emoción del combate ignora el dolor de cualquier herida, te limpias la sangre de tus enemigos, requisas lo que encuentras y vuelves victorioso.",
+            "failure": "Un golpe a destiempo y un movimiento descuidado provocó que fueras superado, lo que te animó a buscar un camino de escape antes de que fueras liquidado."
+          }
+        }
       }
     }
   },
   {
-    "id": "exploradores_prisioneros",
-    "titulo": "Exploradores prisioneros",
-    "destino": "Lebennin",
-    "nivel": 2,
-    "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, tenemos que liberarlos.",
-    "puntos": 150,
-    "xp": 100,
-    "encuentros": [
-      "enemigo_numeroso",
-      "evento_especial",
-      "enemigo_numeroso"
-    ],
-    "escenarioFinal": {
-      "enabled": true,
-      "titulo": "Campamento de corsarios en Lebennin",
-      "descripcion": "Has llegado al campamento enemigo. Ves entre los enemigos a los compañeros amarrados de espaldas. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "corsarios",
-      "enemyChance": 0.99,
-      "peligro": 2,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+   {
+  "id": "exploradores_prisioneros",
+  "titulo": "Exploradores prisioneros",
+  "destino": "Lebennin",
+  "nivel": 2,
+  "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, debemos liberarlos.",
+  "puntos": 150,
+  "xp": 100,
+  "conclusionGeneral": {
+    "exito": "La misión de rescate se ha completado. Regresas al campamento con el orgullo del deber cumplido y los exploradores a salvo. El capitán toma nota de tu valentía y se te otorga tu recompensa.",
+    "fracaso": "El objetivo principal ha fracasado. Vuelves al campamento con las manos vacías y malas noticias. Aprender de esta derrota será crucial para tus próximas expediciones."
+  },
+  "encuentros": [
+    "enemigo_numeroso",
+    "evento_especial",
+    "enemigo_numeroso"
+  ],
+  "escenarioFinal": {
+    "enabled": true,
+    "titulo": "Campamento enemigo a la vista",
+    "descripcion": "Llegas al margen del campamento enemigo. Ves a tus aliados amarrados de espaldas cerca de la fogata; unos cuatro bandidos los vigilan charlando entre ellos, ignorando que están siendo observados. El tiempo apremia.",
+    "hasEnemies": true,
+    "enemyLabel": "captores corsarios",
+    "enemyChance": 0.99,
+    "peligro": 3,
+    "categoria": "enemigo_numeroso",
+    "bonus": { "meleeBonus" 0.01, "negotiationBonus": 0.01 }
       "allowedActions": [
-        "atacar",
-        "rodear",
-        "infiltrar",
-        "negociar",
-        "retirarse"
-      ],
-      "actionText": {
-        "atacar": "Te enfrentas a los corsarios de frente, corriendo hacia ellos; sorprendidos reciben tu carga y se libra un feroz combate.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente, sorprendiéndolos desprevenidos.",
-        "infiltrar": "Te haces pasar por uno de ellos y se la creen, los distraes para luego improvisar.",
-        "negociar": "Tratas de negociar con ellos para que liberen a los rehenes haciendo el uso máximo de tu carisma.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
-      },
-      "completionText": {
-        "success": "Liberas a los exploradores y ellos te agradecen por haberlos salvado, luego vuelven al campamento celebrando la victoria.",
-        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
-      }
+      "atacar",
+      "rodear",
+      "negociar",
+      "retirarse"
+    ],
+    "actionText": {
+      "atacar": "Saltas desde tu escondite, buscando neutralizar a la amenaza más cercana antes de que puedan reaccionar.",
+      "rodear": "Flanqueas la posición, utilizando el entorno para distraerlos y separarlos.",
+      "negociar": "Emerges con las manos visibles, intentando comprar tiempo o llegar a un acuerdo con oro.",
+      "retirarse": "El número de enemigos te hace dudar en el último segundo. Das un paso atrás y abandonas el rescate."
+    },
+    "completionText": {
+      "success": "Tus acciones fueron rápidas y precisas. Cortas las ataduras de los exploradores mientras los enemigos yacen derrotados. Están magullados, pero vivos.",
+      "failure": "El plan colapsa. Eres superado por los corsarios y te ves obligado a huir con heridas, dejando atrás a tus aliados."
     }
+  }
+}
   },
   {
     "id": "rastreo_lothgobel",
     "titulo": "Rastreo en Lothgobel",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Se han visto huellas y señales extrañas en los alrededores de la aldea de Lothgobel. Recorre los senderos, confirma si hay actividad enemiga y vuelve con un informe.",
+    "descripcion": "Señales extrañas marcan los senderos de Lothgobel. Parecen ser demasiadas huellas para ser simples comerciantes. Averigua quiénes transitan nuestra tierra.",
     "puntos": 90,
     "xp": 50,
+    "conclusionGeneral": {
+      "exito": "Tu rastreo ha sido productivo. Regresas al mando con información valiosa sobre las rutas y amenazas, reclamando tu paga merecida.",
+      "fracaso": "El terreno y las circunstancias jugaron en tu contra. Regresas magullado y con un informe incompleto, esperando mejor suerte la próxima vez."
+    },
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
@@ -176,28 +252,47 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Senderos de Dínadab",
-      "descripcion": "Recorres las huellas hasta encontrar a un grupo no muy numeroso de bandidos. Algunos de ellos parecen saber defenderse. Puedes atacar, rodear o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyChance": 0.75,
-      "peligro": 3,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Fin del sendero",
+      "descripcion": "El rastro conduce a un desfiladero estrecho y silencioso. Es el lugar perfecto para una emboscada, pero también el único camino para descubrir la verdad. Puedes avanzar con cautela o dar el informe por terminado.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "rodear",
+        "explorar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Te enfrentas directamente al enemigo usando tu habilidad e ingenio para tratar de vencerlos.",
-        "rodear": "Encuentras un espacio no vigilado y te adentras en él sorprendiéndolos desprevenidos.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Avanzas paso a paso, prestando atención a cada eco y sombra en la pared de roca.",
+        "retirarse": "Decides que tienes suficiente información. Es mejor regresar entero que arriesgarse en un lugar tan cerrado."
       },
       "completionText": {
-        "success": "Tu decisión tuvo éxito y gracias a ello cumpliste con el objetivo de la misión; ahora puedes regresar e informar de tu éxito.",
-        "failure": "Tu decisión no resultó de la mejor manera y no tuviste mejor opción que huir para que no te atraparan, aunque tu informe servirá para contraatacar."
+        "success": "Tu prudencia te permite advertir el peligro antes de que se cierre sobre ti.",
+        "failure": "Tropiezas en el camino de vuelta, torciéndote el tobillo mientras dejas el lugar atrás."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Emboscada en la cornisa",
+          "descripcion": "Un grupo de desertores armados te observa desde las cornisas superiores con los arcos tensados. Te han acorralado.",
+          "hasEnemies": true,
+          "enemyLabel": "desertores armados",
+          "enemyChance": 0.85,
+          "peligro": 2,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "rangedBonus": 0.02 },
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "No esperas a que disparen. Buscas cobertura y respondes al ataque rápidamente.",
+            "rodear": "Finges una retirada para flanquearlos escalando por un lateral oculto.",
+            "retirarse": "Corres en zigzag buscando la salida del desfiladero bajo una lluvia de flechas."
+          },
+          "completionText": {
+            "success": "Neutralizas la amenaza con destreza. El desfiladero vuelve a ser un camino seguro para los nuestros.",
+            "failure": "Eres alcanzado por sus ataques y te ves forzado a realizar una retirada desesperada, herido y exhausto."
+          }
+        }
       }
     }
   },
@@ -206,9 +301,13 @@
     "titulo": "Niños perdidos de Calembel",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Unos cuatro niños entre 7 y 12 años de edad jugaban a las afueras de la ciudad pero no regresaron al atardecer, solo quedaron sus huellas como rastros.",
+    "descripcion": "Varios niños han desaparecido en las afueras de la ciudad. Las marcas en el suelo indican que fueron llevados a la fuerza. Encuéntralos y tráelos a casa.",
     "puntos": 90,
     "xp": 40,
+    "conclusionGeneral": {
+      "exito": "Has actuado con valentía. Completar esta tarea te otorga no solo tu recompensa en oro, sino la gratitud y el alivio de los habitantes de Calembel.",
+      "fracaso": "Vuelves con pesar. La misión ha superado tus capacidades actuales y el regreso al pueblo se hace duro al no traer las noticias esperadas."
+    },
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -216,29 +315,47 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Sendero oculto",
-      "descripcion": "Tras derrotar a sus escoltas, llegas hasta el final de la cueva donde el líder enemigo te esperaba con los niños a su espalda amarrados. '¿Así que llegó el rescate eh? Primero tendrás que vencerme'.",
-      "hasEnemies": true,
-      "enemyLabel": "lider bandido",
-      "enemyChance": 0.95,
-      "peligro": 5,
-      "rewardMultiplier": 1,
-      "xpBonus": 0,
-      "pointsBonus": 0,
-      "affinityBonus": 0,
+      "titulo": "Boca de la mina abandonada",
+      "descripcion": "Las pequeñas huellas terminan en la entrada de una vieja excavación minera. Un débil eco sugiere que alguien se encuentra en su interior. Puedes adentrarte en la oscuridad o regresar a pedir ayuda.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "negociar",
+        "explorar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Desenvainas tu arma y cargas de frente contra el enemigo haciendo uso de tu habilidad para debilitarlo hasta dar el golpe mortal.",
-        "negociar": "Intentas negociar con el enemigo y, a cambio de dejarlo libre, aceptará entregarte a los niños.",
-        "retirarse": "Decides regresar e informar de la situación en el campamento."
+        "explorar": "Enciendes una antorcha y desciendes con paso firme, determinado a efectuar el rescate.",
+        "retirarse": "La mina parece demasiado peligrosa para ti solo. Retrocedes con la intención de informar su ubicación."
       },
       "completionText": {
-        "success": "Rescatas a los niños y regresas al campamento con la misión cumplida.",
-        "failure": "No logras completar la misión y te ves obligado a regresar al campamento."
+        "success": "Tu decisión de regresar por ayuda es sensata, aunque los minutos perdidos podrían ser vitales.",
+        "failure": "Al salir apresuradamente resbalas en la entrada, ganándote un buen golpe contra las rocas."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Rehenes en la oscuridad",
+          "descripcion": "En la caverna principal encuentras a un grupo de bandidos. Su líder nota tu presencia y amenaza a los cautivos si das un paso en falso.",
+          "hasEnemies": true,
+          "enemyLabel": "bandido líder",
+          "enemyChance": 0.95,
+          "peligro": 2,
+          "categoria": "jefe",
+          "bonus": { "meleeBonus": 0.02, "negotiationBonus": 0.02 },
+          "allowedActions": [
+            "atacar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Lanzas un ataque sorpresa, buscando desarmar al líder antes de que lastime a alguien.",
+            "negociar": "Ofreces tu dinero y pertenencias intentando llegar a un acuerdo pacífico por los niños.",
+            "retirarse": "Te das cuenta de que no puedes salvarlos solo y retrocedes cautelosamente."
+          },
+          "completionText": {
+            "success": "Derrotas a la banda y aseguras el área. Levantas a los niños asustados y los guías de vuelta hacia la luz y la seguridad.",
+            "failure": "Tus esfuerzos no son suficientes y el combate se vuelve en tu contra. Eres expulsado de la mina con múltiples heridas."
+          }
+        }
       }
     }
   },
@@ -247,9 +364,13 @@
     "titulo": "Orcos nocturnos",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Se habla de criaturas viles acechando en la oscuridad de las noches, secuestrando y asaltando a quienes encuentren en el camino, rastrearlos y darles caza, llevar antorchas.",
+    "descripcion": "Un grupo de incursores orcos aprovecha la noche para asaltar los caminos. Equípate y rastea sus movimientos para asegurar la zona.",
     "puntos": 90,
     "xp": 40,
+    "conclusionGeneral": {
+      "exito": "Has cumplido tu deber protegiendo los caminos de la oscuridad. Reportas tus hallazgos al mando y recibes tu pago por una noche de trabajo bien hecho.",
+      "fracaso": "La noche probó ser un terreno difícil. Vuelves al campamento cansado y sabiendo que la amenaza en los caminos aún persiste."
+    },
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -257,40 +378,62 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Orcos nocturnos",
-      "descripcion": "Luego de algunas noches de búsqueda, rastreo y paciencia logras encontrar a los acechadores ¿Qué quieres hacer? Atacar, rodear o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "merodeadores",
-      "enemyChance": 0.75,
-      "peligro": 3,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Sombras en el bosque",
+      "descripcion": "El bosque de noche es denso y amenazador. Sigues un rastro fresco entre los árboles crujientes. Puedes internarte en la espesura para buscarlos o mantener una distancia segura y retirarte.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "rodear",
+        "explorar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Cargas contra ellos de frente gritando en medio de la noche y luchando contra ellos usando todas tus habilidades intentando no ser derrotado.",
-        "rodear": "Te acercas sigilosamente y tardan en notar tu presencia tras olfatearte, pero ya estabas lo suficientemente cerca como para tomar la ventaja.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Empuñas tu arma con firmeza y te adentras en la oscuridad, confiando en tus sentidos.",
+        "retirarse": "Tomas nota de la ruta que siguen y das la vuelta hacia el campamento; es mejor luchar de día."
       },
       "completionText": {
-        "success": "El combate nocturno se vuelve intenso pero para tu sorpresa resultaste vencedor y vuelves rápido al campamento para recuperarte de tus heridas y entregar el informe.",
-        "failure": "El combate nocturno se vuelve intenso y en cierto punto pierdes la compostura optando por una retirada táctica, luego de cansarte de correr te diriges al campamento para entregar el informe."
+        "success": "Has completado un buen informe de vigilancia. La prudencia garantiza que puedas luchar otro día.",
+        "failure": "La poca visibilidad te hace tropezar varias veces durante la retirada, desgastando tus energías."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Enfrentamiento bajo la luna",
+          "descripcion": "Encuentras a los merodeadores orcos organizando un pequeño campamento. Al percibir tu presencia, emiten un rugido y se preparan para emboscarte.",
+          "hasEnemies": true,
+          "enemyLabel": "orcos merodeadores",
+          "enemyChance": 0.85,
+          "peligro": 2,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.01, "thrownBonus": 0.01 }
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Cargas con determinación, aprovechando el elemento sorpresa para romper sus filas.",
+            "rodear": "Utilizas la cobertura de los árboles para atacar desde las sombras y confundirlos.",
+            "retirarse": "Superado en número, decides que una retirada táctica es tu mejor opción en este momento."
+          },
+          "completionText": {
+            "success": "Derrotas a los orcos con ataques certeros. La zona queda despejada y el camino es seguro una vez más.",
+            "failure": "Los orcos son fieros combatientes y logran repelerte. Te retiras herido antes de que la situación empeore."
+          }
+        }
       }
     }
   },
   {
     "id": "vigilar_gilrain",
-    "titulo": "Vigilar el rio Gilrain",
+    "titulo": "Vigilar el río Gilrain",
     "destino": "Lebennin",
     "nivel": 2,
-    "descripcion": "Hay información acerca de una reunión de corsarios en las costas de Lebennin, un grupo de capitanes desembarcarán en el rio Gilrain, no sabemos cuándo pero hay que esperarlos.",
+    "descripcion": "Se han reportado movimientos de barcos corsarios cerca de las costas. Debes acercarte a los muelles del Gilrain y evaluar la magnitud de la amenaza.",
     "puntos": 150,
     "xp": 80,
+    "conclusionGeneral": {
+      "exito": "Tu labor de reconocimiento rinde frutos. El capitán toma tus notas tácticas con seriedad, entregándote tu paga en agradecimiento por tu eficacia.",
+      "fracaso": "El río es un terreno traicionero y esta vez no tuviste suerte. Regresas sin la información completa, esperando recuperarte pronto."
+    },
     "encuentros": [
       "obstaculo",
       "obstaculo",
@@ -298,29 +441,47 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Encuentras las embarcaciones",
-      "descripcion": "Encuentras a uno de los capitanes corsarios acompañado de pocos hombres llegando en una última embarcación. ¿Qué decides hacer? Atacar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "jefe",
-      "enemyChance": 0.75,
-      "peligro": 3,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Los muelles ocultos",
+      "descripcion": "El agua del Gilrain choca suavemente contra varias barcazas de diseño corsario amarradas en la orilla. Puedes acercarte a investigar de cerca o tomar nota de los barcos y regresar.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "negociar",
+        "explorar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Una vez desembarcaron lo encaras frente a frente y le propones un combate individual, este acepta y tras ambos prepararse comienzan el combate.",
-        "negociar": "Una vez desembarcaron lo encaras frente a frente y le propones dejarlo ir a cambio de información sobre sus planes.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Te mueves con sigilo hacia las barcazas para intentar escuchar planes o identificar a los líderes.",
+        "retirarse": "Contar los barcos es suficiente inteligencia por hoy. Te retiras hacia una posición segura."
       },
       "completionText": {
-        "success": "Lograste vencerlo, sea con palabras o con la fuerza y obtuviste información valiosa para el capitán.",
-        "failure": "Te ves superado ante él y eres rescatado antes de ser asesinado o capturado y llevado como prisionero a Umbar."
+        "success": "Tu reporte de tonelaje y número de navíos será sumamente útil para preparar las defensas.",
+        "failure": "Una retirada torpe llama la atención de los vigías de los barcos, pero logras perderlos en la maleza."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "El capitán desembarca",
+          "descripcion": "Un capitán corsario baja al muelle rodeado de su escolta. Te detecta al instante debido a un reflejo en tu equipo y desenfunda su arma, listo para el combate.",
+          "hasEnemies": true,
+          "enemyLabel": "capitán corsario",
+          "enemyChance": 0.85,
+          "peligro": 3,
+          "categoria": "jefe"
+          "bonus": { "meleeBonus": 0.03, "negotiationBonus": 0.03, "damageReduction": 0.01, "willpowerBonus": 0.02 }
+            "allowedActions": [
+            "atacar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Aceptas el desafío y sales de tu escondite, buscando un duelo rápido con el líder.",
+            "negociar": "Intentas usar la intimidación y la diplomacia para evitar un derramamiento de sangre.",
+            "retirarse": "Ante la superioridad numérica de su escolta, decides escapar rápidamente por el río."
+          },
+          "completionText": {
+            "success": "Consigues vencer al capitán en un intenso choque de espadas, recuperando mapas navales importantes de sus pertenencias.",
+            "failure": "Eres superado por sus guardias en el altercado. Logras huir a duras penas, sufriendo varias heridas."
+          }
+        }
       }
     }
   },
@@ -329,9 +490,13 @@
     "titulo": "Custodia de Tarlang's Neck",
     "destino": "Lamedon",
     "nivel": 4,
-    "descripcion": "Tarlang's Neck es un paso útil y peligroso; hay señales de bandidos y viejos restos de combate. Custodia el paso y elimina la amenaza si aparece.",
+    "descripcion": "El paso de Tarlang es un punto estratégico vital que ha visto muchas batallas. Tu orden es mantener el desfiladero seguro frente a los asaltantes.",
     "puntos": 340,
     "xp": 200,
+    "conclusionGeneral": {
+      "exito": "Has mantenido la seguridad en un punto clave del territorio. Vuelves victorioso, y tus superiores recompensan generosamente tu lealtad y resistencia.",
+      "fracaso": "El enemigo resultó ser implacable. Vuelves al campamento cediendo tu posición, pero sabiendo que sobrevivir es el primer paso para luchar otro día."
+    },
     "encuentros": [
       "evento_especial",
       "enemigo_numeroso",
@@ -339,35 +504,49 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Paso de Tarlang's Neck",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "bandidos",
-      "enemyChance": 0.75,
-      "peligro": 4,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "El paso estratégico",
+      "descripcion": "El desfiladero impone respeto. Existen varios rincones ciegos donde emboscadores podrían ocultarse fácilmente. Puedes patrullar minuciosamente la zona o dar por terminada tu guardia.",
+      "hasEnemies": false,
+      "peligro": 2,
       "allowedActions": [
-        "atacar",
-        "rodear",
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Mantienes el paso bajo control y la vigilancia confirma que la ruta puede seguir usándose con cautela.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Inicias una revisión exhaustiva de las rocas y grietas buscando señales de hostiles.",
+        "retirarse": "Decides que has cubierto tu tiempo de patrulla y te marchas antes de que oscurezca."
       },
       "completionText": {
-        "success": "Aseguras el paso y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "Tu patrulla concluye sin incidentes graves. El paso queda despejado por ahora.",
+        "failure": "Una caída en el terreno accidentado te obliga a volver cojeando hacia tu base."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Emboscadores en el desfiladero",
+          "descripcion": "De entre las rocas emergen varios mercenarios profesionales. Llevan días esperando la oportunidad de atacar a las caravanas o a los guardias.",
+          "hasEnemies": true,
+          "enemyLabel": "emboscadores",
+          "enemyChance": 0.85,
+          "peligro": 4,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.02, "rangedBonus" 0.01, "thrownBonus" 0.02 }
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "infiltrar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Interceptas su ataque rompiendo su formación con un choque frontal contundente.",
+            "rodear": "Escalas un saliente cercano para ganar la ventaja del terreno elevado y atacar desde arriba.",
+            "infiltrar": "Te mezclas con su avance usando el terreno rocoso, intentando desarmarlos uno a uno.",
+            "retirarse": "Huyes por el camino más rápido, cediéndoles el control temporal del desfiladero."
+          },
+          "completionText": {
+            "success": "Vences a los asaltantes demostrando gran habilidad marcial. Tarlang es seguro de nuevo gracias a ti.",
+            "failure": "La emboscada está bien ejecutada y te superan. Sobrevives porque logras ocultarte tras las rocas y escapar."
+          }
+        }
       }
     }
   },
@@ -376,9 +555,13 @@
     "titulo": "Sombras en Sardol",
     "destino": "Blackroot Vale",
     "nivel": 3,
-    "descripcion": "Sardol ha quedado expuesta a incursiones de saqueadores. Recorre sus afueras, reduce a los grupos and neutraliza al jefe menor si aparece.",
+    "descripcion": "El pueblo de Sardol está bajo ataque por bandas de saqueadores. Interviene para proteger a los habitantes y neutralizar la amenaza si es posible.",
     "puntos": 200,
     "xp": 120,
+    "conclusionGeneral": {
+      "exito": "Tu oportuna intervención ha marcado la diferencia en Sardol. Al volver, recibes tu recompensa junto con el respeto de aquellos a quienes protegiste.",
+      "fracaso": "El caos del asalto fue inmanejable. Te retiras exhausto, sabiendo que la reconstrucción del pueblo será larga y costosa."
+    },
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -386,35 +569,47 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Afueras de Sardol",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "saqueadores",
-      "enemyChance": 0.75,
-      "peligro": 4,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Humo en la plaza",
+      "descripcion": "Sardol está envuelto en humo. Los saqueadores se mueven por las calles buscando objetos de valor. Puedes adentrarte para buscar a sus líderes o evaluar la situación desde lejos y retirarte.",
+      "hasEnemies": false,
+      "peligro": 2,
       "allowedActions": [
-        "atacar",
-        "rodear",
-        "explorar",
         "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Derrotas la amenaza que pesaba sobre Sardol y dejas el valle en mejores condiciones que al llegar.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "infiltrar": "Avanzas entre los escombros y el humo humeante, fundiéndote con el caos del ataque.",
+        "retirarse": "La situación parece fuera de control. Decides retirarte para reunir a la milicia."
       },
       "completionText": {
-        "success": "La amenaza queda contenida y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "Llevas un reporte detallado del número de enemigos al mando para preparar un contraataque.",
+        "failure": "El espeso humo te desorienta, provocando que tu retirada sea torpe y accidentada."
+      },
+      "subEscenarios": {
+        "infiltrar": {
+          "titulo": "El cabecilla del saqueo",
+          "descripcion": "En el centro del pueblo, el líder de los bandidos dirige el pillaje y arenga a sus hombres. Se da cuenta de tu presencia y ordena el ataque.",
+          "hasEnemies": true,
+          "enemyLabel": "saqueadores",
+          "enemyChance": 0.85,
+          "peligro": 4,
+          "categoria": "jefe"
+          "bonus": { "meleeBonus": 0.03, "thrownBonus": 0.01, "cavalryBonus": 0.01 },
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Vas directo por el líder, esperando que su caída desmoralice al resto de los bandidos.",
+            "rodear": "Buscas un ángulo ventajoso rodeando la plaza para atacar a los guardias del flanco.",
+            "retirarse": "El número de enemigos es abrumador. Abandonas el valle huyendo entre las casas."
+          },
+          "completionText": {
+            "success": "Neutralizas al cabecilla con gran pericia. Sin su líder, los saqueadores pierden el orden y comienzan a huir.",
+            "failure": "Eres rechazado por los saqueadores. Sufres golpes severos y apenas logras escapar de la turba."
+          }
+        }
       }
     }
   },
@@ -423,9 +618,13 @@
     "titulo": "Rastro junto al Celos",
     "destino": "Lebennin",
     "nivel": 2,
-    "descripcion": "La ribera del Celos guarda rastros de un campamento reciente. Averigua quién pasó por allí y si quedan prisioneros o botín.",
+    "descripcion": "Sigues un rastro sospechoso por la ribera del río Celos. Alguien ha estado moviéndose por la zona y necesitas descubrir de quiénes se trata.",
     "puntos": 150,
     "xp": 90,
+    "conclusionGeneral": {
+      "exito": "Has despejado las dudas sobre la actividad en el río Celos. Tu expedición rinde frutos y el mando recompensa adecuadamente tu trabajo de investigación.",
+      "fracaso": "El río guardó bien sus secretos esta vez. Regresas con las manos vacías y la moral tocada, pero listo para la próxima oportunidad."
+    },
     "encuentros": [
       "obstaculo",
       "enemigo_numeroso",
@@ -433,35 +632,51 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Ribera del Celos",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "enemigos",
-      "enemyChance": 0.75,
-      "peligro": 4,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "El campamento en el río",
+      "descripcion": "Más adelante en la orilla del río encuentras restos de campamento y humo denso. Puedes acercarte sigilosamente para encarar la situación o dar media vuelta y reportar lo visto.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "rodear",
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Sigues el rastro junto al Celos hasta resolver el misterio y devuelves noticias valiosas al campamento.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Avanzas en silencio entre la maleza, preparado para cualquier encuentro hostil.",
+        "retirarse": "Consideras que investigar más allá es arriesgado y te regresas por el mismo sendero."
       },
       "completionText": {
-        "success": "Averiguas qué pasó en la ribera y regresas al campamento con la misión cumplida.",
-        "failure": "La tensión te obliga a retirarte antes de completar la misión."
+        "success": "Tu reporte de exploración pasiva es útil para que el mando tome decisiones sin arriesgar tropas.",
+        "failure": "Pierdes pie en la orilla pedregosa y terminas mojado, haciendo ruido antes de marcharte."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Mercenarios al acecho",
+          "descripcion": "Descubres a un grupo de mercenarios limpiando sus armas en el río. Al notar que la maleza cede, desenfundan rápidamente, montan sus caballos, listos para la batalla.",
+          "hasEnemies": true,
+          "enemyLabel": "mercenarios",
+          "enemyChance": 0.85,
+          "peligro": 3,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "cavalryBonus": 0.03, "negotiationBonus": 0.02 }
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "infiltrar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Te lanzas al combate aprovechando tu impulso, buscando sorprender a los mercenarios.",
+            "rodear": "Utilizas el ruido de la corriente del agua para acercarte sin ser visto por los flancos.",
+            "infiltrar": "Intentas pasar desapercibido entre los arbustos para desorganizar su posición.",
+            "negociar": "Pides parlamentar, intentando averiguar quién los contrató sin llegar a las armas.",
+            "retirarse": "Evalúas que son demasiados y retrocedes por la ribera evitando el conflicto."
+          },
+          "completionText": {
+            "success": "Logras dispersar a los mercenarios y asegurar la orilla del río, demostrando un excelente manejo de la situación.",
+            "failure": "La experiencia de combate del grupo rival te supera. Te ves obligado a retirarte con varias contusiones."
+          }
+        }
       }
     }
   },
@@ -470,9 +685,13 @@
     "titulo": "Escolta hacia Tadrent",
     "destino": "Belfalas",
     "nivel": 3,
-    "descripcion": "Una caravana debe llegar hasta Tadrent por una ruta inquieta. La escolta puede acabar en emboscada, negociación o combate abierto.",
+    "descripcion": "Debes escoltar una lenta caravana comercial hacia Tadrent. El camino es peligroso y los asaltantes son frecuentes. Tu trabajo es mantener la carga segura.",
     "puntos": 230,
     "xp": 140,
+    "conclusionGeneral": {
+      "exito": "La caravana ha llegado a salvo a su destino gracias a tus habilidades. Cobras tu contrato mercenario con la satisfacción del deber bien realizado.",
+      "fracaso": "Proteger la caravana fue una tarea que te sobrepasó. Regresas magullado y sin recompensa, habiendo perdido tanto la carga como parte de tu reputación."
+    },
     "encuentros": [
       "enemigo_numeroso",
       "obstaculo",
@@ -481,35 +700,47 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Camino hacia Tadrent",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "asaltantes",
-      "enemyChance": 0.75,
-      "peligro": 5,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "El paso angosto",
+      "descripcion": "La caravana llega a un estrecho sendero flanqueado por colinas. Es el lugar ideal para un asalto. Puedes adelantarte para asegurar el paso o abandonar el trabajo si lo ves muy peligroso.",
+      "hasEnemies": false,
+      "peligro": 2,
       "allowedActions": [
-        "atacar",
-        "rodear",
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "La caravana llega a Tadrent y tu escolta evita que el viaje se convierta en tragedia.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Reconoces el lugar con calma y obtienes pruebas claras de su actividad.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Ordenas a la caravana que espere mientras avanzas para inspeccionar posibles emboscadas.",
+        "retirarse": "Consideras que el riesgo para tu vida no vale la paga y te alejas del lugar."
       },
       "completionText": {
-        "success": "La caravana llega a Tadrent y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "Abandonas el contrato sin sufrir daños físicos, pero tu reputación entre los comerciantes se verá afectada.",
+        "failure": "Te retiras con torpeza y te pierdes brevemente en las colinas antes de encontrar el camino de regreso."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Trampa en el camino",
+          "descripcion": "Un árbol masivo ha sido derribado cruzando el camino. Desde las laderas, asaltantes descienden rápidamente para rodearte e intentar tomar el control de la ruta.",
+          "hasEnemies": true,
+          "enemyLabel": "asaltantes de caminos",
+          "enemyChance": 0.85,
+          "peligro": 4,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.02, "rangedBonus": 0.03, "negotiationBonus": 0.04 },
+          "allowedActions": [
+            "atacar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Desenvainas y haces frente a los asaltantes según van descendiendo, defendiendo la posición.",
+            "negociar": "Ofreces una parte menor del cargamento o monedas como peaje para evitar un combate total.",
+            "retirarse": "Viendo que la emboscada es letal, huyes dejando a la caravana a su suerte."
+          },
+          "completionText": {
+            "success": "Tus tácticas de protección y combate resultan impecables. Vences a los asaltantes y abres paso para que la caravana avance sana y salva.",
+            "failure": "La emboscada es demasiado fuerte. Eres superado, la caravana es saqueada y te ves forzado a arrastrarte lejos del combate."
+          }
+        }
       }
     }
   },
@@ -518,9 +749,13 @@
     "titulo": "Eco de la Stone of Erech",
     "destino": "Blackroot Vale",
     "nivel": 5,
-    "descripcion": "Al pie de la Stone of Erech circulan rumores de un eco antiguo. Investiga las ruinas, soporta la amenaza y resuelve la situación.",
+    "descripcion": "Han surgido rumores de extraños ecos y movimientos bajo la gran Piedra de Erech. Tienes órdenes de investigar la colina y asegurar la zona.",
     "puntos": 430,
     "xp": 210,
+    "conclusionGeneral": {
+      "exito": "Has desafiado uno de los lugares más inhóspitos y regresas con vida y buenas noticias. Se te recompensa con creces por tu valentía.",
+      "fracaso": "El misterio de la Piedra fue demasiado profundo. Regresas exhausto e incapaz de completar el encargo, necesitando urgente reposo."
+    },
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -529,35 +764,49 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Ruinas de la Stone of Erech",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "enemigos",
-      "enemyChance": 0.75,
-      "peligro": 5,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "El peso de la piedra",
+      "descripcion": "Un frío sobrenatural envuelve la colina de la Piedra. La tensión en el aire es evidente. Puedes explorar el origen de los ruidos en la niebla o retirarte prudentemente.",
+      "hasEnemies": false,
+      "peligro": 2,
       "allowedActions": [
-        "atacar",
-        "rodear",
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "Descifras el origen del eco y regresas con pruebas claras de lo que acecha en Blackroot Vale.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Avanzas paso a paso hacia la gran piedra, sintiendo cómo baja la temperatura.",
+        "retirarse": "Sientes que el ambiente no es propicio y prefieres regresar para reportar la actividad inusual."
       },
       "completionText": {
-        "success": "Resuelves el misterio de las ruinas y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "Regresas tiritando pero a salvo, habiendo dejado constancia de los cambios en el ambiente.",
+        "failure": "La prisa por salir te hace tropezar en el sendero escarpado de la colina, causándote heridas leves."
+      },
+       "subEscenarios": {
+        "explorar": {
+          "titulo": "Sombras inquietas",
+          "descripcion": "La niebla toma densidad a tus pies y surgen figuras espectrales, perturbadas por visitantes intrusos. Tienen intenciones hostiles.",
+          "hasEnemies": true,
+          "enemyLabel": "espectros menores",
+          "enemyChance": 0.85,
+          "peligro": 5,
+          "categori!": "enemigo_numeroso"
+          "bonus": { "meleeBonus": 0.03, "rangedBonus": 0.02, "magicBonus": 0.03 },
+          "allowedActions": [
+            "atacar",
+            "explorar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Levantas tu arma y enfrentas a las apariciones con pura fuerza de voluntad.",
+            "explorar": "Buscas algún sello o reliquia en el suelo que pueda estar causando esta perturbación.",
+            "negociar": "Pronuncias antiguos juramentos tratando de apaciguar a las entidades.",
+            "retirarse": "El frío y el terror te abruman, emprendiendo una retirada desesperada colina abajo."
+          },
+          "completionText": {
+            "success": "Con firmeza logras disipar la amenaza. La colina vuelve a su habitual silencio y tú completas tu misión con honores.",
+            "failure": "La energía helada de los entes drena tus fuerzas. Te desmayas brevemente y te retiras sintiéndote sumamente débil."
+          }
+        }
       }
     }
   },
@@ -566,9 +815,13 @@
     "titulo": "Vigilia en la frontera de Belfalas",
     "destino": "Belfalas",
     "nivel": 3,
-    "descripcion": "En la frontera de Belfalas, algunos días basta con vigilar; otros, una amenaza se manifiesta y obliga a actuar. Completa la misión incluso si el peligro nunca da la cara.",
+    "descripcion": "Tu deber es realizar una patrulla en la frontera de Belfalas, asegurando que ninguna amenaza cruce inadvertida.",
     "puntos": 200,
     "xp": 110,
+    "conclusionGeneral": {
+      "exito": "Tu guardia ha asegurado la paz en Belfalas una noche más. Regresas al campamento para recibir tu paga y descansar.",
+      "fracaso": "La patrulla no salió como esperabas. Vuelves con magulladuras y la frustración de no haber mantenido la línea, debiendo mejorar tu estrategia."
+    },
     "encuentros": [
       "evento_especial",
       "obstaculo",
@@ -577,35 +830,53 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Frontera de Belfalas",
-      "descripcion": "Has llegado a la zona objetivo. Puedes atacar, rodear, explorar, infiltrar, negociar o retirarte con el informe.",
-      "hasEnemies": true,
-      "enemyLabel": "amenazas",
-      "enemyChance": 0.75,
-      "peligro": 4,
-      "rewardMultiplier": 1.15,
-      "xpBonus": 10,
-      "pointsBonus": 8,
-      "affinityBonus": 1,
+      "titulo": "Punto de guardia",
+      "descripcion": "La frontera está envuelta en niebla baja y el viento es suave. Todo parece tranquilo. Puedes inspeccionar los matorrales cercanos por si acaso o retirarte dando tu turno por finalizado.",
+      "hasEnemies": false,
+      "peligro": 1,
       "allowedActions": [
-        "atacar",
-        "rodear",
         "explorar",
-        "infiltrar",
-        "negociar",
         "retirarse"
       ],
       "actionText": {
-        "atacar": "Rompes su línea defensiva y los enemigos huyen o caen ante ti.",
-        "rodear": "Encuentras un acceso lateral y tomas ventaja sin entrar de frente.",
-        "explorar": "La frontera queda clara, segura y bien observada; aun sin combate, la misión queda cumplida.",
-        "infiltrar": "Te cuelas entre sombras y descubres su punto débil.",
-        "negociar": "Tu voz logra ganar tiempo y desordenar su disciplina.",
-        "retirarse": "Decides volver con el informe antes de arriesgar más al grupo."
+        "explorar": "Prestas atención al crujir de las ramas y desciendes tu perfil para escudriñar la niebla.",
+        "retirarse": "Tu turno de vigilancia ha concluido. Decides regresar a los barracones."
       },
       "completionText": {
-        "success": "Terminas la vigilancia de la frontera y regresas al campamento con la misión cumplida.",
-        "failure": "La expedición se vio obligada a retirarse antes de completar la misión."
+        "success": "La jornada termina pacíficamente. Mantienes tu posición y reportas total normalidad.",
+        "failure": "Una retirada apresurada te hace tropezar, provocándote un esguince menor."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Incursores en la niebla",
+          "descripcion": "Un grupo de incursores emerge silenciosamente de la niebla, intentando cruzar la frontera. Al verte, se preparan para luchar e intentar abrirse paso.",
+          "hasEnemies": true,
+          "enemyLabel": "incursores silentes",
+          "enemyChance": 0.85,
+          "peligro": 4,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.05 }
+          "allowedActions": [
+            "atacar",
+            "rodear",
+            "explorar",
+            "infiltrar",
+            "negociar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Das la voz de alto y cargas contra ellos para impedir su avance a toda costa.",
+            "rodear": "Aprovechas la niebla para reposicionarte y golpear su flanco desprotegido.",
+            "explorar": "Identificas un cuello de botella en el terreno para limitar su capacidad de ataque en grupo.",
+            "infiltrar": "Te ocultas y los atacas uno a uno mientras avanzan cegados por la neblina.",
+            "negociar": "Intentas intimidarlos y ordenarles que den media vuelta si no quieren lidiar con las patrullas principales.",
+            "retirarse": "Consideras que son demasiados para ti solo y retrocedes para buscar refuerzos."
+          },
+          "completionText": {
+            "success": "Rechazas a los incursores con gran maestría táctica. La frontera permanece intacta bajo tu atenta vigilancia.",
+            "failure": "Te ves superado por la coordinación enemiga. Te defiendes como puedes, pero debes ceder terreno y escapar."
+          }
+        }
       }
     }
   },
@@ -614,9 +885,13 @@
     "titulo": "Investigación en las Ered Nimrais",
     "destino": "Lamedon",
     "nivel": 1,
-    "descripcion": "Los sanadores del campamento necesitan Athelas y otras raíces raras que solo crecen en las faldas de las Ered Nimrais. Investiga la zona botánica y recolecta las muestras.",
+    "descripcion": "Los sanadores locales necesitan Athelas y otras raíces raras de las montañas. Debes realizar labores de recolección en una zona conocida por su peligrosa fauna.",
     "puntos": 80,
     "xp": 40,
+    "conclusionGeneral": {
+      "exito": "Has llevado a cabo la recolección con destreza. Los sanadores están agradecidos y el mando te compensa debidamente por los recursos aportados.",
+      "fracaso": "La naturaleza demostró ser indomable. Regresas sin las hierbas y con algunas heridas, esperando que otro recolector tenga mejor suerte."
+    },
     "encuentros": [
       "obstaculo",
       "evento_especial",
@@ -624,27 +899,46 @@
     ],
     "escenarioFinal": {
       "enabled": true,
-      "titulo": "Faldas de las Ered Nimrais",
-      "descripcion": "Llegas al punto marcado. No hay batalla que librar, solo decidir cómo asegurar el objetivo y regresar.",
+      "titulo": "Zona de recolección",
+      "descripcion": "Llegas al claro marcado, donde la flora crece abundantemente, aunque cerca hay madrigueras revueltas. Puedes intentar recolectar rápidamente o retirarte de la zona silvestre.",
       "hasEnemies": false,
-      "enemyChance": 0,
       "peligro": 1,
-      "rewardMultiplier": 1,
-      "xpBonus": 0,
-      "pointsBonus": 0,
-      "affinityBonus": 0,
       "allowedActions": [
         "explorar",
         "retirarse"
       ],
       "actionText": {
-        "explorar": "Logras identificar y cosechar las plantas medicinales necesarias sin llamar la atención de las alimañas locales. Los sanadores estarán agradecidos.",
-        "retirarse": "Decides informar y volver sin seguir removiendo la zona."
+        "explorar": "Te arrodillas y comienzas a buscar las raíces cuidadosamente, atento a tu entorno.",
+        "retirarse": "Las señales de bestias territoriales te hacen dudar. Prefieres marcharte y volver más preparado."
       },
       "completionText": {
-        "success": "Recolectas las hierbas necesarias y regresas al campamento con la misión cumplida.",
-        "failure": "No lograste identificar las hierbas adecuadas obligandote a retirarse antes de completar la misión."
+        "success": "Tomas la decisión cautelosa y te retiras con un informe sobre la peligrosidad de la zona.",
+        "failure": "Te enredas en zarzas espinosas al irte, rasgando tus ropas y lastimándote."
+      },
+      "subEscenarios": {
+        "explorar": {
+          "titulo": "Territorio ocupado",
+          "descripcion": "Mientras recolectas, una bestia salvaje montañesa aparece para defender lo que considera su territorio.",
+          "hasEnemies": true,
+          "enemyLabel": "alimañas salvajes",
+          "enemyChance": 0.85,
+          "peligro": 2,
+          "categoria": "enemigo_numeroso",
+          "bonus": { "meleeBonus": 0.02 }
+          "allowedActions": [
+            "atacar",
+            "retirarse"
+          ],
+          "actionText": {
+            "atacar": "Enfrentas a las alimañas voladoras empuñando tus armas para proteger tu recolección.",
+            "retirarse": "Dejas las hierbas y huyes rápidamente antes de ser atacado directamente."
+          },
+          "completionText": {
+            "success": "Abates a la criatura y aseguras tu botín de hierbas medicinales, completando tu tarea.",
+            "failure": "La bestia resulta demasiado fiera. Te inflige daños considerables antes de que logres escapar con las manos vacías."
+          }
+        }
       }
     }
   }
-]
+          ]
