@@ -1,6 +1,6 @@
 import * as db from "./database.js";
 import { startSchedulers } from "./scheduler.js";
-import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
+import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
