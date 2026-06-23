@@ -532,6 +532,25 @@ const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes"
 //          FUNCIONES AUXILIARES
 // ==========================================
 
+
+function calcularSaludMaxima(profile = {}, equipment = {}) {
+    const nivel = calculateLevelFromXP(profile.xp || 0);
+    const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
+    
+    // Vida base de 100 + 15 por cada nivel
+    let vidaMaxima = 100 + (nivel * 15);
+
+    // Sumar vida otorgada por los items de utilidad y equipo
+    for (const util of (profile.activeUtilities || [])) {
+        if (util?.efecto?.salud) vidaMaxima += Number(util.efecto.salud);
+    }
+    
+    if (equipment.pecho?.efecto?.salud) vidaMaxima += Number(equipment.pecho.efecto.salud);
+    if (equipment.amuleto?.efecto?.salud) vidaMaxima += Number(equipment.amuleto.efecto.salud);
+
+    return Math.round(vidaMaxima);
+}
+
 function getPlayerClassKey(profile = {}) { 
   return normalizeKey(profile?.class || profile?.clase || ""); 
 } 
@@ -2385,12 +2404,18 @@ async function handleExpedicionStart(message, args) {
 
   const activeCompanions = getOwnedCompanions(profile);
 
-  expeditions.set(message.author.id, {
+  // 1. Calculamos la salud máxima basada en el nivel y equipo actual del jugador
+const saludMax = calcularSaludMaxima(profile, equipment);
+
+// 2. Inicializamos el estado de la expedición con los datos de vida incluidos
+expeditions.set(message.author.id, {
     missionId: mission.id,
     pendingStartHeal: true,
     mission,
     progress: 0,
     currentEncounter: null,
+    saludMaxima: saludMax, // <-- Guardamos el tope máximo para controlar las curaciones (ej. Faelon)
+    saludActual: saludMax, // <-- La vida con la que arranca y que se modificará en los encuentros
     xpEarned: 0,
     pointsEarned: 0,
     failed: false,
@@ -2399,7 +2424,7 @@ async function handleExpedicionStart(message, args) {
     pendingFinalScenario: false,
     finalScenarioShown: false,
     finalScenario: getFinalScenarioConfig(mission)
-  });
+});
 
   await db.updateTravelerData(message.author.id, { activeCompanions });
 
@@ -2543,23 +2568,6 @@ async function handleExpedicionVolver(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en una expedición activa.");
   }
-
-  const expedition = expeditions.get(message.author.id);
-  const partialXP = expedition.xpEarned || 0;
-  const partialPoints = expedition.pointsEarned || 0;
-
-  if (partialXP > 0) await db.addXP(message.author.id, partialXP);
-  if (partialPoints > 0) await db.addPoints(message.author.id, partialPoints);
-
-  expeditions.delete(message.author.id);
-  await clearExpeditionParty(message.author.id);
-  const utilMsg = await decrementUtilities(message.author.id);
-
-  const txtAfinidad = "• Ninguna"; // Valor seguro al abortar una misión
-
-  return message.reply(`⛺ **Regresas a salvo al campamento base.**\n\n🏆 Recompensa obtenida: +${partialPoints} pts | +${partialXP} XP\n\n🤝 Afinidades obtenidas:\n${txtAfinidad}\n\nExpedición abortada.${utilMsg}`);
-}
-
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en ninguna expedición activa. Usa `!tablon`.");
@@ -2587,14 +2595,14 @@ async function handleExpedicionDesafiar(message) {
     return result;
   };
 
-  const healWithFaelon = async () => {
+  const healWithFaelon = () => {
     if (!owned.includes("faelon")) return null;
-    const saludActual = profile.salud !== undefined ? profile.salud : 100;
-    const nuevaSalud = Math.min(100, saludActual + 10);
-    if (nuevaSalud !== saludActual) {
-      await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
-    }
-    return { saludActual, nuevaSalud };
+    let salud = expedition.saludActual || calcularSaludMaxima(profile, equipment);
+    const saludMaxima = expedition.saludMaxima || calcularSaludMaxima(profile, equipment);
+    
+    const nuevaSalud = Math.min(saludMaxima, salud + 10);
+    expedition.saludActual = nuevaSalud;
+    return { saludActual: salud, nuevaSalud };
   };
 
   if (expedition.failed) {
@@ -2682,6 +2690,23 @@ async function handleExpedicionDesafiar(message) {
       const coincideRegion = Array.isArray(e.region) && e.region.some(r => normalizeKey(r) === destino);
       return coincideEncuentro && coincideRegion;
     });
+  const expedition = expeditions.get(message.author.id);
+  const partialXP = expedition.xpEarned || 0;
+  const partialPoints = expedition.pointsEarned || 0;
+
+  if (partialXP > 0) await db.addXP(message.author.id, partialXP);
+  if (partialPoints > 0) await db.addPoints(message.author.id, partialPoints);
+
+  expeditions.delete(message.author.id);
+  await clearExpeditionParty(message.author.id);
+  const utilMsg = await decrementUtilities(message.author.id);
+
+  const txtAfinidad = "• Ninguna"; // Valor seguro al abortar una misión
+
+  return message.reply(`⛺ **Regresas a salvo al campamento base.**\n\n🏆 Recompensa obtenida: +${partialPoints} pts | +${partialXP} XP\n\n🤝 Afinidades obtenidas:\n${txtAfinidad}\n\nExpedición abortada.${utilMsg}`);
+}
+
+
 
     if (owned.includes("nieriel")) {
       const safe = lista.filter(e => (e.peligro ?? 0) <= nivelJugador);
