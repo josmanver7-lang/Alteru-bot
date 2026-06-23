@@ -2948,7 +2948,7 @@ async function handleExpedicionInteract(message) {
 
   await clearExpeditionParty(message.author.id);
   expedition.pendingFinalScenario = false;
-  expeditions.delete(message.author.id);
+  expeditions.delete(message.author.id); 
 
 
   textoFinalInteraccion += `\n\n🎉 **Misión completada**\n\n${expedition.mission.textoExito || "¡Has llegado al final del recorrido!"}\n\n🏆 Puntos obtenidos: +${puntosTotal}\n📚 XP obtenida: +${xpTotal}\n\n🤝 Afinidad ganada total:\n${finalAffinityText}`;
@@ -2965,7 +2965,7 @@ async function handleExpedicionInteract(message) {
 async function handleExpedicionVolver(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en una expedición activa.");
-  }
+    {
   const expedition = expeditions.get(message.author.id);
   const partialXP = expedition.xpEarned || 0;
   const partialPoints = expedition.pointsEarned || 0;
