@@ -10,7 +10,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent
-  ]
+  ],
+  partials: [Partials.Channel]
 });
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
