@@ -2966,7 +2966,22 @@ async function handleExpedicionVolver(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en una expedición activa.");
   }
+  const expedition = expeditions.get(message.author.id);
+  const partialXP = expedition.xpEarned || 0;
+  const partialPoints = expedition.pointsEarned || 0;
+
+  if (partialXP > 0) await db.addXP(message.author.id, partialXP);
+  if (partialPoints > 0) await db.addPoints(message.author.id, partialPoints);
+
+  expeditions.delete(message.author.id);
+  await clearExpeditionParty(message.author.id);
+  const utilMsg = await decrementUtilities(message.author.id);
+
+  const txtAfinidad = "â€¢ Ninguna"; // Valor seguro al abortar una misiÃ³n
+
+  return message.reply(`â›º **Regresas a salvo al campamento base.**\n\nðŸ† Recompensa obtenida: +${partialPoints} pts | +${partialXP} XP\n\nðŸ¤ Afinidades obtenidas:\n${txtAfinidad}\n\nExpediciÃ³n abortada.${utilMsg}`);
 }
+    
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en ninguna expedición activa. Usa `!tablon`.");
