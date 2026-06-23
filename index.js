@@ -2752,7 +2752,7 @@ async function handleExpedicionStart(message, args) {
   const mission = missions[numero - 1];
   if (!mission) return message.reply("Esa misión no existe.");
 
-  const profile = await db.getProfile(message.author.id);
+  let profile = await db.getProfile(message.author.id);
   const saludActual = profile.salud !== undefined ? profile.salud : 100; 
   const xpActual = profile.xp || 0;
   const nivelJugador = calculateLevelFromXP(xpActual);
