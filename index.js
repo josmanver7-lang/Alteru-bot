@@ -2966,6 +2966,7 @@ async function handleExpedicionVolver(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en una expedición activa.");
   }
+}
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en ninguna expedición activa. Usa `!tablon`.");
