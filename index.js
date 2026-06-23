@@ -3264,7 +3264,6 @@ async function handleExpedicionDesafiar(message) {
   }
 }
 
-// Función principal para resolver las acciones dentro del escenario final o subescenarios
 async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
   if (!scenario) return message.reply("⚠️ No se encontró la configuración del escenario actual.");
@@ -3291,71 +3290,77 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     // Obtenemos los perfiles del jugador y su equipamiento activo
     const profile = await db.getProfile(message.author.id);
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  } // <--- Cierre del IF (ya no cierra la función entera)
+
+  // --- 4. LÓGICA DE FRACASO MARCIAL O TÁCTICO ---
+  const scale = expedition.rewardScale || 1.0;
+  const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
+  const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
+  
+  let damage = Number(scenario.damageOnFail || 15 * (scenario.peligro || 1)); 
+  
+  // Obtención de reducciones activas de equipo y clases para equilibrar el daño directo
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
+  const classBonus = getPlayerClassBonus(profile);
+
+  const totalDmgRed = (eqPower.totals.damageReduction || 0) + (classBonus.damageReduction || 0);
+  damage = Math.max(1, Math.floor(damage * (1 - totalDmgRed)));
+  
+  const nuevaSalud = Math.max(0, (profile.salud !== undefined ? profile.salud : 100) - damage);
+
+  if (xpGain > 0) await db.addXP(message.author.id, xpGain);
+  if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
+  await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
+
+  const finalResolutionText = buildFinalResolutionText(normalizedAction, false, scenario);
+  const utilMsg = await decrementUtilities(message.author.id);
+
+  // ---> Declaración de variables necesarias para evitar un ReferenceError
+  const owned = [...new Set(getOwnedCompanions(profile))];
+  const reactionIds = getFinalScenarioReactionIds(normalizedAction, owned);
+  const activeEncounter = expedition.currentEncounter || {
+    ...scenario,
+    tipo: "escenario_final",
+    categoria: "final",
+    active: true
+  };
+
+  // COMPAÑEROS REACCIONAN AL FRACASO/RETIRADA FORZOSA
+  const failureReactions = [];
+  for (const cid of reactionIds) {
+    if (!owned.includes(cid)) continue;
+    const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "derrota");
+    if (line) failureReactions.push(`💬 **${companions[cid]?.nombre || cid}**: "${line}"`);
   }
-}
 
- 
-    // --- 4. LÓGICA DE FRACASO MARCIAL O TÁCTICO ---
-    const scale = expedition.rewardScale || 1.0;
-    const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
-    const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
-    
-    let damage = Number(scenario.damageOnFail || 15 * (scenario.peligro || 1)); 
-    
-    // Obtención de reducciones activas de equipo y clases para equilibrar el daño directo
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
-    const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-    const classBonus = getPlayerClassBonus(profile);
+  // Limpieza de datos de expedición
+  await clearExpeditionParty(message.author.id);
+  expedition.pendingFinalScenario = false;
+  expedition.finalScenarioShown = false;
+  expedition.currentEncounter = null;
+  expeditions.delete(message.author.id);
 
-
-    const totalDmgRed = (eqPower.totals.damageReduction || 0) + (classBonus.damageReduction || 0);
-    damage = Math.max(1, Math.floor(damage * (1 - totalDmgRed)));
-    
-    const nuevaSalud = Math.max(0, (profile.salud !== undefined ? profile.salud : 100) - damage);
-
-
-    if (xpGain > 0) await db.addXP(message.author.id, xpGain);
-    if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
-    await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
-
-
-    const finalResolutionText = buildFinalResolutionText(normalizedAction, false, scenario);
-    const utilMsg = await decrementUtilities(message.author.id);
-
-
-    // COMPAÑEROS REACCIONAN AL FRACASO/RETIRADA FORZOSA
-    const failureReactions = [];
-    for (const cid of reactionIds) {
-      if (!owned.includes(cid)) continue;
-      const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "derrota");
-      if (line) failureReactions.push(`💬 **${companions[cid]?.nombre || cid}**: "${line}"`);
-    }
-
-
-    // Limpieza de datos de expedición
-    await clearExpeditionParty(message.author.id);
-    expedition.pendingFinalScenario = false;
-    expedition.finalScenarioShown = false;
-    expedition.currentEncounter = null;
-    expeditions.delete(message.author.id);
-
-
-    let texto = `❌ **Escenario final infructuoso**\n`;
-    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-    if (combateData) texto += `\n⚔️ *Informa de Batalla:* Tu hueste cayó repelida. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
-    
-    texto += `\n\nRecibes **${damage}** de daño. (Salud Actual: **${nuevaSalud}**/100)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
-    
-    if (failureReactions.length) {
-      texto += `\n\n**Reacciones de tu grupo:**\n${failureReactions.join("\n")}`;
-    }
-    
-    texto += `\n\nLa expedición ha concluido.` + utilMsg;
-    return message.reply(texto);
+  let texto = `❌ **Escenario final infructuoso**\n`;
+  if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+  if (combateData) texto += `\n⚔️ *Informe de Batalla:* Tu hueste cayó repelida. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
+  
+  texto += `\n\nRecibes **${damage}** de daño. (Salud Actual: **${nuevaSalud}**/100)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
+  
+  if (failureReactions.length) {
+    texto += `\n\n**Reacciones de tu grupo:**\n${failureReactions.join("\n")}`;
   }
-}
+  
+  texto += `\n\nLa expedición ha concluido.` + utilMsg;
+  return message.reply(texto);
+} 
+
+// ==========================================
+//          MANEJO DE MENSAJES PRINCIPAL
+// ==========================================
+
 
 
 // ==========================================
