@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const EVENT_CHANNEL_ID = process.env.ANNOUNCEMENTS_CHANNEL_ID || "1514198998838284288";
 
 // ================================
-// VARIABLES PARA IA (ACTUALIZADAS)
+// VARIABLES PARA IA
 // ================================
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
@@ -46,7 +46,6 @@ const merchantCities = [
 
 let schedulerPersonajesCache = {};
 let merchantCloseTimer = null;
-let cycleEventTimers = [];
 
 // Memoria para askGroq
 const conversationMemory = new Map();
@@ -71,7 +70,7 @@ Rango: ${obtenerRango(profile?.points || 0)}
 }
 
 // ===============================================
-// FUNCIÓN PRINCIPAL DE IA (SINCRONIZADA CON INDEX)
+// FUNCIÓN PRINCIPAL DE IA
 // ===============================================
 async function chatWithAI({
   systemPrompt = "",
@@ -127,7 +126,7 @@ async function chatWithAI({
     console.error("Groq error:", err);
   }
 
-  // 2) OPERATOR / respaldo
+  // 2) OPENROUTER / RESPALDO
   try {
     if (!OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY no configurada");
 
@@ -196,16 +195,16 @@ async function askGroq(userId, userMessage, lore) {
   }
 }
 
-async function generateAITextStrict(prompt, maxTokens = 150) {
+async function generateAITextStrict(prompt, maxTokens = 200) {
   return await chatWithAI({
-    systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones.",
+    systemPrompt: "Escribes textos de ambientación para un bot de Discord ambientado en un campamento de la Tierra Media. Responde solo con el texto pedido, sin explicaciones adicionales.",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.9,
     maxTokens
   });
 }
 
-async function ai(prompt, maxTokens = 150) {
+async function ai(prompt, maxTokens = 200) {
   try {
     const text = await generateAITextStrict(prompt, maxTokens);
     const clean = String(text || "").trim();
@@ -223,10 +222,6 @@ function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function randomBetween(minMs, maxMs) {
-  return Math.floor(minMs + Math.random() * (maxMs - minMs));
-}
-
 function truncate(text, max = 1800) {
   const clean = String(text || "").trim();
   if (clean.length <= max) return clean;
@@ -241,24 +236,6 @@ function normalizeKey(text) {
     .replace(/[^\p{L}\p{N}\s_-]/gu, "")
     .trim()
     .replace(/\s+/g, "_");
-}
-
-function clearCycleTimers() {
-  for (const t of cycleEventTimers) clearTimeout(t);
-  cycleEventTimers.length = 0;
-}
-
-function scheduleCycleRandomEvents(cycleStartMs, events) {
-  for (const ev of events) {
-    const offset = randomBetween(ev.minOffsetMs, ev.maxOffsetMs);
-    const targetMs = cycleStartMs + offset;
-    const delay = targetMs - Date.now();
-    if (delay <= 0) {
-      setTimeout(ev.task, 0);
-    } else {
-      cycleEventTimers.push(setTimeout(ev.task, delay));
-    }
-  }
 }
 
 async function loadJson(filename) {
@@ -349,7 +326,7 @@ function stripCompanionPrefix(text, companionName) {
   return raw.replace(re, "").trim();
 }
 
-function compactLine(text, maxWords = 60) {
+function compactLine(text, maxWords = 80) {
   const words = String(text || "")
     .replace(/\s+/g, " ")
     .trim()
@@ -358,20 +335,6 @@ function compactLine(text, maxWords = 60) {
 
   if (words.length <= maxWords) return words.join(" ");
   return `${words.slice(0, maxWords).join(" ")}…`;
-}
-
-function getEncounterReactionStyle(encounter = {}) {
-  const tipo = normalizeKey(encounter?.tipo || "");
-  const categoria = normalizeKey(encounter?.categoria || "");
-  const titulo = normalizeKey(encounter?.titulo || "");
-  const desc = String(encounter?.descripcion || "").toLowerCase();
-
-  if (tipo === "enemigo_poderoso" || tipo === "jefe" || (encounter?.peligro || 0) >= 4) return "combate tenso, golpe a golpe, con riesgo real";
-  if (tipo === "enemigo_numeroso" || categoria === "combate") return "choque contra varios enemigos, presión constante y ritmo rápido";
-  if (tipo === "obstaculo" || categoria === "terreno") return "avance difícil, terreno hostil y cuidado en cada paso";
-  if (tipo === "evento_especial" || categoria === "social" || categoria === "exploracion") return "encuentro inesperado, ambiente de viaje y reacción natural";
-  if (titulo.includes("perdido") || desc.includes("desorient") || desc.includes("camino")) return "desorientación, tensión y búsqueda de orientación";
-  return "situación de viaje, reacción breve y natural";
 }
 
 async function companionReaction(companionId, context, mode = "encounter") {
@@ -411,233 +374,25 @@ Descripción:
 ${descripcion}
 
 Instrucciones:
-- Responde con una sola línea corta.
-- Máximo 60 palabras.
+- Responde con un mensaje un poco más largo y detallado, de aproximadamente 100 a 150 caracteres (unas 20 a 30 palabras).
 - El nombre debe aparecer solo una vez al inicio.
-- Si es combate, menciona el arma o la postura.
-- Si es obstáculo, reacciona al terreno o al riesgo.
-- Si es evento especial, comenta la escena de forma natural.
+- Si es combate, menciona el arma, la táctica o la postura de manera épica.
+- Si es obstáculo, reacciona al terreno o al riesgo de forma inmersiva.
+- Si es evento especial, comenta la escena de forma natural y viva.
 - Español.
 `.trim();
 
   try {
-    const raw = await generateAITextStrict(prompt, 120); 
+    const raw = await generateAITextStrict(prompt, 150); 
     if (!raw || !String(raw).trim()) {
       return `${nombre}: *observa en silencio*`;
     }
 
     const clean = stripCompanionPrefix(raw, nombre);
-    return `${nombre}: ${compactLine(clean, 40)}`;
+    return `${nombre}: ${compactLine(clean, 80)}`;
   } catch {
     return `${nombre}: *observa en silencio*`;
   }
-}
-
-async function companionReactions(profile, context, mode = "encounter", maxLines = 3, outcome = "encounter") {
-  const ids = [...new Set(getOwnedCompanions(profile))].slice(0, maxLines);
-  const lines = [];
-
-  for (const id of ids) {
-    const line = await companionReaction(id, context, mode);
-    if (line) lines.push(`💬 ${line}`);
-  }
-
-  return lines.join("\n");
-}
-
-async function announceDawnReset(client) {
-  const dawnCompanionId = [
-    "faelon", "nieriel", "cirdil", "andaer", "duinor", "alteru", "montaraces"
-  ][Math.floor(Math.random() * 7)];
-
-  const line = await companionReaction(
-    dawnCompanionId,
-    {
-      titulo: "Amanecer",
-      tipo: "evento_especial",
-      categoria: "social",
-      descripcion: "Las nuevas tareas despiertan con la luz del alba."
-    },
-    "amanecer"
-  );
-
-  const channelId = process.env.ANNOUNCEMENTS_CHANNEL_ID;
-  if (!channelId) return;
-
-  const channel = await client.channels.fetch(channelId).catch(() => null);
-  if (channel?.isTextBased()) {
-    await channel.send(`🌅 ${line}`);
-  }
-}
-
-async function loadAlteruLore() {
-  const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
-  const lore = JSON.parse(loreRaw);
-  try {
-    const historiaPath = path.join(__dirname, 'historia_completa.txt');
-    const historia = await readFile(historiaPath, 'utf8');
-    lore.historia_completa = historia.slice(0, 25000);
-  } catch {
-    lore.historia_completa = "Usa la información de la ficha de personaje.";
-  }
-  try {
-    const personajesPath = path.join(__dirname, 'personajes.json');
-    const personajesRaw = await readFile(personajesPath, 'utf8');
-    lore.personajes = JSON.parse(personajesRaw);
-  } catch {
-    console.log("Aviso: personajes.json no encontrado.");
-  }
-  return lore;
-}
-
-async function loadQuestions() {
-  try {
-    const raw = await readFile(path.join(__dirname, 'preguntas.json'), 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function loadMissions() {
-  try {
-    const raw = await readFile(path.join(__dirname, "misiones.json"), "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function loadEncounters() {
-  try {
-    const raw = await readFile(path.join(__dirname, "encuentros.json"), "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-async function getCatalogSelection(key, fallbackItems, limit = 15) {
-  const state = await db.getEventState(key);
-  if (Array.isArray(state?.selection) && state.selection.length) {
-    return state.selection.slice(0, limit);
-  }
-  return [...(fallbackItems || [])].slice(0, limit);
-}
-
-async function getCatalogStateItems(catalogName, catalogItems) {
-  const state = await db.getEventState(catalogName).catch(() => null);
-
-  const items = Array.isArray(state?.selection) && state.selection.length
-    ? state.selection
-    : catalogItems;
-
-  return { state, items };
-}
-
-function getCatalogItems(data) {
-  if (Array.isArray(data)) return data;
-  return data?.items || data?.equipo || [];
-}
-
-async function renderCatalog(catalogName, items, title) {
-  let texto = `🏪 **${title}**\n\n`;
-  for (const item of items) {
-    const price = await db.getDynamicPrice(catalogName, item);
-    texto += `• **${item.nombre}**\n`;
-    texto += `ID: ${item.id}\n`;
-    texto += `Precio: ${formatPrice(price)}\n`;
-    if (item.tipo) texto += `Tipo: ${item.tipo}\n`;
-    if (item.slot) texto += `Slot: ${item.slot}\n`;
-    texto += `Efecto: ${formatEffect(item.efecto)}\n`;
-    if (item.descripcion) texto += `Descripción: ${item.descripcion}\n`;
-    texto += `\n`;
-  }
-  texto += `Más adelante podrás usar \`!comprar <id>\` o \`!equipar <id>\`.`;
-  return texto;
-}
-
-function formatEffect(effect = {}) {
-  const parts = [];
-
-  if (effect.salud) parts.push(`Salud +${effect.salud}`);
-  if (effect.damageBonus) parts.push(`Daño +${effect.damageBonus}`);
-  if (effect.successBonus) parts.push(`Éxito +${Math.round(effect.successBonus * 100)}%`);
-  if (effect.damageReduction) parts.push(`Daño recibido -${Math.round(effect.damageReduction * 100)}%`);
-  if (effect.afinidad) parts.push(`Afinidad +${effect.afinidad}`);
-  if (effect.reduceDanioSiguienteEncuentro) parts.push(`- ${effect.reduceDanioSiguienteEncuentro} daño siguiente`);
-  if (effect.soloProximaExpedicion) parts.push(`Duración: próxima expedición`);
-  if (effect.soloProximoEncuentro) parts.push(`Duración: próximo encuentro`);
-
-  return parts.length ? parts.join(" | ") : "Sin efecto definido";
-}
-
-function formatPrice(value) {
-  return `${Number(value || 0)} pts`;
-}
-
-async function getCurrentMerchantState() {
-  const state = await db.getEventState("merchant");
-  return state || null;
-}
-
-async function getCurrentTablonSelection() {
-  const state = await db.getEventState("tablon");
-  if (Array.isArray(state?.selection) && state.selection.length) return state.selection;
-
-  const missions = await loadMissions();
-  const shuffled = [...missions].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 5);
-}
-
-function normalizeText(text) {
-  if (!text) return "";
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "")
-    .trim();
-}
-
-function normalizeDifficulty(value) {
-  return normalizeText(value || "normal");
-}
-
-function formatRemainingTime(ms) {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-
-function buildPersonajesCache(input) {
-  if (Array.isArray(input)) {
-    return Object.fromEntries(
-      input
-        .filter(Boolean)
-        .map(p => {
-          const key = normalizeKey(p.id || p.nombre);
-          return [key, p];
-        })
-    );
-  }
-
-  if (input && typeof input === "object") {
-    return Object.fromEntries(
-      Object.entries(input).map(([k, v]) => [normalizeKey(k), v])
-    );
-  }
-
-  return {};
-}
-
-function getPersonajeById(id) {
-  return schedulerPersonajesCache[normalizeKey(id)] || null;
 }
 
 function getOwnedCompanions(profile) {
@@ -646,72 +401,6 @@ function getOwnedCompanions(profile) {
     : (profile?.hiredCompanions || profile?.companions || []);
 
   return [...new Set(list.map(normalizeKey))];
-}
-
-function getCompanionIcon(id) {
-  switch (normalizeKey(id)) {
-    case "cirdil":
-    case "andaer":
-      return "🛡️";
-    case "duinor":
-      return "⚔️";
-    case "alteru":
-    case "nieriel":
-      return "🎖️";
-    case "montaraces":
-      return "🏹";
-    case "faelon":
-      return "🌿";
-    default:
-      return "•";
-  }
-}
-
-function getPersonalityText(id) {
-  const p = getPersonajeById(id);
-  if (!p) return "Sin definir";
-
-  const raw =
-    p.personalidadCorta ||
-    p.personalidadBreve ||
-    p.personalidad ||
-    p.rasgos ||
-    p.caracter ||
-    p.descripcionCorta ||
-    p.descripcion ||
-    p.tono ||
-    "";
-
-  const text = String(raw).trim();
-  return text || "Sin definir";
-}
-
-function getCompanionEffect(id) {
-  return companionNames[id]?.efecto || "Sin efecto definido.";
-}
-
-function getAffinityRank(value) {
-  if (value >= 100) return "Compañero de Confianza";
-  if (value >= 75) return "Amigo Cercano";
-  if (value >= 50) return "Aliado";
-  if (value >= 25) return "Conocido";
-  return "Desconocido";
-}
-
-function getDangerText(peligro) {
-  if (peligro <= 2) return "Bajo";
-  if (peligro <= 4) return "Moderado";
-  if (peligro <= 6) return "Alto";
-  return "Extremo";
-}
-
-function shuffleArray(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
 }
 
 async function refreshTablonSelection(client, loreCache, cycleStartMs) {
@@ -760,7 +449,7 @@ No menciones que es una IA.
 }
 
 // ==========================================
-// INICIALIZACIÓN DE INVENTARIOS (CORREGIDA)
+// INICIALIZACIÓN Y ROTACIÓN DE INVENTARIOS
 // ==========================================
 
 async function ensureCatalogStates() {
@@ -776,7 +465,6 @@ async function ensureCatalogStates() {
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
   const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
 
-  // Barajamos la armería una única vez para que no se pisen los inventarios
   const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
   const existingTienda = await db.getEventState("tienda").catch(() => null);
@@ -830,10 +518,6 @@ async function ensureCatalogStates() {
   }
 }
 
-// ==========================================
-// ROTACIÓN DE INVENTARIOS CADA 12H (CORREGIDA)
-// ==========================================
-
 async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const currentTienda = await db.getEventState("tienda").catch(() => null);
   const currentArmeria1 = await db.getEventState("armeria1").catch(() => null);
@@ -868,7 +552,6 @@ async function refreshCatalogPricesAndSelections(cycleStartAt = Date.now()) {
   const mercaderItems = Array.isArray(mercader?.items) ? mercader.items : Array.isArray(mercader) ? mercader : [];
   const establoItems = Array.isArray(establo?.items) ? establo.items : Array.isArray(establo) ? establo : [];
 
-  // Barajamos la armería una única vez
   const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
   await db.setEventState("tienda", {
@@ -991,15 +674,104 @@ async function openMerchant(client) {
 }
 
 // ==========================================
-// CONVERSACIONES Y ESCENAS
+// ESCENAS MANUALES Y DIÁLOGOS IA
 // ==========================================
+
+const companionScenes = [
+  {
+    id: "escena_1",
+    text: `*Todos los compañeros están sentados en torno a la fogata compartiendo la cena, Andaer el más inquieto decide romper hielo y pregunta mirando a Altéru:* 💬 Andaer: "¿No ha habido alguna otra pista sobre el nigromante? Me dijeron que ayer otro viajero que decidió explorar solo se perdió y dijo haber sentido una presencia maligna cerca de un claro con una piedra en el centro, pero por miedo no quiso acercarse."\n\n*Cirdil que estaba junto a él le continuó:* 💬 Cirdil: "Acompañé ayer a un enano pero el muy sensato llevó una antorcha, de no ser por eso nos hubiésemos perdido en la oscuridad, pero logramos encontrar el camino y acampar cerca."\n\n*Altéru se removió un poco sobre el tronco en el que estaba sentado junto a Nieriel y tras aclararse un poco la voz dijo:*\n\n💬 Altéru: "Thûlazar debe estar en alguna parte, no podrá esconderse para siempre. Estoy esperando al viajero que me traiga más pistas y vayamos juntos a cazarlo."`
+  },
+  {
+    id: "escena_2",
+    text: `*Duinor enseña a Andaer como mantener la postura en un combate contra enemigos numerosos.*\n\n💬 Duinor: "Con mi mandoble mantengo al enemigo a distancia, y atacó a quienes creo más valientes, es como un la fila de pilares, si el más grande se cae los demás se vienen abajo."\n\n*Andaer trataba de mantenerse fuera del alcance del arma del campeón Lamedoniano, pero tras esperar el momento se acercó a su rival y le apoyó su espada de práctica en el cuello*\n\n💬 Andaer: "Eso si entre tus enemigos no hay alguien tan valiente como el Leal Escudero de Altéru."\n\n💬 Duinor: "No creas que por decir eso van a promoverte a Sargento."`
+  },
+  {
+    id: "escena_3",
+    text: `*Faelon enseña a Nieriel cómo usar la planta de Athelas, usando a uno de los montaraces de Arathir como paciente de prácticas."\n\n💬 Faelon: "En nuestro refugio cada herida es cuidada con el conocimiento y la dedicación que ameritan, no es sólo los ingredientes que aplicas, sino comprender los efectos negativos de cualquier descuido."\n\n*Nieriel seguía las indicaciones de su instructor sin interrumpir sus indicaciones aplicando una manta húmeda con ungüentos especiales para cortes."\n\n💬 Nieriel: "Será mejor que te apoyes y reposes hasta mañana, seguro que al amanecer la herida estará cerrada y sin que haya ninguna infección."\n\n*El montaraz silencioso obedeció a la doncella del cisne y se recostó para tratar de encontrar el sueño.*`
+  },
+  {
+    id: "escena_4",
+    text: `*Amanecía otro día en el campamento y Cirdil se preparaba para encender la fragua, reunió el carbón y la leña y luego de limpiar avivó el fuego hasta que logró la constancia adecuada.*\n\n💬 Duinor: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tú tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"\n\n*Cirdil sonreía mientras negaba con la cabeza, preparando sus herramientas para calentar el acero.*\n\n💬 Cirdil: "¿Y yo que obtengo a cambio? Mira todo el trabajo que tengo, y ya le prometí a una de las viajeras acompañarla a una misión en Anfalas. Es muy hermosa por cierto. Pero déjame ver que puedo hacer, quizás cuando termine de preparar esto."\n\n💬 Duinor: "Ya me lo prometiste, estaré cerca de aquí para que no lo olvides."`
+  },
+  {
+    id: "escena_5",
+    text: `*Altéru estaba en su tienda charlando con un mercader y entró Cirdil interrumpiendo la conversación.*\n\n💬 Cirdil: "Nieriel quiere que sepas que queda poca carne y han estado llegando varios viajeros durante la semana, me envió a preguntarte que debemos hacer."\n\n💬 Altéru: "¿Los montaraces aún no regresan?" *Cirdil negó rápidamente* "Entonces ordena una partida de caza con los viajeros que estén desocupados, diles que tendrán un descuento en la armeria, Faelon puede ir con ellos."\n\n💬 Cirdil: "Pero es mi armeria. Esta bien, ¡Eh! Eres Bifur ¿No? Me gustan los frutos secos que vendes, se que te debo de la última vez pero avísame cuando te instales para pagarte, además me vas a dar otros dos kilos y te los pago la próxima vez que vengas."`
+  },
+  {
+    id: "escena_6",
+    text: `*Andaer agotado de intentar aprender a usar el arco decentemente decidió rendirse y frustrado se lo regresó a su dueño*\n\n💬 Faelon: "No te impacientes muchacho, tu ímpetu puede llegar a ser tu mayor enemigo si no lo sabes controlar."\n\n💬 Andaer: "Tú debes tener mucha paciencia, supongo ¿No es aburrido vivir tanto?"\n\n💬 Faelon: "Para nosotros es un regalo, contemplamos esta tierra con otros ojos, y aunque ha perdido mucho la belleza de otros tiempos no hay amanecer al que no sienta deseos de agradecer a quienes crearon este mundo para nosotros."\n\n💬 Andaer: "¿Cuantos años dijiste que tenias?"\n\n💬 Faelon: "Quinientos tres."`
+  },
+  {
+    id: "escena_7",
+    text: `*Nieriel salía de la tienda abruptamente con cierta molestia, algo poco común en ella, detrás le seguía Altéru llamándola y tratando de que se detuviera*\n\n💬 Altéru: "¿Por qué me lo haces tan difícil? Solo quiero que no te arriesgues demasiado más allá del reino, solamente quiero..."\n\n💬 Nieriel: "¿Protegerme? eso ya lo sé, pero no puedes tenerme aquí siempre si hay tantas personas necesitando ayuda contra los invasores en las fronteras. Al traerme de Dol Amrorh me dijiste que tendríamos aventuras y..."\n\n*Altéru puso su índice en sus labios y beso su mejilla izquierda.*\n\n💬 Altéru: "Aún no hemos salido a ninguna expedición, todavía estamos comenzando. Además tampoco olvides que te hice otra promesa ¿La olvidas?"\n\n*Nieriel se cruzó de brazos resignadose y dejándose rodear por él apoyó su cabeza en el hombro derecho el capitán.*`
+  },
+  {
+    id: "escena_8",
+    text: `*Los ocho montaraces llegaron una noche con uno de los viajeros de mayor renombre con un gran botín y tres ciervos.*\n\n💬 Montaraz: "Señor la misión fue un absoluto éxito, acabamos con el capitán orco y sus guerreros, logramos traer lo que puede ver. El viajero le entregará el resto del informe."\n\n💬 Altéru: "Todas estas baratijas nos servirán para reforjar espadas, sin duda fue un buen botín, Cirdil estará contento, casi se estaba quedando sin nada que echar a su fragata."\n\n💬 Montaraz: "Hablamos con uno de los locales y nos llevó hasta un ermitaño quien afirmó saber sobre nuestro amigo."\n\n*Altéru lo interrumpió.*\n\n💬 Altéru: "Vayamos a mi tienda y cuéntame lo que te dijo".`
+  },
+  {
+    id: "escena_9",
+    text: `*Andaer había llegado con varios campesinos desde Ethring con varios varios materiales de construcción y unas cuantas gallinas y dos gallos.*\n\n💬 Nieriel: "Se acabaron los amaneceres en silencio."\n\n*Duinor curioso se acercó a ellos y los ayudó a ubicar el mejor lugar para poner un lugar gallinero en el campamento.*\n\n💬 Faelon: "¿Altéru lo sabe?"\n\n*Altéru salió de su tienda al oír el alboroto y dijo:*\n\n💬 Altéru: "Detrás de tu tienda, que sean a ti al primero que despierten."`
+  },
+  {
+    id: "escena_10",
+    text: `*Nieriel le daba un masaje en la espalda a Altéru mientras él conversaba con sus compañeros en la tienda*\n\n💬 Cirdil: "Esos piel oscura eran unos verdaderos desquiciados, peleaban sin importarles su propia vida, nisiquiera llevaban armadura, casi no tenias tiempo de atacar a alguno porque otro podría noquearte con su garrote si te descuidas."\n\n💬 Duinor: "De no ser porque el viejo Tarannon, que su alma repose en paz y Elphir el flanco derecho hubiera caído, allí la batalla estaría perdida. Los hacheros de Lossarnach defendieron muy bien contra esos Haradrim con escudos de cuero y yelmos intimidantes."\n\n💬 Andaer: "Mi madre no me dejó acudir a la batalla pero la carga de Altéru junto a Imrahil, sus hijos y Angbor el Intrépido se cantará en los salones del príncipe y en los festines usuales de Linhir por muchos años."`
+  },
+  {
+    id: "escena_12",
+    text: `*Altéru en su tienda discutía con varios emisarios de la capital quienes eran conocidos por intentar dañar la imagen del capital de las colinas en Minas Tirith*\n\n💬 Altéru: "Proteger nuestras tierras y a nuestra gente ¿No es nuestro deber? Yo sirvo a Gondor, a nadie más. Y ese es aquí nuestro trabajo."\n\n💬 Vorondil: "No eres más que un malcriado que obedece su propio ego, tus acciones siguen siendo rechazadas por muchos consejeros en la capital y al igual que por el honorable Senescal, hijo del sabio Ecthelion II ¿Cómo osas tu a pasearte por el reino como un héroe que no necesitamos? Ve y vuelve a tu casa, en Pinnath Gelin seguro que hay short muchos viñedos a los que atender."\n\n💬 Altéru: "Les permitiré descansar con nosotros esa noche y compartir nuestra cena, pero no abusen de mi hospitalidad"\n\n💬 Vorondil: "No la necesitaremos, no deseamos pasar el resto del día entre gallinas revoloteando de un lado a otro, vamonos compañeros".\n\n💬 Altéru: "Saludos al excelentísimo Senescal Denethor II de mi parte, que salir y pasear alrededor del árbol blanco es buen ejercicio para tomar el sol de vez en cuando."`
+  },
+  {
+    id: "escena_13",
+    text: `*Un jinete de la marca se acercó al campamento en solitario, fue bien recibido y Altéru salió de su tienda para atenderlo*\n\n💬 Altéru: "Saludos, estimado Jinete, pocos son los siervos del rey de Rohan en acercarse a estas tierras y menos en pisar mi humilde campamento."\n\n*El jinete hizo una leve reverencia, se quitó el casco y mostró sus facciones eorlingas.*\n\n💬 Rohirrim: "Es un gran honor conocerle Capitán de las Colinas, aquel que sobrevivió a las penurias del sur. Sus historias han llegado hasta el Folde Este y más allá, nuestras fronteras son atravesadas por orcos desde muy al norte, necesitamos su ayuda para enviar exploradores que cubran el lejano Anorien. En la capital nuestras peticiones no son escuchadas."\n\n💬 Altéru: "Así será Jinete de la Marca, cuenta con mi ayuda, háblale de mi a tu señor."\n\n💬 Rohirrim: "Lo haré, mi señor Eomer estará muy complacido en conocerle."`
+  },
+  {
+    id: "escena_14",
+    text: `*Llovía con fuerza esa noche y uno de los montaraces de guardia a esa hora dio la alarma de ataque*\n\n💬 Montaraz: "¡Estamos bajo ataque!"\n\n*Todos los guerreros se dispusieron en los lugares más vulnerables del campamento para defenderse de hordas de trasgos que venían de la montaña y por el camino escondido del norte venían dos trolls de las cavernas.*\n\n*Los montaraces se subieron a las torres improvisadas y disparaban a todo el que se acercaba, Altéru y Nieriel pelearon juntos, intentando que los trasgos no intentarán quemar ninguna tienda. Andaer, Duinor y Cirdil pelearon con ferocidad animados por el constante sonido del cuerno del capitán Altéru.*\n\n💬 Altéru: "Esa armadura no te luce mal mi vida ¿No te lo había dicho?" *A lo que Nieriel sonrió alzando su escudo y espada*\n\n*Tras una hora de combate los pocos trasgos que quedaron huyeron y Faelon se preparó para atender las heridas de todos.*`
+  },
+  {
+    id: "escena_15",
+    text: `*Varios campesinos llegaron a las puertas del campamento pidiendo ayuda contra unos huargos que se habían adentrado en la zona norte entre Lamedon y Blackroot Vale.*\n\n💬 Altéru: "No hay tiempo de colocar ningún aviso de expedición, escogan a los viajeros más dispuestos y vayan a darles caza."\n\n💬 Nieriel: "¿Tú iras?"\n\n💬 Altéru: "No, nos quedaremos aquí, espero recibir la visita de unos marineros para comerciar provisiones con Linhir."`
+  },
+  {
+    id: "escena_16",
+    text: `*Un viajero acompañado por Faelon y Cirdil trajeron a un capitán corsario amordazado frente a la tienda del capitán, colocándolo de rodillas.*\n\n💬 Altéru: "¿Sabes quien soy no? ¿Y sabes que me gusta hacerle a los capitanes piratas que se dedican a hacer el mal en nuestras tierras? No me respondas, por tus ojos se que lo sabes. ¡Traiganme una estaca afilada en la punta! No. Que estoy bromeando."\n\n💬 Altéru: "Llévenlo a la jaula de las gallinas y busquenle otro lugar a las aves, tengo preguntas que hacerle a nuestro invitado."\n\n*Faelon y Cirdil obedecieron y se llevaron al prisionero detrás de la tienda de Andaer y Duinor.*`
+  },
+  {
+    id: "escena_17",
+    text: `*Una noche oscura iluminada por las estrellas, Altéru que no podía dormir, se levantó tratando de no despertar a Nieriel y se dirigió a una de las torres de vigilancia donde uno de los montaraces hacia guardia*\n\n💬 Altéru: "¿Puedo subir? Es que simplemente no puedo dormir y deseo conversar un poco. ¿Alguna novedad que reportar?"\n\n💬 Montaraz: "Todo está tranquilo señor, durante mi guardia no ha habido nada que reportar."\n\n💬 Altéru: "¿Cómo te sientes aquí? Sabes que también lo extraño y pienso lo descuidado que fue al dejar que aquello pasara. Pero es el riesgo a los que nos exponemos."\n\n💬 Montaraz: "El Capitán Arathir era el mejor hombre al que conocí, después de usted. Nos conocíamos de toda la vida y siempre le seguimos. Ahora obedemiemos su última voluntad y estamos bajo sus ordenes."\n\n💬 Altéru: "Más allá de eso, quiero que te sientas bien, no estamos en el norte, al menos no por ahora. Continua vigilando, no quisiera otro ataque de alimañas de las montañas.\n\n💬 Montaraz: "Así será señor."`
+  },
+  {
+    id: "escena_18",
+    text: `*Altéru se encontraba conversando con varios viajeros recién llegados junto a Nieriel, en los que había Hobbits, Enanos, Élfos incluso un hombre oso, o Beórnida. Hasta que Cirdil lo llamó a cierta distancia.*\n\n💬 Cirdil: "Altéru necesito hablar contigo"\n\n💬 Altéru: "¿Qué pasa? ¿Ocurre algo?"\n\n💬 Cirdil: "Ya sabes que mi mujer está embarazada y debe tener ya seis meses, así que me gustaría ir a verla, entonces te quería preguntar si me podía ausentar una semana."\n\n💬 Altéru: "Claro, ve y mira como sigue, envíale mi saludos, pero no te demores demasiado, sabes que aquí necesitamos manos."\n\n💬 Cirdil: "Gracias Altéru, sabes que eres como un hermano."\n\n💬 Altéru: "Tú igual, cuando tu hijo nazca le diré que soy su tío. Bueno, márchate cuando te quieras ir, toma el camino principal y no acampes lejos de una ciudad."`
+  },
+  {
+    id: "escena_19",
+    text: `*Altéru tenía algunos minutos buscando a Faelon hasta que se le ocurrió buscarlo en su tienda, allí lo encontró sumido en sus pergaminos, leyendo gracias a la luz de una pequeña vela a la que le quedaba poco menos de unos treinta minutos*\n\n💬 Altéru: "Elfo, estaba buscándote. Quería preguntarte sobre... ¿Qué es eso que lees?"\n\n💬 Faelon: "¿Cuál? ¿Este o este otro? Estoy haciendo algunas comparaciones. El que tengo a mi derecha narra la batalla de Azanulbizar, una lucha memorable entre Enanos y trasgos."\n\n*Altéru se acercó más a él y trató de leer por encima un poco aquel pergamino*\n\n💬 Altéru: "Quince mil Enanos contra sesenta mil orcos, debió ser una masacre."\n\n💬 Faelon: "Y la fue, aunque orcos y trasgos murieron o huyeron casi todos, muchos Enanos no sobrevivieron aquel combate. A Imladris llegaron las noticias, una agridulce. Un enemigo que teníamos muy cerca habia desaparecido, pero tantos hombres de Thráin II que habían caído, fue doloroso incluso para nosotros."`
+  },
+  {
+    id: "escena_20",
+    text: `*Había una pequeña discusión en la tienda que era atendida aveces por Duinor y aveces por Faelon, en la que Altéru tuvo que intervenir.*\n\n💬 Altéru: "¿Qué ocurre Duinor? ¿Y cuál es este alboroto?"\n\n💬 Duinor: "Se quejan de los precios Altéru, las provisiones de camino casi duplican su precio de una semana a otra, y se quejan por esto."\n\n"¡Es injusto, es un robo!" *Bramó uno de los viajeros.*\n\n💬 Altéru: "Entiendo que estén molestos porque los precios no son estables, pero estamos en estado de guerra y la economía se tambalea, no soy yo quien decide los precios, sino las caravanas y comerciantes que llegan cada día para comerciar. A ellos también les afecta y a cada Gondoriano que viva dentro de los límites de nuestro reino. Alguno de ustedes quizás ayer luchó contra un troll lo derrotó ¿Y hoy se queja por el precio de un pan de lembas? Dejar tanto escándalo que tengo visitas por atender, van a pensar que esto es un nido de bandidos."`
+  }
+];
+
+const COMPANION_SCENES_KEY = "companion_scenes";
+const COMPANION_SCENE_HISTORY_LIMIT = 15;
 
 async function companionDialogue(client, loreCache, slotId = null) {
   const channel = await fetchChannel(client);
   if (!channel) return;
 
   const personajes = await loadPersonajes(loreCache);
-  const history = String(loreCache?.historia_completa || "").slice(0, 5000);
+  const historyText = String(loreCache?.historia_completa || "").slice(0, 3000);
+
+  // Seleccionamos un par de escenas manuales para darle contexto y estilo a la IA
+  const sampleScenesContext = [...companionScenes]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 2)
+    .map(s => s.text)
+    .join("\n\n---\n\n");
 
   const a = pick(companionIds);
   let b = pick(companionIds);
@@ -1031,16 +803,16 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `Compañero B: ${nombreB}\n` +
       `Personalidad B: ${personaB.personalidad || personaB.descripcion || personaB.tono || "sin definir"}\n\n` +
       `Tema:\n${theme.text}\n\n` +
-      `Contexto de historia útil:\n${history}\n\n` +
+      `Contexto general de historia útil:\n${historyText}\n\n` +
+      `Toma como base de datos de estilo narrativo estas interacciones previas:\n${sampleScenesContext}\n\n` +
       `Reglas:\n` +
       `- Entre 80 y 140 palabras.\n` +
-      `- Debe parecer una escena de rol natural.\n` +
-      `- Cada intervención debe llevar el nombre del personaje al inicio.\n` +
+      `- Debe parecer una escena de rol natural, similar a los ejemplos de estilo provistos.\n` +
+      `- Cada intervención debe llevar el nombre del personaje al inicio, y acciones entre asteriscos.\n` +
       `- Uno habla y el otro responde o pregunta.\n` +
       `- Si el tema es entrenamiento, debe sentirse como un combate amistoso con espadas de madera.\n` +
       `- Español.\n` +
       `- No pongas título.\n` +
-      `- No menciones que es una IA.`,
       `- Usa solo información a la que tengas acceso respecto al personaje. No inventes nada.`,
       350 
     );
@@ -1066,287 +838,6 @@ async function companionDialogue(client, loreCache, slotId = null) {
 
   if (slotId) await markSlotDone("dialogue", slotId).catch(() => {});
 }
-
-const companionScenes = [
-  {
-    id: "escena_1",
-    order: 1,
-    text: `*Todos los compañeros están sentados en torno a la fogata compartiendo la cena, Andaer el más inquieto decide romper hielo y pregunta mirando a Altéru:* 💬 Andaer: "¿No ha habido alguna otra pista sobre el nigromante? Me dijeron que ayer otro viajero que decidió explorar solo se perdió y dijo haber sentido una presencia maligna cerca de un claro con una piedra en el centro, pero por miedo no quiso acercarse."
-
-*Cirdil que estaba junto a él le continuó:* 💬 Cirdil: "Acompañé ayer a un enano pero el muy sensato llevó una antorcha, de no ser por eso nos hubiésemos perdido en la oscuridad, pero logramos encontrar el camino y acampar cerca."
-
-*Altéru se removió un poco sobre el tronco en el que estaba sentado junto a Nieriel y tras aclararse un poco la voz dijo:*
-
-💬 Altéru: "Thûlazar debe estar en alguna parte, no podrá esconderse para siempre. Estoy esperando al viajero que me traiga más pistas y vayamos juntos a cazarlo."`
-  },
-  {
-    id: "escena_2",
-    order: 2,
-    text: `*Duinor enseña a Andaer como mantener la postura en un combate contra enemigos numerosos.*
-
-💬 Duinor: "Con mi mandoble mantengo al enemigo a distancia, y atacó a quienes creo más valientes, es como un la fila de pilares, si el más grande se cae los demás se vienen abajo."
-
-*Andaer trataba de mantenerse fuera del alcance del arma del campeón Lamedoniano, pero tras esperar el momento se acercó a su rival y le apoyó su espada de práctica en el cuello*
-
-💬 Andaer: "Eso si entre tus enemigos no hay alguien tan valiente como el Leal Escudero de Altéru."
-
-💬 Duinor: "No creas que por decir eso van a promoverte a Sargento."`
-  },
-  {
-    id: "escena_3",
-    order: 3,
-    text: `*Faelon enseña a Nieriel cómo usar la planta de Athelas, usando a uno de los montaraces de Arathir como paciente de prácticas."
-
-💬 Faelon: "En nuestro refugio cada herida es cuidada con el conocimiento y la dedicación que ameritan, no es sólo los ingredientes que aplicas, sino comprender los efectos negativos de cualquier descuido."
-
-*Nieriel seguía las indicaciones de su instructor sin interrumpir sus indicaciones aplicando una manta húmeda con ungüentos especiales para cortes."
-
-💬 Nieriel: "Será mejor que te apoyes y reposes hasta mañana, seguro que al amanecer la herida estará cerrada y sin que haya ninguna infección."
-
-*El montaraz silencioso obedeció a la doncella del cisne y se recostó para tratar de encontrar el sueño.*`
-  },
-  {
-    id: "escena_4",
-    order: 4,
-    text: `*Amanecía otro día en el campamento y Cirdil se preparaba para encender la fragua, reunió el carbón y la leña y luego de limpiar avivó el fuego hasta que logró la constancia adecuada.*
-
-💬 Duinor: "¿Me afilas el mandoble? Siempre dices no tener tiempo. Ninguno sabe mejor que tú tratar con tanta destreza esa muela de piedra ¿Podrás hacerlo?"
-
-*Cirdil sonreía mientras negaba con la cabeza, preparando sus herramientas para calentar el acero.*
-
-💬 Cirdil: "¿Y yo que obtengo a cambio? Mira todo el trabajo que tengo, y ya le prometí a una de las viajeras acompañarla a una misión en Anfalas. Es muy hermosa por cierto. Pero déjame ver que puedo hacer, quizás cuando termine de preparar esto."
-
-💬 Duinor: "Ya me lo prometiste, estaré cerca de aquí para que no lo olvides."`
-  },
-  {
-    id: "escena_5",
-    order: 5,
-    text: `*Altéru estaba en su tienda charlando con un mercader y entró Cirdil interrumpiendo la conversación.*
-
-💬 Cirdil: "Nieriel quiere que sepas que queda poca carne y han estado llegando varios viajeros durante la semana, me envió a preguntarte que debemos hacer."
-
-💬 Altéru: "¿Los montaraces aún no regresan?" *Cirdil negó rápidamente* "Entonces ordena una partida de caza con los viajeros que estén desocupados, diles que tendrán un descuento en la armeria, Faelon puede ir con ellos."
-
-💬 Cirdil: "Pero es mi armeria. Esta bien, ¡Eh! Eres Bifur ¿No? Me gustan los frutos secos que vendes, se que te debo de la última vez pero avísame cuando te instales para pagarte, además me vas a dar otros dos kilos y te los pago la próxima vez que vengas."`
-  },
-  {
-    id: "escena_6",
-    order: 6,
-    text: `*Andaer agotado de intentar aprender a usar el arco decentemente decidió rendirse y frustrado se lo regresó a su dueño*
-
-💬 Faelon: "No te impacientes muchacho, tu ímpetu puede llegar a ser tu mayor enemigo si no lo sabes controlar."
-
-💬 Andaer: "Tú debes tener mucha paciencia, supongo ¿No es aburrido vivir tanto?"
-
-💬 Faelon: "Para nosotros es un regalo, contemplamos esta tierra con otros ojos, y aunque ha perdido mucho la belleza de otros tiempos no hay amanecer al que no sienta deseos de agradecer a quienes crearon este mundo para nosotros."
-
-💬 Andaer: "¿Cuantos años dijiste que tenias?"
-
-💬 Faelon: "Quinientos tres."`
-  },
-  {
-    id: "escena_7",
-    order: 7,
-    text: `*Nieriel salía de la tienda abruptamente con cierta molestia, algo poco común en ella, detrás le seguía Altéru llamándola y tratando de que se detuviera*
-
-💬 Altéru: "¿Por qué me lo haces tan difícil? Solo quiero que no te arriesgues demasiado más allá del reino, solamente quiero..."
-
-💬 Nieriel: "¿Protegerme? eso ya lo sé, pero no puedes tenerme aquí siempre si hay tantas personas necesitando ayuda contra los invasores en las fronteras. Al traerme de Dol Amrorh me dijiste que tendríamos aventuras y..."
-
-*Altéru puso su índice en sus labios y beso su mejilla izquierda.*
-
-💬 Altéru: "Aún no hemos salido a ninguna expedición, todavía estamos comenzando. Además tampoco olvides que te hice otra promesa ¿La olvidas?"
-
-*Nieriel se cruzó de brazos resignadose y dejándose rodear por él apoyó su cabeza en el hombro derecho el capitán.*`
-  },
-  {
-    id: "escena_8",
-    order: 8,
-    text: `*Los ocho montaraces llegaron una noche con uno de los viajeros de mayor renombre con un gran botín y tres ciervos.*
-
-💬 Montaraz: "Señor la misión fue un absoluto éxito, acabamos con el capitán orco y sus guerreros, logramos traer lo que puede ver. El viajero le entregará el resto del informe."
-
-💬 Altéru: "Todas estas baratijas nos servirán para reforjar espadas, sin duda fue un buen botín, Cirdil estará contento, casi se estaba quedando sin nada que echar a su fragata."
-
-💬 Montaraz: "Hablamos con uno de los locales y nos llevó hasta un ermitaño quien afirmó saber sobre nuestro amigo."
-
-*Altéru lo interrumpió.*
-
-💬 Altéru: "Vayamos a mi tienda y cuéntame lo que te dijo".`
-  },
-  {
-    id: "escena_9",
-    order: 9,
-    text: `*Andaer había llegado con varios campesinos desde Ethring con varios varios materiales de construcción y unas cuantas gallinas y dos gallos.*
-
-💬 Nieriel: "Se acabaron los amaneceres en silencio."
-
-*Duinor curioso se acercó a ellos y los ayudó a ubicar el mejor lugar para poner un lugar gallinero en el campamento.*
-
-💬 Faelon: "¿Altéru lo sabe?"
-
-*Altéru salió de su tienda al oír el alboroto y dijo:*
-
-💬 Altéru: "Detrás de tu tienda, que sean a ti al primero que despierten."`
-  },
-  {
-    id: "escena_10",
-    order: 10,
-    text: `*Nieriel le daba un masaje en la espalda a Altéru mientras él conversaba con sus compañeros en la tienda*
-
-💬 Cirdil: "Esos piel oscura eran unos verdaderos desquiciados, peleaban sin importarles su propia vida, nisiquiera llevaban armadura, casi no tenias tiempo de atacar a alguno porque otro podría noquearte con su garrote si te descuidas."
-
-💬 Duinor: "De no ser porque el viejo Tarannon, que su alma repose en paz y Elphir el flanco derecho hubiera caído, allí la batalla estaría perdida. Los hacheros de Lossarnach defendieron muy bien contra esos Haradrim con escudos de cuero y yelmos intimidantes."
-
-💬 Andaer: "Mi madre no me dejó acudir a la batalla pero la carga de Altéru junto a Imrahil, sus hijos y Angbor el Intrépido se cantará en los salones del príncipe y en los festines usuales de Linhir por muchos años."`
-  },
-  {
-    id: "escena_12",
-    order: 12,
-    text: `*Altéru en su tienda discutía con varios emisarios de la capital quienes eran conocidos por intentar dañar la imagen del capital de las colinas en Minas Tirith*
-
-💬 Altéru: "Proteger nuestras tierras y a nuestra gente ¿No es nuestro deber? Yo sirvo a Gondor, a nadie más. Y ese es aquí nuestro trabajo."
-
-💬 Vorondil: "No eres más que un malcriado que obedece su propio ego, tus acciones siguen siendo rechazadas por muchos consejeros en la capital y al igual que por el honorable Senescal, hijo del sabio Ecthelion II ¿Cómo osas tu a pasearte por el reino como un héroe que no necesitamos? Ve y vuelve a tu casa, en Pinnath Gelin seguro que hay short muchos viñedos a los que atender."
-
-💬 Altéru: "Les permitiré descansar con nosotros esa noche y compartir nuestra cena, pero no abusen de mi hospitalidad"
-
-💬 Vorondil: "No la necesitaremos, no deseamos pasar el resto del día entre gallinas revoloteando de un lado a otro, vamonos compañeros".
-
-💬 Altéru: "Saludos al excelentísimo Senescal Denethor II de mi parte, que salir y pasear alrededor del árbol blanco es buen ejercicio para tomar el sol de vez en cuando."`
-  },
-  {
-    id: "escena_13",
-    order: 13,
-    text: `*Un jinete de la marca se acercó al campamento en solitario, fue bien recibido y Altéru salió de su tienda para atenderlo*
-
-💬 Altéru: "Saludos, estimado Jinete, pocos son los siervos del rey de Rohan en acercarse a estas tierras y menos en pisar mi humilde campamento."
-
-*El jinete hizo una leve reverencia, se quitó el casco y mostró sus facciones eorlingas.*
-
-💬 Rohirrim: "Es un gran honor conocerle Capitán de las Colinas, aquel que sobrevivió a las penurias del sur. Sus historias han llegado hasta el Folde Este y más allá, nuestras fronteras son atravesadas por orcos desde muy al norte, necesitamos su ayuda para enviar exploradores que cubran el lejano Anorien. En la capital nuestras peticiones no son escuchadas."
-
-💬 Altéru: "Así será Jinete de la Marca, cuenta con mi ayuda, háblale de mi a tu señor."
-
-💬 Rohirrim: "Lo haré, mi señor Eomer estará muy complacido en conocerle."`
-  },
-  {
-    id: "escena_14",
-    order: 14,
-    text: `*Llovía con fuerza esa noche y uno de los montaraces de guardia a esa hora dio la alarma de ataque*
-
-💬 Montaraz: "¡Estamos bajo ataque!"
-
-*Todos los guerreros se dispusieron en los lugares más vulnerables del campamento para defenderse de hordas de trasgos que venían de la montaña y por el camino escondido del norte venían dos trolls de las cavernas.*
-
-*Los montaraces se subieron a las torres improvisadas y disparaban a todo el que se acercaba, Altéru y Nieriel pelearon juntos, intentando que los trasgos no intentarán quemar ninguna tienda. Andaer, Duinor y Cirdil pelearon con ferocidad animados por el constante sonido del cuerno del capitán Altéru.*
-
-💬 Altéru: "Esa armadura no te luce mal mi vida ¿No te lo había dicho?" *A lo que Nieriel sonrió alzando su escudo y espada*
-
-*Tras una hora de combate los pocos trasgos que quedaron huyeron y Faelon se preparó para atender las heridas de todos.*`
-  },
-  {
-    id: "escena_15",
-    order: 15,
-    text: `*Varios campesinos llegaron a las puertas del campamento pidiendo ayuda contra unos huargos que se habían adentrado en la zona norte entre Lamedon y Blackroot Vale.*
-
-💬 Altéru: "No hay tiempo de colocar ningún aviso de expedición, escogan a los viajeros más dispuestos y vayan a darles caza."
-
-💬 Nieriel: "¿Tú iras?"
-
-💬 Altéru: "No, nos quedaremos aquí, espero recibir la visita de unos marineros para comerciar provisiones con Linhir."`
-  },
-  {
-    id: "escena_16",
-    order: 16,
-    text: `*Un viajero acompañado por Faelon y Cirdil trajeron a un capitán corsario amordazado frente a la tienda del capitán, colocándolo de rodillas.*
-
-💬 Altéru: "¿Sabes quien soy no? ¿Y sabes que me gusta hacerle a los capitanes piratas que se dedican a hacer el mal en nuestras tierras? No me respondas, por tus ojos se que lo sabes. ¡Traiganme una estaca afilada en la punta! No. Que estoy bromeando."
-
-💬 Altéru: "Llévenlo a la jaula de las gallinas y busquenle otro lugar a las aves, tengo preguntas que hacerle a nuestro invitado."
-
-*Faelon y Cirdil obedecieron y se llevaron al prisionero detrás de la tienda de Andaer y Duinor.*`
-  },
-  {
-    id: "escena_17",
-    order: 17,
-    text: `*Una noche oscura iluminada por las estrellas, Altéru que no podía dormir, se levantó tratando de no despertar a Nieriel y se dirigió a una de las torres de vigilancia donde uno de los montaraces hacia guardia*
-
-💬 Altéru: "¿Puedo subir? Es que simplemente no puedo dormir y deseo conversar un poco. ¿Alguna novedad que reportar?"
-
-💬 Montaraz: "Todo está tranquilo señor, durante mi guardia no ha habido nada que reportar."
-
-💬 Altéru: "¿Cómo te sientes aquí? Sabes que también lo extraño y pienso lo descuidado que fue al dejar que aquello pasara. Pero es el riesgo a los que nos exponemos."
-
-💬 Montaraz: "El Capitán Arathir era el mejor hombre al que conocí, después de usted. Nos conocíamos de toda la vida y siempre le seguimos. Ahora obedemiemos su última voluntad y estamos bajo sus ordenes."
-
-💬 Altéru: "Más allá de eso, quiero que te sientas bien, no estamos en el norte, al menos no por ahora. Continua vigilando, no quisiera otro ataque de alimañas de las montañas.
-
-💬 Montaraz: "Así será señor."`
-  },
-  {
-    id: "escena_18",
-    order: 18,
-    text: `*Altéru se encontraba conversando con varios viajeros recién llegados junto a Nieriel, en los que había Hobbits, Enanos, Élfos incluso un hombre oso, o Beórnida. Hasta que Cirdil lo llamó a cierta distancia.*
-
-💬 Cirdil: "Altéru necesito hablar contigo"
-
-💬 Altéru: "¿Qué pasa? ¿Ocurre algo?"
-
-💬 Cirdil: "Ya sabes que mi mujer está embarazada y debe tener ya seis meses, así que me gustaría ir a verla, entonces te quería preguntar si me podía ausentar una semana."
-
-💬 Altéru: "Claro, ve y mira como sigue, envíale mi saludos, pero no te demores demasiado, sabes que aquí necesitamos manos."
-
-💬 Cirdil: "Gracias Altéru, sabes que eres como un hermano."
-
-💬 Altéru: "Tú igual, cuando tu hijo nazca le diré que soy su tío. Bueno, márchate cuando te quieras ir, toma el camino principal y no acampes lejos de una ciudad."`
-  },
-  {
-    id: "escena_19",
-    order: 19,
-    text: `*Altéru tenía algunos minutos buscando a Faelon hasta que se le ocurrió buscarlo en su tienda, allí lo encontró sumido en sus pergaminos, leyendo gracias a la luz de una pequeña vela a la que le quedaba poco menos de unos treinta minutos*
-
-💬 Altéru: "Elfo, estaba buscándote. Quería preguntarte sobre... ¿Qué es eso que lees?"
-
-💬 Faelon: "¿Cuál? ¿Este o este otro? Estoy haciendo algunas comparaciones. El que tengo a mi derecha narra la batalla de Azanulbizar, una lucha memorable entre Enanos y trasgos."
-
-*Altéru se acercó más a él y trató de leer por encima un poco aquel pergamino*
-
-💬 Altéru: "Quince mil Enanos contra sesenta mil orcos, debió ser una masacre."
-
-💬 Faelon: "Y la fue, aunque orcos y trasgos murieron o huyeron casi todos, muchos Enanos no sobrevivieron aquel combate. A Imladris llegaron las noticias, una agridulce. Un enemigo que teníamos muy cerca habia desaparecido, pero tantos hombres de Thráin II que habían caído, fue doloroso incluso para nosotros."`
-  },
-  {
-    id: "escena_20",
-    order: 20,
-    text: `*Había una pequeña discusión en la tienda que era atendida aveces por Duinor y aveces por Faelon, en la que Altéru tuvo que intervenir.*
-
-💬 Altéru: "¿Qué ocurre Duinor? ¿Y cuál es este alboroto?"
-
-💬 Duinor: "Se quejan de los precios Altéru, las provisiones de camino casi duplican su precio de una semana a otra, y se quejan por esto."
-
-"¡Es injusto, es un robo!" *Bramó uno de los viajeros.*
-
-💬 Altéru: "Entiendo que estén molestos porque los precios no son estables, pero estamos en estado de guerra y la economía se tambalea, no soy yo quien decide los precios, sino las caravanas y comerciantes que llegan cada día para comerciar. A ellos también les afecta y a cada Gondoriano que viva dentro de los límites de nuestro reino. Alguno de ustedes quizás ayer luchó contra un troll lo derrotó ¿Y hoy se queja por el precio de un pan de lembas? Dejar tanto escándalo que tengo visitas por atender, van a pensar que esto es un nido de bandidos."`
-  }
-];
-
-const COMPANION_SCENES_KEY = "companion_scenes";
-const COMPANION_SCENE_HISTORY_LIMIT = 15;
-const COMPANION_SCENES_PER_CYCLE = 2;
-
-const COMPANION_SCENE_WINDOWS = [
-  {
-    slot: 0,
-    minOffsetMs: 4 * 60 * 60 * 1000,
-    maxOffsetMs: 6 * 60 * 60 * 1000
-  },
-  {
-    slot: 1,
-    minOffsetMs: 8 * 60 * 60 * 1000,
-    maxOffsetMs: 11 * 60 * 60 * 1000
-  }
-];
 
 function chunkDiscordText(text, limit = 1900) {
   const chunks = [];
@@ -1402,31 +893,22 @@ async function saveCompanionSceneState(state) {
 async function pickCompanionSceneForCycle(cycleStartMs = getCycleBounds().cycleStartAt, slot = 0) {
   const state = await getCompanionSceneState();
 
-  const scenesPosted = Array.isArray(state?.scenesPosted)
-    ? [...state.scenesPosted]
-    : [];
+  const scenesPosted = Array.isArray(state?.scenesPosted) ? [...state.scenesPosted] : [];
+  const history = Array.isArray(state?.history) ? [...state.history] : [];
 
-  const history = Array.isArray(state?.history)
-    ? [...state.history]
-    : [];
-
-  if (state?.cycleId === cycleStartMs && state?.scene?.id && !scenesPosted.length) {
-    scenesPosted.push({
-      slot: 0,
-      scene: state.scene,
-      postedAt: state.postedAt || Date.now()
-    });
-  }
-
+  // Comprobar si ya existe una asignada en este slot y extraerla solo por su ID
   const existingForSlot = scenesPosted.find(entry => entry.slot === slot);
-  if (state?.cycleId === cycleStartMs && existingForSlot?.scene?.id) {
-    return existingForSlot.scene;
+  if (state?.cycleId === cycleStartMs && existingForSlot) {
+    const searchId = existingForSlot.sceneId || existingForSlot.scene?.id;
+    if (searchId) {
+      const freshScene = companionScenes.find(s => s.id === searchId);
+      if (freshScene) return freshScene; 
+      // Si freshScene no existe, significa que fue borrada del código duro. Pasamos de largo para escoger otra.
+    }
   }
 
   const recent = new Set(history.slice(-COMPANION_SCENE_HISTORY_LIMIT));
-  const usedIds = new Set(
-    scenesPosted.map(entry => entry?.scene?.id).filter(Boolean)
-  );
+  const usedIds = new Set(scenesPosted.map(entry => entry.sceneId || entry.scene?.id).filter(Boolean));
 
   let pool = companionScenes.filter(scene => !recent.has(scene.id) && !usedIds.has(scene.id));
 
@@ -1441,11 +923,13 @@ async function pickCompanionSceneForCycle(cycleStartMs = getCycleBounds().cycleS
   const chosen = pool[Math.floor(Math.random() * pool.length)];
   if (!chosen) return null;
 
-  scenesPosted.push({
-    slot,
-    scene: chosen,
-    postedAt: Date.now()
-  });
+  // Actualizamos o añadimos la escena para este slot (guardando solo el ID, para evitar fantasmas en caché)
+  const existingIndex = scenesPosted.findIndex(entry => entry.slot === slot);
+  if (existingIndex > -1) {
+    scenesPosted[existingIndex] = { slot, sceneId: chosen.id, postedAt: Date.now() };
+  } else {
+    scenesPosted.push({ slot, sceneId: chosen.id, postedAt: Date.now() });
+  }
 
   await saveCompanionSceneState({
     cycleId: cycleStartMs,
@@ -1468,11 +952,15 @@ async function publishCompanionScene(client, cycleStartMs = getCycleBounds().cyc
   await sendLongScene(channel, `${header}${scene.text}`);
 }
 
+// ==========================================
+// SCHEDULER FIJO AUTOMÁTICO
+// ==========================================
+
 const FIXED_AUTO_SLOTS = [
-  { id: "dialogue_0400", type: "relation", hour: 4, minute: 0, sceneSlot: 0 },
+  { id: "dialogue_ia_0400", type: "dialogue", hour: 4, minute: 0 },
   { id: "merchant_0900", type: "merchant", hour: 9, minute: 0 },
   { id: "merchant_1400", type: "merchant", hour: 14, minute: 0 },
-  { id: "dialogue_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
+  { id: "relation_scene_1900", type: "relation", hour: 19, minute: 0, sceneSlot: 1 },
 ];
 
 const FIXED_AUTO_STATE_KEY = "fixed_auto_scheduler_v1";
@@ -1537,7 +1025,6 @@ async function processFixedAutoSlots(client, loreCache) {
     const now = new Date();
     const nowMs = now.getTime();
     
-    // Recuperamos la variable que se había borrado
     const dayStartMs = getUTCMidnightMs(now); 
 
     const { cycleStartAt } = getCycleBounds(nowMs);
