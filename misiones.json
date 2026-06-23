@@ -166,7 +166,7 @@
           "enemyLabel": "asaltantes",
           "enemyChance": 0.80,
           "peligro": 2,
-          "categoria"; "enemigo_numeroso",
+          "categoria": "enemigo_numeroso",
           "bonus": { "meleeBonus": 0.02 },
           "allowedActions": [
             "atacar",
