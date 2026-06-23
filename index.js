@@ -2971,6 +2971,9 @@ if (isObstacle) {
 
 let danoFinalRecibido = 0;
 
+let evadioDano = false;
+evadioDano = true;
+  
 if (!evadioDano) {
   let danoBase = 10;
   if (isObstacle) {
