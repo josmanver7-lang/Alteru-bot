@@ -98,14 +98,14 @@
       "subEscenarios": {
         "infiltrar": {
           "titulo": "El nido",
-          "descripcion": "Te encuentras un amplio espacio, la morada de los trasgos. Sus miradas amarillentas te contemplan con ansias y se preparan para atacarte saltando de un lado a otro como pequeños demonios.",
+          "descripcion": "Te encuentras un amplio espacio, la morada de los trasgos. Sus miradas amarillentas te contemplan con ansias y se preparan para atacararte saltando de un lado a otro como pequeños demonios.",
           "hasEnemies": true,
           "enemyLabel": "horda de trasgos",
           "enemyChance": 0.95,
           "peligro": 2,
-          "categoria": "enemigo_numeroso"
+          "categoria": "enemigo_numeroso",
           "bonus": { "rangedBonus": 0.01, "meleeBonus": 0.01 },
-            "allowedActions": [
+          "allowedActions": [
             "atacar",
             "rodear",
             "retirarse"
@@ -187,51 +187,49 @@
     }
   },
   {
-   {
-  "id": "exploradores_prisioneros",
-  "titulo": "Exploradores prisioneros",
-  "destino": "Lebennin",
-  "nivel": 2,
-  "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, debemos liberarlos.",
-  "puntos": 150,
-  "xp": 100,
-  "conclusionGeneral": {
-    "exito": "La misión de rescate se ha completado. Regresas al campamento con el orgullo del deber cumplido y los exploradores a salvo. El capitán toma nota de tu valentía y se te otorga tu recompensa.",
-    "fracaso": "El objetivo principal ha fracasado. Vuelves al campamento con las manos vacías y malas noticias. Aprender de esta derrota será crucial para tus próximas expediciones."
-  },
-  "encuentros": [
-    "enemigo_numeroso",
-    "evento_especial",
-    "enemigo_numeroso"
-  ],
-  "escenarioFinal": {
-    "enabled": true,
-    "titulo": "Campamento enemigo a la vista",
-    "descripcion": "Llegas al margen del campamento enemigo. Ves a tus aliados amarrados de espaldas cerca de la fogata; unos cuatro bandidos los vigilan charlando entre ellos, ignorando que están siendo observados. El tiempo apremia.",
-    "hasEnemies": true,
-    "enemyLabel": "captores corsarios",
-    "enemyChance": 0.99,
-    "peligro": 3,
-    "categoria": "enemigo_numeroso",
-    "bonus": { "meleeBonus" 0.01, "negotiationBonus": 0.01 }
-      "allowedActions": [
-      "atacar",
-      "rodear",
-      "negociar",
-      "retirarse"
-    ],
-    "actionText": {
-      "atacar": "Saltas desde tu escondite, buscando neutralizar a la amenaza más cercana antes de que puedan reaccionar.",
-      "rodear": "Flanqueas la posición, utilizando el entorno para distraerlos y separarlos.",
-      "negociar": "Emerges con las manos visibles, intentando comprar tiempo o llegar a un acuerdo con oro.",
-      "retirarse": "El número de enemigos te hace dudar en el último segundo. Das un paso atrás y abandonas el rescate."
+    "id": "exploradores_prisioneros",
+    "titulo": "Exploradores prisioneros",
+    "destino": "Lebennin",
+    "nivel": 2,
+    "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, debemos liberarlos.",
+    "puntos": 150,
+    "xp": 100,
+    "conclusionGeneral": {
+      "exito": "La misión de rescate se ha completado. Regresas al campamento con el orgullo del deber cumplido y los exploradores a salvo. El capitán toma nota de tu valentía y se te otorga tu recompensa.",
+      "fracaso": "El objetivo principal ha fracasado. Vuelves al campamento con las manos vacías y malas noticias. Aprender de esta derrota será crucial para tus próximas expediciones."
     },
-    "completionText": {
-      "success": "Tus acciones fueron rápidas y precisas. Cortas las ataduras de los exploradores mientras los enemigos yacen derrotados. Están magullados, pero vivos.",
-      "failure": "El plan colapsa. Eres superado por los corsarios y te ves obligado a huir con heridas, dejando atrás a tus aliados."
+    "encuentros": [
+      "enemigo_numeroso",
+      "evento_especial",
+      "enemigo_numeroso"
+    ],
+    "escenarioFinal": {
+      "enabled": true,
+      "titulo": "Campamento enemigo a la vista",
+      "descripcion": "Llegas al margen del campamento enemigo. Ves a tus aliados amarrados de espaldas cerca de la fogata; unos cuatro bandidos los vigilan charlando entre ellos, ignorando que están siendo observados. El tiempo apremia.",
+      "hasEnemies": true,
+      "enemyLabel": "captores corsarios",
+      "enemyChance": 0.99,
+      "peligro": 3,
+      "categoria": "enemigo_numeroso",
+      "bonus": { "meleeBonus": 0.01, "negotiationBonus": 0.01 },
+      "allowedActions": [
+        "atacar",
+        "rodear",
+        "negociar",
+        "retirarse"
+      ],
+      "actionText": {
+        "atacar": "Saltas desde tu escondite, buscando neutralizar a la amenaza más cercana antes de que puedan reaccionar.",
+        "rodear": "Flanqueas la posición, utilizando el entorno para distraerlos y separarlos.",
+        "negociar": "Emerges con las manos visibles, intentando comprar tiempo o llegar a un acuerdo con oro.",
+        "retirarse": "El número de enemigos te hace dudar en el último segundo. Das un paso atrás y abandonas el rescate."
+      },
+      "completionText": {
+        "success": "Tus acciones fueron rápidas y precisas. Cortas las ataduras de los exploradores mientras los enemigos yacen derrotados. Están magullados, pero vivos.",
+        "failure": "El plan colapsa. Eres superado por los corsarios y te ves obligado a huir con heridas, dejando atrás a tus aliados."
+      }
     }
-  }
-}
   },
   {
     "id": "rastreo_lothgobel",
@@ -391,7 +389,7 @@
         "retirarse": "Tomas nota de la ruta que siguen y das la vuelta hacia el campamento; es mejor luchar de día."
       },
       "completionText": {
-        "success": "Has completado un buen informe de vigilancia. La prudencia garantiza que puedas luchar otro día.",
+        "success": "Has completado un buen informe de vigilancia. La pfudencia garantiza que puedas luchar otro día.",
         "failure": "La poca visibilidad te hace tropezar varias veces durante la retirada, desgastando tus energías."
       },
       "subEscenarios": {
@@ -403,7 +401,7 @@
           "enemyChance": 0.85,
           "peligro": 2,
           "categoria": "enemigo_numeroso",
-          "bonus": { "meleeBonus": 0.01, "thrownBonus": 0.01 }
+          "bonus": { "meleeBonus": 0.01, "thrownBonus": 0.01 },
           "allowedActions": [
             "atacar",
             "rodear",
@@ -465,9 +463,9 @@
           "enemyLabel": "capitán corsario",
           "enemyChance": 0.85,
           "peligro": 3,
-          "categoria": "jefe"
-          "bonus": { "meleeBonus": 0.03, "negotiationBonus": 0.03, "damageReduction": 0.01, "willpowerBonus": 0.02 }
-            "allowedActions": [
+          "categoria": "jefe",
+          "bonus": { "meleeBonus": 0.03, "negotiationBonus": 0.03, "damageReduction": 0.01, "willpowerBonus": 0.02 },
+          "allowedActions": [
             "atacar",
             "negociar",
             "retirarse"
@@ -529,7 +527,7 @@
           "enemyChance": 0.85,
           "peligro": 4,
           "categoria": "enemigo_numeroso",
-          "bonus": { "meleeBonus": 0.02, "rangedBonus" 0.01, "thrownBonus" 0.02 }
+          "bonus": { "meleeBonus": 0.02, "rangedBonus": 0.01, "thrownBonus": 0.02 },
           "allowedActions": [
             "atacar",
             "rodear",
@@ -593,7 +591,7 @@
           "enemyLabel": "saqueadores",
           "enemyChance": 0.85,
           "peligro": 4,
-          "categoria": "jefe"
+          "categoria": "jefe",
           "bonus": { "meleeBonus": 0.03, "thrownBonus": 0.01, "cavalryBonus": 0.01 },
           "allowedActions": [
             "atacar",
@@ -657,7 +655,7 @@
           "enemyChance": 0.85,
           "peligro": 3,
           "categoria": "enemigo_numeroso",
-          "bonus": { "cavalryBonus": 0.03, "negotiationBonus": 0.02 }
+          "bonus": { "cavalryBonus": 0.03, "negotiationBonus": 0.02 },
           "allowedActions": [
             "atacar",
             "rodear",
@@ -780,7 +778,7 @@
         "success": "Regresas tiritando pero a salvo, habiendo dejado constancia de los cambios en el ambiente.",
         "failure": "La prisa por salir te hace tropezar en el sendero escarpado de la colina, causándote heridas leves."
       },
-       "subEscenarios": {
+      "subEscenarios": {
         "explorar": {
           "titulo": "Sombras inquietas",
           "descripcion": "La niebla toma densidad a tus pies y surgen figuras espectrales, perturbadas por visitantes intrusos. Tienen intenciones hostiles.",
@@ -788,7 +786,7 @@
           "enemyLabel": "espectros menores",
           "enemyChance": 0.85,
           "peligro": 5,
-          "categori!": "enemigo_numeroso"
+          "categoria": "enemigo_numeroso",
           "bonus": { "meleeBonus": 0.03, "rangedBonus": 0.02, "magicBonus": 0.03 },
           "allowedActions": [
             "atacar",
@@ -855,7 +853,7 @@
           "enemyChance": 0.85,
           "peligro": 4,
           "categoria": "enemigo_numeroso",
-          "bonus": { "meleeBonus": 0.05 }
+          "bonus": { "meleeBonus": 0.05 },
           "allowedActions": [
             "atacar",
             "rodear",
@@ -924,7 +922,7 @@
           "enemyChance": 0.85,
           "peligro": 2,
           "categoria": "enemigo_numeroso",
-          "bonus": { "meleeBonus": 0.02 }
+          "bonus": { "meleeBonus": 0.02 },
           "allowedActions": [
             "atacar",
             "retirarse"
@@ -941,4 +939,4 @@
       }
     }
   }
-          ]
+]
