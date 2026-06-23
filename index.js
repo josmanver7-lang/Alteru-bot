@@ -2744,7 +2744,7 @@ async function handleExpedicionStart(message, args) {
   const numero = parseInt(args[1]);
   if (isNaN(numero)) return message.reply("Usa `!expedicion <numero>`");
 
-  const profile = await db.getProfile(message.author.id);
+  let profile = await db.getProfile(message.author.id);
   const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
   const equipment = getResolvedEquipment(profile, equipmentRaw);
 
