@@ -2964,8 +2964,9 @@ async function handleExpedicionInteract(message) {
 
 async function handleExpedicionVolver(message) {
   if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en una expedición activa.");
-    {
+    return message.reply("No estÃ¡s en una expediciÃ³n activa.");
+  }
+
   const expedition = expeditions.get(message.author.id);
   const partialXP = expedition.xpEarned || 0;
   const partialPoints = expedition.pointsEarned || 0;
