@@ -3270,10 +3270,6 @@ async function handleExpedicionDesafiar(message) {
 
   return message.reply(`⚔️ **¡Victoria en ${encounter.titulo}!**\n\nHas derrotado al enemigo de este sector. Aseguraste **+${xpGanada} XP** y **+${puntosGanados} Puntos** provisionales para el botín final de la expedición.${textoAdicional}\n\nEscribe \`!desafiar\` cuando estés listo para avanzar al siguiente tramo.`);
 }
-
-
-
-
   // === RESOLVER ENCUENTRO ACTUAL ===
   let activeEncounter = expedition.currentEncounter;
 
@@ -3282,11 +3278,8 @@ async function handleExpedicionDesafiar(message) {
     expedition.pendingFinalScenario = true;
     return startFinalScenario(message, expedition);
   }
-
-
   const encounters = await loadEncounters();
   const subOptions = getEncounterSubOptions(activeEncounter, encounters);
-
 
   if (!activeEncounter.subEncounter && subOptions.length > 0) {
     const chosen = subOptions[Math.floor(Math.random() * subOptions.length)];
