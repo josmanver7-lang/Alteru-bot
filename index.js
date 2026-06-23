@@ -2738,26 +2738,24 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 async function handleExpedicionStart(message, args) {
   const state = await db.getQuotaState(message.author.id, "expedicion", EXPEDITION_WINDOW_MS);
 
-
   if (state.attempts >= EXPEDITION_LIMIT) {
     return message.reply(`⚠️ Agotaste tus expediciones. Vuelve en ${formatRemainingTime(state.resetAt - Date.now())}.`);
   }
-
-
   const numero = parseInt(args[1]);
   if (isNaN(numero)) return message.reply("Usa `!expedicion <numero>`");
 
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
 
   const missions = await getCurrentTablonSelection();
   const mission = missions[numero - 1];
   if (!mission) return message.reply("Esa misión no existe.");
 
-
   const profile = await db.getProfile(message.author.id);
   const saludActual = profile.salud !== undefined ? profile.salud : 100; 
   const xpActual = profile.xp || 0;
   const nivelJugador = calculateLevelFromXP(xpActual);
-
 
   if (mission.nivel && nivelJugador < mission.nivel) {
     return message.reply(`⚠️ Necesitas nivel ${mission.nivel} para realizar esta expedición.\n\nTu nivel actual es ${nivelJugador}.`);
