@@ -326,7 +326,6 @@
         "retirarse": "La mina parece demasiado peligrosa para ti solo. Retrocedes con la intención de informar su ubicación."
       },
       "completionText": {
-              "completionText": {
         "success_explorar": "Enciendes una antorcha y desciendes con paso firme. (Fase de exploración iniciada).",
         "success_retirarse": "Tu decisión de regresar por ayuda es sensata, aunque los minutos perdidos podrían ser vitales.",
         "failure_explorar": "Te adentras a ciegas y tropiezas en la oscuridad de la entrada, alertando a lo que sea que more dentro.",
@@ -354,8 +353,8 @@
           },
           "completionText": {
             "success_atacar": "Derrotas a la banda y aseguras el área. Levantas a los niños asustados y los guías de vuelta hacia la luz y la seguridad.",
-            "succes_negociar": "El lider acepta tu propuesta dejando libre a los niños a cambio de dejarlo irse sin ser atacado.",
-            "succes_retirarse": "Te devuelves al campamento para informar de la situación y pedir refuerzos.",
+            "success_negociar": "El lider acepta tu propuesta dejando libre a los niños a cambio de dejarlo irse sin ser atacado.",
+            "success_retirarse": "Te devuelves al campamento para informar de la situación y pedir refuerzos.",
             "failure_atacar": "Tus esfuerzos no son suficientes y el combate se vuelve en tu contra. Eres expulsado de la mina con múltiples heridas.",
             "failure_negociar": "Fallas al intentar negociar y te retiras para pedir más refuerzos y así evitar un mal peor para los niños."
             "failure_retirarse": "Regresas al campamento pero te enteras que los niños fueron llevados a otra parte y el rescate se escapa de tus manos."
