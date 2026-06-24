@@ -4350,22 +4350,27 @@ resetear"
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
-  
-  bot.on('comando', (user, args) => {
-    if (args[0] === '!resetearRaza') {
-        if (user.role === 'admin') {
-            let item = user.getItem(args[1]);
-            if (item) {
-                item.raceRequirement = 'humano';
-                user.save();
-                bot.sendMessage(user, `La raza del ítem ha sido reseteada a humano.`);
-            } else {
-                bot.sendMessage(user, `No se encontró el ítem especificado.`);
-            }
-        } else {
-            bot.sendMessage(user, `No tienes permisos para este comando.`);
-        }
+    // ==========================================
+  // COMANDO: RESETEAR RAZA DEL ÍTEM
+  // ==========================================
+  else if (command === "!resetearRaza") {
+    if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos.");
+
+    const itemId = args[1];
+    if (!itemId) {
+      return message.reply("Uso correcto: `!resetearRaza <ID del ítem>`");
     }
+
+    try {
+      const item = await db.getItem(itemId); // ajusta esto a tu método real
+      if (!item) return message.reply("No se encontró el ítem especificado.");
+
+      await db.updateItem(itemId, { raceRequirement: null }); // null = sin requisito
+      return message.reply(`✅ La restricción de raza del ítem **${itemId}** ha sido eliminada.`);
+    } catch (err) {
+      return message.reply("Hubo un error al intentar resetear la raza del ítem.");
+    }
+      }
 });
 
 
