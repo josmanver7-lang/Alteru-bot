@@ -4350,27 +4350,7 @@ resetear"
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
-    // ==========================================
-  // COMANDO: RESETEAR RAZA DEL ÍTEM
-  // ==========================================
-  else if (command === "!resetearRaza") {
-    if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos.");
 
-    const itemId = args[1];
-    if (!itemId) {
-      return message.reply("Uso correcto: `!resetearRaza <ID del ítem>`");
-    }
-
-    try {
-      const item = await db.getItem(itemId); // ajusta esto a tu método real
-      if (!item) return message.reply("No se encontró el ítem especificado.");
-
-      await db.updateItem(itemId, { raceRequirement: null }); // null = sin requisito
-      return message.reply(`✅ La restricción de raza del ítem **${itemId}** ha sido eliminada.`);
-    } catch (err) {
-      return message.reply("Hubo un error al intentar resetear la raza del ítem.");
-    }
-      }
 });
 
 
