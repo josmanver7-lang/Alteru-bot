@@ -2525,6 +2525,10 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 //        LÓGICA LIMPIA DE EXPEDICIONES
 // ==========================================
 
+// ==========================================
+//        LÓGICA LIMPIA DE EXPEDICIONES
+// ==========================================
+
 async function handleExpedicionStart(message, args) {
   const state = await db.getQuotaState(message.author.id, "expedicion", EXPEDITION_WINDOW_MS);
 
@@ -2986,13 +2990,19 @@ async function handleExpedicionDesafiar(message) {
               return message.reply(`💀 **Derrota Definitiva**\n\nHas sucumbido ante el enemigo recibiendo **${danoFinal}** de daño. Tu salud llegó a 0 y la expedición fracasa. Eres llevado de vuelta al campamento.\n*(Tu salud ha sido restaurada)*`);
           }
 
+          // ✅ EVITAR BUCLE INFINTIO: Avanzamos en la misión aunque hayamos tomado daño. 
+          expedition.progress += 1;
+          expedition.currentEncounter = null;
+
           // Respuesta estructurada y limpia de combate fallido
           let msgFail = `⚠️ **Recibes Daño**\n\n`;
           msgFail += `${encounter.textoFracaso || encounter.textoDerrota || "Tu estrategia falló y el enemigo logró herirte."}\n\n`;
           if (textoAdicional) msgFail += `${textoAdicional}`;
+          msgFail += `Logras escapar de la refriega y continuar tu camino a duras penas.\n\n`;
           msgFail += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n\n`;
           msgFail += `🤝 Afinidad ganada:\n• Ninguna\n\n`;
-          msgFail += `Usa \`!desafiar\` para reintentar o \`!volver\` para huir.`;
+          msgFail += `Usa \`!desafiar\` para continuar o \`!volver\` para huir.`;
+          
           return message.reply(msgFail);
       }
 
@@ -3156,6 +3166,10 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`💀 **Has caído...**\n\n${activeEncounter.textoDerrotaTotal || textoFinalDerrota}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n*(Tu salud ha sido restaurada a 100/100)*\n` + utilMsg);
     }
 
+    // ✅ EVITAR BUCLE INFINTIO: Avanzamos en la misión aunque hayamos tomado daño. 
+    expedition.progress += 1;
+    expedition.currentEncounter = null;
+
     let txtRegen = "";
     const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
     
@@ -3167,12 +3181,17 @@ async function handleExpedicionDesafiar(message) {
 
     let msgObs = `⚠️ **Contratiempo**\n\n`;
     msgObs += `${textoFinalDerrota}\n\n`;
-    if (evadioDano) msgObs += `Lograste evitar salir lastimado gracias a tus instintos, pero el obstáculo persiste.\n`;
+    if (evadioDano) {
+      msgObs += `Lograste evitar salir lastimado gracias a tus instintos y superas el obstáculo a duras penas.\n`;
+    } else {
+      msgObs += `A pesar de salir herido, logras dejar atrás el obstáculo y continuar tu camino.\n`;
+    }
     
     if (txtRegen) msgObs += txtRegen;
     msgObs += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n\n`;
     msgObs += `🤝 Afinidad ganada:\n• Ninguna\n\n`;
-    msgObs += `Usa \`!desafiar\` para reintentar o \`!volver\` para huir.`;
+    msgObs += `Usa \`!desafiar\` para continuar o \`!volver\` para huir.`;
+    
     return message.reply(msgObs);
   }
 }
