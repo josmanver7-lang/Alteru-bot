@@ -3166,7 +3166,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     texto += `\n\n${conclusionGeneralTexto}` + utilMsg;
     return message.reply(texto);
   }
-}
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
