@@ -2925,7 +2925,7 @@ async function transicionarSiguientePaso(message, expedition, textoBase) {
 }
 
 // =========================================================
-// CORREGIDO: SE EVALÚAN LOS SUBESCENARIOS ANTES DE TERMINAR
+// CORREGIDO: EXTRACCIÓN PROFUNDA DE SUBESCENARIOS ANIDADOS
 // =========================================================
 async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
@@ -2942,6 +2942,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const accionesCombate = ["atacar", "rodear", "infiltrar"];
   const esAccionCombate = accionesCombate.includes(normalizedAction);
 
+  // 1. RESOLUCIÓN DE ÉXITO O FRACASO
   if (scenario.hasEnemies && esAccionCombate) {
     const rivalEncounter = {
       id: scenario.enemyLabel || scenario.titulo || "Rival",
@@ -2967,33 +2968,65 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     success = Math.random() < Math.max(0.30, probExito);
   }
 
-  // --- OBTENCIÓN ROBUSTA DEL TEXTO DE COMPLETADO ---
+  // ========================================================
+  // 2. OBTENCIÓN ROBUSTA DEL TEXTO Y SUBESCENARIO ANIDADO
+  // ========================================================
   const lookupKey = `${success ? 'success' : 'failure'}_${normalizedAction}`;
   const altLookupKey = `${success ? 'succes' : 'failure'}_${normalizedAction}`;
   const fallbackKey = success ? 'success' : 'failure';
 
-  const extraerTexto = (obj) => {
-    if (!obj) return null;
-    return obj[lookupKey] || obj[altLookupKey] || obj[fallbackKey];
-  };
+  let resolutionNode = null;
+  if (scenario.completionText) {
+    resolutionNode = scenario.completionText[lookupKey] || 
+                     scenario.completionText[altLookupKey] || 
+                     scenario.completionText[fallbackKey];
+  }
 
   let finalResolutionText = "";
-  if (scenario.completionText) {
-    finalResolutionText = extraerTexto(scenario.completionText.completionText) || extraerTexto(scenario.completionText);
+  let nextSub = null;
+
+  // Extraer buscando primero DENTRO del nodo del resultado específico (ej: success_infiltrar)
+  if (resolutionNode) {
+    if (typeof resolutionNode === "string") {
+      finalResolutionText = resolutionNode;
+    } else {
+      finalResolutionText = resolutionNode.completionText || resolutionNode.texto || "";
+      // Buscar subescenario anidado en el objeto de resolución
+      nextSub = resolutionNode.subEscenario || 
+                (resolutionNode.subEscenarios && resolutionNode.subEscenarios[normalizedAction]) || 
+                resolutionNode.subEscenarios;
+    }
+  } else if (typeof scenario.completionText === "string") {
+    finalResolutionText = scenario.completionText;
   }
+
   if (!finalResolutionText && typeof buildFinalResolutionText === "function") {
     finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
   }
 
-  const subEscenariosSource = scenario.subEscenarios || (scenario.completionText && (scenario.completionText.subEscenarios || scenario.completionText.completionText?.subEscenarios));
-  const tieneSubEscenario = subEscenariosSource && subEscenariosSource[normalizedAction];
+  // Fallback: Si no estaba anidado en el resultado, buscar a nivel raíz del escenario
+  if (!nextSub) {
+    nextSub = scenario.subEscenario || 
+              (scenario.subEscenarios && scenario.subEscenarios[normalizedAction]) || 
+              scenario.subEscenarios;
+  }
+
+  // Limpieza: Si nextSub es un mapeo de acciones en lugar del escenario directo
+  if (nextSub && typeof nextSub === 'object' && !nextSub.titulo && !nextSub.descripcion) {
+    if (nextSub[normalizedAction]) {
+      nextSub = nextSub[normalizedAction];
+    } else if (nextSub["default"]) {
+      nextSub = nextSub["default"];
+    }
+  }
+
+  // Validar de forma segura que realmente tenemos un objeto de subescenario válido
+  const tieneSubEscenario = nextSub && (nextSub.titulo || nextSub.descripcion);
 
   // ========================================================
-  // INTERCEPCIÓN TÁCTICA: SI EXISTE UN SUBESCENARIO, SE AVANZA
+  // 3. INTERCEPCIÓN TÁCTICA: SI EXISTE UN SUBESCENARIO
   // ========================================================
   if (tieneSubEscenario) {
-    const nextSub = subEscenariosSource[normalizedAction];
-    
     expedition.finalScenario = {
       ...nextSub,
       enabled: true
@@ -3007,16 +3040,16 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       tipo: "escenario_final",
       categoria: "final",
       active: true,
-      enemyPresent: nextSub.hasEnemies,
+      enemyPresent: !!nextSub.hasEnemies,
       allowedActions: nextAllowedActions
     };
 
     if (success) {
       let texto = `✅ **Avanzas en el Escenario Final**\n`;
       if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-      texto += `\n🎬 **${nextSub.titulo}**\n${nextSub.descripcion}\n\n`;
+      texto += `\n🎬 **${nextSub.titulo || "Siguiente Fase"}**\n${nextSub.descripcion || ""}\n\n`;
       if (nextSub.hasEnemies) {
-        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro})\n`;
+        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro || 1})\n`;
       }
       texto += `👉 Opciones disponibles: ${expedition.currentEncounter.allowedActions.map(a => `!${a}`).join(", ")}`;
       await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
@@ -3030,6 +3063,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       expedition.saludActual = Math.max(0, expedition.saludActual - damage);
 
       if (expedition.saludActual <= 0) {
+        // ... (Lógica intacta de muerte durante el paso a un subescenario)
         const scale = expedition.rewardScale || 1.0;
         const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
         const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
@@ -3051,9 +3085,9 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       let texto = `⚠️ **Contratiempo en el Escenario Final**\n`;
       if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
       texto += `\nRecibes **${damage}** de daño. (Salud Actual: **${expedition.saludActual}**/${expedition.saludMaxima})\n`;
-      texto += `\n🎬 **${nextSub.titulo}**\n${nextSub.descripcion}\n\n`;
+      texto += `\n🎬 **${nextSub.titulo || "Siguiente Fase"}**\n${nextSub.descripcion || ""}\n\n`;
       if (nextSub.hasEnemies) {
-        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro})\n`;
+        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro || 1})\n`;
       }
       texto += `👉 Opciones disponibles: ${expedition.currentEncounter.allowedActions.map(a => `!${a}`).join(", ")}`;
       await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
@@ -3062,7 +3096,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   }
 
   // ========================================================
-  // CONCLUSIÓN DEFINITIVA DE LA MISIÓN (SI NO HAY SUBESCENARIOS)
+  // 4. CONCLUSIÓN DEFINITIVA (SI NO HAY SUBESCENARIOS)
   // ========================================================
   if (success) {
     const scale = expedition.rewardScale || 1.0;
@@ -3084,6 +3118,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     return message.reply(texto);
 
   } else {
+    // ... (Lógica intacta de derrota definitiva)
     let multPeligro = (scenario.peligro <= 2) ? 10 : 15;
     let damage = Number(scenario.damageOnFail || multPeligro * (scenario.peligro || 1));
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
@@ -3129,6 +3164,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     return message.reply(texto);
   }
 }
+
         
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
