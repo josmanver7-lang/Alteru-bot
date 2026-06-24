@@ -2520,11 +2520,6 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 
   return texto;
 }
-
-// ==========================================
-//        LÓGICA LIMPIA DE EXPEDICIONES
-// ==========================================
-
       
 // ==========================================
 //        LÓGICA LIMPIA DE EXPEDICIONES
