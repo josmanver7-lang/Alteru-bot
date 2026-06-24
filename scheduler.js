@@ -806,7 +806,7 @@ async function companionDialogue(client, loreCache, slotId = null) {
       `Contexto general de historia útil:\n${historyText}\n\n` +
       `Toma como base de datos de estilo narrativo estas interacciones previas:\n${sampleScenesContext}\n\n` +
       `Reglas:\n` +
-      `- Entre 80 y 140 palabras.\n` +
+      `- Entre 200 y 300 palabras.\n` +
       `- Debe parecer una escena de rol natural, similar a los ejemplos de estilo provistos.\n` +
       `- Cada intervención debe llevar el nombre del personaje al inicio, y acciones entre asteriscos.\n` +
       `- Uno habla y el otro responde o pregunta.\n` +
