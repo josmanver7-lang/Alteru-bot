@@ -2924,9 +2924,9 @@ async function transicionarSiguientePaso(message, expedition, textoBase) {
   return message.reply(textoBase + `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado la expedición!"}`);
 }
 
-// =========================================================
-// CORREGIDO: EXTRACCIÓN PROFUNDA DE SUBESCENARIOS ANIDADOS
-// =========================================================
+// =================================================================
+// CORREGIDO: EXTRACCIÓN PROFUNDA Y MULTICAPA DE SUBESCENARIOS ANIDADOS
+// =================================================================
 async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
   if (!scenario) return message.reply("⚠️ No se encontró la configuración del escenario actual.");
@@ -2942,7 +2942,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const accionesCombate = ["atacar", "rodear", "infiltrar"];
   const esAccionCombate = accionesCombate.includes(normalizedAction);
 
-  // 1. RESOLUCIÓN DE ÉXITO O FRACASO
+  // 1. RESOLUCIÓN DE ÉXITO O FRACASO[span_3](start_span)[span_3](end_span)
   if (scenario.hasEnemies && esAccionCombate) {
     const rivalEncounter = {
       id: scenario.enemyLabel || scenario.titulo || "Rival",
@@ -2969,7 +2969,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   }
 
   // ========================================================
-  // 2. OBTENCIÓN ROBUSTA DEL TEXTO Y SUBESCENARIO ANIDADO
+  // 2. OBTENCIÓN ROBUSTA DEL TEXTO Y SUBESCENARIO ANIDADO[span_4](start_span)[span_4](end_span)
   // ========================================================
   const lookupKey = `${success ? 'success' : 'failure'}_${normalizedAction}`;
   const altLookupKey = `${success ? 'succes' : 'failure'}_${normalizedAction}`;
@@ -2985,16 +2985,14 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   let finalResolutionText = "";
   let nextSub = null;
 
-  // Extraer buscando primero DENTRO del nodo del resultado específico (ej: success_infiltrar)
+  // Extraer texto buscando primero DENTRO del nodo del resultado específico (ej: success_infiltrar)[span_5](start_span)[span_5](end_span)
   if (resolutionNode) {
     if (typeof resolutionNode === "string") {
       finalResolutionText = resolutionNode;
     } else {
       finalResolutionText = resolutionNode.completionText || resolutionNode.texto || "";
-      // Buscar subescenario anidado en el objeto de resolución
-      nextSub = resolutionNode.subEscenario || 
-                (resolutionNode.subEscenarios && resolutionNode.subEscenarios[normalizedAction]) || 
-                resolutionNode.subEscenarios;
+      // Intento A: Buscar subescenario anidado directamente en las propiedades del nodo del resultado[span_6](start_span)[span_6](end_span)
+      nextSub = resolutionNode.subEscenario || resolutionNode.subEscenarios;
     }
   } else if (typeof scenario.completionText === "string") {
     finalResolutionText = scenario.completionText;
@@ -3004,27 +3002,31 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
   }
 
-  // Fallback: Si no estaba anidado en el resultado, buscar a nivel raíz del escenario
+  // Intento B: Si no estaba en el nodo de resolución, buscar a nivel raíz del escenario[span_7](start_span)[span_7](end_span)
   if (!nextSub) {
-    nextSub = scenario.subEscenario || 
-              (scenario.subEscenarios && scenario.subEscenarios[normalizedAction]) || 
-              scenario.subEscenarios;
+    nextSub = scenario.subEscenario || scenario.subEscenarios;
   }
 
-  // Limpieza: Si nextSub es un mapeo de acciones en lugar del escenario directo
+  // Intento C: Descompresión de mapeos dinámicos en el objeto contenedor (Soporte exhaustivo para llaves combinadas)[span_8](start_span)[span_8](end_span)
   if (nextSub && typeof nextSub === 'object' && !nextSub.titulo && !nextSub.descripcion) {
-    if (nextSub[normalizedAction]) {
-      nextSub = nextSub[normalizedAction];
-    } else if (nextSub["default"]) {
-      nextSub = nextSub["default"];
-    }
+    nextSub = nextSub[lookupKey] || 
+              nextSub[altLookupKey] || 
+              nextSub[normalizedAction] || 
+              nextSub[fallbackKey] || 
+              nextSub["default"] || 
+              nextSub;
   }
 
-  // Validar de forma segura que realmente tenemos un objeto de subescenario válido
-  const tieneSubEscenario = nextSub && (nextSub.titulo || nextSub.descripcion);
+  // Intento D: Reducción secundaria si las propiedades estaban envueltas un nivel extra
+  if (nextSub && typeof nextSub === 'object' && !nextSub.titulo && !nextSub.descripcion) {
+    nextSub = nextSub.subEscenario || nextSub.subEscenarios || nextSub;
+  }
+
+  // Validar de forma totalmente segura que realmente tenemos un objeto de subescenario procesable[span_9](start_span)[span_9](end_span)
+  const tieneSubEscenario = nextSub && typeof nextSub === 'object' && (nextSub.titulo || nextSub.descripcion);
 
   // ========================================================
-  // 3. INTERCEPCIÓN TÁCTICA: SI EXISTE UN SUBESCENARIO
+  // 3. INTERCEPCIÓN TÁCTICA: SI EXISTE UN SUBESCENARIO[span_10](start_span)[span_10](end_span)
   // ========================================================
   if (tieneSubEscenario) {
     expedition.finalScenario = {
@@ -3063,7 +3065,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       expedition.saludActual = Math.max(0, expedition.saludActual - damage);
 
       if (expedition.saludActual <= 0) {
-        // ... (Lógica intacta de muerte durante el paso a un subescenario)
         const scale = expedition.rewardScale || 1.0;
         const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
         const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
@@ -3096,7 +3097,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   }
 
   // ========================================================
-  // 4. CONCLUSIÓN DEFINITIVA (SI NO HAY SUBESCENARIOS)
+  // 4. CONCLUSIÓN DEFINITIVA (SI NO HAY SUBESCENARIOS)[span_11](start_span)[span_11](end_span)
   // ========================================================
   if (success) {
     const scale = expedition.rewardScale || 1.0;
@@ -3118,7 +3119,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     return message.reply(texto);
 
   } else {
-    // ... (Lógica intacta de derrota definitiva)
     let multPeligro = (scenario.peligro <= 2) ? 10 : 15;
     let damage = Number(scenario.damageOnFail || multPeligro * (scenario.peligro || 1));
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
@@ -3164,7 +3164,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     return message.reply(texto);
   }
 }
-
         
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
