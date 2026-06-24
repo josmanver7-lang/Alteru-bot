@@ -3353,8 +3353,8 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     
     texto += `\n\nLa expedición ha concluido.` + utilMsg;
     return message.reply(texto);
-  }
-
+  
+}
   
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
