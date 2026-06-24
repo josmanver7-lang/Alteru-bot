@@ -2525,6 +2525,11 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
 //        LÓGICA LIMPIA DE EXPEDICIONES
 // ==========================================
 
+      
+// ==========================================
+//        LÓGICA LIMPIA DE EXPEDICIONES
+// ==========================================
+
 async function handleExpedicionStart(message, args) {
   const state = await db.getQuotaState(message.author.id, "expedicion", EXPEDITION_WINDOW_MS);
 
@@ -2680,7 +2685,6 @@ async function handleExpedicionInteract(message) {
   // === Lógica de finalización directa de misión (solo si finalScenario no está habilitado) ===
   const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
   const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
-  // ... (aquí continúa el resto de tu código de finalización normal) ...
 
   const beforeProfile = await db.getProfile(message.author.id);
   const beforeLevel = calculateLevelFromXP(beforeProfile.xp || 0);
@@ -3273,6 +3277,14 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
   let success = true; 
   let combateData = null;
   
+  // Perfiles básicos del jugador y grupo
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const owned = getOwnedCompanions(profile);
+  const reactionIds = [...new Set(owned)].slice(0, 3);
+  const activeEncounter = expedition.currentEncounter || scenario;
+  
   // Si el escenario detecta enemigos y la acción implica confrontación directa
   const accionesCombate = ["atacar", "rodear", "infiltrar"];
   const esAccionCombate = accionesCombate.includes(normalizedAction);
@@ -3285,16 +3297,68 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       categoria: scenario.categoria || "enemigo_numeroso",
       peligro: Number(scenario.peligro || 1),
       // Inyectamos dinámicamente los bonus de matriz declarados en el JSON descriptivo
-      ...mapStatsToMatrixKeys(scenario.bonus || {})
+      ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(scenario.bonus || {}) : (scenario.bonus || {}))
     };
 
-    // Obtenemos los perfiles del jugador y su equipamiento activo
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+    // Procesamos el combate invocando la lógica de la matriz
+    const combatBonus = typeof getCompanionBonus === "function" ? getCompanionBonus(owned) : { damageReduction: 0 };
+    const affinityCombat = typeof getAffinityCombatBonus === "function" ? getAffinityCombatBonus(profile, owned) : { successBonus: 0, damageReduction: 0 };
+    
+    if (typeof resolverCombateMixto === "function") {
+      const resultado = resolverCombateMixto(profile, equipment, rivalEncounter, combatBonus, affinityCombat);
+      success = resultado.exito;
+      combateData = { poderJugador: resultado.poderJugador || 0, poderEnemigo: resultado.poderEnemigo || 0 };
+    } else {
+      // Fallback de seguridad en caso de que la función global no esté disponible
+      success = Math.random() > 0.45;
+    }
+  } else {
+    // 2. LÓGICA PARA ACCIONES TÁCTICAS O SIN CONFRONTACIÓN
+    const probExito = normalizedAction === "retirarse" ? 0.99 : 0.70;
+    success = Math.random() < probExito;
   }
-}
 
-  // --- 4. LÓGICA DE FRACASO MARCIAL O TÁCTICO ---
+  // --- 3. LÓGICA DE ÉXITO MARCIAL O TÁCTICO ---
+  if (success) {
+    const scale = expedition.rewardScale || 1.0;
+    const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 20)) * scale);
+    const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 10)) * scale);
+
+    if (xpGain > 0) await db.addXP(message.author.id, xpGain);
+    if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
+
+    const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
+    const utilMsg = await decrementUtilities(message.author.id);
+
+    // COMPAÑEROS REACCIONAN AL ÉXITO
+    const successReactions = [];
+    for (const cid of reactionIds) {
+      if (!owned.includes(cid)) continue;
+      const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "victoria");
+      if (line) successReactions.push(`💬 **${companions[cid]?.nombre || cid}**: "${line}"`);
+    }
+
+    await clearExpeditionParty(message.author.id);
+    expedition.pendingFinalScenario = false;
+    expedition.finalScenarioShown = false;
+    expedition.currentEncounter = null;
+    expeditions.delete(message.author.id);
+
+    let texto = `✅ **Escenario final superado**\n`;
+    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+    if (combateData) texto += `\n⚔️ *Informa de Batalla:* Tu hueste prevaleció. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
+    
+    texto += `\n\n🏆 Recompensa total acumulada: +${pointsGain} pts | +${xpGain} XP`;
+    
+    if (successReactions.length) {
+      texto += `\n\n**Reacciones de tu grupo:**\n${successReactions.join("\n")}`;
+    }
+    
+    texto += `\n\nLa expedición ha concluido con éxito.` + utilMsg;
+    return message.reply(texto);
+
+  } else {
+    // --- 4. LÓGICA DE FRACASO MARCIAL O TÁCTICO ---
     const scale = expedition.rewardScale || 1.0;
     const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
     const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
@@ -3302,27 +3366,20 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     let damage = Number(scenario.damageOnFail || 15 * (scenario.peligro || 1)); 
     
     // Obtención de reducciones activas de equipo y clases para equilibrar el daño directo
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
     const classBonus = getPlayerClassBonus(profile);
 
-
-    const totalDmgRed = (eqPower.totals.damageReduction || 0) + (classBonus.damageReduction || 0);
+    const totalDmgRed = (eqPower.totals?.damageReduction || 0) + (classBonus.damageReduction || 0);
     damage = Math.max(1, Math.floor(damage * (1 - totalDmgRed)));
     
     const nuevaSalud = Math.max(0, (profile.salud !== undefined ? profile.salud : 100) - damage);
-
 
     if (xpGain > 0) await db.addXP(message.author.id, xpGain);
     if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
     await db.updateTravelerData(message.author.id, { salud: nuevaSalud });
 
-
     const finalResolutionText = buildFinalResolutionText(normalizedAction, false, scenario);
     const utilMsg = await decrementUtilities(message.author.id);
-
 
     // COMPAÑEROS REACCIONAN AL FRACASO/RETIRADA FORZOSA
     const failureReactions = [];
@@ -3332,14 +3389,12 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       if (line) failureReactions.push(`💬 **${companions[cid]?.nombre || cid}**: "${line}"`);
     }
 
-
     // Limpieza de datos de expedición
     await clearExpeditionParty(message.author.id);
     expedition.pendingFinalScenario = false;
     expedition.finalScenarioShown = false;
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
-
 
     let texto = `❌ **Escenario final infructuoso**\n`;
     if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
@@ -3353,10 +3408,9 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     
     texto += `\n\nLa expedición ha concluido.` + utilMsg;
     return message.reply(texto);
-    }
+  }
 }
-    
-  
+
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
 // ==========================================
