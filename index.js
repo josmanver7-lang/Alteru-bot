@@ -4352,7 +4352,7 @@ resetear"
   }
   
   bot.on('comando', (user, args) => {
-    if (args[0] === 'resetearRaza') {
+    if (args[0] === '!resetearRaza') {
         if (user.role === 'admin') {
             let item = user.getItem(args[1]);
             if (item) {
