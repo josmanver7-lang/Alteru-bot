@@ -4350,6 +4350,22 @@ resetear"
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
+  
+  bot.on('comando', (user, args) => {
+    if (args[0] === 'resetearRaza') {
+        if (user.role === 'admin') {
+            let item = user.getItem(args[1]);
+            if (item) {
+                item.raceRequirement = 'humano';
+                user.save();
+                bot.sendMessage(user, `La raza del ítem ha sido reseteada a humano.`);
+            } else {
+                bot.sendMessage(user, `No se encontró el ítem especificado.`);
+            }
+        } else {
+            bot.sendMessage(user, `No tienes permisos para este comando.`);
+        }
+    }
 });
 
 
