@@ -3263,8 +3263,50 @@ async function handleExpedicionDesafiar(message) {
       reporteDano = `Recibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}`;
     }
 
-    // Respuesta final de supervivencia
-    return message.reply(`❌ **Intento fallido**\n\n${textoFinalDerrota}\n\n${reporteDano}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`);
+    const textoExitoObstaculo =
+  activeEncounter.textoExito ||
+  activeEncounter.textoInicio ||
+  activeEncounter.descripcion ||
+  "Superas el obstáculo.";
+
+if (isObstacle && evadioDano) {
+  const xpGain = Number(activeEncounter.xp || 0);
+  const pointsGain = Number(activeEncounter.puntos || 0);
+
+  if (xpGain > 0) expedition.xpEarned = (expedition.xpEarned || 0) + xpGain;
+  if (pointsGain > 0) expedition.pointsEarned = (expedition.pointsEarned || 0) + pointsGain;
+
+  expedition.progress += 1;
+  expedition.currentEncounter = null;
+
+  const totalEncuentros = expedition.mission.encuentros?.length || 0;
+  let texto = `✅ **${activeEncounter.titulo}**\n\n${textoExitoObstaculo}`;
+
+  if (xpGain > 0 || pointsGain > 0) {
+    texto += `\n\n🏆 Recompensa obtenida: +${pointsGain} pts | +${xpGain} XP`;
+  }
+
+  if (expedition.progress < totalEncuentros) {
+    texto += `\n\n🛤️ El camino continúa.\n\nUsa \`!desafiar\` para seguir viajando.`;
+  } else if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
+    expedition.finalScenarioShown = true;
+    expedition.pendingFinalScenario = true;
+
+    const enemyPresent = rollFinalScenarioEnemyPresence(expedition.finalScenario);
+    expedition.currentEncounter = {
+      ...expedition.finalScenario,
+      tipo: "escenario_final",
+      categoria: "final",
+      active: true,
+      enemyPresent,
+      allowedActions: enemyPresent ? expedition.finalScenario.allowedActions : ["retirarse"]
+    };
+
+    texto += `\n\n⚠️ **Has llegado al final de la expedición.** Usa \`!desafiar\` para encarar el último escenario.`;
+  }
+
+  await db.updateTravelerData(message.author.id, { salud: saludActual });
+  return message.reply(texto);
   }
 }
 
