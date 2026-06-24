@@ -3169,112 +3169,38 @@ async function handleExpedicionDesafiar(message) {
     }
 
     // 🟢 SOLUCIÓN: Definir cuánto daño recibes dependiendo de qué fallaste
-    const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
-
-    // 🟢 NUEVA LÓGICA: Probabilidad de evadir el daño al fallar un obstáculo
-    let evadioDano = false;
     
-    if (isObstacle) {
-      let probEvadir = 0.15;
-      probEvadir += (utilTotals.exploration || 0) * 0.40;
-      probEvadir += (utilTotals.survival || 0) * 0.50;
-      probEvadir += (utilTotals.willpower || 0) * 0.30;
+      const isObstacle = activeEncounter.tipo === "obstaculo" || activeEncounter.categoria === "obstaculo";
 
-      // Tope máximo del 85% para que siempre exista un pequeño riesgo
-      evadioDano = Math.random() < Math.min(probEvadir, 0.85);
-    }
+// ------------------------------
+// OBSTÁCULO: intento de evitar daño
+// ------------------------------
+let evadioDano = false;
 
-    let danoFinalRecibido = 0;
-  
-    if (!evadioDano) {
-      let danoBase = 10;
-      if (isObstacle) {
-        danoBase = Math.max(5, (activeEncounter.peligro || 1) * 4);
-      } else {
-        danoBase = (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0);
-      }
+if (isObstacle) {
+  let probEvadir = 0.15;
+  probEvadir += (utilTotals.exploration || 0) * 0.40;
+  probEvadir += (utilTotals.survival || 0) * 0.50;
+  probEvadir += (utilTotals.willpower || 0) * 0.30;
 
-      const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (bonuses.baseDamageReduction || 0) + (eqPower.totals.damageReduction || 0);
-      danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
-    }
+  evadioDano = Math.random() < Math.min(probEvadir, 0.85);
+}
 
-    // Calculamos la nueva salud
-    const nuevaSalud = saludActual - danoFinalRecibido;
-
-    // Procesamos la afinidad
-    const affinityGainedLoss = [];
-    for (const cid of [...new Set(owned)]) {
-      const result = await recordAffinity(cid, activeEncounter, "derrota", "derrota");
-      affinityGainedLoss.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
-      if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
-    }
-
-    // Procesamos las reacciones
-    const reactionIds = [...new Set(owned)].slice(0, 3);
-    const reactions = [];
-    for (const cid of reactionIds) {
-      const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "derrota");
-      if (line) reactions.push(`💬 ${line}`);
-    }
-
-    const textoFinalDerrota = activeEncounter.textoFracaso || activeEncounter.textoDerrota || "El desafío te superó esta vez.";
-
-    // Lógica si te quedas sin salud (Muerte/Rescate)
-    if (nuevaSalud <= 0) {
-      const utilMsg = await decrementUtilities(message.author.id);
-      
-      // Aquí el jugador cae: se limpia la expedición
-      await clearExpeditionParty(message.author.id);
-      expedition.pendingFinalScenario = false;
-      expeditions.delete(message.author.id);
-
-      await db.updateTravelerData(message.author.id, { salud: 100 });
-
-      const textoMuerte = activeEncounter.textoDerrotaTotal || textoFinalDerrota;
-
-      return message.reply(`💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg);
-    }
-
-    // Lógica si sobrevives con heridas (NO se borra la expedición)
-    const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
-    let saludConRegen = nuevaSalud;
-    let txtRegen = "";
-
-    // Regeneración por equipamiento (Solo si realmente recibiste daño)
-    if (healingBonusTotal > 0 && danoFinalRecibido > 0) {
-      const vidaARecuperar = Math.floor(healingBonusTotal * 100);
-      saludConRegen = Math.min(100, nuevaSalud + vidaARecuperar);
-      txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te recupera +${vidaARecuperar} HP.*`;
-    }
-
-    // Guardamos la salud resultante en la base de datos
-    await db.updateTravelerData(message.author.id, { salud: saludConRegen });
-
-    // Adaptamos el texto de reintento según el tipo de encuentro
-    const txtReintento = isObstacle 
-        ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a usar `!desafiar` para intentar superarlo o usa `!volver` para retirarte.*"
-        : "⚠️ *El enemigo sigue en pie. Usa `!desafiar` para reintentar el combate o `!volver` para huir.*";
-
-    // Adaptamos el texto de daño para reflejar si evadió el impacto
-    let reporteDano = "";
-    if (evadioDano) {
-      reporteDano = `Lograste evitar salir lastimado gracias a tus instintos de supervivencia y voluntad, pero el problema persiste.\n❤️ Salud intacta: ${saludConRegen}/100`;
-    } else {
-      reporteDano = `Recibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}`;
-    }
-
-    const textoExitoObstaculo =
-  activeEncounter.textoExito ||
-  activeEncounter.textoInicio ||
-  activeEncounter.descripcion ||
-  "Superas el obstáculo.";
-
+// ------------------------------
+// OBSTÁCULO SUPERADO: salir del bucle
+// ------------------------------
 if (isObstacle && evadioDano) {
-  const xpGain = Number(activeEncounter.xp || 0);
-  const pointsGain = Number(activeEncounter.puntos || 0);
+  const textoExitoObstaculo =
+    activeEncounter.textoExito ||
+    activeEncounter.textoInicio ||
+    activeEncounter.descripcion ||
+    "Superas el obstáculo.";
 
-  if (xpGain > 0) expedition.xpEarned = (expedition.xpEarned || 0) + xpGain;
-  if (pointsGain > 0) expedition.pointsEarned = (expedition.pointsEarned || 0) + pointsGain;
+  const xpGain = Number(activeEncounter.xp || 0);
+
+  if (xpGain > 0) {
+    expedition.xpEarned = (expedition.xpEarned || 0) + xpGain;
+  }
 
   expedition.progress += 1;
   expedition.currentEncounter = null;
@@ -3282,8 +3208,8 @@ if (isObstacle && evadioDano) {
   const totalEncuentros = expedition.mission.encuentros?.length || 0;
   let texto = `✅ **${activeEncounter.titulo}**\n\n${textoExitoObstaculo}`;
 
-  if (xpGain > 0 || pointsGain > 0) {
-    texto += `\n\n🏆 Recompensa obtenida: +${pointsGain} pts | +${xpGain} XP`;
+  if (xpGain > 0) {
+    texto += `\n\n🏆 Recompensa obtenida: +${xpGain} XP`;
   }
 
   if (expedition.progress < totalEncuentros) {
@@ -3307,9 +3233,91 @@ if (isObstacle && evadioDano) {
 
   await db.updateTravelerData(message.author.id, { salud: saludActual });
   return message.reply(texto);
-  }
 }
 
+// ------------------------------
+// SI NO SE EVADIO, HAY DAÑO
+// ------------------------------
+let danoFinalRecibido = 0;
+
+if (!evadioDano) {
+  const danoBase = isObstacle
+    ? Math.max(5, (activeEncounter.peligro || 1) * 4)
+    : (activeEncounter.peligro || 1) * 7 + (activeEncounter.damageBonus || 0);
+
+  const totalDmgRed =
+    (bonuses.damageReduction || 0) +
+    (affinityCombat.damageReduction || 0) +
+    (bonuses.baseDamageReduction || 0) +
+    (eqPower.totals.damageReduction || 0);
+
+  danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
+}
+
+// Calculamos la nueva salud
+const nuevaSalud = saludActual - danoFinalRecibido;
+
+// Procesamos afinidad y reacciones solo si quieres conservarlo en fallo
+const affinityGainedLoss = [];
+for (const cid of [...new Set(owned)]) {
+  const result = await recordAffinity(cid, activeEncounter, "derrota", "derrota");
+  affinityGainedLoss.push(`• **${companions[cid]?.nombre || cid}**: +${result.gain} afinidad`);
+  if (result.rankMessage) affinityGainedLoss.push(`  ${result.rankMessage}`);
+}
+
+const reactionIds = [...new Set(owned)].slice(0, 3);
+const reactions = [];
+for (const cid of reactionIds) {
+  const line = await companionReaction(cid, { ...activeEncounter, userId: message.author.id }, "derrota");
+  if (line) reactions.push(`💬 ${line}`);
+}
+
+const textoFinalDerrota =
+  activeEncounter.textoFracaso ||
+  activeEncounter.textoDerrota ||
+  "El desafío te superó esta vez.";
+
+// Muerte / rescate
+if (nuevaSalud <= 0) {
+  const utilMsg = await decrementUtilities(message.author.id);
+
+  await clearExpeditionParty(message.author.id);
+  expedition.pendingFinalScenario = false;
+  expeditions.delete(message.author.id);
+
+  await db.updateTravelerData(message.author.id, { salud: 100 });
+
+  const textoMuerte = activeEncounter.textoDerrotaTotal || textoFinalDerrota;
+
+  return message.reply(
+    `💀 **Has caído...**\n\n${textoMuerte}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n\n*(Tu salud ha sido restaurada a 100/100, pero la misión se ha perdido)*\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}` + utilMsg
+  );
+}
+
+// Supervivencia con heridas
+const healingBonusTotal = Number(eqPower?.totals?.healingBonus || 0);
+let saludConRegen = nuevaSalud;
+let txtRegen = "";
+
+if (healingBonusTotal > 0 && danoFinalRecibido > 0) {
+  const vidaARecuperar = Math.floor(healingBonusTotal * 100);
+  saludConRegen = Math.min(100, nuevaSalud + vidaARecuperar);
+  txtRegen = `\n✨ *Tu equipamiento de curación reacciona y te recupera +${vidaARecuperar} HP.*`;
+}
+
+await db.updateTravelerData(message.author.id, { salud: saludConRegen });
+
+const txtReintento = isObstacle
+  ? "⚠️ *El obstáculo sigue bloqueando tu camino. Vuelve a usar `!desafiar` para intentar superarlo o usa `!volver` para retirarte.*"
+  : "⚠️ *El enemigo sigue en pie. Usa `!desafiar` para reintentar el combate o `!volver` para huir.*";
+
+const reporteDano = evadioDano
+  ? `Lograste evitar salir lastimado gracias a tus instintos de supervivencia y voluntad, pero el problema persiste.\n❤️ Salud intacta: ${saludConRegen}/100`
+  : `Recibes **${danoFinalRecibido} de daño**.\n❤️ Salud restante: ${saludConRegen}/100${txtRegen}`;
+
+return message.reply(
+  `❌ **Intento fallido**\n\n${textoFinalDerrota}\n\n${reporteDano}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
+);
 // Función principal para resolver las acciones dentro del escenario final o subescenarios
 async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
