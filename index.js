@@ -3313,6 +3313,7 @@ const reporteDano = evadioDano
 return message.reply(
   `❌ **Intento fallido**\n\n${textoFinalDerrota}\n\n${reporteDano}\n\n🤝 Afinidad afectada:\n${affinityGainedLoss.length ? affinityGainedLoss.join("\n") : "• Ninguna"}\n\n${txtReintento}${reactions.length ? `\n\n${reactions.join("\n")}` : ""}`
 );
+  }
 // Función principal para resolver las acciones dentro del escenario final o subescenarios
 async function procesarAccionEscenario(message, expedition, normalizedAction) {
   const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
