@@ -356,7 +356,7 @@
             "success_negociar": "El lider acepta tu propuesta dejando libre a los niños a cambio de dejarlo irse sin ser atacado.",
             "success_retirarse": "Te devuelves al campamento para informar de la situación y pedir refuerzos.",
             "failure_atacar": "Tus esfuerzos no son suficientes y el combate se vuelve en tu contra. Eres expulsado de la mina con múltiples heridas.",
-            "failure_negociar": "Fallas al intentar negociar y te retiras para pedir más refuerzos y así evitar un mal peor para los niños."
+            "failure_negociar": "Fallas al intentar negociar y te retiras para pedir más refuerzos y así evitar un mal peor para los niños.",
             "failure_retirarse": "Regresas al campamento pero te enteras que los niños fueron llevados a otra parte y el rescate se escapa de tus manos."
           }
         }
