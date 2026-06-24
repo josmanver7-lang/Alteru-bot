@@ -303,7 +303,7 @@
     "puntos": 90,
     "xp": 40,
     "conclusionGeneral": {
-      "exito": "Has actuado con valentía. Completar esta tarea te otorga no solo tu recompensa en oro, sino la gratitud y el alivio de los habitantes de Calembel.",
+      "exito": "Has actuado con valentía. Completar esta tarea te otorga no solo tu recompensa acordada, sino la gratitud y el alivio de los habitantes de Calembel.",
       "fracaso": "Vuelves con pesar. La misión ha superado tus capacidades actuales y el regreso al pueblo se hace duro al no traer las noticias esperadas."
     },
     "encuentros": [
@@ -326,8 +326,11 @@
         "retirarse": "La mina parece demasiado peligrosa para ti solo. Retrocedes con la intención de informar su ubicación."
       },
       "completionText": {
-        "success": "Tu decisión de regresar por ayuda es sensata, aunque los minutos perdidos podrían ser vitales.",
-        "failure": "Al salir apresuradamente resbalas en la entrada, ganándote un buen golpe contra las rocas."
+              "completionText": {
+        "success_explorar": "Enciendes una antorcha y desciendes con paso firme. (Fase de exploración iniciada).",
+        "success_retirarse": "Tu decisión de regresar por ayuda es sensata, aunque los minutos perdidos podrían ser vitales.",
+        "failure_explorar": "Te adentras a ciegas y tropiezas en la oscuridad de la entrada, alertando a lo que sea que more dentro.",
+        "failure_retirarse": "Al salir apresuradamente resbalas en la entrada, ganándote un buen golpe contra las rocas."
       },
       "subEscenarios": {
         "explorar": {
@@ -346,12 +349,16 @@
           ],
           "actionText": {
             "atacar": "Lanzas un ataque sorpresa, buscando desarmar al líder antes de que lastime a alguien.",
-            "negociar": "Ofreces tu dinero y pertenencias intentando llegar a un acuerdo pacífico por los niños.",
+            "negociar": "Ofreces dejarlos irse sin atacarlos intentando llegar a un acuerdo pacífico por los niños.",
             "retirarse": "Te das cuenta de que no puedes salvarlos solo y retrocedes cautelosamente."
           },
           "completionText": {
-            "success": "Derrotas a la banda y aseguras el área. Levantas a los niños asustados y los guías de vuelta hacia la luz y la seguridad.",
-            "failure": "Tus esfuerzos no son suficientes y el combate se vuelve en tu contra. Eres expulsado de la mina con múltiples heridas."
+            "success_atacar": "Derrotas a la banda y aseguras el área. Levantas a los niños asustados y los guías de vuelta hacia la luz y la seguridad.",
+            "succes_negociar": "El lider acepta tu propuesta dejando libre a los niños a cambio de dejarlo irse sin ser atacado.",
+            "succes_retirarse": "Te devuelves al campamento para informar de la situación y pedir refuerzos.",
+            "failure_atacar": "Tus esfuerzos no son suficientes y el combate se vuelve en tu contra. Eres expulsado de la mina con múltiples heridas.",
+            "failure_negociar": "Fallas al intentar negociar y te retiras para pedir más refuerzos y así evitar un mal peor para los niños."
+            "failure_retirarse": "Regresas al campamento pero te enteras que los niños fueron llevados a otra parte y el rescate se escapa de tus manos."
           }
         }
       }
