@@ -92,8 +92,10 @@
         "retirarse": "Un paso atrás es una vida más. El informe bastará por hoy."
       },
       "completionText": {
-        "success": "Te preparas para lo inevitable y ante tus ojos ahora acostumbrados a la penumbra observas a las dispersas criaturas de poco tamaño y apenas armados como esperando tu llegada.",
-        "failure": "No logras encontrar el camino adecuado y tus pasos te llevaron de nuevo a la entrada de la cueva."
+        "success_infiltrar": "Te preparas para lo inevitable y ante tus ojos ahora acostumbrados a la penumbra observas a las dispersas criaturas de poco tamaño y apenas armados como esperando tu llegada.",
+        "success_retirarse": "Decides dar vuelta atrás y regresar al campamento para informar lo que viste y quizás regresar con refuerzos.",
+        "failure_infiltrar": "Te preparas para lo inevitable y ante tus ojos ahora acostumbrados a la penumbra observas a las dispersas criaturas de poco tamaño y apenas armados como esperando tu llegada, lo que te aterra y decides regresar avergonzado",
+        "failure_retirarse": "Decides dar vuelta atrás y regresar con el informe al campamento pero al llegar llegan noticias de trasgos atacando las rutas cercanas, cayendo la responsabilidad sobre tus hombros."
       },
       "subEscenarios": {
         "infiltrar": {
@@ -116,8 +118,12 @@
             "retirarse": "Te lanzas hacia la salida antes de que el enjambre te devore vivo."
           },
           "completionText": {
-            "success": "Pisas los cuerpos destrozados para no resbalar en su sangre negra. Sobreviviste al infierno cavernoso.",
-            "failure": "Sus filos oxidados y sucias garras te alcanzan. Te sacan arrastrado de milagro."
+            "success_atacar": "Pisas los cuerpos destrozados para no resbalar en su sangre negra. Sobreviviste al infierno cavernoso.",
+            "success_rodear": "Pisas los cuerpos destrozados para no resbalar en su sangre negra. Sobreviviste al infierno cavernoso.",
+            "success_retirarse": "Decides dar vuelta atrás y regresar al campamento para informar lo que viste y quizás regresar con refuerzos.",
+            "failure_atacar": "Sus filos oxidados y sucias garras te alcanzan. Te ves rodeado y sacan arrastrado salvandote milagro.",
+            "failure_rodear": "Sus filos oxidados y sucias garras te alcanzan. Te ves rodeado y sacan arrastrado salvandote milagro.",
+            "failure_retirarse": "Decides dar vuelta atrás y regresar con el informe al campamento pero al llegar llegan noticias de trasgos atacando las rutas cercanas, cayendo la responsabilidad sobre tus hombros."
           }
         }
       }
