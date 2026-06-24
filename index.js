@@ -2557,8 +2557,13 @@ async function handleExpedicionStart(message, args) {
 
   const activeCompanions = getOwnedCompanions(profile);
 
-  // Calculamos la salud máxima y respetamos el estado del jugador
-  const saludMax = calcularSaludMaxima(profile, equipment);
+  // CORRECCIÓN: Calculamos la salud máxima y aplicamos un seguro por si la función externa falla o da valores anómalos
+  let saludMax = 100;
+  if (typeof calcularSaludMaxima === "function") {
+    const calcMax = calcularSaludMaxima(profile, equipment);
+    if (typeof calcMax === "number" && !isNaN(calcMax)) saludMax = calcMax;
+  }
+  
   let saludInicial = (profile.salud !== undefined && profile.salud > 0) ? profile.salud : saludMax;
   if (saludInicial > saludMax) saludInicial = saludMax;
 
@@ -3014,13 +3019,22 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     success = Math.random() < Math.max(0.30, probExito);
   }
 
+  // CORRECCIÓN: Extracción robusta de los textos de resolución (soporta errores tipográficos del JSON)
+  const completionTexts = scenario.completionText?.completionText || scenario.completionText || {};
+  let finalResolutionText = completionTexts[`${success ? 'success' : 'failure'}_${normalizedAction}`] 
+                         || completionTexts[`${success ? 'succes' : 'failure'}_${normalizedAction}`] 
+                         || "";
+
+  if (!finalResolutionText && typeof buildFinalResolutionText === "function") {
+      finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
+  }
+
   if (success) {
-    // COMPROBACIÓN Y TRANSICIÓN A SUB-ESCENARIOS (Soporta la estructura con o sin el error tipográfico del JSON)
+    // COMPROBACIÓN Y TRANSICIÓN A SUB-ESCENARIOS
     const subEscenariosSource = scenario.subEscenarios || (scenario.completionText && scenario.completionText.subEscenarios);
     
     if (subEscenariosSource && subEscenariosSource[normalizedAction]) {
       const nextSub = subEscenariosSource[normalizedAction];
-      const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
       
       // Mutamos el estado de la expedición para apuntar al nuevo sub-escenario
       expedition.finalScenario = {
@@ -3037,7 +3051,8 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
       };
 
       let texto = `✅ **Avanzas en el Escenario Final**\n`;
-      if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+      // Ahora se mostrará el texto "Enciendes una antorcha y desciendes..." antes de la descripción.
+      if (finalResolutionText) texto += `\n*${finalResolutionText}*\n`;
       texto += `\n🎬 **${nextSub.titulo}**\n${nextSub.descripcion}\n\n`;
       if (nextSub.hasEnemies) {
         texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro})\n`;
@@ -3056,7 +3071,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
     await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
 
-    const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
     const utilMsg = await decrementUtilities(message.author.id);
 
     await clearExpeditionParty(message.author.id);
@@ -3065,6 +3079,11 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     let texto = `✅ **Escenario Final Superado**\n`;
     if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
     if (combateData) texto += `\n⚔️ *Informe de Batalla:* Tu hueste prevaleció. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
+    
+    // Agregamos la conclusión general de éxito
+    const exitoGeneralText = expedition.mission?.conclusionGeneral?.exito;
+    if (exitoGeneralText) texto += `\n\n🌟 *${exitoGeneralText}*`;
+
     texto += `\n\n🏆 Recompensa total acumulada: +${pointsGain} pts | +${xpGain} XP`;
     texto += `\n\nLa expedición ha concluido con éxito.` + utilMsg;
     return message.reply(texto);
@@ -3089,7 +3108,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     // Al caer debilitado por completo se reinicia la salud al máximo teórico del jugador
     await db.updateTravelerData(message.author.id, { salud: expedition.saludActual <= 0 ? expedition.saludMaxima : expedition.saludActual });
 
-    const finalResolutionText = buildFinalResolutionText(normalizedAction, false, scenario);
     const utilMsg = await decrementUtilities(message.author.id);
 
     const estadoVidaTexto = expedition.saludActual <= 0 ? `Has caído al final de tu recorrido. Tu salud llegó a 0.` : `Salud Actual: **${expedition.saludActual}**/${expedition.saludMaxima}`;
@@ -3099,6 +3117,11 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
 
     let texto = `❌ **Escenario Final Infructuoso**\n`;
     if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+
+    // CORRECCIÓN: Agregamos la conclusión general de fracaso
+    const fracasoGeneralText = expedition.mission?.conclusionGeneral?.fracaso;
+    if (fracasoGeneralText) texto += `\n🍂 *${fracasoGeneralText}*\n`;
+
     if (combateData) texto += `\n⚔️ *Informe de Batalla:* Tu hueste cayó repelida. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
     texto += `\n\nRecibes **${damage}** de daño. (${estadoVidaTexto})\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
     texto += `\n\nLa expedición ha concluido.` + utilMsg;
