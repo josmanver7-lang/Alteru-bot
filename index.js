@@ -2605,7 +2605,8 @@ async function handleExpedicionInteract(message) {
   const bonuses = getAdventureBonuses(profile, equipment);
 
   const probExito = 0.70 + (bonuses.negotiation * 0.80) + (bonuses.willpower * 0.30) - ((special.peligro || 1) * 0.05);
-  const success = Math.random() < Math.min(probExito, 0.95);
+  // Garantizamos al menos 30% de éxito para no generar paredes infranqueables
+  const success = Math.random() < Math.max(0.30, Math.min(probExito, 0.95));
 
   expedition.progress += 1;
   let textoFinalInteraccion = "";
@@ -2950,7 +2951,13 @@ async function handleExpedicionDesafiar(message) {
       const combatBonus = typeof getCompanionBonus === "function" ? getCompanionBonus(owned) : { damageReduction: 0, faelonHeal: 0 };
 
       // Cálculo mediante la matriz de stats
-      const resultado = resolverCombateMixto(profile, equipment, encounter, combatBonus, affinityCombat);
+      let resultado = resolverCombateMixto(profile, equipment, encounter, combatBonus, affinityCombat);
+      
+      // ✅ EVITAR BUCLE INFINTIO: Siempre hay un mínimo de 30% de probabilidad de éxito en combate.
+      if (!resultado.exito && Math.random() < 0.30) {
+          resultado.exito = true;
+      }
+
       let textoAdicional = "";
 
       if (!resultado.exito) {
@@ -2996,11 +3003,10 @@ async function handleExpedicionDesafiar(message) {
       baseSuccess += bonuses.baseSuccessBonus || 0;
       baseSuccess += eqPower.totals.successBonus || 0;
       
+      // ✅ EVITAR BUCLE INFINTIO: Siempre hay un mínimo de 30% de probabilidad de éxito en obstáculos.
       if (activeEncounter.tipo === "evento_especial") {
-          baseSuccess += playerClassBonus.specialBonus || 0;
-          baseSuccess += utilTotals.negotiation * 0.90;
-          baseSuccess += utilTotals.willpower * 0.45;
-          baseSuccess += utilTotals.stealth * 0.15;
+          let specialSuccess = baseSuccess + (playerClassBonus.specialBonus || 0) + (utilTotals.negotiation * 0.90) + (utilTotals.willpower * 0.45) + (utilTotals.stealth * 0.15);
+          success = Math.random() < Math.max(0.30, Math.min(specialSuccess, 0.95));
       } else if (activeEncounter.tipo === "obstaculo") {
           let baseSuccessOb = 0.70 - ((activeEncounter.peligro || 1) * 0.04);
           baseSuccessOb += playerClassBonus.explorationBonus || 0;
@@ -3009,7 +3015,9 @@ async function handleExpedicionDesafiar(message) {
           baseSuccessOb += utilTotals.willpower * 0.15;
           baseSuccessOb += bonuses.rangerBonus + affinityCombat.successBonus + affinityBonus;
           
-          success = Math.random() < Math.min(baseSuccessOb, 0.95);
+          success = Math.random() < Math.max(0.30, Math.min(baseSuccessOb, 0.95));
+      } else {
+          success = Math.random() < Math.max(0.30, Math.min(baseSuccess, 0.95));
       }
   }
 
@@ -3201,13 +3209,16 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     if (typeof resolverCombateMixto === "function") {
       const resultado = resolverCombateMixto(profile, equipment, rivalEncounter, combatBonus, affinityCombat);
       success = resultado.exito;
+      // ✅ EVITAR BUCLE INFINTIO en escenario final
+      if (!success && Math.random() < 0.30) success = true;
       combateData = { poderJugador: resultado.poderJugador || 0, poderEnemigo: resultado.poderEnemigo || 0 };
     } else {
       success = Math.random() > 0.45;
     }
   } else {
     const probExito = normalizedAction === "retirarse" ? 0.99 : 0.70;
-    success = Math.random() < probExito;
+    // ✅ EVITAR BUCLE INFINTIO en acciones que no sean de combate
+    success = Math.random() < Math.max(0.30, probExito);
   }
 
   if (success) {
