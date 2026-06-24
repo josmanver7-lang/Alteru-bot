@@ -3031,8 +3031,24 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
 
   if (success) {
     // COMPROBACIÓN Y TRANSICIÓN A SUB-ESCENARIOS
-    const subEscenariosSource = scenario.subEscenarios || (scenario.completionText && scenario.completionText.subEscenarios);
-    
+    // --- NUEVA LÓGICA DE DETECCIÓN DE SUBESCENARIOS ---
+     let subEscenariosSource = scenario.subEscenarios;
+
+// Si getFinalScenarioConfig limpió la propiedad del objeto dinámico, 
+// la rescatamos directamente de la estructura original de la misión
+if (!subEscenariosSource && expedition.mission?.escenarioFinal) {
+    // Validamos que estemos en el escenario raíz comparando los títulos
+    if (scenario.titulo === expedition.mission.escenarioFinal.titulo) {
+        subEscenariosSource = expedition.mission.escenarioFinal.subEscenarios;
+    }
+}
+
+// Retrocompatibilidad por si algún archivo viejo aún conserva la estructura anidada
+if (!subEscenariosSource && scenario.completionText) {
+    subEscenariosSource = scenario.completionText.subEscenarios || scenario.completionText.completionText?.subEscenarios;
+}
+// --------------------------------------------------
+
     if (subEscenariosSource && subEscenariosSource[normalizedAction]) {
       const nextSub = subEscenariosSource[normalizedAction];
       
