@@ -3849,13 +3849,44 @@ resetear"
     return message.reply({ embeds: [embed] });
   }
 
+    else if (command === "!armeria1") {
+    const state = await db.getEventState("armeria1").catch(() => null);
+    let items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
+    if (!items.length) return message.reply("No hay objetos disponibles en Armería 1.");
+    
+    // Mapeamos los objetos para incluir su raza y descripción en el formato visual
+    items = items.map(item => ({
+      ...item,
+      name: `${item.name} [${item.raza || "Todas las razas"}] — *${item.descripcion || item.description || "Sin descripción"}*`
+    }));
 
-  
+    const profile = await db.getProfile(message.author.id);
+    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+    
+    const embed = await renderCatalogEmbed("armeria1", items, "ARMERÍA 1", profile, cycleId);
+    return message.reply({ embeds: [embed] });
+  }
+  else if (command === "!armeria2") {
+    const state = await db.getEventState("armeria2").catch(() => null);
+    let items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
+    if (!items.length) return message.reply("No hay objetos disponibles en Armería 2.");
+    
+    // Mapeamos los objetos para incluir su raza y descripción en el formato visual
+    items = items.map(item => ({
+      ...item,
+      name: `${item.name} [${item.raza || "Todas las razas"}] — *${item.descripcion || item.description || "Sin descripción"}*`
+    }));
 
-
+    const profile = await db.getProfile(message.author.id);
+    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
+    
+    const embed = await renderCatalogEmbed("armeria2", items, "ARMERÍA 2", profile, cycleId);
+    return message.reply({ embeds: [embed] });
+  }
   else if (command === "!armeria") {
     return message.reply("La armería está dividida en dos partes: usa `!armeria1` o `!armeria2`.");
   }
+
     else if (command === "!mercader") {
     const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return message.reply("El mercader ambulante no está en el campamento en este momento.");
