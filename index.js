@@ -3469,7 +3469,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       texto += "\n";
     }
     return message.reply(texto.trim());
-  }
+}
   else if (command === "!equipo") { 
     const profile = await db.getProfile(message.author.id); 
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null); 
@@ -3914,28 +3914,7 @@ resetear"
   }
 
 
-  else if (command === "!armeria1") {
-    const state = await db.getEventState("armeria1").catch(() => null);
-    const items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
-    if (!items.length) return message.reply("No hay objetos disponibles en Armería 1.");
-    const profile = await db.getProfile(message.author.id);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    
-    // Cambiamos renderCatalog por renderCatalogEmbed
-    const embed = await renderCatalogEmbed("armeria1", items, "ARMERÍA 1", profile, cycleId);
-    return message.reply({ embeds: [embed] });
-  }
-  else if (command === "!armeria2") {
-    const state = await db.getEventState("armeria2").catch(() => null);
-    const items = (Array.isArray(state?.selection) ? state.selection : []).slice(0, 15);
-    if (!items.length) return message.reply("No hay objetos disponibles en Armería 2.");
-    const profile = await db.getProfile(message.author.id);
-    const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-    
-    // Cambiamos renderCatalog por renderCatalogEmbed
-    const embed = await renderCatalogEmbed("armeria2", items, "ARMERÍA 2", profile, cycleId);
-    return message.reply({ embeds: [embed] });
-  }
+  
 
 
   else if (command === "!armeria") {
@@ -4042,31 +4021,39 @@ resetear"
 
 
     return message.reply(`🛒 Has comprado **${found.nombre}** por **${price}** puntos.`);
-  }
-  else if (command === "!vender") {
+  }  
+    else if (command === "!vender") {
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!vender <nombre del objeto>`.");
 
-
+    // 1. Evitar crash si el perfil no existe en la base de datos
     const profile = await db.getProfile(message.author.id);
-    const inventory = normalizeInventory(profile.inventory);
-    const found = findInventoryItem(inventory, query);
+    if (!profile) return message.reply("No tienes un perfil creado todavía.");
 
+    // 2. Asegurar que 'inventory' exista en el perfil antes de normalizar
+    const inventory = normalizeInventory(profile.inventory || {});
+    const found = findInventoryItem(inventory, query);
 
     if (!found) return message.reply("No tienes ese objeto en el inventario.");
 
-
     const { category, item } = found;
+
+    // 3. Evitar crash en Object.values si equipment resuelve a null en lugar de rechazar
     const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
+    const safeEquipment = equipment || {};
 
+    // 4. Evitar crash si algún item equipado no tiene 'id'
+    const equippedIds = Object.values(safeEquipment)
+      .filter(Boolean)
+      .map(x => x?.id ? normalizeKey(x.id) : null)
+      .filter(Boolean);
 
-    const equippedIds = Object.values(equipment).filter(Boolean).map(x => normalizeKey(x.id));
-    if (equippedIds.includes(normalizeKey(item.id))) return message.reply(`No puedes vender **${item.nombre}** porque lo llevas equipado.`);
-
+    if (item?.id && equippedIds.includes(normalizeKey(item.id))) {
+      return message.reply(`No puedes vender **${item.nombre}** porque lo llevas equipado.`);
+    }
 
     const basePrice = Number(item.precioBase ?? item.precioCompra ?? item.precio ?? 0);
     const sellPrice = Math.max(1, Math.floor(basePrice * 0.75));
-
 
     if (isStackableItem(item) && Number(item.cantidad || 1) > 1) {
       const idx = inventory[category].findIndex(x => normalizeKey(x.id) === normalizeKey(item.id));
@@ -4079,13 +4066,15 @@ resetear"
       if (idx !== -1) inventory[category].splice(idx, 1);
     }
 
-
     await db.addPoints(message.author.id, sellPrice);
+    
+    // NOTA: Asegúrate de que updateTravelerData sea el método correcto para guardar,
+    // ya que para leer los datos estás utilizando getProfile.
     await db.updateTravelerData(message.author.id, { inventory: normalizeInventory(inventory) });
-
 
     return message.reply(`💰 Has vendido **${item.nombre}** por **${sellPrice}** puntos.`);
   }
+    
   else if (command === "!contratar") {
     if (!args[1]) return message.reply("Usa !contratar <nombre>");
 
