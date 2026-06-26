@@ -2985,7 +2985,6 @@
     "hand": 1,
     "raza": ["hombre"],
     "rareza": "superior",
-    "material": "acero templado y oro",
     "precioBase": 1850,
     "descripcion": "Portada por los líderes de los Éored. Su presencia en la vanguardia infunde un valor inquebrantable.",
     "efecto": { "meleeBonus": 0.04, "damageBonus": 1, "willpowerBonus": 0.03, "negotiationBonus": 0.03, "survivalBonus": 0.03 }
@@ -2998,9 +2997,219 @@
     "hand": 1,
     "raza": ["hombre"],
     "rareza": "legendario",
-    "material": "madera ancestral y mithril bajo",
     "precioBase": 5200,
     "descripcion": "Una reliquia forjada en los días de Eorl el Joven. Rompe las filas enemigas como un rayo verde y dorado.",
     "efecto": { "meleeBonus": 0.06, "damageBonus": 2, "willpowerBonus": 0.04, "negotiationBonus": 0.04, "survivalBonus": 0.04 }
-  }
+  },
+  [
+  {
+    "id": "jubon_cuero_marca",
+    "nombre": "Jubón de Cuero de la Marca",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 640,
+    "descripcion": "Chaqueta de cuero flexible tratada con grasa, óptima para resistir el viento cabalgando.",
+    "efecto": { "damageReduction": 0.02, "survivalBonus": 0.01, "willpowerBonus": 0.01 }
+  },
+  {
+    "id": "cota_malla_ligera_rohan",
+    "nombre": "Cota de Malla Ligera de Rohan",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 1540,
+    "descripcion": "Eslabones de hierro remachados sobre cuero, equilibrados para no entorpecer la montura.",
+    "efecto": { "damageReduction": 0.04, "survivalBonus": 0.02, "willpowerBonus": 0.02 }
+  },
+  {
+    "id": "cota_malla_acero_rohan",
+    "nombre": "Cota de Mallas de Acero Rohirrim",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 3130,
+    "descripcion": "Protección pesada entrelazada con refuerzos de cuero curtido procedentes de las forjas de Edoras.",
+    "efecto": { "damageReduction": 0.05, "survivalBonus": 0.03, "willpowerBonus": 0.03, "negotiationBonus": 0.01 }
+  },
+  {
+    "id": "armadura_guardia_meduseld",
+    "nombre": "Armadura de la Guardia de Meduseld",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 5200,
+    "descripcion": "Una mítica loriga de escamas doradas y acero brunido que repele los ataques e inspira a los aliados.",
+    "efecto": { "damageReduction": 0.06, "survivalBonus": 0.05, "willpowerBonus": 0.05, "negotiationBonus": 0.03 }
+  },
+  {
+    "id": "gambeson_lana_valle",
+    "nombre": "Gambesón de Lana de Valle",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 650,
+    "descripcion": "Ropa acolchada de hilos densos usada por los bateleros para protegerse del frío norteño.",
+    "efecto": { "damageReduction": 0.01, "survivalBonus": 0.02, "explorationBonus": 0.01 }
+  },
+  {
+    "id": "coraza_cuero_esgaroth",
+    "nombre": "Coraza de Cuero de Esgaroth",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 1320,
+    "descripcion": "Peto de cuero endurecido y encerado, diseñado para repeler la humedad de la Ciudad del Lago.",
+    "efecto": { "damageReduction": 0.03, "survivalBonus": 0.03, "explorationBonus": 0.02 }
+  },
+  {
+    "id": "loriga_escamas_valle",
+    "nombre": "Loriga de Escamas de Valle",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 3400,
+    "descripcion": "Placas de metal superpuestas imitando escamas de pez, forjadas con acero importado de Erebor.",
+    "efecto": { "damageReduction": 0.05, "survivalBonus": 0.04, "negotiationBonus": 0.03, "explorationBonus": 0.02 }
+  },
+  {
+    "id": "armadura_real_valle",
+    "nombre": "Armadura Real de Valle",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 4900,
+    "descripcion": "Una obra maestra de placas de acero e incrustaciones preciosas que rememora la restauración de la estirpe de Girion.",
+    "efecto": { "damageReduction": 0.06, "survivalBonus": 0.04, "willpowerBonus": 0.04, "negotiationBonus": 0.05 }
+  },
+  {
+    "id": "rodela_madera_rohan",
+    "nombre": "Rodela de Madera de Rohan",
+    "slot": "escudo",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precio": 350,
+    "descripcion": "Escudo redondo y plano hecho de tablas de pino unidas con bandas de cuero.",
+    "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "escudo_redondo_rohan",
+    "nombre": "Escudo Redondo de Rohan",
+    "slot": "escudo",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 780,
+    "descripcion": "Ligero y robusto, con un umbo de hierro central para desviar estocadas sobre la montura.",
+    "efecto": { "damageReduction": 0.02, "meleeBonus": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "escudo_guerra_rohirrim",
+    "nombre": "Escudo de Guerra Rohirrim",
+    "slot": "escudo",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1600,
+    "descripcion": "Ostenta el característico diseño del caballo tallado, reforzado con un fuerte aro perimetral de acero.",
+    "efecto": { "damageReduction": 0.04, "meleeBonus": 0.02, "willpowerBonus": 0.02, "survivalBonus": 0.02 }
+  },
+  {
+    "id": "escudo_guardia_meduseld",
+    "nombre": "Escudo de la Guardia de Meduseld",
+    "slot": "escudo",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 3400,
+    "descripcion": "Escudo real recubierto de bronce labrado con los caballos gemelos; detiene golpes devastadores.",
+    "efecto": { "damageReduction": 0.06, "meleeBonus": 0.03, "willpowerBonus": 0.05, "survivalBonus": 0.03 }
+  },
+  {
+    "id": "yelmo_acero_abierto",
+    "nombre": "Yelmo de Acero Abierto Rohirrim",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 230,
+    "descripcion": "Un capacete básico que protege la parte superior del cráneo sin obstruir la visión.",
+    "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "yelmo_eorlinga_crines",
+    "nombre": "Yelmo de Eorlinga con Crines",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1300,
+    "descripcion": "Yelmo bruñido con grabados de hilos de plata, protectores fijos para las mejillas y una larga crin.",
+    "efecto": { "damageReduction": 0.03, "survivalBonus": 0.03, "willpowerBonus": 0.02 }
+  },
+  {
+    "id": "yelmo_guardia_meduseld",
+    "nombre": "Yelmo de la Guardia de Meduseld",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 3300,
+    "descripcion": "Adornado con crines fluidas que ondean en la carga; una pieza real que infunde pavor.",
+    "efecto": { "damageReduction": 0.04, "survivalBonus": 0.04, "willpowerBonus": 0.05, "negotiationBonus": 0.02 }
+  },
+  {
+    "id": "casquete_hierro_valle",
+    "nombre": "Casquete de Hierro Simple",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 220,
+    "descripcion": "Casco esférico utilitario, fácil de producir y común entre las milicias fluviales.",
+    "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "yelmo_carrilleras_valle",
+    "nombre": "Yelmo con Carrilleras de Valle",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 650,
+    "descripcion": "Yelmo reforzado con solapas batientes acolchadas que cuidan los laterales de la cara contra el viento helado.",
+    "efecto": { "damageReduction": 0.02, "explorationBonus": 0.01, "survivalBonus": 0.01 }
+  },
+  {
+    "id": "yelmo_cresta_cisne",
+    "nombre": "Yelmo con Cresta de Cisne",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1400,
+    "descripcion": "Elegante protección de acero que denota rango, decorada con motivos que recuerdan a las aves del lago.",
+    "efecto": { "damageReduction": 0.03, "survivalBonus": 0.02, "negotiationBonus": 0.02 }
+  },
+  {
+    "id": "yelmo_dragon_alado",
+    "nombre": "Yelmo de Dragón Alado",
+    "slot": "cabeza",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 3500,
+    "descripcion": "Forjado con aleaciones secretas de Erebor, su silueta evoca la caída del gran enemigo de la región.",
+    "efecto": { "damageReduction": 0.04, "willpowerBonus": 0.04, "negotiationBonus": 0.04 }
+  },
+  {
+    "id": "tabardo_lamedon",
+    "nombre": "Tabardo con Placa de Lamedon",
+    "slot": "pecho",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 3500,
+    "descripcion": "Dividido heráldicamente, protegido con una placa pectoral de acero con el grabado del Árbol Blanco",
+    "efecto": { "damageReduction": 0.05, "willpowerBonus": 0.04, "survivalBonus": 0.04 }
+  },
+  {
+    "id": "paves_abordaje",
+    "nombre": "Pavés de Abordaje de Pelargir",
+    "slot": "escudo",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 900,
+    "descripcion": "Escudo ovalado grande con fondo verde mar y borde metálico, decorado con motivos de estrellas, una gaviota y un ancla central en color blanco",
+    "efecto": { "damageReduction": 0.02, "willpowerBonus": 0.01, "survivalBonus": 0.02, "thrownBonus": 0.02 }
+  }   
 ]
