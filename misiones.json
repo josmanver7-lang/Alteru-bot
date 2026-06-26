@@ -957,7 +957,8 @@
   "destino": "Lámedon",
   "nivel": 2,
   "descripcion": "Después de una reciente batalla un capitán orco llamado Muzgash ha escapado y se le ha visto en los caminos hacia Blackroot Vale. Hay que cazarlo y evitar que desaparezca o reagrupe otra hueste",
-  "xp": 110,
+  "puntos": 150,
+  "xp": 90,
   "conclusionGeneral": {
     "exito": "La cabeza cercenada de Muzgash cuelga ahora de tu cinto, un macabro testimonio de hierro y sangre negra que gotea sobre el polvo del camino. Al cruzar las empalizadas del campamento base, un murmullo de asombro y respeto reverbera entre los centinelas. El capitán recibe tu informe con un asentimiento severo y una mirada de profunda aprobación, reconociendo el peso de tu hazaña. Los senderos de Lámedon vuelven a respirar en paz, y tu recompensa hace honor al peligro superado.",
     "fracaso": "El regreso se convierte en un doloroso calvario de humillación. Arrastrando los pies por los escarpados senderos de Lámedon, con la armadura abollada y la carne surcada por crueles cortes de cimitarra, entras al campamento bajo la pesada y silenciosa mirada de tus compañeros. El informe es breve y amargo: el capitán orco sigue libre, y su risa gutural parece resonar aún entre los riscos del desfiladero. No hay oro ni gloria hoy; solo el frío invierno de la derrota y la certeza de que el enemigo sigue acechando en las sombras."
