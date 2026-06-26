@@ -422,7 +422,8 @@ const companions = {
     equipo: "• Espada larga templada\n• Escudo rectangular del Pelennor\n• Placa metálica\n• Capa de Cúridwan",
     imagenUrl: "https://i.ibb.co/6RM6QWb9/Grid-Art-20260620-142725615.png",
     color: "#4A0E4E",
-    coste: "500"
+    coste: "500",
+    requisito: "5"
   },
   nieriel: {
     nombre: "Nieriel",
@@ -436,7 +437,7 @@ const companions = {
     equipo: "• Armadura y Capa del Cisne\n• Escudo Doncella del Cisne\n• Casco de Doncella del Cisne",
     imagenUrl: "https://i.imgur.com/2XyOeOh.png",
     color: "#E5E4E2",
-    coste: "200"
+    coste: "200",
   },
   cirdil: {
     nombre: "Cirdil",
@@ -506,7 +507,8 @@ const companions = {
     equipo: "• Arco largo de montaraz\n• Capa sombría con capucha\n• Espada corta de acero",
     imagenUrl: "https://i.ibb.co/d4r6DWTy/Grid-Art-20260620-192213159.png",
     color: "#223322",
-    coste: "1000"
+    coste: "1000", 
+    requisito: "7"
   }
 };
 
