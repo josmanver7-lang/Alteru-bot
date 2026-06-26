@@ -326,6 +326,7 @@ export async function rerollMarketPrices(catalogName, items = []) {
 }
 
 export async function getDynamicPrice(catalogName, item) {
+  export { getDynamicPrice as getMarketPrice };
   const database = await connectDB();
   const key = getMarketKey(catalogName, item.id);
   const doc = await database.collection("market_prices").findOne({ _id: key });
