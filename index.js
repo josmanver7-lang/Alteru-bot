@@ -3962,9 +3962,9 @@ resetear"
 
     const { category, item } = found;
 
-    // 3. Evitar crash en Object.values si equipment resuelve a null en lugar de rechazar
-    const equipment = await db.getEquipment(message.author.id).catch(() => ({}));
-    const safeEquipment = equipment || {};
+        // 3. Obtener el equipo directamente del perfil, evitando el crash si db.getEquipment no existe
+    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+    const safeEquipment = getResolvedEquipment(profile, equipmentRaw) || {};
 
     // 4. Evitar crash si algún item equipado no tiene 'id'
     const equippedIds = Object.values(safeEquipment)
