@@ -950,5 +950,45 @@
         }
       }
     }
+  },
+  {
+  "id": "caceria_muzgash",
+  "titulo": "La cacería de Muzgash",
+  "destino": "Lámedon",
+  "nivel": 2,
+  "descripcion": "Después de una reciente batalla un capitán orco llamado Muzgash ha escapado y se le ha visto en los caminos hacia Blackroot Vale. Hay que cazarlo y evitar que desaparezca o reagrupe otra hueste",
+  "xp": 110,
+  "conclusionGeneral": {
+    "exito": "La cabeza cercenada de Muzgash cuelga ahora de tu cinto, un macabro testimonio de hierro y sangre negra que gotea sobre el polvo del camino. Al cruzar las empalizadas del campamento base, un murmullo de asombro y respeto reverbera entre los centinelas. El capitán recibe tu informe con un asentimiento severo y una mirada de profunda aprobación, reconociendo el peso de tu hazaña. Los senderos de Lámedon vuelven a respirar en paz, y tu recompensa hace honor al peligro superado.",
+    "fracaso": "El regreso se convierte en un doloroso calvario de humillación. Arrastrando los pies por los escarpados senderos de Lámedon, con la armadura abollada y la carne surcada por crueles cortes de cimitarra, entras al campamento bajo la pesada y silenciosa mirada de tus compañeros. El informe es breve y amargo: el capitán orco sigue libre, y su risa gutural parece resonar aún entre los riscos del desfiladero. No hay oro ni gloria hoy; solo el frío invierno de la derrota y la certeza de que el enemigo sigue acechando en las sombras."
+  },
+  "encuentros": [
+    "evento_especial",
+    "obstaculo",
+    "enemigo_numeroso"
+  ],
+  "escenarioFinal": {
+    "enabled": true,
+    "titulo": "El veredicto del acero: Capitán Muzgash",
+    "descripcion": "Las huellas de sangre fresca mueren en un recodo angosto, donde las ciclópeas paredes de roca gris parecen cerrarse como una tumba de piedra. Allí, bloqueando la única salida, aguarda Muzgash. Es una imponente mole de músculos fibrosos y piel verdosa surcada por viejas cicatrices de guerra, ataviado con retazos de cuero endurecido y placas de hierro remachadas. Al notar tu presencia, una mueca grotesca expone sus colmillos amarillentos mientras blande una pesada cimitarra mellada que exhala el vaho de sus recientes carnicerías. El viento silba entre las grietas, marcando el inicio de un silencio sepulcral. No hay espacio para tácticas ni emboscadas; la confrontación final ha llegado.",
+    "hasEnemies": true,
+    "enemyLabel": "Capitán Muzgash",
+    "enemyChance": 1.0,
+    "peligro": 3,
+    "categoria": "jefe",
+    "bonus": { "meleeBonus": 0.04, "damageBonus": 2 },
+    "allowedActions": [
+      "atacar",
+      "retirarse"
+    ],
+    "actionText": {
+      "atacar": "Afianzas el agarre de tu arma hasta que los nudillos se tornan blancos, bloqueas el temblor de tus piernas y exhalas un último suspiro helado. Con un grito de guerra que desafía el rugido de la bestia, te lanzas al frente en una carga frenética, buscando que la velocidad de tu acero sorprenda la guardia del descomunal capitán orco en un choque a vida o muerte.",
+      "retirarse": "El terror, denso y paralizante, se clava en tu pecho al medir la monstruosa envergadura y la mirada sanguinaria de Muzgash. Das un paso atrás, manteniendo tu arma en alto mientras tus botas resbalan en la grava suelta. Sabes que retroceder ante semejante engendro es tentar al destino, pero el instinto de supervivencia vence al orgullo; rompes la distancia y buscas desesperadamente una ruta de escape entre los riscos antes de que su pesada hoja caiga sobre ti."
+    },
+    "completionText": {
+      "success": "El combate es una danza brutal de chispas y lamentos metálicos. Logras esquivar por milímetros un letal tajo descendente que pulveriza el suelo a tus pies y, aprovechando el desequilibrio del monstruo, hundes tu acero con precisión quirúrgica en la juntura desprotegida de su coraza. Muzgash ahoga un bramido de dolor que se ahoga en un borboteo carmesí; sus ojos pierden el brillo de la furia y se desploma pesadamente como un roble caído, tiñendo la tierra con su viscosa sangre negra.",
+      "failure": "La fuerza bruta de Muzgash resulta inhumana. Su cimitarra impacta contra tu defensa con la violencia de un ariete, fracturando tu postura y entumeciendo tu brazo. Antes de que puedas reaccionar, un revés de su guantelete de hierro te golpea el rostro, nublando tu vista de dolor y carmesí. Tendido en el suelo, viendo la sombra de su hoja alzarse para dar el golpe de gracia, reúnes tus últimas fuerzas en un agónico arrastre, logrando escurrirte milagrosamente por una grieta de la roca mientras las crueles burlas del orco sellan tu derrota."
+    }
   }
+}
 ]
