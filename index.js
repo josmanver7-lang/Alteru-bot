@@ -2540,6 +2540,64 @@ async function getCompanionReactionsText(userId, companionsList, context, mode) 
 //        LÓGICA LIMPIA DE EXPEDICIONES
 // ==========================================
 
+
+// Función auxiliar para inyectar reacciones de IA según personalidad
+function obtenerReaccionCompanero(owned, contexto) {
+  if (!owned || owned.length === 0) return "";
+  
+  // Priorizar al compañero equipado si existe en el array
+  let clave = "generico";
+  const strOwned = owned.join(" ").toLowerCase();
+  
+  if (strOwned.includes("faelon")) clave = "faelon";
+  else if (strOwned.includes("nieriel")) clave = "nieriel";
+  else if (strOwned.includes("alteru")) clave = "alteru";
+  else if (strOwned.includes("cirdil")) clave = "cirdil";
+  else if (strOwned.includes("duinor")) clave = "duinor";
+  
+  const reacciones = {
+    faelon: {
+      inicio: "Faelon ajusta su equipo: «Que la luz nos guíe en este sendero oscuro».", 
+      exito: "Faelon sonríe aliviado: «Bien hecho, los Valar nos favorecen hoy».", 
+      fracaso: "Faelon prepara hierbas curativas: «Cuidado, la oscuridad aquí aún es muy fuerte».", 
+      final: "Faelon empuña su bastón rúnico: «El destino de esta travesía se decide ahora»." 
+    },
+    nieriel: {
+      inicio: "Nieriel alza su escudo: «Ningún mal pasará mientras yo esté en pie».", 
+      exito: "Nieriel asiente firme: «Una victoria más. No bajemos la guardia aún».", 
+      fracaso: "Nieriel frunce el ceño: «Reagrúpate. Mi escudo resistirá el embate».", 
+      final: "Nieriel desenvaina su espada: «¡Por la luz de las estrellas, no retrocederemos!»."
+    },
+    alteru: {
+      inicio: "Altéru otea el horizonte: «Mantén los ojos abiertos, el peligro aguarda».", 
+      exito: "Altéru limpia su hoja: «Un obstáculo menos. Sigamos moviéndonos».", 
+      fracaso: "Altéru aprieta los dientes: «Retrocede un paso, pero no les des la espalda».", 
+      final: "Altéru levanta su arma con fiereza: «¡Por Gondor! Terminemos con esto»."
+    },
+    cirdil: {
+      inicio: "Cirdil golpea su escudo: «¡Que vengan! Gondor no teme a las sombras».", 
+      exito: "Cirdil ríe a carcajadas: «¡Ja! Sabía que no eran rivales para nosotros».", 
+      fracaso: "Cirdil se sacude el polvo: «¡Maldición! Tienen un golpe más duro de lo que parecía».", 
+      final: "Cirdil respira hondo: «Es el momento de la verdad. ¡No cedas ni un palmo de terreno!»."
+    },
+    duinor: {
+      inicio: "Duinor desenvaina sus mandobles: «Espero que valga la pena el viaje».",
+      exito: "Duinor sonríe con arrogancia: «¿Eso fue todo? Apenas calentaba».",
+      fracaso: "Duinor escupe sangre: «Pagaran caro este rasguño».",
+      final: "Duinor choca sus aceros: «¡Al fin! Una verdadera batalla»."
+    },
+    generico: {
+      inicio: "Tu aliado mira el entorno: «El camino es incierto, pero estamos listos».", 
+      exito: "Tu aliado celebra: «¡Así se hace! Sigamos adelante sin perder tiempo».", 
+      fracaso: "Tu compañero escupe al suelo: «Un duro golpe, pero no nos rendiremos».", 
+      final: "Tu aliado aprieta su arma: «Llegó el momento. Concéntrate y venceremos»." 
+    }
+  };
+  
+  const texto = reacciones[clave][contexto] || reacciones.generico[contexto];
+  return `\n💬 *${texto}*`;
+        }
+
 async function handleExpedicionStart(message, args) {
   const state = await db.getQuotaState(message.author.id, "expedicion", EXPEDITION_WINDOW_MS);
   if (state.attempts >= EXPEDITION_LIMIT) {
