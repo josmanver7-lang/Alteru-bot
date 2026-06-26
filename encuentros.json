@@ -564,5 +564,33 @@
   "textoDerrota": "La letal combinación de acero y brujería resulta insuperable. Mientras intentas abrirte paso entre los implacables guerreros Urzrak, una maldición paralizante de Akhram te clava los pies al suelo. Indefenso por un segundo, recibes un impacto brutal de un escudo Urzrak que te fractura las costillas, seguido de una descarga de fuego oscuro que calcina tu armadura. Peleas salvajemente desde el suelo con tus últimas fuerzas, hiriendo de gravedad a uno de los escoltas, pero la fatiga mágica apaga tus músculos. El hechicero rojo se acerca con una sonrisa cruel reflejada en sus ojos oscuros mientras alza un puñal ceremonial. Tu visión se desvanece por completo antes de que el golpe final se consume, dejándote a merced de su oscuro ritual.",
   "peligro": 3,
   "xp": 20
-}
+}, 
+  {
+    "id": "hueste_orca_desbandada_p2",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Hueste Orca Desbandada",
+    "bonus": { "meleeBonus": 0.01, "rangedBonus": 0.01 },
+    "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
+    "descripcion": "El día se extingue prematuramente bajo un cielo encorvado por nubarrones negros y un clima asfixiantemente oscuro. De entre la densa penumbra, los chillidos guturales delatan la aproximación de una hueste desbandada de orcos. Aunque carecen de formación militar, avanzan de forma masiva y amenazante portando escudos de madera astillada y espadas melladas; el frío metal de sus armas reluce tenuemente en la oscuridad mientras tensan sus arcos cortos listos para rodearte.",
+    "textoExito": "A pesar de la abrumadora negrura del entorno y la ventaja numérica de la hueste, mantienes la cabeza fría. Esquivas las toscas flechas que silban en la penumbra y contienes su caótico avance cuerpo a cuerpo con paradas precisas de tu acero. Tras abatir con destreza a los salvajes que lideraban la carga, el pánico se extiende en sus desorganizadas filas y el resto de la hueste huye despavorida perdiéndose en la oscuridad del paisaje.",
+    "textoFracaso": "La hueste te asedia salvajemente aprovechando el amparo de las tinieblas. Una saeta orca muerde tu costado mientras el tumulto de cuerpos hambrientos te empuja y te asesta cortes superficiales con sus armas oxidadas. Aturdido por el caótico e implacable acoso en la penumbra, te ves obligado a retroceder a ciegas, conteniendo sus feroces embates de forma desesperada mientras buscas desesperadamente una ruta de escape.",
+    "textoDerrota": "La superioridad numérica combinada con la opresión del clima oscuro termina por quebrar tus defensas. El acoso constante a distancia rompe tu guardia y la horda se abalanza sobre ti en un caótico torbellino de garras y hierro. Caes derribado bajo el peso de los orcos, quienes te muelen a golpes antes de desvalijar tus pertenencias y dejar tu cuerpo herido y exhausto en el frío suelo.",
+    "peligro": 2,
+    "xp": 12
+  },
+  {
+    "id": "hueste_orca_armada_p4",
+    "tipo": "enemigo_numeroso",
+    "categoria": "combate",
+    "titulo": "Hueste Orca de Vanguardia",
+    "bonus": { "meleeBonus": 0.03, "rangedBonus": 0.02, "thrownBonus": 0.01 },
+    "region": ["lamedon", "lebennin", "belfalas", "anfalas", "blackroot vale", "pinnath gelin", "andrast", "pelennor", "anorien", "ithilien"],
+    "descripcion": "Un clima negro y tormentoso anula por completo la luz del sol, permitiendo que una peligrosa hueste de orcos desbandada avance sin temor a cielo abierto. Estos engendros están notablemente más armados: visten pesadas cotas de malla oxidadas, portan arcos de tiro pesado y empuñan cimitarras aserradas de gran tamaño. Al avistar tu silueta en la densa oscuridad, la vanguardia desata una lluvia coordinada de saetas negras y hachas arrojadizas pesadas mientras se lanzan en tropel con un rugido ensordecedor que estremece el aire.",
+    "textoExito": "Haciendo gala de unos reflejos formidables bajo el cielo tormentoso, usas el terreno para cubrirte de las hachas arrojadizas y la lluvia de flechas pesadas. Te lanzas directo al corazón del combate; tu hoja intercepta los brutales golpes de cimitarra y responde con contragolpes fulminantes que destrozan sus cotas de malla. En una exhibición fluida de poder y agilidad, diezmas sus filas hasta que los orcos supervivientes huyen maldiciendo en su lengua oscura.",
+    "textoFracaso": "La letal combinación de proyectiles y cargas cuerpo a cuerpo se vuelve asfixiante en mitad de la penumbra. Una pesada hacha arrojadiza impacta contra tu defensa astillándola, mientras las saetas y los feroces embates de las cimitarras te acorralan sin piedad. Bañado en sangre y con los músculos al límite por el esfuerzo, te ves obligado a replegarte de manera precaria entre las sombras para evitar que el círculo se cierre sobre ti.",
+    "textoDerrota": "El equipamiento superior y la brutal agresividad de esta hueste armada terminan por aplastar tu resistencia en la absoluta oscuridad. Una ráfaga de proyectiles interrumpe tu movimiento y te derriba de rodillas, permitiendo que los guerreros orcos caigan sobre ti como buitres sedientos de sangre. Luchas con fiereza salvaje desde el suelo, pero el peso de las armaduras y el acero enemigo apagan tus fuerzas, sumiéndote en la inconsciencia mientras desvalijan tu equipo.",
+    "peligro": 4,
+    "xp": 24
+  }
 ]
