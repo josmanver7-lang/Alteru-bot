@@ -2521,6 +2521,18 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   return texto;
 }
         
+async function getCompanionReactionsText(userId, companionsList, context, mode) {
+  if (!companionsList || companionsList.length === 0) return "";
+  
+  const reactions = [];
+  // Limitamos a 3 compañeros para no sobrecargar el chat ni los límites de la API
+  for (const cid of companionsList.slice(0, 3)) { 
+    const line = await companionReaction(cid, { ...context, userId }, mode);
+    if (line) reactions.push(`💬 ${line}`);
+  }
+  
+  return reactions.length > 0 ? `\n\n${reactions.join("\n")}` : "";
+}
 
 // ==========================================
 //        LÓGICA LIMPIA DE EXPEDICIONES
