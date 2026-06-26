@@ -333,7 +333,8 @@ export async function getDynamicPrice(catalogName, item) {
 
   if (doc?.currentPrice) return doc.currentPrice;
   
-  export { getDynamicPrice as getMarketPrice };
-
   return Number(item.precioBase || item.precio || 0);
 }
+
+  export { getDynamicPrice as getMarketPrice };
+
