@@ -2968,7 +2968,7 @@ async function handleExpedicionDesafiar(message) {
 
     if (!evadioDano) {
       let multObstaculo = activeEncounter.peligro <= 2 ? 2 : 4;
-      let danoBase = Math.max(5, (activeEncounter.peligro || 1) * multObstaculo);
+      let danoBase = Math.max(5, (activeEncounter.peligro || 2) * multObstaculo);
       const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (eqPower.totals.damageReduction || 0);
       danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
       
