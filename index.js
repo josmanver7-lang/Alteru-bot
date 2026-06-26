@@ -2693,19 +2693,37 @@ async function handleExpedicionInteract(message) {
     if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
     textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reaction}\n\n`;
 
-    // Lógica para subencuentros en eventos especiales
+    // Lógica robusta para Subencuentros (Aplica dinámicamente sin importar cuántos sean)
     if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0) {
       const nextSub = activeEncounter.subencuentros[0];
-      expedition.currentEncounter = { ...nextSub, isSub: true, parentEncounter: activeEncounter, subIndex: 0 };
-      textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`!interactuar\` o \`!desafiar\` según corresponda para avanzar.`;
+      expedition.currentEncounter = { 
+          ...nextSub, 
+          isSub: true, 
+          parentEncounter: activeEncounter, 
+          subIndex: 0,
+          tipo: nextSub.tipo || activeEncounter.tipo,
+          categoria: nextSub.categoria || activeEncounter.categoria
+      };
+      
+      const accionRequerida = (nextSub.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+      textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`${accionRequerida}\` para avanzar.`;
       return message.reply(textoVictoria);
     } else if (activeEncounter.isSub) {
       const parent = activeEncounter.parentEncounter;
       const nextIndex = activeEncounter.subIndex + 1;
-      if (nextIndex < parent.subencuentros.length) {
+      if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
         const nextSub = parent.subencuentros[nextIndex];
-        expedition.currentEncounter = { ...nextSub, isSub: true, parentEncounter: parent, subIndex: nextIndex };
-        textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`!interactuar\` o \`!desafiar\` según corresponda para avanzar.`;
+        expedition.currentEncounter = { 
+            ...nextSub, 
+            isSub: true, 
+            parentEncounter: parent, 
+            subIndex: nextIndex,
+            tipo: nextSub.tipo || parent.tipo,
+            categoria: nextSub.categoria || parent.categoria
+        };
+        
+        const accionRequerida = (nextSub.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+        textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`${accionRequerida}\` para avanzar.`;
         return message.reply(textoVictoria);
       } else {
         expedition.currentEncounter = null;
@@ -2728,7 +2746,7 @@ async function handleExpedicionInteract(message) {
     textoFracaso += `🕊️ Al ser un encuentro social no sufres daños corporales y continúas tu viaje.\n\n`;
     textoFracaso += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reaction}\n\n`;
     
-    // Al fallar se sale del evento/subencuentro actual
+    // Si falla un evento especial, simplemente avanza y anula el encuentro
     expedition.currentEncounter = null;
     expedition.progress += 1;
     return transicionarSiguientePaso(message, expedition, textoFracaso);
@@ -2790,7 +2808,6 @@ async function handleExpedicionDesafiar(message) {
         let escenario = expedition.finalScenario;
         let enemyPresent = false;
         
-        // Verifica probabilidad de enemigo si tiene el flag
         if (escenario.hasEnemies) {
            enemyPresent = escenario.enemyChance === undefined ? true : (Math.random() <= escenario.enemyChance);
         }
@@ -2807,7 +2824,6 @@ async function handleExpedicionDesafiar(message) {
           allowedActions: finalAllowedActions
         };
         
-        // Bloque de Poder Matrix para el Escenario Final
         let powerBlock = "";
         if (enemyPresent) {
           const dummyEncounter = {
@@ -2959,7 +2975,7 @@ async function handleExpedicionDesafiar(message) {
     success = true;
   } else {
     let baseSuccess = 0.65 + (bonuses.captainBonus||0) + (bonuses.rangerBonus||0) + (affinityCombat.successBonus||0) + affinityBonus + bonoPrevencionBucle;
-    if (activeEncounter.tipo === "obstaculo") {
+    if (esObstaculo) {
       let baseSuccessOb = 0.70 - ((activeEncounter.peligro || 1) * 0.04) + bonoPrevencionBucle;
       baseSuccessOb += utilTotals.exploration * 0.85 + utilTotals.stealth * 0.20 + utilTotals.willpower * 0.15;
       success = Math.random() < Math.max(0.30, Math.min(baseSuccessOb, 0.95));
@@ -2985,26 +3001,65 @@ async function handleExpedicionDesafiar(message) {
     if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
     textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reaction}\n\n`;
 
-    // Lógica para subencuentros en cadena (Ej. Perdido -> Obstáculos)
+    // Lógica para subencuentros en cadena (Ej. Perdido -> Obstáculos/Combates)
     if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0) {
       const nextSub = activeEncounter.subencuentros[0];
-      expedition.currentEncounter = { ...nextSub, isSub: true, parentEncounter: activeEncounter, subIndex: 0 };
-      textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`!desafiar\` para avanzar.`;
+      expedition.currentEncounter = { 
+          ...nextSub, 
+          isSub: true, 
+          parentEncounter: activeEncounter, 
+          subIndex: 0,
+          tipo: nextSub.tipo || activeEncounter.tipo, // Hereda para comportarse correctamente como obstáculo o combate
+          categoria: nextSub.categoria || activeEncounter.categoria
+      };
+      
+      let powerBlock = "";
+      const esCombateSub = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.tipo)) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.categoria));
+      if (esCombateSub && typeof buildPowerComparisonBlock === "function") {
+         powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: expedition.currentEncounter });
+      }
+
+      const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+      textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\n`;
+      if(powerBlock) textoVictoria += `${powerBlock}\n\n`;
+      textoVictoria += `Usa \`${accionRequerida}\` para avanzar.`;
       return message.reply(textoVictoria);
+
     } else if (activeEncounter.isSub) {
       const parent = activeEncounter.parentEncounter;
       const nextIndex = activeEncounter.subIndex + 1;
-      if (nextIndex < parent.subencuentros.length) {
+      
+      if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
         const nextSub = parent.subencuentros[nextIndex];
-        expedition.currentEncounter = { ...nextSub, isSub: true, parentEncounter: parent, subIndex: nextIndex };
-        textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`!desafiar\` para avanzar.`;
+        expedition.currentEncounter = { 
+            ...nextSub, 
+            isSub: true, 
+            parentEncounter: parent, 
+            subIndex: nextIndex,
+            tipo: nextSub.tipo || parent.tipo,
+            categoria: nextSub.categoria || parent.categoria
+        };
+        
+        let powerBlock = "";
+        const esCombateSub = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.tipo)) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.categoria));
+        if (esCombateSub && typeof buildPowerComparisonBlock === "function") {
+           powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: expedition.currentEncounter });
+        }
+
+        const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+        textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\n`;
+        if(powerBlock) textoVictoria += `${powerBlock}\n\n`;
+        textoVictoria += `Usa \`${accionRequerida}\` para avanzar.`;
         return message.reply(textoVictoria);
+
       } else {
+        // Se terminaron los subencuentros, avanza normalmente
         expedition.currentEncounter = null;
         expedition.progress += 1;
         return transicionarSiguientePaso(message, expedition, textoVictoria);
       }
     } else {
+      // Encuentro normal sin subencuentros
       expedition.currentEncounter = null;
       expedition.progress += 1;
       return transicionarSiguientePaso(message, expedition, textoVictoria);
@@ -3016,6 +3071,12 @@ async function handleExpedicionDesafiar(message) {
 
     if (!evadioDano) {
       let multObstaculo = activeEncounter.peligro <= 2 ? 2 : 4;
+      
+      // Incremento de dificultad para los terrenos como me indicaste (3 o 5 en lugar de 2 o 4)
+      if (tipo === "terreno" || categoria === "terreno") {
+          multObstaculo = activeEncounter.peligro <= 2 ? 3 : 5;
+      }
+
       let danoBase = Math.max(5, (activeEncounter.peligro || 1) * multObstaculo);
       const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (eqPower.totals.damageReduction || 0);
       danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
@@ -3035,6 +3096,7 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`💀 **Has caído...**\n\n${activeEncounter.textoDerrota || "El desafío te superó."}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n*(Tu salud ha sido restaurada al máximo)*`);
     }
 
+    // En caso de fallar (incluso si es un subencuentro), se resta el peligro para no hacerlo imposible y se permite reintentar
     activeEncounter.peligro = Math.max(0, activeEncounter.peligro - 1);
     activeEncounter.probabilidadBonus = (activeEncounter.probabilidadBonus || 0) + 0.30;
 
@@ -3051,7 +3113,9 @@ async function handleExpedicionDesafiar(message) {
       if (textoCuracionOb) msgObs += `${textoCuracionOb}\n`;
     }
     msgObs += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reaction}\n\n`;
-    msgObs += `Usa \`!desafiar\` para intentar sortearlo de nuevo o \`!volver\` para huir.`;
+    
+    const accionRequerida = (activeEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+    msgObs += `Usa \`${accionRequerida}\` para intentarlo de nuevo o \`!volver\` para huir.`;
     return message.reply(msgObs);
   }
 }
@@ -3069,7 +3133,6 @@ async function transicionarSiguientePaso(message, expedition, textoBase) {
     let escenario = expedition.finalScenario;
     let enemyPresent = false;
     
-    // Evaluar posibilidad de que el enemigo esté presente según JSON
     if (escenario.hasEnemies) {
        enemyPresent = escenario.enemyChance === undefined ? true : (Math.random() <= escenario.enemyChance);
     }
@@ -3163,7 +3226,6 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     finalResolutionText = scenario.completionText[lookupKey] || scenario.completionText[fallbackKey] || "";
   }
 
-  // Solución para leer Sub Escenarios del Escenario Final basados en la acción
   let nextSub = null;
   if (scenario.subEscenarios && scenario.subEscenarios[normalizedAction]) {
     nextSub = scenario.subEscenarios[normalizedAction];
@@ -3328,7 +3390,7 @@ async function procesarAccionEscenario(message, expedition, normalizedAction) {
     texto += `\n\n${conclusionGeneralTexto}\n${reaction}` + utilMsg;
     return message.reply(texto);
   }
-}                       
+}
         
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
