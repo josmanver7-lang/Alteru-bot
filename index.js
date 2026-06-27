@@ -2523,45 +2523,68 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   return texto;
 }
         
-async function getCompanionReactionsText(userId, companionsList, context, mode) {
-  if (!companionsList || companionsList.length === 0) return "";
-  
-  const reactions = [];
-  // Limitamos a 3 compañeros para no sobrecargar el chat ni los límites de la API
-  for (const cid of companionsList.slice(0, 3)) { 
-    const line = await companionReaction(cid, { ...context, userId }, mode);
-    if (line) reactions.push(`💬 ${line}`);
+// Asegúrate de tener importado Groq al inicio de tu archivo
+// const { Groq } = require("groq-sdk");
+// const groq = new Groq({ apiKey: process.env.GROQ_API_KEY }); 
+
+// ==========================================
+//        INTEGRACIÓN GROQ IA (COMPAÑEROS)
+// ==========================================
+
+async function obtenerReaccionIA(companero, contexto, resultado) {
+  try {
+    const nombreEncuentro = contexto.encounter?.titulo || contexto.encounter || "un desafío en el camino";
+    let contextoSituacion = "";
+    
+    if (resultado === "inicio") contextoSituacion = "Están a punto de iniciar el encuentro.";
+    else if (resultado === "exito") contextoSituacion = "Han superado el encuentro con éxito.";
+    else if (resultado === "fracaso") contextoSituacion = "Han fracasado o recibido daño al intentar superar el encuentro.";
+    else if (resultado === "final") contextoSituacion = "Han llegado al escenario final de la misión.";
+
+    const prompt = `Eres un aventurero en la Tierra Media llamado ${companero.toUpperCase()}.
+Tu grupo acaba de enfrentarse a: "${nombreEncuentro}".
+Situación actual: ${contextoSituacion}.
+Escribe una breve línea de diálogo (máximo 15 palabras) reaccionando a esto desde la perspectiva de tu personaje. 
+REGLA ESTRICTA: Devuelve ÚNICAMENTE el diálogo y una breve acción, sin comillas, sin introducciones. Ejemplo: Faelon empuña su bastón: La oscuridad no nos vencerá hoy.`;
+
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "llama3-8b-8192", // Puedes cambiarlo a "mixtral-8x7b-32768" si prefieres
+      temperature: 0.7,
+      max_tokens: 60
+    });
+    
+    let respuesta = chatCompletion.choices[0]?.message?.content?.trim() || "";
+    // Limpiamos comillas accidentales
+    return respuesta.replace(/^["']|["']$/g, '');
+  } catch (error) {
+    console.error("Error al generar diálogo con Groq:", error);
+    return null; // Si falla, devolverá null para usar el texto por defecto
   }
-  
-  return reactions.length > 0 ? `\n\n${reactions.join("\n")}` : "";
 }
 
-// ==========================================
-//        LÓGICA LIMPIA DE EXPEDICIONES
-// ==========================================
-
-function obtenerReaccionCompanero(owned, contexto) {
+function obtenerReaccionCompaneroFallback(owned, contexto) {
   if (!owned || owned.length === 0) return "";
   const companero = owned[Math.floor(Math.random() * owned.length)].toLowerCase();
   
   const reacciones = {
     faelon: {
-      inicio: "Faelon ajusta su equipo: «Que la luz nos guíe en este sendero oscuro».", 
-      exito: "Faelon sonríe aliviado: «Bien hecho, los Valar nos favorecen hoy».", 
-      fracaso: "Faelon cura una herida: «Cuidado, la oscuridad aquí aún es muy fuerte».", 
-      final: "Faelon empuña su bastón: «El destino de esta travesía se decide ahora»." 
+      inicio: "Faelon ajusta su equipo: Que la luz nos guíe en este sendero oscuro.", 
+      exito: "Faelon sonríe aliviado: Bien hecho, los Valar nos favorecen hoy.", 
+      fracaso: "Faelon cura una herida: Cuidado, la oscuridad aquí aún es muy fuerte.", 
+      final: "Faelon empuña su bastón: El destino de esta travesía se decide ahora." 
     },
     nieriel: {
-      inicio: "Nieriel alza su escudo: «Ningún mal pasará mientras yo esté en pie».", 
-      exito: "Nieriel asiente firme: «Una victoria más. No bajemos la guardia aún».", 
-      fracaso: "Nieriel frunce el ceño: «Reagrúpate. Mi escudo resistirá el embate».", 
-      final: "Nieriel desenvaina: «¡Por la luz de las estrellas, no retrocederemos!»."
+      inicio: "Nieriel alza su escudo: Ningún mal pasará mientras yo esté en pie.", 
+      exito: "Nieriel asiente firme: Una victoria más. No bajemos la guardia aún.", 
+      fracaso: "Nieriel frunce el ceño: Reagrúpate. Mi escudo resistirá el embate.", 
+      final: "Nieriel desenvaina: ¡Por la luz de las estrellas, no retrocederemos!."
     },
     generico: {
-      inicio: "Tu aliado mira al horizonte: «El camino es incierto, pero estamos listos».", 
-      exito: "Tu aliado celebra: «¡Así se hace! Sigamos adelante sin perder tiempo».", 
-      fracaso: "Tu compañero escupe al suelo: «Un duro golpe, pero no nos rendiremos».", 
-      final: "Tu aliado aprieta su arma: «Llegó el momento. Concéntrate y venceremos»." 
+      inicio: "Tu aliado mira al horizonte: El camino es incierto, pero estamos listos.", 
+      exito: "Tu aliado celebra: ¡Así se hace! Sigamos adelante sin perder tiempo.", 
+      fracaso: "Tu compañero escupe al suelo: Un duro golpe, pero no nos rendiremos.", 
+      final: "Tu aliado aprieta su arma: Llegó el momento. Concéntrate y venceremos." 
     }
   };
   
@@ -2569,9 +2592,31 @@ function obtenerReaccionCompanero(owned, contexto) {
   if (companero.includes("faelon")) clave = "faelon";
   else if (companero.includes("nieriel")) clave = "nieriel";
   
-  const texto = reacciones[clave][contexto] || reacciones.generico[contexto];
-  return `\n💬 *${texto}*`;
+  return reacciones[clave][contexto] || reacciones.generico[contexto];
 }
+
+async function getCompanionReactionsText(userId, companionsList, context, mode) {
+  if (!companionsList || companionsList.length === 0) return "";
+  
+  const reactions = [];
+  for (const cid of companionsList.slice(0, 3)) { 
+    // Intenta usar la IA primero
+    let line = await obtenerReaccionIA(cid, context, mode);
+    
+    // Si la IA falla o da error, usa el fallback predeterminado
+    if (!line) {
+        line = obtenerReaccionCompaneroFallback([cid], mode);
+    }
+    
+    reactions.push(`💬 *${line}*`);
+  }
+  
+  return reactions.length > 0 ? `\n\n${reactions.join("\n")}` : "";
+}
+
+// ==========================================
+//        LÓGICA DE EXPEDICIONES
+// ==========================================
 
 function aplicarCuracionPorBonus(expedition, bonuses, utilTotals) {
   if (expedition.saludActual <= 0) return 0;
@@ -2635,138 +2680,13 @@ async function handleExpedicionStart(message, args) {
   await db.updateTravelerData(message.author.id, { activeCompanions });
   
   const reactionAsync = await getCompanionReactionsText(message.author.id, activeCompanions, { encounter: mission.titulo }, "inicio");
-  const reaction = reactionAsync || obtenerReaccionCompanero(activeCompanions, "inicio");
-  const textoExpedicion = `📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reaction}`;
+  const textoExpedicion = `📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reactionAsync}`;
   return replyLong(message, textoExpedicion);
 }
 
-async function handleExpedicionInteract(message) {
-  if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en ninguna expedición activa. Usa !tablon.");
-  }
-  const expedition = expeditions.get(message.author.id);
-  if (!expedition.currentEncounter || normalizeKey(expedition.currentEncounter.tipo) !== "evento_especial") {
-    return message.reply("⚠️ No hay ningún evento especial activo con el cual interactuar en este momento.");
-  }
-  const activeEncounter = expedition.currentEncounter;
-  const profile = await db.getProfile(message.author.id);
-  const owned = getOwnedCompanions(profile);
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const bonuses = getCompanionBonus(profile);
-  const playerClassBonus = getPlayerClassBonus(profile);
-  const adventureBonuses = getAdventureBonuses(profile, equipment);
-  const utilTotals = adventureBonuses;
-  let affinityBonus = 0;
-  for (const comp of owned) affinityBonus += getAffinityBonus(profile, comp);
-  const affinityCombat = getAffinityCombatBonus(profile, owned);
-
-  let baseSuccess = 0.65 + (bonuses.captainBonus || 0) + (bonuses.rangerBonus || 0) + (affinityCombat.successBonus || 0) + affinityBonus;
-  let specialSuccess = baseSuccess + (playerClassBonus.specialBonus || 0) + (utilTotals.negotiation * 0.90) + (utilTotals.willpower * 0.45);
-  const success = Math.random() < Math.max(0.30, Math.min(specialSuccess, 0.95));
-
-  if (success) {
-    const xpGanada = activeEncounter.xp || 15;
-    let puntosGanados = activeEncounter.puntos || 10;
-
-    if (normalizeKey(activeEncounter.categoria) === "exploracion") {
-      const basePts = Math.floor(Math.random() * 51);
-      const extraPts = Math.floor(Math.min(1, (utilTotals.exploration || 0)) * 50);
-      puntosGanados = basePts + extraPts;
-    }
-
-    expedition.xpEarned += xpGanada;
-    expedition.pointsEarned += puntosGanados;
-
-    const faelonHeal = owned.includes("faelon") && expedition.saludActual < expedition.saludMaxima;
-    if (faelonHeal) {
-      expedition.saludActual = Math.min(expedition.saludMaxima, expedition.saludActual + 10);
-    }
-
-    const contextData = { encounter: activeEncounter, resultado: "exito", puntos: puntosGanados, xp: xpGanada };
-    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-    const reaction = reactionAsync || obtenerReaccionCompanero(owned, "exito");
-
-    let textoVictoria = `✅ **¡Evento Especial Superado!**\n\n`;
-    textoVictoria += `${activeEncounter.textoExito || activeEncounter.descripcion || "Logras resolver la situación favorablemente y obtienes tu recompensa."}\n\n`;
-    textoVictoria += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n`;
-    if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
-    textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reaction}\n\n`;
-
-    // Lógica robusta para Subencuentros (Aplica dinámicamente sin importar cuántos sean)
-    if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0) {
-      const nextSub = activeEncounter.subencuentros[0];
-      expedition.currentEncounter = { 
-          ...nextSub, 
-          isSub: true, 
-          parentEncounter: activeEncounter, 
-          subIndex: 0,
-          tipo: nextSub.tipo || activeEncounter.tipo,
-          categoria: nextSub.categoria || activeEncounter.categoria
-      };
-      
-      const accionRequerida = (nextSub.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-      textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`${accionRequerida}\` para avanzar.`;
-      return message.reply(textoVictoria);
-    } else if (activeEncounter.isSub) {
-      const parent = activeEncounter.parentEncounter;
-      const nextIndex = activeEncounter.subIndex + 1;
-      if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
-        const nextSub = parent.subencuentros[nextIndex];
-        expedition.currentEncounter = { 
-            ...nextSub, 
-            isSub: true, 
-            parentEncounter: parent, 
-            subIndex: nextIndex,
-            tipo: nextSub.tipo || parent.tipo,
-            categoria: nextSub.categoria || parent.categoria
-        };
-        
-        const accionRequerida = (nextSub.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-        textoVictoria += `⚠️ **Continúa la exploración:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\nUsa \`${accionRequerida}\` para avanzar.`;
-        return message.reply(textoVictoria);
-      } else {
-        expedition.currentEncounter = null;
-        expedition.progress += 1;
-        return transicionarSiguientePaso(message, expedition, textoVictoria);
-      }
-    } else {
-      expedition.currentEncounter = null;
-      expedition.progress += 1;
-      return transicionarSiguientePaso(message, expedition, textoVictoria);
-    }
-
-  } else {
-    const contextData = { encounter: activeEncounter, resultado: "fracaso" };
-    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-    const reaction = reactionAsync || obtenerReaccionCompanero(owned, "fracaso");
-
-    let textoFracaso = `❌ **Evento Especial Terminado**\n\n`;
-    textoFracaso += `${activeEncounter.textoFracaso || activeEncounter.textoDerrota || "La interacción no sale como esperabas y te retiras con las manos vacías."}\n\n`;
-    textoFracaso += `🕊️ Al ser un encuentro social no sufres daños corporales y continúas tu viaje.\n\n`;
-    textoFracaso += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reaction}\n\n`;
-    
-    // Si falla un evento especial, simplemente avanza y anula el encuentro
-    expedition.currentEncounter = null;
-    expedition.progress += 1;
-    return transicionarSiguientePaso(message, expedition, textoFracaso);
-  }
-}
-
-async function handleExpedicionVolver(message) {
-  if (!expeditions.has(message.author.id)) {
-    return message.reply("No estás en ninguna expedición activa.");
-  }
-  const expedition = expeditions.get(message.author.id);
-  
-  await db.addXP(message.author.id, expedition.xpEarned);
-  await db.addPoints(message.author.id, expedition.pointsEarned);
-  await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-  await clearExpeditionParty(message.author.id);
-  expeditions.delete(message.author.id);
-
-  return message.reply(`⛺ **Regreso al Campamento**\n\nDecides abortar la misión y volver a un lugar seguro. Conservas las recompensas acumuladas:\n\n🏆 Puntos: +${expedition.pointsEarned}\n📚 XP: +${expedition.xpEarned}\n❤️ Salud guardada: ${expedition.saludActual}/${expedition.saludMaxima}`);
-}
+// ==========================================
+//   RESOLUCIÓN DE ENCUENTROS Y TRANSICIONES
+// ==========================================
 
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
@@ -2800,6 +2720,8 @@ async function handleExpedicionDesafiar(message) {
   // === GENERAR NUEVO ENCUENTRO O CERRAR MISIÓN ===
   if (expedition.currentEncounter === null) {
     const encuentroId = expedition.mission.encuentros?.[expedition.progress];
+    
+    // Si no hay más encuentros en la lista de la misión, pasar al final
     if (!encuentroId) {
       if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
         expedition.finalScenarioShown = true;
@@ -2807,21 +2729,12 @@ async function handleExpedicionDesafiar(message) {
         
         let escenario = expedition.finalScenario;
         let enemyPresent = false;
+        if (escenario.hasEnemies) enemyPresent = escenario.enemyChance === undefined ? true : (Math.random() <= escenario.enemyChance);
         
-        if (escenario.hasEnemies) {
-           enemyPresent = escenario.enemyChance === undefined ? true : (Math.random() <= escenario.enemyChance);
-        }
-        
-        const finalAllowedActions = escenario.allowedActions || 
-                                    (enemyPresent ? ["atacar", "rodear", "retirarse"] : ["retirarse", "inspeccionar", "hablar"]);
+        const finalAllowedActions = escenario.allowedActions || (enemyPresent ? ["atacar", "rodear", "retirarse"] : ["retirarse", "inspeccionar", "hablar"]);
 
         expedition.currentEncounter = {
-          ...escenario,
-          tipo: "escenario_final",
-          categoria: "final",
-          active: true,
-          enemyPresent: enemyPresent,
-          allowedActions: finalAllowedActions
+          ...escenario, tipo: "escenario_final", categoria: "final", active: true, enemyPresent, allowedActions: finalAllowedActions
         };
         
         let powerBlock = "";
@@ -2829,7 +2742,6 @@ async function handleExpedicionDesafiar(message) {
           const dummyEncounter = {
              id: escenario.enemyLabel || escenario.titulo || "Rival",
              tipo: escenario.categoria || "enemigo_numeroso",
-             categoria: escenario.categoria || "enemigo_numeroso",
              peligro: Number(escenario.peligro || 1),
              ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
           };
@@ -2837,17 +2749,16 @@ async function handleExpedicionDesafiar(message) {
         }
 
         const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: escenario.titulo, resultado: "inicio" }, "inicio");
-        const reaction = reactionAsync || obtenerReaccionCompanero(owned, "final");
-        
         let textoFinalScenario = `🌑 **Escenario final: ${escenario.titulo || "Cierre de misión"}**\n\n${escenario.descripcion}\n\n`;
         if (powerBlock) textoFinalScenario += `${powerBlock}\n\n`;
         textoFinalScenario += enemyPresent
           ? `⚔️ Presencia enemiga detectada.\n👉 Opciones disponibles: ${finalAllowedActions.map(a => `\`!${a}\``).join(", ")}`
           : `🕊️ El área demanda una decisión.\n👉 Opciones disponibles: ${finalAllowedActions.map(a => `\`!${a}\``).join(", ")}`;
-        textoFinalScenario += `\n${reaction}`;
+        textoFinalScenario += `\n${reactionAsync}`;
         return message.reply(textoFinalScenario);
       }
 
+      // Cerrar expedición si no hay escenario final
       const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
       const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
       await db.addXP(message.author.id, xpTotal);
@@ -2873,23 +2784,13 @@ async function handleExpedicionDesafiar(message) {
     }
 
     if (!lista.length) {
-      lista = [{
-        id: `fallback_${encuentroId}_${Date.now()}`,
-        titulo: "Encuentro en el camino",
-        descripcion: "La expedición avanza hacia un desafío repentino.",
-        tipo: encuentroId,
-        categoria: encuentroId,
-        peligro: Math.max(1, Math.min(10, nivelJugador))
-      }];
+      lista = [{ id: `fallback_${encuentroId}`, titulo: "Encuentro en el camino", descripcion: "La expedición avanza hacia un desafío.", tipo: encuentroId, categoria: encuentroId, peligro: Math.max(1, Math.min(10, nivelJugador)) }];
     }
 
+    // AQUI SE CORRIGIÓ EL ERROR: Solo tomamos el encuentro base (el padre). 
+    // No inyectamos nada extra, si tiene subencuentros en su JSON, la resolución lo detectará naturalmente.
     const encounterBase = lista[Math.floor(Math.random() * lista.length)];
-    const subOptions = getEncounterSubOptions(encounterBase, encounters);
     let finalEncounter = { ...encounterBase };
-    if (!finalEncounter.subEncounter && subOptions.length > 0) {
-      const chosen = subOptions[Math.floor(Math.random() * subOptions.length)];
-      finalEncounter = { ...finalEncounter, ...chosen, parentId: finalEncounter.id, variantOf: finalEncounter.id, subEncounter: true };
-    }
 
     expedition.pendingStartHeal = false;
     expedition.currentEncounter = finalEncounter;
@@ -2901,7 +2802,7 @@ async function handleExpedicionDesafiar(message) {
     return message.reply(textoEncuentro);
   }
 
-  // === RESOLVER ENCUENTRO ACTUAL ===
+  // === RESOLVER ENCUENTRO ACTUAL (El jugador usó !desafiar frente a un desafío) ===
   let activeEncounter = expedition.currentEncounter;
   if (activeEncounter.tipo === "escenario_final") {
     expedition.pendingFinalScenario = true;
@@ -2918,17 +2819,17 @@ async function handleExpedicionDesafiar(message) {
   let success = false;
   const tipo = normalizeKey(activeEncounter.tipo);
   const categoria = normalizeKey(activeEncounter.categoria);
-  const esObstaculo = tipo === "obstaculo" || categoria === "obstaculo";
+  const esObstaculo = tipo === "obstaculo" || categoria === "obstaculo" || tipo === "terreno";
   const esCombate = !esObstaculo && (["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(tipo) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(categoria));
 
   const bonoPrevencionBucle = activeEncounter.probabilidadBonus || 0;
 
+  // Lógica de Combate y Obstáculos
   if (esCombate) {
     const combatBonus = typeof getCompanionBonus === "function" ? getCompanionBonus(owned) : { damageReduction: 0, faelonHeal: 0 };
     let resultado = resolverCombateMixto(profile, equipment, activeEncounter, combatBonus, affinityCombat);
     if (!resultado.exito && Math.random() < (0.30 + bonoPrevencionBucle)) resultado.exito = true;
 
-    let textoAdicional = "";
     if (!resultado.exito) {
       const tieneANieriel = owned.includes("nieriel");
       let multiplicadorPeligro = activeEncounter.peligro <= 2 ? (tieneANieriel ? 3 : 4) : (tieneANieriel ? 5 : 7);
@@ -2936,6 +2837,7 @@ async function handleExpedicionDesafiar(message) {
       const reduccionTotal = Math.min((eqPower.totals?.damageReduction || 0) + (combatBonus.damageReduction || 0), 0.80);
       danoRecibido -= (danoRecibido * reduccionTotal);
       let danoFinal = Math.max(1, Math.round(danoRecibido));
+      let textoAdicional = "";
 
       if (tieneANieriel && (expedition.saludActual - danoFinal) <= 0 && !expedition.nierielShieldUsed) {
         danoFinal = expedition.saludActual - 1; 
@@ -2944,11 +2846,8 @@ async function handleExpedicionDesafiar(message) {
       }
 
       expedition.saludActual -= danoFinal;
-      
       let curacionAdicional = aplicarCuracionPorBonus(expedition, bonuses, adventureBonuses);
-      if (curacionAdicional > 0) {
-        textoAdicional += ` 💚 *Gracias a tu bonus de curación, recuperas rápidamente ${curacionAdicional} HP tras el ataque.*\n\n`;
-      }
+      if (curacionAdicional > 0) textoAdicional += ` 💚 *Gracias a tu bonus de curación, recuperas rápidamente ${curacionAdicional} HP tras el ataque.*\n\n`;
 
       if (expedition.saludActual <= 0) {
         await db.updateTravelerData(message.author.id, { salud: expedition.saludMaxima });
@@ -2960,16 +2859,10 @@ async function handleExpedicionDesafiar(message) {
       activeEncounter.peligro = Math.max(0, activeEncounter.peligro - 1);
       activeEncounter.probabilidadBonus = (activeEncounter.probabilidadBonus || 0) + 0.25;
 
-      const contextData = { encounter: activeEncounter, resultado: "fracaso", dano: danoFinal };
-      const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-      const reaction = reactionAsync || obtenerReaccionCompanero(owned, "fracaso");
-
-      let msgFail = `⚠️ **Combate Prolongado**\n\n`;
-      msgFail += `${activeEncounter.textoFracaso || "Tu estrategia falló y el enemigo logró herirte."}\n\n`;
+      const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "fracaso", dano: danoFinal }, "fracaso");
+      let msgFail = `⚠️ **Combate Prolongado**\n\n${activeEncounter.textoFracaso || "Tu estrategia falló y el enemigo logró herirte."}\n\n`;
       if (textoAdicional) msgFail += `${textoAdicional}`;
-      msgFail += `Recibes **${danoFinal}** de daño. Te ves forzado a retroceder un momento, pero el enemigo sigue en pie bloqueando el camino.\n\n`;
-      msgFail += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reaction}\n\n`;
-      msgFail += `Usa \`!desafiar\` para volver a la carga o \`!volver\` para retirarte.`;
+      msgFail += `Recibes **${danoFinal}** de daño. Te ves forzado a retroceder un momento, pero el enemigo sigue en pie bloqueando el camino.\n\n❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reactionAsync}\n\nUsa \`!desafiar\` para volver a la carga o \`!volver\` para retirarte.`;
       return message.reply(msgFail);
     }
     success = true;
@@ -2991,44 +2884,36 @@ async function handleExpedicionDesafiar(message) {
     expedition.pointsEarned += puntosGanados;
     const faelonHeal = healWithFaelon();
 
-    const contextData = { encounter: activeEncounter, resultado: "exito" };
-    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-    const reaction = reactionAsync || obtenerReaccionCompanero(owned, "exito");
+    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "exito" }, "exito");
 
     let textoVictoria = `✅ **¡Desafío Superado!**\n\n`;
     textoVictoria += `${activeEncounter.textoExito || activeEncounter.descripcion || "Has superado la amenaza."}\n\n`;
     textoVictoria += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n`;
     if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
-    textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reaction}\n\n`;
+    textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reactionAsync}\n\n`;
 
-    // Lógica para subencuentros en cadena (Ej. Perdido -> Obstáculos/Combates)
-    if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0) {
+    // TRANSICIÓN NATURAL: Si el padre tiene subencuentros y este era el padre (no un sub)
+    if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0 && !activeEncounter.isSub) {
       const nextSub = activeEncounter.subencuentros[0];
       expedition.currentEncounter = { 
           ...nextSub, 
           isSub: true, 
           parentEncounter: activeEncounter, 
           subIndex: 0,
-          tipo: nextSub.tipo || activeEncounter.tipo, // Hereda para comportarse correctamente como obstáculo o combate
+          tipo: nextSub.tipo || activeEncounter.tipo, 
           categoria: nextSub.categoria || activeEncounter.categoria
       };
       
-      let powerBlock = "";
-      const esCombateSub = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.tipo)) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.categoria));
-      if (esCombateSub && typeof buildPowerComparisonBlock === "function") {
-         powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: expedition.currentEncounter });
-      }
-
       const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-      textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\n`;
-      if(powerBlock) textoVictoria += `${powerBlock}\n\n`;
-      textoVictoria += `Usa \`${accionRequerida}\` para avanzar.`;
+      // Añadimos el nuevo evento como transición limpia para que deba poner !desafiar
+      textoVictoria += `\n---\n⚠️ **Pero la situación aún no termina...**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
       return message.reply(textoVictoria);
 
     } else if (activeEncounter.isSub) {
       const parent = activeEncounter.parentEncounter;
       const nextIndex = activeEncounter.subIndex + 1;
       
+      // Transición natural al siguiente subencuentro (si hay más de 1)
       if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
         const nextSub = parent.subencuentros[nextIndex];
         expedition.currentEncounter = { 
@@ -3040,31 +2925,24 @@ async function handleExpedicionDesafiar(message) {
             categoria: nextSub.categoria || parent.categoria
         };
         
-        let powerBlock = "";
-        const esCombateSub = ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.tipo)) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(normalizeKey(expedition.currentEncounter.categoria));
-        if (esCombateSub && typeof buildPowerComparisonBlock === "function") {
-           powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: expedition.currentEncounter });
-        }
-
         const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-        textoVictoria += `⚠️ **El desafío continúa:**\n*${nextSub.titulo}*\n${nextSub.descripcion}\n\n`;
-        if(powerBlock) textoVictoria += `${powerBlock}\n\n`;
-        textoVictoria += `Usa \`${accionRequerida}\` para avanzar.`;
+        textoVictoria += `\n---\n⚠️ **El camino revela un nuevo obstáculo:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para avanzar.`;
         return message.reply(textoVictoria);
 
       } else {
-        // Se terminaron los subencuentros, avanza normalmente
+        // Se terminaron los subencuentros, avanza normalmente a la siguiente fase de la expedición
         expedition.currentEncounter = null;
         expedition.progress += 1;
         return transicionarSiguientePaso(message, expedition, textoVictoria);
       }
     } else {
-      // Encuentro normal sin subencuentros
+      // Encuentro normal superado que NO tenía subencuentros
       expedition.currentEncounter = null;
       expedition.progress += 1;
       return transicionarSiguientePaso(message, expedition, textoVictoria);
     }
   } else {
+    // Fracaso en obstáculo
     let evadioDano = Math.random() < Math.min(0.15 + (utilTotals.exploration || 0) * 0.40, 0.85);
     let danoFinalRecibido = 0;
     let textoCuracionOb = "";
@@ -3072,21 +2950,18 @@ async function handleExpedicionDesafiar(message) {
     if (!evadioDano) {
       let multObstaculo = activeEncounter.peligro <= 2 ? 2 : 4;
       
-      // Incremento de dificultad para los terrenos como me indicaste (3 o 5 en lugar de 2 o 4)
+      // Modificación específica para daño de terrenos según tu instrucción
       if (tipo === "terreno" || categoria === "terreno") {
           multObstaculo = activeEncounter.peligro <= 2 ? 3 : 5;
       }
 
       let danoBase = Math.max(5, (activeEncounter.peligro || 1) * multObstaculo);
-      const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (eqPower.totals.damageReduction || 0);
+      const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (eqPower.totals?.damageReduction || 0);
       danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
       
       expedition.saludActual -= danoFinalRecibido;
-      
       let curacionAdicional = aplicarCuracionPorBonus(expedition, bonuses, adventureBonuses);
-      if (curacionAdicional > 0) {
-        textoCuracionOb = `\n💚 *Te repones rápidamente gracias a tu bonus de curación (+${curacionAdicional} HP).*`;
-      }
+      if (curacionAdicional > 0) textoCuracionOb = `\n💚 *Te repones rápidamente gracias a tu bonus de curación (+${curacionAdicional} HP).*`;
     }
 
     if (expedition.saludActual <= 0) {
@@ -3096,301 +2971,26 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`💀 **Has caído...**\n\n${activeEncounter.textoDerrota || "El desafío te superó."}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n*(Tu salud ha sido restaurada al máximo)*`);
     }
 
-    // En caso de fallar (incluso si es un subencuentro), se resta el peligro para no hacerlo imposible y se permite reintentar
     activeEncounter.peligro = Math.max(0, activeEncounter.peligro - 1);
     activeEncounter.probabilidadBonus = (activeEncounter.probabilidadBonus || 0) + 0.30;
 
-    const contextData = { encounter: activeEncounter, resultado: "fracaso", dano: danoFinalRecibido };
-    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-    const reaction = reactionAsync || obtenerReaccionCompanero(owned, "fracaso");
+    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "fracaso", dano: danoFinalRecibido }, "fracaso");
 
-    let msgObs = `⚠️ **Contratiempo**\n\n`;
-    msgObs += `${activeEncounter.textoFracaso || "Tropiezas y fallas en tu intento de superar el obstáculo."}\n\n`;
+    let msgObs = `⚠️ **Contratiempo**\n\n${activeEncounter.textoFracaso || "Tropiezas y fallas en tu intento de superar el obstáculo."}\n\n`;
     if (evadioDano) {
       msgObs += `Lograste evitar salir lastimado de gravedad, pero aún debes resolver cómo pasar.\n`;
     } else {
       msgObs += `Recibes **${danoFinalRecibido}** de daño. A pesar de salir herido, tienes que intentarlo de nuevo.\n`;
       if (textoCuracionOb) msgObs += `${textoCuracionOb}\n`;
     }
-    msgObs += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reaction}\n\n`;
+    msgObs += `❤️ Salud restante: ${expedition.saludActual}/${expedition.saludMaxima}\n${reactionAsync}\n\n`;
     
     const accionRequerida = (activeEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-    msgObs += `Usa \`${accionRequerida}\` para intentarlo de nuevo o \`!volver\` para huir.`;
+    msgObs += `👉 Usa \`${accionRequerida}\` para intentarlo de nuevo o \`!volver\` para huir.`;
     return message.reply(msgObs);
   }
 }
 
-async function transicionarSiguientePaso(message, expedition, textoBase) {
-  const totalEncuentros = expedition.mission.encuentros?.length || 0;
-  if (expedition.progress < totalEncuentros) {
-    textoBase += ` Usa \`!desafiar\` para avanzar.`;
-    return message.reply(textoBase);
-  }
-  if (expedition.finalScenario?.enabled && !expedition.finalScenarioShown) {
-    expedition.finalScenarioShown = true;
-    expedition.pendingFinalScenario = true;
-    
-    let escenario = expedition.finalScenario;
-    let enemyPresent = false;
-    
-    if (escenario.hasEnemies) {
-       enemyPresent = escenario.enemyChance === undefined ? true : (Math.random() <= escenario.enemyChance);
-    }
-    
-    const finalAllowedActions = escenario.allowedActions || 
-                                (enemyPresent ? ["atacar", "rodear", "retirarse"] : ["retirarse", "inspeccionar", "hablar"]);
-
-    expedition.currentEncounter = {
-      ...escenario,
-      tipo: "escenario_final",
-      categoria: "final",
-      active: true,
-      enemyPresent: enemyPresent,
-      allowedActions: finalAllowedActions
-    };
-
-    const profile = await db.getProfile(message.author.id);
-    const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-    const equipment = getResolvedEquipment(profile, equipmentRaw);
-    
-    let powerBlock = "";
-    if (enemyPresent) {
-      const dummyEncounter = {
-         id: escenario.enemyLabel || escenario.titulo || "Rival",
-         tipo: escenario.categoria || "enemigo_numeroso",
-         categoria: escenario.categoria || "enemigo_numeroso",
-         peligro: Number(escenario.peligro || 1),
-         ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
-      };
-      powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: dummyEncounter });
-    }
-
-    textoBase += ` ⚠️ **Has llegado al final de la expedición.** Usa \`!desafiar\` para encarar el último escenario.\n\n`;
-    if (powerBlock) textoBase += `${powerBlock}`;
-    return message.reply(textoBase);
-  }
-  await db.addXP(message.author.id, expedition.xpEarned);
-  await db.addPoints(message.author.id, expedition.pointsEarned);
-  await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-  await clearExpeditionParty(message.author.id);
-  expeditions.delete(message.author.id);
-  return message.reply(textoBase + `\n\n🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado la expedición!"}`);
-}
-
-async function procesarAccionEscenario(message, expedition, normalizedAction) {
-  const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
-  if (!scenario) return message.reply("⚠️ No se encontró la configuración del escenario actual.");
-
-  let success = true;
-  let combateData = null;
-  const profile = await db.getProfile(message.author.id);
-  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
-  const equipment = getResolvedEquipment(profile, equipmentRaw);
-  const owned = getOwnedCompanions(profile);
-  const adventureBonuses = typeof getAdventureBonuses === "function" ? getAdventureBonuses(profile, equipment) : { negotiation: 0, willpower: 0 };
-  const bonuses = getCompanionBonus(profile);
-
-  const accionesCombate = ["atacar", "rodear", "infiltrar"];
-  const esAccionCombate = accionesCombate.includes(normalizedAction);
-
-  if (expedition.currentEncounter?.enemyPresent && esAccionCombate) {
-    const rivalEncounter = {
-      id: scenario.enemyLabel || scenario.titulo || "Rival",
-      tipo: scenario.categoria || "enemigo_numeroso",
-      categoria: scenario.categoria || "enemigo_numeroso",
-      peligro: Number(scenario.peligro || 1),
-      ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(scenario.bonus || {}) : (scenario.bonus || {}))
-    };
-    const combatBonus = typeof getCompanionBonus === "function" ? getCompanionBonus(owned) : { damageReduction: 0 };
-    const affinityCombat = typeof getAffinityCombatBonus === "function" ? getAffinityCombatBonus(profile, owned) : { successBonus: 0, damageReduction: 0 };
-
-    if (typeof resolverCombateMixto === "function") {
-      const resultado = resolverCombateMixto(profile, equipment, rivalEncounter, combatBonus, affinityCombat);
-      success = resultado.exito;
-      if (!success && Math.random() < 0.30) success = true;
-      combateData = { poderJugador: resultado.poderJugador || 0, poderEnemigo: resultado.poderEnemigo || 0 };
-    } else {
-      success = Math.random() > 0.45;
-    }
-  } else {
-    let statBonus = (adventureBonuses.negotiation * 0.45) + (adventureBonuses.willpower * 0.35);
-    const probExito = normalizedAction === "retirarse" ? 0.99 : 0.60 + statBonus - ((scenario.peligro || 1) * 0.05);
-    success = Math.random() < Math.max(0.30, probExito);
-  }
-
-  const lookupKey = `${success ? 'success' : 'failure'}_${normalizedAction}`;
-  const fallbackKey = success ? 'success' : 'failure';
-
-  let finalResolutionText = "";
-  if (scenario.completionText) {
-    finalResolutionText = scenario.completionText[lookupKey] || scenario.completionText[fallbackKey] || "";
-  }
-
-  let nextSub = null;
-  if (scenario.subEscenarios && scenario.subEscenarios[normalizedAction]) {
-    nextSub = scenario.subEscenarios[normalizedAction];
-  }
-
-  const tieneSubEscenario = nextSub && typeof nextSub === 'object' && (nextSub.titulo || nextSub.descripcion);
-  
-  const contextData = { encounter: scenario.titulo, resultado: success ? "exito" : "fracaso", accion: normalizedAction };
-  const reactionAsync = await getCompanionReactionsText(message.author.id, owned, contextData, "resultado");
-  const reaction = reactionAsync || obtenerReaccionCompanero(owned, success ? "exito" : "fracaso");
-
-  if (tieneSubEscenario) {
-    expedition.finalScenario = { ...nextSub, enabled: true };
-    
-    let subEnemyPresent = false;
-    if (nextSub.hasEnemies) {
-       subEnemyPresent = nextSub.enemyChance === undefined ? true : (Math.random() <= nextSub.enemyChance);
-    }
-
-    const nextAllowedActions = nextSub.allowedActions || 
-                               (subEnemyPresent ? ["atacar", "rodear", "retirarse"] : ["retirarse", "inspeccionar", "hablar"]);
-
-    expedition.currentEncounter = {
-      ...nextSub,
-      tipo: "escenario_final",
-      categoria: "final",
-      active: true,
-      enemyPresent: subEnemyPresent,
-      allowedActions: nextAllowedActions
-    };
-
-    if (success) {
-      let texto = `✅ **Avanzas en el Escenario Final**\n`;
-      if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-      texto += `\n🎬 **${nextSub.titulo || "Siguiente Fase"}**\n${nextSub.descripcion || ""}\n\n`;
-      if (subEnemyPresent) {
-        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro || 1})\n`;
-      }
-      texto += `👉 Opciones disponibles: ${expedition.currentEncounter.allowedActions.map(a => `!${a}`).join(", ")}\n${reaction}`;
-      await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-      return message.reply(texto);
-    } else {
-      let multPeligro = (scenario.peligro <= 2) ? 10 : 15;
-      let damage = Number(scenario.damageOnFail || multPeligro * (scenario.peligro || 1));
-      if (isNaN(damage)) damage = 15;
-      
-      const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-      const totalDmgRed = Math.min((eqPower.totals?.damageReduction || 0), 0.80);
-      damage = Math.max(1, Math.floor(damage * (1 - totalDmgRed)));
-      expedition.saludActual = Math.max(0, expedition.saludActual - damage);
-
-      let textoCuracionFinal = "";
-      let curacionAdicional = aplicarCuracionPorBonus(expedition, bonuses, adventureBonuses);
-      if (curacionAdicional > 0) {
-        textoCuracionFinal = `\n💚 *Tu bonus de curación te permite reponerte parcialmente (+${curacionAdicional} HP).*`;
-      }
-
-      if (expedition.saludActual <= 0) {
-        const scale = expedition.rewardScale || 1.0;
-        const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
-        const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
-        if (xpGain > 0) await db.addXP(message.author.id, xpGain);
-        if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
-        await clearExpeditionParty(message.author.id);
-        expeditions.delete(message.author.id);
-        await db.updateTravelerData(message.author.id, { salud: expedition.saludMaxima });
-        const utilMsg = await decrementUtilities(message.author.id);
-        const conclusionGeneralTexto = expedition.mission?.conclusionGeneral?.fracaso || "La expedición ha concluido.";
-
-        let texto = `❌ **Escenario Final Infructuoso**\n`;
-        if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-        texto += `\nRecibes **${damage}** de daño. (Has caído al final de tu recorrido. Tu salud llegó a 0.)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
-        texto += `\n\n${conclusionGeneralTexto}` + utilMsg;
-        return message.reply(texto);
-      }
-
-      let texto = `⚠️ **Contratiempo en el Escenario Final**\n`;
-      if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-      texto += `\nRecibes **${damage}** de daño. (Salud Actual: **${expedition.saludActual}**/${expedition.saludMaxima})\n`;
-      if (textoCuracionFinal) texto += `${textoCuracionFinal}\n`;
-      texto += `\n🎬 **${nextSub.titulo || "Siguiente Fase"}**\n${nextSub.descripcion || ""}\n\n`;
-      if (subEnemyPresent) {
-        texto += `⚔️ Presencia enemiga detectada: **${nextSub.enemyLabel || "Enemigo"}** (Peligro: ${nextSub.peligro || 1})\n`;
-      }
-      texto += `👉 Opciones disponibles: ${expedition.currentEncounter.allowedActions.map(a => `!${a}`).join(", ")}\n${reaction}`;
-      await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-      return message.reply(texto);
-    }
-  }
-
-  if (success) {
-    const scale = expedition.rewardScale || 1.0;
-    const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 20)) * scale);
-    const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 10)) * scale);
-    if (xpGain > 0) await db.addXP(message.author.id, xpGain);
-    if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
-    await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-    const utilMsg = await decrementUtilities(message.author.id);
-    const conclusionGeneralTexto = expedition.mission?.conclusionGeneral?.exito || "La expedición ha concluido con éxito.";
-    await clearExpeditionParty(message.author.id);
-    expeditions.delete(message.author.id);
-
-    let texto = `✅ **Escenario Final Superado**\n`;
-    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-    if (combateData) texto += `\n⚔️ *Informe de Batalla:* Tu hueste prevaleció. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
-    texto += `\n\n🏆 Recompensa total acumulada: +${pointsGain} pts | +${xpGain} XP`;
-    texto += `\n\n${conclusionGeneralTexto}\n${reaction}` + utilMsg;
-    return message.reply(texto);
-
-  } else {
-    let multPeligro = (scenario.peligro <= 2) ? 10 : 15;
-    let damage = Number(scenario.damageOnFail || multPeligro * (scenario.peligro || 1));
-    if (isNaN(damage)) damage = 15; 
-    
-    const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-    const totalDmgRed = Math.min((eqPower.totals?.damageReduction || 0), 0.80);
-    damage = Math.max(1, Math.floor(damage * (1 - totalDmgRed)));
-    expedition.saludActual = Math.max(0, expedition.saludActual - damage);
-
-    let textoCuracionFinal = "";
-    let curacionAdicional = aplicarCuracionPorBonus(expedition, bonuses, adventureBonuses);
-    if (curacionAdicional > 0) {
-      textoCuracionFinal = `\n💚 *Tu bonus de curación te permite reponerte parcialmente (+${curacionAdicional} HP).*`;
-    }
-
-    if (expedition.saludActual <= 0) {
-      const scale = expedition.rewardScale || 1.0;
-      const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
-      const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
-      if (xpGain > 0) await db.addXP(message.author.id, xpGain);
-      if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
-      await clearExpeditionParty(message.author.id);
-      expeditions.delete(message.author.id);
-      await db.updateTravelerData(message.author.id, { salud: expedition.saludMaxima });
-      const utilMsg = await decrementUtilities(message.author.id);
-      const conclusionGeneralTexto = expedition.mission?.conclusionGeneral?.fracaso || "La expedición ha concluido.";
-
-      let texto = `❌ **Escenario Final Infructuoso**\n`;
-      if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-      texto += `\nRecibes **${damage}** de daño. (Has caído al final de tu recorrido. Tu salud llegó a 0.)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
-      texto += `\n\n${conclusionGeneralTexto}` + utilMsg;
-      return message.reply(texto);
-    }
-
-    const scale = expedition.rewardScale || 1.0;
-    const xpGain = (expedition.xpEarned || 0) + Math.floor((Number(expedition.mission?.xp ?? 10) / 2) * scale);
-    const pointsGain = (expedition.pointsEarned || 0) + Math.floor((Number(expedition.mission?.puntos ?? 5) / 2) * scale);
-    if (xpGain > 0) await db.addXP(message.author.id, xpGain);
-    if (pointsGain > 0) await db.addPoints(message.author.id, pointsGain);
-    await db.updateTravelerData(message.author.id, { salud: expedition.saludActual });
-    const utilMsg = await decrementUtilities(message.author.id);
-    const conclusionGeneralTexto = expedition.mission?.conclusionGeneral?.fracaso || "La expedición ha concluido.";
-    await clearExpeditionParty(message.author.id);
-    expeditions.delete(message.author.id);
-
-    let texto = `❌ **Escenario Final Infructuoso**\n`;
-    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
-    if (combateData) texto += `\n⚔️ *Informe de Batalla:* Tu hueste cayó repelida. Poder: \`${combateData.poderJugador}\` contra Presencia Enemiga: \`${combateData.poderEnemigo}\`.`;
-    texto += `\n\nRecibes **${damage}** de daño. (Salud Actual: **${expedition.saludActual}**/${expedition.saludMaxima})\n`;
-    if (textoCuracionFinal) texto += `${textoCuracionFinal}\n`;
-    texto += `🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP`;
-    texto += `\n\n${conclusionGeneralTexto}\n${reaction}` + utilMsg;
-    return message.reply(texto);
-  }
-}
         
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
