@@ -1422,43 +1422,40 @@ const FINAL_SCENE_RULES = {
 
 function getFinalScenarioConfig(mission = {}, expedition = {}) {
   const raw = expedition.finalScenario || mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
-  const enabled = raw.enabled !== false;
+  const enabled = (raw.enabled ?? raw.activo) !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
+  let allowedActions = raw.allowedActions || raw.accionesPermitidas || null;
 
-  let allowedActions = Array.isArray(raw.allowedActions) && raw.allowedActions.length ? raw.allowedActions : null;
-
-
-  if (!allowedActions || !allowedActions.length) {
+  if (!Array.isArray(allowedActions) || !allowedActions.length) {
     allowedActions = hasEnemies
       ? ["atacar", "rodear", "explorar", "infiltrar", "negociar", "retirarse"]
       : ["explorar", "infiltrar", "negociar", "retirarse"];
   }
 
-
   allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
   if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
-
 
   return {
     enabled,
     title: raw.titulo || raw.title || mission.titulo || "Escenario final",
-    description: raw.description || raw.descripcion || mission.escenarioFinal?.descripcion || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.",
+    description: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.",
     hasEnemies,
-    enemyLabel: raw.enemyLabel || raw.enemigo || "enemigos",
-    enemyChance: Number(raw.enemyChance ?? raw.probabilidadEnemigo ?? 0.6),
-    danger: Number(raw.peligro ?? raw.danger ?? raw.nivelPeligro ?? 0),
-    rewardMultiplier: Number(raw.rewardMultiplier ?? 1),
-    xpBonus: Number(raw.xpBonus ?? 0),
-    pointsBonus: Number(raw.pointsBonus ?? 0),
+    enemyLabel: raw.enemigo || raw.enemyLabel || "enemigos",
+    enemyChance: Number(raw.probabilidadEnemigo ?? raw.enemyChance ?? 0.6),
+    danger: Number(raw.peligro ?? raw.nivelPeligro ?? raw.danger ?? 0),
+    rewardMultiplier: Number(raw.multiplicadorRecompensa ?? raw.rewardMultiplier ?? 1),
+    xpBonus: Number(raw.bonoXp ?? raw.xpBonus ?? 0),
+    pointsBonus: Number(raw.bonoPuntos ?? raw.pointsBonus ?? 0),
     allowedActions,
-    actionText: raw.actionText || {},
-    successText: raw.successText || {},
-    failureText: raw.failureText || {},
-    completionText: raw.completionText || {},
-    affinityBonus: Number(raw.affinityBonus ?? 0)
+    actionText: raw.textosAccion || raw.acciones || raw.actionText || {},
+    successText: raw.textoExito || raw.exito || raw.successText || {},
+    failureText: raw.textoFracaso || raw.fracaso || raw.failureText || {},
+    completionText: raw.textosCompletado || raw.resultados || raw.resolucion || raw.completionText || {},
+    affinityBonus: Number(raw.bonoAfinidad ?? raw.affinityBonus ?? 0)
   };
 }
+
 
 
 function getFinalScenarioAllowedText(scenario = {}) {
@@ -1503,9 +1500,22 @@ function rollFinalScenarioEnemyPresence(scenario = {}) {
 
 
 function buildFinalResolutionText(action, success, scenario) {
-  if (success) return scenario?.completionText?.success ? `${scenario.completionText.success}` : "";
-  return scenario?.completionText?.failure ? `${scenario.completionText.failure}` : "La situación no se resolvió como esperabas.";
+  const actKey = normalizeFinalAction(action);
+  const actionBlock = scenario.actionText?.[actKey] || scenario.completionText?.[actKey] || {};
+  
+  if (success) {
+    if (actionBlock.textoExito) return actionBlock.textoExito;
+    if (actionBlock.successText) return actionBlock.successText;
+    if (typeof scenario.successText === "string" && scenario.successText) return scenario.successText;
+    return scenario.completionText?.exito || scenario.completionText?.success || scenario.successText?.[actKey] || "";
+  } else {
+    if (actionBlock.textoFracaso) return actionBlock.textoFracaso;
+    if (actionBlock.failText) return actionBlock.failText;
+    if (typeof scenario.failureText === "string" && scenario.failureText) return scenario.failureText;
+    return scenario.completionText?.fracaso || scenario.completionText?.failure || scenario.failureText?.[actKey] || "La situación no se resolvió como esperabas.";
+  }
 }
+
 
 
 async function startFinalScenario(message, expedition) {
@@ -1713,10 +1723,21 @@ async function resolveFinalScenarioAction(message, expedition, action) {
     }
 
 
-    const baseDescription = scenario.description || scenario.descripcion || expedition.currentEncounter?.descripcion || expedition.mission?.descripcion || "Te enfrentas al desenlace de la expedición.";
-    const actionText = scenario.actionText?.[normalizedAction] || `${baseDescription}`;
-    const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
-    const utilMsg = await decrementUtilities(message.author.id);
+      const baseDescription = scenario.description || expedition.currentEncounter?.descripcion || expedition.mission?.descripcion || "Te enfrentas al desenlace de la expedición.";
+  
+  let actionText = baseDescription;
+  const block = scenario.actionText?.[normalizedAction] || scenario.completionText?.[normalizedAction];
+  
+  if (typeof block === "string") {
+      actionText = block;
+  } else if (block && block.texto) {
+      actionText = block.texto;
+  } else if (block && block.descripcion) {
+      actionText = block.descripcion;
+  }
+  
+  const finalResolutionText = buildFinalResolutionText(normalizedAction, true, scenario);
+
 
 
     await clearExpeditionParty(message.author.id);
