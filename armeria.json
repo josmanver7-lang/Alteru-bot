@@ -3001,7 +3001,6 @@
     "descripcion": "Una reliquia forjada en los días de Eorl el Joven. Rompe las filas enemigas como un rayo verde y dorado.",
     "efecto": { "meleeBonus": 0.06, "damageBonus": 2, "willpowerBonus": 0.04, "negotiationBonus": 0.04, "survivalBonus": 0.04 }
   },
-  [
   {
     "id": "jubon_cuero_marca",
     "nombre": "Jubón de Cuero de la Marca",
