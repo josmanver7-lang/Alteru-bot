@@ -2683,6 +2683,7 @@ async function handleExpedicionStart(message, args) {
   const textoExpedicion = `📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reactionAsync}`;
   return replyLong(message, textoExpedicion);
 }
+message.author.id
 
 // ==========================================
 //   RESOLUCIÓN DE ENCUENTROS Y TRANSICIONES
@@ -2787,8 +2788,6 @@ async function handleExpedicionDesafiar(message) {
       lista = [{ id: `fallback_${encuentroId}`, titulo: "Encuentro en el camino", descripcion: "La expedición avanza hacia un desafío.", tipo: encuentroId, categoria: encuentroId, peligro: Math.max(1, Math.min(10, nivelJugador)) }];
     }
 
-    // AQUI SE CORRIGIÓ EL ERROR: Solo tomamos el encuentro base (el padre). 
-    // No inyectamos nada extra, si tiene subencuentros en su JSON, la resolución lo detectará naturalmente.
     const encounterBase = lista[Math.floor(Math.random() * lista.length)];
     let finalEncounter = { ...encounterBase };
 
@@ -2892,7 +2891,7 @@ async function handleExpedicionDesafiar(message) {
     if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
     textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reactionAsync}\n\n`;
 
-    // TRANSICIÓN NATURAL: Si el padre tiene subencuentros y este era el padre (no un sub)
+    // TRANSICIÓN NATURAL
     if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0 && !activeEncounter.isSub) {
       const nextSub = activeEncounter.subencuentros[0];
       expedition.currentEncounter = { 
@@ -2905,7 +2904,6 @@ async function handleExpedicionDesafiar(message) {
       };
       
       const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-      // Añadimos el nuevo evento como transición limpia para que deba poner !desafiar
       textoVictoria += `\n---\n⚠️ **Pero la situación aún no termina...**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
       return message.reply(textoVictoria);
 
@@ -2913,7 +2911,6 @@ async function handleExpedicionDesafiar(message) {
       const parent = activeEncounter.parentEncounter;
       const nextIndex = activeEncounter.subIndex + 1;
       
-      // Transición natural al siguiente subencuentro (si hay más de 1)
       if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
         const nextSub = parent.subencuentros[nextIndex];
         expedition.currentEncounter = { 
@@ -2930,16 +2927,18 @@ async function handleExpedicionDesafiar(message) {
         return message.reply(textoVictoria);
 
       } else {
-        // Se terminaron los subencuentros, avanza normalmente a la siguiente fase de la expedición
+        // CORRECCIÓN: Se terminaron los subencuentros, se avanza el progreso de forma limpia
         expedition.currentEncounter = null;
         expedition.progress += 1;
-        return transicionarSiguientePaso(message, expedition, textoVictoria);
+        textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
+        return message.reply(textoVictoria);
       }
     } else {
-      // Encuentro normal superado que NO tenía subencuentros
+      // CORRECCIÓN: Encuentro normal superado que NO tenía subencuentros
       expedition.currentEncounter = null;
       expedition.progress += 1;
-      return transicionarSiguientePaso(message, expedition, textoVictoria);
+      textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
+      return message.reply(textoVictoria);
     }
   } else {
     // Fracaso en obstáculo
@@ -2949,8 +2948,6 @@ async function handleExpedicionDesafiar(message) {
 
     if (!evadioDano) {
       let multObstaculo = activeEncounter.peligro <= 2 ? 2 : 4;
-      
-      // Modificación específica para daño de terrenos según tu instrucción
       if (tipo === "terreno" || categoria === "terreno") {
           multObstaculo = activeEncounter.peligro <= 2 ? 3 : 5;
       }
