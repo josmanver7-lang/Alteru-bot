@@ -5,7 +5,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "El capitán ordena requisar el botín de guerra en el antiguo campamento corsario en los pantanos de Tathrendalf, habrá muchos cadáveres y un denso pantano.",
-    "puntos": 100,
+    "puntos": 50,
     "xp": 50,
     "conclusionGeneral": {
       "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
@@ -66,7 +66,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "En las cercanías al campamento hay una cueva infestada de trasgos, no parecen muchos, alguien debe erradicarlos.",
-    "puntos": 100,
+    "puntos": 50,
     "xp": 50,
     "conclusionGeneral": {
       "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
@@ -135,7 +135,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Viajeros informan de un grupo de bandidos rondando por las rutas a Dinadab. La tarea es vigilar la ruta al norte e informar si hay alguna novedad o señales que indagar.",
-    "puntos": 90,
+    "puntos": 40,
     "xp": 40,
     "conclusionGeneral": {
       "exito": "Independientemente de los métodos utilizados, tu labor aquí ha terminado. Regresas al campamento base; la fatiga pesa en tus hombros, pero el peso de tu recompensa y el asentimiento de tu capitán al recibir el informe hacen que el esfuerzo haya valido la pena.",
@@ -198,7 +198,7 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "Unos pocos corsarios tienen cautivos a dos exploradores en un pequeño campamento en Lebennin, debemos liberarlos.",
-    "puntos": 150,
+    "puntos": 100,
     "xp": 100,
     "conclusionGeneral": {
       "exito": "La misión de rescate se ha completado. Regresas al campamento con el orgullo del deber cumplido y los exploradores a salvo. El capitán toma nota de tu valentía y se te otorga tu recompensa.",
@@ -243,7 +243,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Señales extrañas marcan los senderos de Lothgobel. Parecen ser demasiadas huellas para ser simples comerciantes. Averigua quiénes transitan nuestra tierra.",
-    "puntos": 90,
+    "puntos": 50,
     "xp": 50,
     "conclusionGeneral": {
       "exito": "Tu rastreo ha sido productivo. Regresas al mando con información valiosa sobre las rutas y amenazas, reclamando tu paga merecida.",
@@ -306,7 +306,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Varios niños han desaparecido en las afueras de la ciudad. Las marcas en el suelo indican que fueron llevados a la fuerza. Encuéntralos y tráelos a casa.",
-    "puntos": 90,
+    "puntos": 40,
     "xp": 40,
     "conclusionGeneral": {
       "exito": "Has actuado con valentía. Completar esta tarea te otorga no solo tu recompensa acordada, sino la gratitud y el alivio de los habitantes de Calembel.",
@@ -375,7 +375,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Un grupo de incursores orcos aprovecha la noche para asaltar los caminos. Equípate y rastea sus movimientos para asegurar la zona.",
-    "puntos": 90,
+    "puntos": 40,
     "xp": 40,
     "conclusionGeneral": {
       "exito": "Has cumplido tu deber protegiendo los caminos de la oscuridad. Reportas tus hallazgos al mando y recibes tu pago por una noche de trabajo bien hecho.",
@@ -438,7 +438,7 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "Se han reportado movimientos de barcos corsarios cerca de las costas. Debes acercarte a los muelles del Gilrain y evaluar la magnitud de la amenaza.",
-    "puntos": 150,
+    "puntos": 80,
     "xp": 80,
     "conclusionGeneral": {
       "exito": "Tu labor de reconocimiento rinde frutos. El capitán toma tus notas tácticas con seriedad, entregándote tu paga en agradecimiento por tu eficacia.",
@@ -501,7 +501,7 @@
     "destino": "Lamedon",
     "nivel": 4,
     "descripcion": "El paso de Tarlang es un punto estratégico vital que ha visto muchas batallas. Tu orden es mantener el desfiladero seguro frente a los asaltantes.",
-    "puntos": 340,
+    "puntos": 200,
     "xp": 200,
     "conclusionGeneral": {
       "exito": "Has mantenido la seguridad en un punto clave del territorio. Vuelves victorioso, y tus superiores recompensan generosamente tu lealtad y resistencia.",
@@ -566,7 +566,7 @@
     "destino": "Blackroot Vale",
     "nivel": 3,
     "descripcion": "El pueblo de Sardol está bajo ataque por bandas de saqueadores. Interviene para proteger a los habitantes y neutralizar la amenaza si es posible.",
-    "puntos": 200,
+    "puntos": 120,
     "xp": 120,
     "conclusionGeneral": {
       "exito": "Tu oportuna intervención ha marcado la diferencia en Sardol. Al volver, recibes tu recompensa junto con el respeto de aquellos a quienes protegiste.",
@@ -629,7 +629,7 @@
     "destino": "Lebennin",
     "nivel": 2,
     "descripcion": "Sigues un rastro sospechoso por la ribera del río Celos. Alguien ha estado moviéndose por la zona y necesitas descubrir de quiénes se trata.",
-    "puntos": 150,
+    "puntos": 90,
     "xp": 90,
     "conclusionGeneral": {
       "exito": "Has despejado las dudas sobre la actividad en el río Celos. Tu expedición rinde frutos y el mando recompensa adecuadamente tu trabajo de investigación.",
@@ -696,7 +696,7 @@
     "destino": "Belfalas",
     "nivel": 3,
     "descripcion": "Debes escoltar una lenta caravana comercial hacia Tadrent. El camino es peligroso y los asaltantes son frecuentes. Tu trabajo es mantener la carga segura.",
-    "puntos": 230,
+    "puntos": 140,
     "xp": 140,
     "conclusionGeneral": {
       "exito": "La caravana ha llegado a salvo a su destino gracias a tus habilidades. Cobras tu contrato mercenario con la satisfacción del deber bien realizado.",
@@ -760,7 +760,7 @@
     "destino": "Blackroot Vale",
     "nivel": 5,
     "descripcion": "Han surgido rumores de extraños ecos y movimientos bajo la gran Piedra de Erech. Tienes órdenes de investigar la colina y asegurar la zona.",
-    "puntos": 430,
+    "puntos": 210,
     "xp": 210,
     "conclusionGeneral": {
       "exito": "Has desafiado uno de los lugares más inhóspitos y regresas con vida y buenas noticias. Se te recompensa con creces por tu valentía.",
@@ -826,7 +826,7 @@
     "destino": "Belfalas",
     "nivel": 3,
     "descripcion": "Tu deber es realizar una patrulla en la frontera de Belfalas, asegurando que ninguna amenaza cruce inadvertida.",
-    "puntos": 200,
+    "puntos": 110,
     "xp": 110,
     "conclusionGeneral": {
       "exito": "Tu guardia ha asegurado la paz en Belfalas una noche más. Regresas al campamento para recibir tu paga y descansar.",
@@ -896,7 +896,7 @@
     "destino": "Lamedon",
     "nivel": 1,
     "descripcion": "Los sanadores locales necesitan Athelas y otras raíces raras de las montañas. Debes realizar labores de recolección en una zona conocida por su peligrosa fauna.",
-    "puntos": 80,
+    "puntos": 40,
     "xp": 40,
     "conclusionGeneral": {
       "exito": "Has llevado a cabo la recolección con destreza. Los sanadores están agradecidos y el mando te compensa debidamente por los recursos aportados.",
@@ -957,7 +957,7 @@
   "destino": "Lámedon",
   "nivel": 2,
   "descripcion": "Después de una reciente batalla un capitán orco llamado Muzgash ha escapado y se le ha visto en los caminos hacia Blackroot Vale. Hay que cazarlo y evitar que desaparezca o reagrupe otra hueste",
-  "puntos": 150,
+  "puntos": 90,
   "xp": 90,
   "conclusionGeneral": {
     "exito": "La cabeza cercenada de Muzgash cuelga ahora de tu cinto, un macabro testimonio de hierro y sangre negra que gotea sobre el polvo del camino. Al cruzar las empalizadas del campamento base, un murmullo de asombro y respeto reverbera entre los centinelas. El capitán recibe tu informe con un asentimiento severo y una mirada de profunda aprobación, reconociendo el peso de tu hazaña. Los senderos de Lámedon vuelven a respirar en paz, y tu recompensa hace honor al peligro superado.",
