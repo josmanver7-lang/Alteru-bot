@@ -2985,6 +2985,129 @@ async function handleExpedicionDesafiar(message) {
     msgObs += `👉 Usa \`${accionRequerida}\` para intentarlo de nuevo o \`!volver\` para huir.`;
     return message.reply(msgObs);
   }
+
+  async function handleExpedicionInteract(message) {
+  if (!expeditions.has(message.author.id)) {
+    return message.reply("No estás en ninguna expedición activa. Usa !tablon.");
+  }
+
+  const expedition = expeditions.get(message.author.id);
+  const activeEncounter = expedition.currentEncounter;
+
+  // Verificamos que haya un encuentro válido y que sea de tipo evento_especial
+  if (!activeEncounter || activeEncounter.tipo !== "evento_especial") {
+    return message.reply("No hay nada con lo que interactuar en este momento. Usa `!desafiar`.");
+  }
+
+  const profile = await db.getProfile(message.author.id);
+  const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
+  const equipment = getResolvedEquipment(profile, equipmentRaw);
+  const adventureBonuses = getAdventureBonuses(profile, equipment);
+  const owned = getOwnedCompanions(profile);
+
+  let textoResultado = "";
+  const categoria = normalizeKey(activeEncounter.categoria);
+
+  // ==========================================
+  // 1. LÓGICA DE EXPLORACIÓN
+  // ==========================================
+  if (categoria === "exploracion") {
+    const explorationBonusDecimal = Math.max(0, adventureBonuses.exploration || 0);
+    
+    // Puntos base entre 0 y 50
+    const puntosAleatorios = Math.floor(Math.random() * 51); 
+    
+    // Bonus limitado al 100% (1.0), lo que da un máximo de 50 puntos extra
+    const bonusLimitado = Math.min(explorationBonusDecimal, 1.0); 
+    const puntosExtra = Math.floor(50 * bonusLimitado);
+    const totalPuntos = puntosAleatorios + puntosExtra;
+    
+    // Añadimos las recompensas a la expedición
+    expedition.pointsEarned += totalPuntos;
+    expedition.xpEarned += (activeEncounter.xp || 10);
+    
+    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "exito" }, "exito");
+    
+    textoResultado = `🔍 **Exploración Exitosa**\n\n${activeEncounter.textoExito || "Encuentras algo interesante al inspeccionar la zona."}\n\n🏆 Has hallado **${totalPuntos}** puntos (Base: ${puntosAleatorios} | Bonus: ${puntosExtra}).\n🌟 Experiencia: +${activeEncounter.xp || 10} XP\n${reactionAsync}`;
+
+  // ==========================================
+  // 2. LÓGICA SOCIAL (Éxito o Fracaso)
+  // ==========================================
+  } else if (categoria === "social") {
+    // Cálculo de éxito usando bonos de negociación y voluntad
+    const chanceExito = 0.50 + (adventureBonuses.negotiation || 0) + (adventureBonuses.willpower || 0) * 0.5;
+    const exito = Math.random() < Math.max(0.10, Math.min(chanceExito, 0.95));
+    
+    const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: exito ? "exito" : "fracaso" }, exito ? "exito" : "fracaso");
+
+    if (exito) {
+      const ptos = activeEncounter.puntos || 15;
+      expedition.pointsEarned += ptos;
+      expedition.xpEarned += (activeEncounter.xp || 10);
+      
+      textoResultado = `💬 **Interacción Exitosa**\n\n${activeEncounter.textoExito || "La conversación fluye a tu favor y obtienes un buen resultado."}\n\n🌟 Recompensas: +${activeEncounter.xp || 10} XP | +${ptos} Pts\n${reactionAsync}`;
+    } else {
+      // Usamos textoFracaso o caemos en textoDerrota si no existe
+      textoResultado = `⚠️ **Interacción Fallida**\n\n${activeEncounter.textoFracaso || activeEncounter.textoDerrota || "Las cosas no salieron como esperabas. Deciden darte la espalda."}\n${reactionAsync}`;
+    }
+
+  // ==========================================
+  // 3. FALLBACK PARA OTRAS CATEGORÍAS
+  // ==========================================
+  } else {
+    expedition.pointsEarned += (activeEncounter.puntos || 0);
+    expedition.xpEarned += (activeEncounter.xp || 10);
+    textoResultado = `✨ **Evento Superado**\n\n${activeEncounter.textoExito || "Has manejado la situación correctamente."}`;
+  }
+
+  // ==========================================
+  // 4. TRANSICIÓN AL SIGUIENTE ENCUENTRO
+  // ==========================================
+  if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0 && !activeEncounter.isSub) {
+    const nextSub = activeEncounter.subencuentros[0];
+    expedition.currentEncounter = { 
+        ...nextSub, 
+        isSub: true, 
+        parentEncounter: activeEncounter, 
+        subIndex: 0,
+        tipo: nextSub.tipo || activeEncounter.tipo, 
+        categoria: nextSub.categoria || activeEncounter.categoria
+    };
+    
+    const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+    textoResultado += `\n\n---\n⚠️ **Pero la situación aún no termina...**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
+
+  } else if (activeEncounter.isSub) {
+    const parent = activeEncounter.parentEncounter;
+    const nextIndex = activeEncounter.subIndex + 1;
+    
+    if (parent.subencuentros && nextIndex < parent.subencuentros.length) {
+      const nextSub = parent.subencuentros[nextIndex];
+      expedition.currentEncounter = { 
+          ...nextSub, 
+          isSub: true, 
+          parentEncounter: parent, 
+          subIndex: nextIndex,
+          tipo: nextSub.tipo || parent.tipo,
+          categoria: nextSub.categoria || parent.categoria
+      };
+      
+      const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+      textoResultado += `\n\n---\n⚠️ **El camino revela un nuevo obstáculo:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para avanzar.`;
+
+    } else {
+      expedition.currentEncounter = null;
+      expedition.progress += 1;
+      textoResultado += `\n\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
+    }
+  } else {
+    expedition.currentEncounter = null;
+    expedition.progress += 1;
+    textoResultado += `\n\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
+  }
+
+  return message.reply(textoResultado);
+}
 }
 
         
