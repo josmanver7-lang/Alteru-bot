@@ -4284,7 +4284,7 @@ resetear"
     }
   }
   
-}  else if (command === "!resetcatalogo") {
+else if (command === "!resetcatalogo") {
     // Solo tú (el admin) puedes usar esto
     if (message.author.id !== ADMIN_USER_ID) return message.reply("❌ No tienes permisos para usar este comando.");
 
