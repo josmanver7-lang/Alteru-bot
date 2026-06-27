@@ -4283,25 +4283,45 @@ resetear"
       return message.reply("Hubo un error al intentar otorgar los puntos.");
     }
   }
-
-    if (command === "resetcatalogo") {
-    // Seguridad: Asegúrate de que solo tú puedas usarlo mediante tu ID
-    if (message.author.id !== "276922628613079040") return;
+  
+}  else if (command === "!resetcatalogo") {
+    // Solo tú (el admin) puedes usar esto
+    if (message.author.id !== ADMIN_USER_ID) return message.reply("❌ No tienes permisos para usar este comando.");
 
     try {
-        // 1. Vaciamos la selección actual en la base de datos
-        db.set("armeria1.selection", []);
-        db.set("armeria2.selection", []);
-        
-        // 2. Forzamos la actualización llamando a tu función principal
-        await refreshCatalogPricesAndSelections(); 
+      // 1. Forzamos la lectura fresca del archivo local armeria.json
+      const armeriaRaw = await readFile(path.join(__dirname, "armeria.json"), "utf8");
+      const armeria = JSON.parse(armeriaRaw);
+      
+      const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
+      const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
-        return message.reply("✅ Los catálogos han sido purgados y recargados desde el archivo JSON.");
+      if (armeriaItems.length === 0) {
+        return message.reply("⚠️ El archivo `armeria.json` está vacío o no tiene el formato correcto.");
+      }
+
+      // 2. Sobrescribimos la base de datos forzando el nuevo stock
+      await db.setEventState("armeria1", {
+        selection: armeriaShuffled.slice(0, 15),
+        lastAt: Date.now(),
+        nextAt: Date.now() + (12 * 60 * 60 * 1000),
+        cycleId: Date.now()
+      });
+
+      await db.setEventState("armeria2", {
+        selection: armeriaShuffled.slice(15, 30),
+        lastAt: Date.now(),
+        nextAt: Date.now() + (12 * 60 * 60 * 1000),
+        cycleId: Date.now()
+      });
+
+      return message.reply("✅ **Catálogo de Armería reseteado.** Los datos se han recargado desde el archivo a la base de datos con éxito. Revisa la `!armeria1`.");
+      
     } catch (error) {
-        console.error("Error al reiniciar catálogo:", error);
-        return message.reply("❌ Hubo un error al forzar el reinicio.");
+      console.error("Error reseteando catálogo:", error);
+      return message.reply("❌ **Error:** No se pudo leer `armeria.json`. Verifica que exista y esté bien escrito.");
     }
-}
+  }
 
   // ==========================================
   // COMANDO: DAR EXPERIENCIA
