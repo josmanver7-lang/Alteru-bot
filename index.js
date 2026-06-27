@@ -4284,6 +4284,24 @@ resetear"
     }
   }
 
+    if (command === "resetcatalogo") {
+    // Seguridad: Asegúrate de que solo tú puedas usarlo mediante tu ID
+    if (message.author.id !== "276922628613079040") return;
+
+    try {
+        // 1. Vaciamos la selección actual en la base de datos
+        db.set("armeria1.selection", []);
+        db.set("armeria2.selection", []);
+        
+        // 2. Forzamos la actualización llamando a tu función principal
+        await refreshCatalogPricesAndSelections(); 
+
+        return message.reply("✅ Los catálogos han sido purgados y recargados desde el archivo JSON.");
+    } catch (error) {
+        console.error("Error al reiniciar catálogo:", error);
+        return message.reply("❌ Hubo un error al forzar el reinicio.");
+    }
+}
 
   // ==========================================
   // COMANDO: DAR EXPERIENCIA
