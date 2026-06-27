@@ -2985,7 +2985,7 @@ async function handleExpedicionDesafiar(message) {
     msgObs += `👉 Usa \`${accionRequerida}\` para intentarlo de nuevo o \`!volver\` para huir.`;
     return message.reply(msgObs);
   }
-
+}
   async function handleExpedicionInteract(message) {
   if (!expeditions.has(message.author.id)) {
     return message.reply("No estás en ninguna expedición activa. Usa !tablon.");
@@ -3108,7 +3108,7 @@ async function handleExpedicionDesafiar(message) {
 
   return message.reply(textoResultado);
 }
-}
+
 
         
 // ==========================================
@@ -3142,6 +3142,8 @@ client.on("messageCreate", async (message) => {
       return procesarAccionEscenario(message, expedition, normalizedAction);
     }
   }
+
+  
 
 
   // ========================================
