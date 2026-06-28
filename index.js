@@ -1462,7 +1462,7 @@ function getFinalScenarioAllowedText(scenario = {}) {
   return allowed.map(a => `\`!${a}\``).join(", ");
 }
 
-async function resolveFinalScenarioAction(message, expedition, action) {
+async function resolveFinalScenarioAction(message, expedition) {
   const scenario = expedition.finalScenario;
   if (!scenario || (!scenario.active && !expedition.pendingFinalScenario)) return false;
 
@@ -3138,12 +3138,9 @@ client.on("messageCreate", async (message) => {
 
     if (allowedActions.includes(normalizedAction)) {
       // 🚀 AQUÍ SE INVOCA TU FUNCIÓN DEFINITIVA:
-      return resolveFinalScenarioAction(message, expedition, action);
+      return resolveFinalScenarioAction(message, expedition);
     }
   }
-
-  
-
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
