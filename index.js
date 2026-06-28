@@ -1422,8 +1422,8 @@ const FINAL_SCENE_RULES = {
 
 
 function getFinalScenarioConfig(mission = {}, expedition = {}) 
-title: raw.titulo || raw.title || mission.titulo || mission.title || "Escenario final",
-description: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.escenarioFinal?.description || mission.descripcion || mission.description || expedition?.currentEncounter?.descripcion || expedition?.currentEncounter?.description || "Te enfrentas al desenlace de tu expedición.",
+const title = raw.titulo || raw.title || mission.titulo || "Escenario final";
+const desc = raw.descripcion || raw.description || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.";
 const enabled = (raw.enabled ?? raw.activo) !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
