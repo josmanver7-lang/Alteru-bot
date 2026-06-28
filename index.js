@@ -1421,37 +1421,18 @@ const FINAL_SCENE_RULES = {
 };
 
 
-function getFinalScenarioConfig(mission = {}, expedition = {}) {
-  const raw = mission.escenarioFinal || {};
-
-  const title = raw.titulo || raw.title || mission.titulo || "Escenario final";
-  const desc = raw.descripcion || raw.description || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.";
+función getFinalScenarioConfig(misión = {}, expedición = {}) {
+  const raw = expedition.finalScenario || mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
   const enabled = (raw.enabled ?? raw.activo) !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
   let allowedActions = raw.allowedActions || raw.accionesPermitidas || null;
 
-  if (!Array.isArray(allowedActions) || !allowedActions.length) {
-    allowedActions = hasEnemies
+  Si (!Array.isArray(accionespermitidas) || !accionespermitidas.length) {
+    acciones permitidas = tiene enemigos
       ? ["atacar", "rodear", "explorar", "infiltrar", "negociar", "retirarse"]
       : ["explorar", "infiltrar", "negociar", "retirarse"];
-  }
-
-  return {
-    ...raw,
-    title,
-    titulo: title,
-    description: desc,
-    descripcion: desc,
-    enabled,
-    activo: enabled,
-    hasEnemies,
-    tieneEnemigos: hasEnemies,
-    allowedActions,
-    accionesPermitidas: allowedActions,
-    tipo: "escenario_final"
-  };
-}
+    }
 
   allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
   if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
