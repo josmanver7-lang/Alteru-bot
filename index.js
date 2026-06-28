@@ -1421,18 +1421,42 @@ const FINAL_SCENE_RULES = {
 };
 
 
-función getFinalScenarioConfig(misión = {}, expedición = {}) {
+function getFinalScenarioConfig(mission = {}, expedition = {}) {
   const raw = expedition.finalScenario || mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
   const enabled = (raw.enabled ?? raw.activo) !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
   let allowedActions = raw.allowedActions || raw.accionesPermitidas || null;
 
-  Si (!Array.isArray(accionespermitidas) || !accionespermitidas.length) {
-    acciones permitidas = tiene enemigos
+  if (!Array.isArray(allowedActions) || !allowedActions.length) {
+    allowedActions = hasEnemies
       ? ["atacar", "rodear", "explorar", "infiltrar", "negociar", "retirarse"]
       : ["explorar", "infiltrar", "negociar", "retirarse"];
-    }
+  }
+
+  allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
+  if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
+
+  return {
+    enabled,
+    title: raw.titulo || raw.title || mission.titulo || "Escenario final",
+    description: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.",
+    hasEnemies,
+    enemyLabel: raw.enemigo || raw.enemyLabel || "enemigos",
+    enemyChance: Number(raw.probabilidadEnemigo ?? raw.enemyChance ?? 0.6),
+    danger: Number(raw.peligro ?? raw.nivelPeligro ?? raw.danger ?? 0),
+    rewardMultiplier: Number(raw.multiplicadorRecompensa ?? raw.rewardMultiplier ?? 1),
+    xpBonus: Number(raw.bonoXp ?? raw.xpBonus ?? 0),
+    pointsBonus: Number(raw.bonoPuntos ?? raw.pointsBonus ?? 0),
+    allowedActions,
+    actionText: raw.textosAccion || raw.acciones || raw.actionText || {},
+    successText: raw.textoExito || raw.exito || raw.successText || {},
+    failureText: raw.textoFracaso || raw.fracaso || raw.failureText || {},
+    completionText: raw.textosCompletado || raw.resultados || raw.resolucion || raw.completionText || {},
+    affinityBonus: Number(raw.bonoAfinidad ?? raw.affinityBonus ?? 0)
+  };
+}
+
 
   allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
   if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
