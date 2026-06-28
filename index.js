@@ -3160,7 +3160,7 @@ client.on("messageCreate", async (message) => {
 
     if (allowedActions.includes(normalizedAction)) {
       // 🚀 AQUÍ SE INVOCA TU FUNCIÓN DEFINITIVA:
-      return procesarAccionEscenario(message, expedition, normalizedAction);
+      return resolveFinalScenarioAction(message, expedition, action);
     }
   }
 
