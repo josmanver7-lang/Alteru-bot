@@ -1658,7 +1658,7 @@ expedition.currentEncounter = {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let texto = `❌ **Escenario Final Infructuoso**\n\n🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${combatBlock}`;
+    let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}${finalResolutionText}\n\n...`;
     if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
     texto += `\nRecibes ${damage} de daño. (Salud: ${nuevaSalud}/100)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP\n\nLa expedición ha concluido.` + utilMsg;
     return message.reply(texto);
