@@ -1383,7 +1383,8 @@ function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "
   const peligroTexto = encounter?.peligro ? getDangerText(encounter.peligro) : "Ninguno";
   const baseText = encounter?.textoInicio || encounter?.descripcion || encounter?.description || "Te adentras en territorio desconocido...";
 
-  let text = `⚠️ **${encounter.titulo}**\n\n${baseText}`;
+  let text = `⚠️ **${encounter.titulo || encounter.title || "Evento en curso"}**\n\n${baseText}`;
+
   if (powerBlock) text += `\n\n${powerBlock}`;
   text += `\n\nPeligro: ${peligroTexto}\nUsa: ${commandHint}`;
 
@@ -1420,9 +1421,10 @@ const FINAL_SCENE_RULES = {
 };
 
 
-function getFinalScenarioConfig(mission = {}, expedition = {}) {
-  const raw = expedition.finalScenario || mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
-  const enabled = (raw.enabled ?? raw.activo) !== false;
+function getFinalScenarioConfig(mission = {}, expedition = {}) 
+title: raw.titulo || raw.title || mission.titulo || mission.title || "Escenario final",
+description: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.escenarioFinal?.description || mission.descripcion || mission.description || expedition?.currentEncounter?.descripcion || expedition?.currentEncounter?.description || "Te enfrentas al desenlace de tu expedición.",
+const enabled = (raw.enabled ?? raw.activo) !== false;
   const hasEnemies = raw.hasEnemies ?? raw.tieneEnemigos ?? true;
 
   let allowedActions = raw.allowedActions || raw.accionesPermitidas || null;
@@ -1559,26 +1561,38 @@ async function resolveFinalScenarioAction(message, expedition) {
   let actionText = baseDescription;
   const block = scenario.actionText?.[normalizedAction] || scenario.completionText?.[normalizedAction];
   
-  if (typeof block === "string") {
-      actionText = block;
-  } else if (block && block.texto) {
-      actionText = block.texto;
-  } else if (block && block.descripcion) {
-      actionText = block.descripcion;
-  }
+if (typeof block === "string") {
+    actionText = block;
+} else if (block && (block.texto || block.text || block.successText)) {
+    actionText = block.texto || block.text || block.successText;
+} else if (block && (block.descripcion || block.description)) {
+    actionText = block.descripcion || block.description;
+}
   
   const finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
 
   // 4. LECTURA DE SUBESCENARIOS (Si existen, encadena el desenlace en lugar de cerrar)
   if (success && activeEncounter.subescenarios && activeEncounter.subescenarios.length > 0 && !activeEncounter.isSub) {
-    const selectedSub = activeEncounter.subescenarios[Math.floor(Math.random() * activeEncounter.subescenarios.length)];
-    expedition.currentEncounter = {
-      ...selectedSub,
-      isSub: true,
-      parentEncounter: activeEncounter,
-      tipo: selectedSub.tipo || "escenario_final",
-      categoria: selectedSub.categoria || "final"
+    // NUEVO CÓDIGO
+let selectedSub = activeEncounter.subescenarios[Math.floor(Math.random() * activeEncounter.subescenarios.length)];
+
+// Si el subescenario es un string (ID), lo recuperamos del pool de encuentros
+if (typeof selectedSub === "string") {
+    const encountersPool = await loadEncounters();
+    const found = encountersPool.find(e => e.id === selectedSub);
+    selectedSub = found || { 
+        titulo: "Desvío Inesperado", 
+        descripcion: "El camino cambia abruptamente frente a ti." 
     };
+}
+
+expedition.currentEncounter = {
+  ...selectedSub,
+  isSub: true,
+  parentEncounter: activeEncounter,
+  tipo: selectedSub.tipo || "escenario_final",
+  categoria: selectedSub.categoria || "final"
+};
     
     let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}${finalResolutionText}\n\n---\n⚠️ **Un giro inesperado altera el final de la misión:**\n📜 *${selectedSub.titulo}*\n${selectedSub.descripcion}\n\n🗺️ Usa /desafiar para continuar tu viaje.`;
     return message.reply(texto);
@@ -1677,14 +1691,12 @@ function getFinalScenarioActionStartText(action, expedition) {
   }
 }
 
-
 function rollFinalScenarioEnemyPresence(scenario = {}) {
   if (scenario.hasEnemies === false) return false;
   const chance = Number(scenario.enemyChance ?? 0.6);
   const clamped = Math.max(0, Math.min(chance, 1));
   return Math.random() < clamped;
 }
-
 
 function buildFinalResolutionText(action, success, scenario) {
   const actKey = normalizeFinalAction(action);
@@ -1702,8 +1714,6 @@ function buildFinalResolutionText(action, success, scenario) {
     return scenario.completionText?.fracaso || scenario.completionText?.failure || scenario.failureText?.[actKey] || "La situación no se resolvió como esperabas.";
   }
 }
-
-
 
 async function startFinalScenario(message, expedition) {
   const scenario = getFinalScenarioConfig(expedition.mission || {}, expedition);
