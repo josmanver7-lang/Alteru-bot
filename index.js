@@ -2904,7 +2904,7 @@ async function handleExpedicionDesafiar(message) {
     }
   }
 
-  if (success) {
+    if (success) {
     const xpGanada = activeEncounter.xp || 15;
     const puntosGanados = activeEncounter.puntos || 10;
     expedition.xpEarned += xpGanada;
@@ -2919,59 +2919,40 @@ async function handleExpedicionDesafiar(message) {
     if (faelonHeal) textoVictoria += `🌿 *Faelon cura tus heridas (+10 HP).*\n`;
     textoVictoria += `🌟 Recompensas parciales: +${xpGanada} XP | +${puntosGanados} Pts\n${reactionAsync}\n\n`;
 
-              // TRANSICIÓN NATURAL
-  if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0 && !activeEncounter.isSub) {
-    // 1. Elegir un ÚNICO subencuentro al azar
-    const indexAleatorio = Math.floor(Math.random() * activeEncounter.subencuentros.length);
-    const nextSub = activeEncounter.subencuentros[indexAleatorio];
-    
-    // 2. Sobrescribir el encuentro actual heredando tipo y categoría
-    expedition.currentEncounter = { 
-        ...nextSub, 
-        isSub: true, 
-        parentEncounter: activeEncounter, 
-        tipo: nextSub.tipo || activeEncounter.tipo, 
-        categoria: nextSub.categoria || activeEncounter.categoria
-    };
-    
-    const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-    
-    // 3. Adaptar el texto si el encuentro base no tenía peligro real
-    if ((activeEncounter.peligro || 0) === 0) {
-        textoVictoria = `⚠️ **Una situación inesperada altera tu camino:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar el obstáculo.`;
-    } else {
-        textoVictoria += `\n---\n⚠️ **Pero la situación aún no termina...**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
-    }
-    
-    await db.updateTravelerData(message.author.id, { xp: profile.xp, oro: profile.oro, expedition });
-    return message.reply(textoVictoria);
-
-  } else {
-    // 4. Lógica para avanzar la expedición si no hay subencuentros pendientes
-    expedition.currentEncounter = null;
-    expedition.progress += 1;
-    textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu viaje al siguiente escenario.`;
-    
-    await db.updateTravelerData(message.author.id, { xp: profile.xp, oro: profile.oro, expedition });
-    return message.reply(textoVictoria);
-  }
-        
-        const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
-        textoVictoria += `\n---\n⚠️ **El camino revela un nuevo obstáculo:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para avanzar.`;
-        return message.reply(textoVictoria);
-
+    // TRANSICIÓN NATURAL
+    if (activeEncounter.subencuentros && activeEncounter.subencuentros.length > 0 && !activeEncounter.isSub) {
+      // 1. Elegir un ÚNICO subencuentro al azar
+      const indexAleatorio = Math.floor(Math.random() * activeEncounter.subencuentros.length);
+      const nextSub = activeEncounter.subencuentros[indexAleatorio];
+      
+      // 2. Sobrescribir el encuentro actual heredando tipo y categoría
+      expedition.currentEncounter = { 
+          ...nextSub, 
+          isSub: true, 
+          parentEncounter: activeEncounter, 
+          tipo: nextSub.tipo || activeEncounter.tipo, 
+          categoria: nextSub.categoria || activeEncounter.categoria
+      };
+      
+      const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
+      
+      // 3. Adaptar el texto si el encuentro base no tenía peligro real
+      if ((activeEncounter.peligro || 0) === 0) {
+          textoVictoria = `⚠️ **Una situación inesperada altera tu camino:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar el obstáculo.`;
       } else {
-        // CORRECCIÓN: Se terminaron los subencuentros, se avanza el progreso de forma limpia
-        expedition.currentEncounter = null;
-        expedition.progress += 1;
-        textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
-        return message.reply(textoVictoria);
+          textoVictoria += `\n---\n⚠️ **Pero la situación aún no termina...**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
       }
+      
+      await db.updateTravelerData(message.author.id, { xp: profile.xp, oro: profile.oro, expedition });
+      return message.reply(textoVictoria);
+
     } else {
-      // CORRECCIÓN: Encuentro normal superado que NO tenía subencuentros
+      // 4. Lógica para avanzar la expedición si no hay subencuentros pendientes
       expedition.currentEncounter = null;
       expedition.progress += 1;
-      textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu camino.`;
+      textoVictoria += `\n---\n👉 Usa \`!desafiar\` para continuar tu viaje al siguiente escenario.`;
+      
+      await db.updateTravelerData(message.author.id, { xp: profile.xp, oro: profile.oro, expedition });
       return message.reply(textoVictoria);
     }
   } else {
