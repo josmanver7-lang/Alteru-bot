@@ -3117,7 +3117,7 @@ async function handleExpedicionDesafiar(message) {
 
   return message.reply(textoResultado);
 }
-.
+
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
 // ==========================================
