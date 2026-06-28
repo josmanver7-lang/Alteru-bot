@@ -1458,6 +1458,7 @@ function getFinalScenarioConfig(mission = {}, expedition = {}) {
 }
 
 
+
   allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
   if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
 
