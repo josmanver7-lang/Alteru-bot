@@ -1466,9 +1466,11 @@ async function resolveFinalScenarioAction(message, expedition) {
   const scenario = expedition.finalScenario;
   if (!scenario || (!scenario.active && !expedition.pendingFinalScenario)) return false;
 
-  // 1. LECTURA DE COMANDOS DE RESOLUCIÓN (Mapeo dinámico)
+   // 1. LECTURA DE COMANDOS DE RESOLUCIÓN (Mapeo dinámico)
   const commandKey = message.content.split(" ")[0].toLowerCase();
-  const normalizedAction = FINAL_SCENE_COMMANDS[commandKey] || normalizeKey(action);
+  // Extraemos el texto del comando sin el prefijo "!" para usarlo como fallback seguro
+  const actionStr = commandKey.replace("!", ""); 
+  const normalizedAction = FINAL_SCENE_COMMANDS[commandKey] || normalizeKey(actionStr);
 
   const allowed = Array.isArray(scenario.allowedActions) && scenario.allowedActions.length
     ? scenario.allowedActions.map(normalizeKey)
@@ -3106,10 +3108,7 @@ async function handleExpedicionDesafiar(message) {
 
   return message.reply(textoResultado);
 }
-
-
-
-        
+.
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
 // ==========================================
