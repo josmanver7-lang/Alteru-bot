@@ -3124,7 +3124,7 @@
   {
     "id": "yelmo_acero_abierto",
     "nombre": "Yelmo de Acero Abierto Rohirrim",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "comun",
     "precioBase": 230,
@@ -3134,7 +3134,7 @@
   {
     "id": "yelmo_eorlinga_crines",
     "nombre": "Yelmo de Eorlinga con Crines",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
     "precioBase": 1300,
@@ -3144,7 +3144,7 @@
   {
     "id": "yelmo_guardia_meduseld",
     "nombre": "Yelmo de la Guardia de Meduseld",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "legendario",
     "precioBase": 3300,
@@ -3154,7 +3154,7 @@
   {
     "id": "casquete_hierro_valle",
     "nombre": "Casquete de Hierro Simple",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "comun",
     "precioBase": 220,
@@ -3164,7 +3164,7 @@
   {
     "id": "yelmo_carrilleras_valle",
     "nombre": "Yelmo con Carrilleras de Valle",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "forjado",
     "precioBase": 650,
@@ -3174,7 +3174,7 @@
   {
     "id": "yelmo_cresta_cisne",
     "nombre": "Yelmo con Cresta de Cisne",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
     "precioBase": 1400,
@@ -3184,7 +3184,7 @@
   {
     "id": "yelmo_dragon_alado",
     "nombre": "Yelmo de Dragón Alado",
-    "slot": "cabeza",
+    "slot": "casco",
     "raza": "hombre",
     "rareza": "legendario",
     "precioBase": 3500,
