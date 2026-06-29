@@ -806,34 +806,8 @@
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
   {
-    "id": "escudo_juez_rohan",
-    "nombre": "Escudo de Juez de Rohan",
-    "slot": "escudo",
-    "hands": 1,
-    "raza": "hombre",
-    "forma": "redonda",
-    "material": "madera reforzada y cuero",
-    "rareza": "forjado",
-    "precioBase": 320,
-    "descripcion": "Escudo con el símbolo del caballo blanco pintado en el centro.",
-    "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
-  },
-  {
-    "id": "escudo_guardia_real_rohan",
-    "nombre": "Escudo de la Guardia Real de la Marca",
-    "slot": "escudo",
-    "hands": 1,
-    "raza": "hombre",
-    "forma": "redonda",
-    "material": "acero y madera tratada",
-    "rareza": "superior",
-    "precioBase": 950,
-    "descripcion": "Escudo de alta calidad, usado por los guerreros de Meduseld.",
-    "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
-  },
-  {
-    "id": "escudo_sol_rohan",
-    "nombre": "Escudo de Sol del Rey de la Marca",
+    "id": "escudo_sol_mariscal",
+    "nombre": "Escudo de Sol de Mariscal",
     "slot": "escudo",
     "hands": 1,
     "raza": "hombre",
