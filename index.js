@@ -193,7 +193,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     const nivelJugador = calculateLevelFromXP(profile.xp || 0);
     
     // 1 & 2: El daño plano ahora es el Ataque + Nivel + EL SCORE/PODER TOTAL DEL EQUIPO.
-    let danoPlanoJugador = (Number(profile.ataque || 10)) + (nivelJugador * 2) + (eqPower.score || 0);
+    let danoPlanoJugador = (Number(profile.ataque || 10)) + (nivelJugador * 2) + (eqPower.totals.damageBonus || 0);
     
     // Cambiamos el successBonus por el willpowerBonus
     let bonosExtra = (bonuses.captainBonus || 0) + (affinityCombat.willpowerBonus || 0) + (classBonus.attackBonus || 0);
@@ -247,11 +247,13 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     poderFinalJugador = Math.max(1, Math.round(poderFinalJugador));
     poderFinalEnemigo = Math.max(1, Math.round(poderFinalEnemigo));
 
-    return {
+        return {
         exito: poderFinalJugador >= poderFinalEnemigo,
         poderJugador: poderFinalJugador,
         poderEnemigo: poderFinalEnemigo,
-        modificadorMatriz: modificadorPuntos
+        modificadorMatriz: modificadorPuntos,
+        playerStats: playerMatrixStats, // NUEVO
+        enemyStats: enemyMatrixStats    // NUEVO
     };
 }
 
@@ -1571,10 +1573,26 @@ async function resolveFinalScenarioAction(message, expedition) {
   let success = false;
   let combatBlock = "";
 
-  if (normalizedAction === "atacar" || activeEncounter.categoria === "combate" || activeEncounter.tipo === "combate") {
+   if (normalizedAction === "atacar" || activeEncounter.categoria === "combate" || activeEncounter.tipo === "combate") {
     const combatResult = resolverCombateMixto(profile, equipment, activeEncounter, combatBonus, affinityCombat);
     success = combatResult.exito;
-    combatBlock = `\n⚔️ **Combate Resolutivo (Sistema Matrix):**\n• Tu Poder: **${combatResult.poderJugador}** | Poder Enemigo: **${combatResult.poderEnemigo}**\n• Modificador Táctico: **${combatResult.modificadorMatriz >= 0 ? '+' : ''}${Math.round(combatResult.modificadorMatriz * 100)}%**\n`;
+    
+    // Función auxiliar para renderizar los stats de la matriz en texto
+    const formatMatrixStats = (stats) => {
+        const parts = [];
+        if (stats.meleeBonus) parts.push(`Melé +${Math.round(stats.meleeBonus * 100)}%`);
+        if (stats.rangedBonus) parts.push(`Rango +${Math.round(stats.rangedBonus * 100)}%`);
+        if (stats.thrownBonus) parts.push(`Arrojo +${Math.round(stats.thrownBonus * 100)}%`);
+        if (stats.magicBonus) parts.push(`Magia +${Math.round(stats.magicBonus * 100)}%`);
+        if (stats.cavalryBonus) parts.push(`Caballería +${Math.round(stats.cavalryBonus * 100)}%`);
+        return parts.length ? parts.join(" | ") : "Sin bonos";
+    };
+
+    combatBlock = `\n⚔️ **Combate Resolutivo (Sistema Matrix):**\n` +
+                  `• Tus Bonos: **${formatMatrixStats(combatResult.playerStats)}**\n` +
+                  `• Bonos Enemigo: **${formatMatrixStats(combatResult.enemyStats)}**\n` +
+                  `• Tu Poder: **${combatResult.poderJugador}** | Poder Enemigo: **${combatResult.poderEnemigo}**\n` +
+                  `• Modificador Táctico: **${combatResult.modificadorMatriz >= 0 ? '+' : ''}${Math.round(combatResult.modificadorMatriz * 100)}%**\n`;
   } else {
     success = Math.random() < successChance;
   }
@@ -1817,10 +1835,20 @@ async function startFinalScenario(message, expedition) {
     if (line) reactions.push(`💬 ${line}`);
   }
 
+    const descToUse = scenario.description || "Te enfrentas al desenlace de tu expedición.";
+  
+  // NUEVO: Renderizado de los stats del enemigo para el escenario final
+  const enemyStats = [];
+  if (scenario.meleeBonus) enemyStats.push(`Melé +${Math.round(scenario.meleeBonus * 100)}%`);
+  if (scenario.rangedBonus) enemyStats.push(`Rango +${Math.round(scenario.rangedBonus * 100)}%`);
+  if (scenario.thrownBonus) enemyStats.push(`Arrojo +${Math.round(scenario.thrownBonus * 100)}%`);
+  if (scenario.magicBonus) enemyStats.push(`Magia +${Math.round(scenario.magicBonus * 100)}%`);
+  if (scenario.cavalryBonus) enemyStats.push(`Caballería +${Math.round(scenario.cavalryBonus * 100)}%`);
+  
+  const statsText = enemyStats.length > 0 ? `\n📊 Atributos Enemigos: **${enemyStats.join(" | ")}**` : "";
 
-  const descToUse = scenario.description || "Te enfrentas al desenlace de tu expedición.";
-  const intro = scenario.introText || `🏁 **${scenario.titulo || scenario.title || expedition.mission?.titulo || "Escenario final"}**\n\n${descToUse}\n\nPeligro: ${dangerText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
-
+  // SE AÑADE statsText ANTES DE LAS ACCIONES
+  const intro = scenario.introText || `🏁 **${scenario.titulo || scenario.title || expedition.mission?.titulo || "Escenario final"}**\n\n${descToUse}\n\nPeligro: ${dangerText}${statsText}\n\nAcciones disponibles: ${getFinalScenarioAllowedText(scenario)}.`;
 
   let text = intro;
   if (reactions.length) text += `\n\n${reactions.join("\n")}`;
