@@ -199,10 +199,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     
     // Cambiamos el successBonus por el willpowerBonus
     let bonosExtra = (bonuses.captainBonus || 0) + (affinityCombat.willpowerBonus || 0) + (classBonus.attackBonus || 0);
-
-    // Tipos de enemigo
-    const esNumeroso = encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso";
-        // Tipos de enemigo
+          // Tipos de enemigo
     const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
     // Forzamos que si es Jefe, no pueda ser Numeroso simultáneamente
     const esNumeroso = (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") && !esJefe;
