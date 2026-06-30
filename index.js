@@ -149,12 +149,14 @@ const COMBAT_MATRIX = {
 };
 
 function mapStatsToMatrixKeys(statsObj = {}) {
+    // Aseguramos la lectura si los stats vienen dentro de .stats o .atributos
+    const src = statsObj.stats || statsObj.atributos || statsObj;
     return {
-        meleeBonus: statsObj.meleeBonus || statsObj.combatBonus || 0,
-        rangedBonus: statsObj.rangedBonus || 0,
-        thrownBonus: statsObj.thrownBonus || statsObj.throwBonus || 0,
-        magicBonus: statsObj.magicBonus || 0,
-        cavalryBonus: statsObj.cavalryBonus || statsObj.mountedBonus || 0
+        meleeBonus: src.meleeBonus || src.combatBonus || 0,
+        rangedBonus: src.rangedBonus || 0,
+        thrownBonus: src.thrownBonus || src.throwBonus || 0,
+        magicBonus: src.magicBonus || 0,
+        cavalryBonus: src.cavalryBonus || src.mountedBonus || 0
     };
 }
 
@@ -201,6 +203,11 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     // Tipos de enemigo
     const esNumeroso = encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso";
     const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
+
+        // Tipos de enemigo
+    const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
+    // Forzamos que si es Jefe, no pueda ser Numeroso simultáneamente
+    const esNumeroso = (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") && !esJefe;
 
     if (esJefe) {
         bonosExtra += bonuses.strongEnemyBonus || 0;
@@ -1404,13 +1411,26 @@ function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "
   const peligroTexto = encounter?.peligro ? getDangerText(encounter.peligro) : "Ninguno";
   const baseText = encounter?.textoInicio || encounter?.descripcion || encounter?.description || "Te adentras en territorio desconocido...";
 
+  // NUEVO: Renderizado de los stats de la matriz para encuentros normales
+  const enemyStats = [];
+  const src = encounter.stats || encounter.atributos || encounter;
+  if (src.meleeBonus || src.combatBonus) enemyStats.push(`Melé +${Math.round((src.meleeBonus || src.combatBonus) * 100)}%`);
+  if (src.rangedBonus) enemyStats.push(`Rango +${Math.round(src.rangedBonus * 100)}%`);
+  if (src.thrownBonus || src.throwBonus) enemyStats.push(`Arrojo +${Math.round((src.thrownBonus || src.throwBonus) * 100)}%`);
+  if (src.magicBonus) enemyStats.push(`Magia +${Math.round(src.magicBonus * 100)}%`);
+  if (src.cavalryBonus || src.mountedBonus) enemyStats.push(`Caballería +${Math.round((src.cavalryBonus || src.mountedBonus) * 100)}%`);
+
+  const statsText = enemyStats.length > 0 ? `\n📊 Atributos Enemigos: **${enemyStats.join(" | ")}**` : "";
+
   let text = `⚠️ **${encounter.titulo || encounter.title || "Evento en curso"}**\n\n${baseText}`;
 
   if (powerBlock) text += `\n\n${powerBlock}`;
-  text += `\n\nPeligro: ${peligroTexto}\nUsa: ${commandHint}`;
+  // Incorporamos el statsText a la salida
+  text += `\n\nPeligro: ${peligroTexto}${statsText}\nUsa: ${commandHint}`;
 
   return text;
 }
+
 
 
 // ==========================================
@@ -1480,15 +1500,14 @@ function getFinalScenarioConfig(mission = {}, expedition = {}) {
     failureText: raw.textoFracaso || raw.fracaso || raw.failureText || {},
     completionText: raw.textosCompletado || raw.resultados || raw.resolucion || raw.completionText || {},
     affinityBonus: Number(raw.bonoAfinidad ?? raw.affinityBonus ?? 0),
-    // Traspaso de estadísticas para la Matriz de Combate
-    meleeBonus: raw.meleeBonus || raw.combatBonus || 0,
-    rangedBonus: raw.rangedBonus || 0,
-    thrownBonus: raw.thrownBonus || raw.throwBonus || 0,
-    magicBonus: raw.magicBonus || 0,
-    cavalryBonus: raw.cavalryBonus || raw.mountedBonus || 0,
-    damageBonus: raw.damageBonus || 0,
-    willpowerBonus: raw.willpowerBonus || 0, 
-    damageReduction: raw.damageReduction || 0
+    meleeBonus: (raw.stats || raw.atributos || raw).meleeBonus || (raw.stats || raw.atributos || raw).combatBonus || 0,
+    rangedBonus: (raw.stats || raw.atributos || raw).rangedBonus || 0,
+    thrownBonus: (raw.stats || raw.atributos || raw).thrownBonus || (raw.stats || raw.atributos || raw).throwBonus || 0,
+    magicBonus: (raw.stats || raw.atributos || raw).magicBonus || 0,
+    cavalryBonus: (raw.stats || raw.atributos || raw).cavalryBonus || (raw.stats || raw.atributos || raw).mountedBonus || 0,
+    damageBonus: (raw.stats || raw.atributos || raw).damageBonus || 0,
+    willpowerBonus: (raw.stats || raw.atributos || raw).willpowerBonus || 0, 
+    damageReduction: (raw.stats || raw.atributos || raw).damageReduction || 0
   };
 }
 
