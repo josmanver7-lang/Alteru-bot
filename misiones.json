@@ -218,7 +218,7 @@
       "enemyChance": 0.99,
       "peligro": 3,
       "categoria": "enemigo_numeroso",
-      "bonus": { "damageBonus": 1 "meleeBonus": 0.05, "negotiationBonus": 0.03, "damageReduction": 0.09 },
+      "bonus": { "damageBonus": 1, "meleeBonus": 0.05, "negotiationBonus": 0.03, "damageReduction": 0.09 },
       "allowedActions": [
         "atacar",
         "rodear",
