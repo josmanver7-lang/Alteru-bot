@@ -202,8 +202,6 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
 
     // Tipos de enemigo
     const esNumeroso = encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso";
-    const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
-
         // Tipos de enemigo
     const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
     // Forzamos que si es Jefe, no pueda ser Numeroso simultáneamente
@@ -214,7 +212,6 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     } else if (esNumeroso) {
         bonosExtra += bonuses.numerousEnemyBonus || 0;
     }
-
     // Calculamos el poder total que aportan los stats de combate del enemigo
     let poderStatsEnemigo = (encounter.meleeBonus || 0) + (encounter.rangedBonus || 0) + (encounter.thrownBonus || 0) + (encounter.magicBonus || 0) + (encounter.cavalryBonus || 0);
     // Lo convertimos a puntos directos (ej. 0.20 de melee = 20 de poder)
