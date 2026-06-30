@@ -418,7 +418,7 @@
     "tipo": "enemigo_numeroso",
     "categoria": "combate",
     "titulo": "Merodeadores de las Montañas Blancas",
-    "bonus": { "damageBonus" 1, "meleeBonus": 0.03, "rangedBonus": 0.04, "damageReduction": 0.04 },
+    "bonus": { "damageBonus": 1, "meleeBonus": 0.03, "rangedBonus": 0.04, "damageReduction": 0.04 },
     "region": ["blackroot vale", "lamedon"],
     "descripcion": "El eco de un cuerno rústico resuena en las frías laderas superiores. Un grupo de montañeses renegados y desertores, armados con arcos largos de madera de tejo y pesadas hachas de mano, desciende por un desfiladero rocoso dispuestos a arrancar hasta la última moneda de tus bolsillos.",
     "textoExito": "Anticipando su emboscada, te pegas a las rocas para anular la ventaja de sus arqueros. Cuando los hacheros se acercan, los recibes con una contraofensiva fulminante. Tu acero corta el aire helado y despacha a los atacantes con una velocidad asombrosa. Al ver la carnicería, los tiradores de las colinas arrojan sus arcos y huyen hacia las cumbres nevadas.",
