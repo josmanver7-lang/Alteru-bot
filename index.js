@@ -158,84 +158,100 @@ function mapStatsToMatrixKeys(statsObj = {}) {
     };
 }
 
-function resolverCombateMixto(profile, equipment, encounter, combatBonus, affinityCombat) {
+function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCombat) {
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
+    const playerMatrixStats = mapStatsToMatrixKeys(eqPower.totals);
+    const classBonus = getPlayerClassBonus(profile);
+    
+    if (Object.values(playerMatrixStats).every(v => v === 0)) playerMatrixStats.meleeBonus = 0.1;
 
-    const userKeys = mapStatsToMatrixKeys({
-        meleeBonus: combatBonus.meleeBonus,
-        rangedBonus: combatBonus.rangedBonus,
-        thrownBonus: combatBonus.thrownBonus,
-        magicBonus: combatBonus.magicBonus,
-        cavalryBonus: combatBonus.cavalryBonus
-    });
+    const enemyMatrixStats = mapStatsToMatrixKeys(encounter);
+    if (Object.values(enemyMatrixStats).every(v => v === 0)) enemyMatrixStats.meleeBonus = 0.1;
 
-    const enemyKeys = mapStatsToMatrixKeys({
-        meleeBonus: encounter.meleeBonus || 0,
-        rangedBonus: encounter.rangedBonus || 0,
-        thrownBonus: encounter.thrownBonus || 0,
-        magicBonus: encounter.magicBonus || 0,
-        cavalryBonus: encounter.cavalryBonus || 0
-    });
+    let modificadorPuntos = 0;
 
-    let modMatriz = 0;
-    if (userKeys.length && enemyKeys.length) {
-        let totalMatches = 0;
-        let sumMod = 0;
-        for (const uk of userKeys) {
-            for (const ek of enemyKeys) {
-                const row = COMBAT_MATRIX[uk];
-                if (row && typeof row[ek] === 'number') {
-                    sumMod += row[ek];
-                    totalMatches++;
+    for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
+        if (pVal > 0) {
+            for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
+                if (eVal > 0 && COMBAT_MATRIX[pKey]?.[eKey]) {
+                    modificadorPuntos += (COMBAT_MATRIX[pKey][eKey] * Math.min(pVal, eVal));
                 }
             }
         }
-        if (totalMatches > 0) {
-            modMatriz = sumMod / totalMatches;
+    }
+
+    for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
+        if (eVal > 0) {
+            for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
+                if (pVal > 0 && COMBAT_MATRIX[eKey]?.[pKey]) {
+                    modificadorPuntos -= (COMBAT_MATRIX[eKey][pKey] * Math.min(eVal, pVal));
+                }
+            }
         }
     }
 
-    const danoPlanoJugador = Number(profile.ataque || 10) + (combatBonus.baseDamageBonus || 0) + (eqPower.totals.damageBonus || 0);
-    const danoPlanoEnemigo = (Number(encounter.peligro) * 7) + (encounter.damageBonus || 0);
+    const nivelJugador = calculateLevelFromXP(profile.xp || 0);
+    
+    // 1 & 2: El daño plano ahora es el Ataque + Nivel + EL SCORE/PODER TOTAL DEL EQUIPO.
+    let danoPlanoJugador = (Number(profile.ataque || 10)) + (nivelJugador * 2) + (eqPower.score || 0);
+    
+    // Cambiamos el successBonus por el willpowerBonus
+    let bonosExtra = (bonuses.captainBonus || 0) + (affinityCombat.willpowerBonus || 0) + (classBonus.attackBonus || 0);
 
-    const bonosExtra = (combatBonus.captainBonus * 0.25) + (combatBonus.strongEnemyBonus * 0.15) + (affinityCombat.combatBonus || 0);
+    // Tipos de enemigo
+    const esNumeroso = encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso";
+    const esJefe = encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe" || encounter.categoria === "jefe";
 
-    let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
-    let poderFinalEnemigo = danoPlanoEnemigo * (1 + (encounter.successBonus || 0));
-
-    if (modMatriz >= 0) {
-        poderFinalJugador *= (1 + modMatriz);
-    } else {
-        poderFinalEnemigo *= (1 + Math.abs(modMatriz));
+    if (esJefe) {
+        bonosExtra += bonuses.strongEnemyBonus || 0;
+    } else if (esNumeroso) {
+        bonosExtra += bonuses.numerousEnemyBonus || 0;
     }
 
-    // ==========================================
-    // APLICACIÓN ESTRICTA DE ARMADURA (COMBATE)
-    // ==========================================
-    
-    // El damageReduction del enemigo absorbe/mitiga el poder del jugador
+    // Calculamos el poder total que aportan los stats de combate del enemigo
+    let poderStatsEnemigo = (encounter.meleeBonus || 0) + (encounter.rangedBonus || 0) + (encounter.thrownBonus || 0) + (encounter.magicBonus || 0) + (encounter.cavalryBonus || 0);
+    // Lo convertimos a puntos directos (ej. 0.20 de melee = 20 de poder)
+    let poderMatrizEnemigo = Math.floor(poderStatsEnemigo * 100);
+
+    // 2: El daño del enemigo suma su peligro * 7, su damageBonus y TODO el poder de sus stats
+    let danoPlanoEnemigo = ((encounter.peligro || 0) * 7) + (encounter.damageBonus || 0) + poderMatrizEnemigo;
+
+    // Multiplicamos por el nuevo willpowerBonus (en vez de successBonus)
+    let poderFinalJugador = danoPlanoJugador * (1 + (eqPower.totals.willpowerBonus || 0) + bonosExtra);
+    let poderFinalEnemigo = danoPlanoEnemigo * (1 + (encounter.willpowerBonus || 0));
+
+    // Aplicar los resultados de la matriz de combate (Piedra/Papel/Tijera)
+    if (modificadorPuntos >= 0) {
+        poderFinalJugador *= (1 + modificadorPuntos);
+    } else {
+        poderFinalEnemigo *= (1 + Math.abs(modificadorPuntos));
+    }
+
+    // Aplicación de Armadura (Damage Reduction)
     if (encounter.damageReduction && encounter.damageReduction > 0) {
         poderFinalJugador *= (1 - Math.min(0.85, encounter.damageReduction));
     }
 
-    // El damageReduction del jugador absorbe/mitiga el poder del enemigo
-    const totalPlayerDmgRed = (eqPower.totals?.damageReduction || 0) + (combatBonus.damageReduction || 0) + (affinityCombat.damageReduction || 0);
+    const totalPlayerDmgRed = (eqPower.totals?.damageReduction || 0) + (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0);
     if (totalPlayerDmgRed > 0) {
         poderFinalEnemigo *= (1 - Math.min(0.85, totalPlayerDmgRed));
     }
 
-    // ==========================================
+    // 🔥 LÓGICA: DAÑO DE ÁREA CONTRA ENEMIGOS NUMEROSOS 🔥
+    // Ahora está restringido estrictamente a los "enemigos numerosos"
+    if (esNumeroso) {
+        let danoDeArea = poderFinalJugador * 0.35;
+        poderFinalEnemigo -= danoDeArea;
+    }
 
     poderFinalJugador = Math.max(1, Math.round(poderFinalJugador));
     poderFinalEnemigo = Math.max(1, Math.round(poderFinalEnemigo));
 
-    const exito = poderFinalJugador >= poderFinalEnemigo;
-
     return {
-        exito,
+        exito: poderFinalJugador >= poderFinalEnemigo,
         poderJugador: poderFinalJugador,
         poderEnemigo: poderFinalEnemigo,
-        modificadorMatriz: modMatriz
+        modificadorMatriz: modificadorPuntos
     };
 }
 
@@ -1503,10 +1519,10 @@ async function resolveFinalScenarioAction(message, expedition) {
   const mission = expedition.mission || {};
   const playerClassBonus = getPlayerClassBonus(profile);
 
-  const activeEncounter = expedition.currentEncounter || {
+    const activeEncounter = expedition.currentEncounter || {
     ...scenario,
-    tipo: "escenario_final",
-    categoria: "final",
+    tipo: scenario.tipo || "jefe", // Por defecto será tratado como jefe o enemigo poderoso
+    categoria: scenario.categoria || "final",
     active: true
   };
 
