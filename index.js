@@ -158,83 +158,87 @@ function mapStatsToMatrixKeys(statsObj = {}) {
     };
 }
 
-function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCombat) {
+function resolverCombateMixto(profile, equipment, encounter, combatBonus, affinityCombat) {
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-    const playerMatrixStats = mapStatsToMatrixKeys(eqPower.totals);
-    const classBonus = getPlayerClassBonus(profile);
-    
-    if (Object.values(playerMatrixStats).every(v => v === 0)) playerMatrixStats.meleeBonus = 0.1;
 
-    const enemyMatrixStats = mapStatsToMatrixKeys(encounter);
-    if (Object.values(enemyMatrixStats).every(v => v === 0)) enemyMatrixStats.meleeBonus = 0.1;
+    const userKeys = mapStatsToMatrixKeys({
+        meleeBonus: combatBonus.meleeBonus,
+        rangedBonus: combatBonus.rangedBonus,
+        thrownBonus: combatBonus.thrownBonus,
+        magicBonus: combatBonus.magicBonus,
+        cavalryBonus: combatBonus.cavalryBonus
+    });
 
-    let modificadorPuntos = 0;
+    const enemyKeys = mapStatsToMatrixKeys({
+        meleeBonus: encounter.meleeBonus || 0,
+        rangedBonus: encounter.rangedBonus || 0,
+        thrownBonus: encounter.thrownBonus || 0,
+        magicBonus: encounter.magicBonus || 0,
+        cavalryBonus: encounter.cavalryBonus || 0
+    });
 
-    for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
-        if (pVal > 0) {
-            for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
-                if (eVal > 0 && COMBAT_MATRIX[pKey]?.[eKey]) {
-                    modificadorPuntos += (COMBAT_MATRIX[pKey][eKey] * Math.min(pVal, eVal));
+    let modMatriz = 0;
+    if (userKeys.length && enemyKeys.length) {
+        let totalMatches = 0;
+        let sumMod = 0;
+        for (const uk of userKeys) {
+            for (const ek of enemyKeys) {
+                const row = COMBAT_MATRIX[uk];
+                if (row && typeof row[ek] === 'number') {
+                    sumMod += row[ek];
+                    totalMatches++;
                 }
             }
         }
-    }
-
-    for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
-        if (eVal > 0) {
-            for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
-                if (pVal > 0 && COMBAT_MATRIX[eKey]?.[pKey]) {
-                    modificadorPuntos -= (COMBAT_MATRIX[eKey][pKey] * Math.min(eVal, pVal));
-                }
-            }
+        if (totalMatches > 0) {
+            modMatriz = sumMod / totalMatches;
         }
     }
 
-    const nivelJugador = calculateLevelFromXP(profile.xp || 0);
-    
-    let danoPlanoJugador = 10 + (nivelJugador * 2) + (eqPower.totals.damageBonus || 0);
-    let bonosExtra = (bonuses.captainBonus || 0) + (affinityCombat.successBonus || 0) + (classBonus.attackBonus || 0);
+    const danoPlanoJugador = Number(profile.ataque || 10) + (combatBonus.baseDamageBonus || 0) + (eqPower.totals.damageBonus || 0);
+    const danoPlanoEnemigo = (Number(encounter.peligro) * 7) + (encounter.damageBonus || 0);
 
-    if (encounter.tipo === "enemigo_poderoso" || encounter.tipo === "jefe") {
-        bonosExtra += bonuses.strongEnemyBonus || 0;
-    } else if (encounter.tipo === "enemigo_numeroso") {
-        bonosExtra += bonuses.numerousEnemyBonus || 0;
-    }
-
-    // Nota: El multiplicador "9" original aquí es seguro dejarlo, 
-    // porque el daño de área equilibrará la balanza de forma natural.
-    let danoPlanoEnemigo = (encounter.peligro * 7) + (encounter.damageBonus || 0);
+    const bonosExtra = (combatBonus.captainBonus * 0.25) + (combatBonus.strongEnemyBonus * 0.15) + (affinityCombat.combatBonus || 0);
 
     let poderFinalJugador = danoPlanoJugador * (1 + eqPower.totals.successBonus + bonosExtra);
     let poderFinalEnemigo = danoPlanoEnemigo * (1 + (encounter.successBonus || 0));
 
-    // 🔥 NUEVA LÓGICA: DAÑO DE ÁREA (AoE) CONTRA ENEMIGOS NUMEROSOS 🔥
-    if (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") {
-        // Un 35% de tu poder actúa como "salpicadura", dañando a varios enemigos a la vez.
-        // Esto debilita enormemente el poder grupal del enemigo antes del choque final.
-        let danoDeArea = poderFinalJugador * 0.35; 
-        poderFinalEnemigo -= danoDeArea;
-        
-        // Nos aseguramos de que el poder enemigo nunca sea menor a 1 por fallos matemáticos.
-        if (poderFinalEnemigo < 1) poderFinalEnemigo = 1;
+    if (modMatriz >= 0) {
+        poderFinalJugador *= (1 + modMatriz);
+    } else {
+        poderFinalEnemigo *= (1 + Math.abs(modMatriz));
     }
 
-    if (modificadorPuntos > 0) {
-        poderFinalJugador *= (1 + (modificadorPuntos * 0.25)); 
-    } else if (modificadorPuntos < 0) {
-        poderFinalEnemigo *= (1 + (Math.abs(modificadorPuntos) * 0.25)); 
+    // ==========================================
+    // APLICACIÓN ESTRICTA DE ARMADURA (COMBATE)
+    // ==========================================
+    
+    // El damageReduction del enemigo absorbe/mitiga el poder del jugador
+    if (encounter.damageReduction && encounter.damageReduction > 0) {
+        poderFinalJugador *= (1 - Math.min(0.85, encounter.damageReduction));
     }
 
-    const varianzaRNG = 0.85 + (Math.random() * 0.30);
-    poderFinalJugador *= varianzaRNG;
+    // El damageReduction del jugador absorbe/mitiga el poder del enemigo
+    const totalPlayerDmgRed = (eqPower.totals?.damageReduction || 0) + (combatBonus.damageReduction || 0) + (affinityCombat.damageReduction || 0);
+    if (totalPlayerDmgRed > 0) {
+        poderFinalEnemigo *= (1 - Math.min(0.85, totalPlayerDmgRed));
+    }
+
+    // ==========================================
+
+    poderFinalJugador = Math.max(1, Math.round(poderFinalJugador));
+    poderFinalEnemigo = Math.max(1, Math.round(poderFinalEnemigo));
+
+    const exito = poderFinalJugador >= poderFinalEnemigo;
 
     return {
-        exito: poderFinalJugador >= poderFinalEnemigo,
-        poderJugador: Math.round(poderFinalJugador),
-        poderEnemigo: Math.round(poderFinalEnemigo),
-        modificadorMatriz: modificadorPuntos
+        exito,
+        poderJugador: poderFinalJugador,
+        poderEnemigo: poderFinalEnemigo,
+        modificadorMatriz: modMatriz
     };
 }
+
 
 
 // ================================
@@ -1130,7 +1134,6 @@ function getCompanionEquipmentFromPersonaje(companionId) {
       armadura: rawEq.armadura || personaje.armadura || "",
       guantes: rawEq.guantes || personaje.guantes || "",
       piernas: rawEq.piernas || personaje.piernas || "",
-      botas: rawEq.botas || personaje.botas || "",
       capa: rawEq.capa || personaje.capa || "",
       casco: rawEq.casco || personaje.casco || "",
       hombros: rawEq.hombros || personaje.hombros || "",
@@ -1437,14 +1440,19 @@ function getFinalScenarioConfig(mission = {}, expedition = {}) {
   allowedActions = [...new Set(allowedActions.map(a => normalizeKey(a)))];
   if (!hasEnemies) allowedActions = allowedActions.filter(a => a !== "atacar");
 
+  const peligroValor = Number(raw.peligro ?? raw.nivelPeligro ?? raw.danger ?? 0);
+
   return {
     enabled,
     title: raw.titulo || raw.title || mission.titulo || "Escenario final",
+    titulo: raw.titulo || raw.title || mission.titulo || "Escenario final", // Consistencia de idioma
     description: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.",
+    descripcion: raw.descripcion || raw.description || mission.escenarioFinal?.descripcion || mission.descripcion || expedition?.currentEncounter?.descripcion || "Te enfrentas al desenlace de tu expedición.",
     hasEnemies,
     enemyLabel: raw.enemigo || raw.enemyLabel || "enemigos",
     enemyChance: Number(raw.probabilidadEnemigo ?? raw.enemyChance ?? 0.6),
-    danger: Number(raw.peligro ?? raw.nivelPeligro ?? raw.danger ?? 0),
+    danger: peligroValor,
+    peligro: peligroValor, // Corrección para resolverCombateMixto
     rewardMultiplier: Number(raw.multiplicadorRecompensa ?? raw.rewardMultiplier ?? 1),
     xpBonus: Number(raw.bonoXp ?? raw.xpBonus ?? 0),
     pointsBonus: Number(raw.bonoPuntos ?? raw.pointsBonus ?? 0),
@@ -1453,7 +1461,16 @@ function getFinalScenarioConfig(mission = {}, expedition = {}) {
     successText: raw.textoExito || raw.exito || raw.successText || {},
     failureText: raw.textoFracaso || raw.fracaso || raw.failureText || {},
     completionText: raw.textosCompletado || raw.resultados || raw.resolucion || raw.completionText || {},
-    affinityBonus: Number(raw.bonoAfinidad ?? raw.affinityBonus ?? 0)
+    affinityBonus: Number(raw.bonoAfinidad ?? raw.affinityBonus ?? 0),
+    // Traspaso de estadísticas para la Matriz de Combate
+    meleeBonus: raw.meleeBonus || raw.combatBonus || 0,
+    rangedBonus: raw.rangedBonus || 0,
+    thrownBonus: raw.thrownBonus || raw.throwBonus || 0,
+    magicBonus: raw.magicBonus || 0,
+    cavalryBonus: raw.cavalryBonus || raw.mountedBonus || 0,
+    damageBonus: raw.damageBonus || 0,
+    willpowerBonus: raw.willpowerBonus || 0, 
+    damageReduction: raw.damageReduction || 0
   };
 }
 
@@ -1462,14 +1479,11 @@ function getFinalScenarioAllowedText(scenario = {}) {
   const allowed = Array.isArray(scenario.allowedActions) && scenario.allowedActions.length ? scenario.allowedActions : fallback;
   return allowed.map(a => `\`!${a}\``).join(", ");
 }
-
 async function resolveFinalScenarioAction(message, expedition) {
   const scenario = expedition.finalScenario;
   if (!scenario || (!scenario.active && !expedition.pendingFinalScenario)) return false;
 
-   // 1. LECTURA DE COMANDOS DE RESOLUCIÓN (Mapeo dinámico)
   const commandKey = message.content.split(" ")[0].toLowerCase();
-  // Extraemos el texto del comando sin el prefijo "!" para usarlo como fallback seguro
   const actionStr = commandKey.replace("!", ""); 
   const normalizedAction = FINAL_SCENE_COMMANDS[commandKey] || normalizeKey(actionStr);
 
@@ -1538,7 +1552,6 @@ async function resolveFinalScenarioAction(message, expedition) {
 
   successChance = Math.max(0.05, Math.min(successChance, 0.95));
 
-  // 2. APLICACIÓN DEL SISTEMA COMBATE MATRIX SIN ERRORES
   let success = false;
   let combatBlock = "";
 
@@ -1555,49 +1568,46 @@ async function resolveFinalScenarioAction(message, expedition) {
   const affinityTargets = getFinalScenarioAffinityTargets(normalizedAction, owned);
   const affinityLines = [];
 
-  // 3. SE ASEGURA DE CARGAR EL TÍTULO Y DESCRIPCIÓN CORRECTOS
-  const baseDescription = scenario.description || scenario.descripcion || activeEncounter.descripcion || mission.descripcion || "Te enfrentas al desenlace de la expedición.";
+  const baseDescription = scenario.description || scenario.descripcion || activeEncounter.descripcion || mission.descripcion || "Te enfrentas al desenlace de tu expedición.";
   let actionText = baseDescription;
   const block = scenario.actionText?.[normalizedAction] || scenario.completionText?.[normalizedAction];
   
-if (typeof block === "string") {
-    actionText = block;
-} else if (block && (block.texto || block.text || block.successText)) {
-    actionText = block.texto || block.text || block.successText;
-} else if (block && (block.descripcion || block.description)) {
-    actionText = block.descripcion || block.description;
-}
+  if (typeof block === "string") {
+      actionText = block;
+  } else if (block && (block.texto || block.text)) {
+      actionText = block.texto || block.text; // Eliminado .successText para evitar colisión limpia
+  } else if (block && (block.descripcion || block.description)) {
+      actionText = block.descripcion || block.description;
+  }
   
   const finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
 
-  // 4. LECTURA DE SUBESCENARIOS (Si existen, encadena el desenlace en lugar de cerrar)
   if (success && activeEncounter.subescenarios && activeEncounter.subescenarios.length > 0 && !activeEncounter.isSub) {
-    // NUEVO CÓDIGO
-let selectedSub = activeEncounter.subescenarios[Math.floor(Math.random() * activeEncounter.subescenarios.length)];
+    let selectedSub = activeEncounter.subescenarios[Math.floor(Math.random() * activeEncounter.subescenarios.length)];
 
-// Si el subescenario es un string (ID), lo recuperamos del pool de encuentros
-if (typeof selectedSub === "string") {
-    const encountersPool = await loadEncounters();
-    const found = encountersPool.find(e => e.id === selectedSub);
-    selectedSub = found || { 
-        titulo: "Desvío Inesperado", 
-        descripcion: "El camino cambia abruptamente frente a ti." 
+    if (typeof selectedSub === "string") {
+        const encountersPool = await loadEncounters();
+        const found = encountersPool.find(e => e.id === selectedSub);
+        selectedSub = found || { 
+            titulo: "Desvío Inesperado", 
+            descripcion: "El camino cambia abruptamente frente a ti." 
+        };
+    }
+
+    expedition.currentEncounter = {
+      ...selectedSub,
+      isSub: true,
+      parentEncounter: activeEncounter,
+      tipo: selectedSub.tipo || "escenario_final",
+      categoria: selectedSub.categoria || "final"
     };
-}
-
-expedition.currentEncounter = {
-  ...selectedSub,
-  isSub: true,
-  parentEncounter: activeEncounter,
-  tipo: selectedSub.tipo || "escenario_final",
-  categoria: selectedSub.categoria || "final"
-};
     
-    let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}${finalResolutionText}\n\n---\n⚠️ **Un giro inesperado altera el final de la misión:**\n📜 *${selectedSub.titulo}*\n${selectedSub.descripcion}\n\n🗺️ Usa /desafiar para continuar tu viaje.`;
+    let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}`;
+    if (finalResolutionText && finalResolutionText !== actionText) texto += `\n${finalResolutionText}\n`;
+    texto += `\n---\n⚠️ **Un giro inesperado altera el final de la misión:**\n📜 *${selectedSub.titulo}*\n${selectedSub.descripcion}\n\n🗺️ Usa /desafiar para continuar tu viaje.`;
     return message.reply(texto);
   }
 
-  // Resolución definitiva si no quedan subescenarios pendientes
   if (success) {
     const xpGain = expedition.xpEarned + Number(scenario.xpBonus ?? 0) + Number(mission.xp ?? 10);
     const pointsGain = expedition.pointsEarned + Number(scenario.pointsBonus ?? 0) + Number(mission.puntos ?? 5);
@@ -1629,7 +1639,7 @@ expedition.currentEncounter = {
     expeditions.delete(message.author.id);
 
     let texto = `✅ **Escenario Final Resuelto**\n\n🏆 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}`;
-    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+    if (finalResolutionText && finalResolutionText !== actionText) texto += `\n${finalResolutionText}\n`;
     texto += `\n🏆 Recompensa Total Acumulada: +${pointsGain} pts | +${xpGain} XP`;
 
     if (affinityLines.length) texto += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
@@ -1658,8 +1668,8 @@ expedition.currentEncounter = {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-    let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}${finalResolutionText}\n\n...`;
-    if (finalResolutionText) texto += `\n${finalResolutionText}\n`;
+    let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}\n\n...`;
+    if (finalResolutionText && finalResolutionText !== actionText) texto += `\n${finalResolutionText}\n`;
     texto += `\nRecibes ${damage} de daño. (Salud: ${nuevaSalud}/100)\n🏆 Recompensa parcial acumulada: +${pointsGain} pts | +${xpGain} XP\n\nLa expedición ha concluido.` + utilMsg;
     return message.reply(texto);
   }
@@ -2573,7 +2583,7 @@ async function obtenerReaccionIA(companero, contexto, resultado) {
     const prompt = `Eres un aventurero en la Tierra Media llamado ${companero.toUpperCase()}.
 Tu grupo acaba de enfrentarse a: "${nombreEncuentro}".
 Situación actual: ${contextoSituacion}.
-Escribe una breve línea de diálogo (máximo 15 palabras) reaccionando a esto desde la perspectiva de tu personaje. 
+Escribe una breve línea de diálogo (máximo 20 palabras) reaccionando a esto desde la perspectiva de tu personaje. 
 REGLA ESTRICTA: Devuelve ÚNICAMENTE el diálogo y una breve acción, sin comillas, sin introducciones. Ejemplo: Faelon empuña su bastón: La oscuridad no nos vencerá hoy.`;
 
     const chatCompletion = await groq.chat.completions.create({
