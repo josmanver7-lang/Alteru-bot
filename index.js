@@ -2537,14 +2537,14 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   }
 
 
-  // 3. Extraer Estadísticas del Enemigo
-  const eBonus = encounter.bonus || encounter.bonosTacticos || encounter.stats || {};
-  const eMelee = Math.round((eBonus.meleeBonus || eBonus.melee || 0) * 100);
-  const eRanged = Math.round((eBonus.rangedBonus || eBonus.ranged || 0) * 100);
-  const eThrown = Math.round((eBonus.thrownBonus || eBonus.throwBonus || eBonus.thrown || 0) * 100);
-  const eMagic = Math.round((eBonus.magicBonus || eBonus.magic || 0) * 100);
-  const eCavalry = Math.round((eBonus.cavalryBonus || eBonus.mountedBonus || eBonus.cavalry || 0) * 100);
-
+    // 3. Extraer Estadísticas del Enemigo (Leídas directamente de la raíz del JSON)
+  const eMelee = Math.round((encounter.meleeBonus || 0) * 100);
+  const eRanged = Math.round((encounter.rangedBonus || 0) * 100);
+  const eThrown = Math.round((encounter.thrownBonus || encounter.throwBonus || encounter.thrown || 0) * 100);
+  const eMagic = Math.round((encounter.magicBonus || 0) * 100);
+  const eCavalry = Math.round((encounter.cavalryBonus || encounter.cavalry || 0) * 100);
+  const eWillpower = Math.round((encounter.willpowerBonus || 0) * 100);
+  const eDmgRed = Math.round((encounter.damageReduction || 0) * 100);
 
   // 4. Función Auxiliar para Evaluar Ventajas
   const buildStatLine = (icon, name, userStat, compStat, enemyStat) => {
@@ -2557,9 +2557,9 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
     else if (diff < -5) resultIndicator = "⚠️ ¡Desventaja Clara!";
     else if (diff < 0) resultIndicator = "⚠️ ¡Desventaja Ligera!";
 
-
     return `> **${icon} ${name}**: **+${totalAlianza}%** Alianza (*Tú: +${userStat}% | ${compName}: +${compStat}%*) vs **Enemigo: +${enemyStat}%** -> ${resultIndicator}`;
   };
+
   // 5. Ensamblar el Mensaje
   let texto = `### 📊 VENTAJAS TÁCTICAS\n`;
   texto += buildStatLine("⚔️", "Cuerpo a Cuerpo", userMelee, compMelee, eMelee) + "\n";
@@ -2567,10 +2567,16 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   texto += buildStatLine("🎯", "Hostigamiento", userThrown, compThrown, eThrown) + "\n";
   texto += buildStatLine("🐎", "Caballería", userCavalry, compCavalry, eCavalry) + "\n";
   texto += buildStatLine("✨", "Magia", userMagic, compMagic, eMagic) + "\n";
+  texto += buildStatLine("🔮", "Voluntad", userWillpower, compWillpower, eWillpower) + "\n"; // Añadido Willpower
 
+  // Mostrar estadísticas defensivas del enemigo si las tiene
+  if (eDmgRed > 0) {
+    texto += `> **🛡️ Armadura Enemiga**: El rival mitiga un **${eDmgRed}%** del poder de impacto recibido.\n`;
+  }
 
-  // 6. Añadir el reporte de daño de área si aplica
-  if (encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso") {
+  // 6. Añadir el reporte de daño de área ÚNICAMENTE si es enemigo numeroso
+  const esNumeroso = encounter.tipo === "enemigo_numeroso" || encounter.categoria === "enemigo_numeroso";
+  if (esNumeroso) {
     texto += `\n───────────────────────────────\n💥 **REPORTE DE TÁCTICA GRUPAL**\n*Al ser un enemigo numeroso, el 35% del poder de la Alianza impactó como Daño de Área, mermando las fuerzas rivales antes del choque.*`;
   }
 
