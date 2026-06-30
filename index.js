@@ -2505,23 +2505,18 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
   const classBonus = getPlayerClassBonus(profile);
 
+  const userMelee = Math.round(((eq.totals.meleeBonus || 0) + (classBonus.meleeBonus || 0)) * 100);
+  const userRanged = Math.round(((eq.totals.rangedBonus || 0) + (classBonus.rangedBonus || 0)) * 100);
+  const userThrown = Math.round(((eq.totals.thrownBonus || 0) + (classBonus.thrownBonus || 0)) * 100);
+  const userMagic = Math.round(((eq.totals.magicBonus || 0) + (classBonus.magicBonus || 0)) * 100);
+  const userCavalry = Math.round(((eq.totals.cavalryBonus || 0) + (classBonus.cavalryBonus || 0)) * 100);
+  const userWillpower = Math.round(((eq.totals.willpowerBonus || 0) + (classBonus.willpowerBonus || 0)) * 100);
 
-  // 1. Extraer Estadísticas del Jugador (Añadir userWillpower)
-  const userMelee = Math.round((uTotals.meleeBonus || 0) * 100);
-  const userRanged = Math.round((uTotals.rangedBonus || 0) * 100);
-  const userThrown = Math.round((uTotals.thrownBonus || 0) * 100);
-  const userMagic = Math.round((uTotals.magicBonus || 0) * 100);
-  const userCavalry = Math.round((uTotals.cavalryBonus || 0) * 100);
-  const userWillpower = Math.round((uTotals.willpowerBonus || 0) * 100); // 👈 ¡AÑADIR ESTA LÍNEA!
-
-  // 2. Extraer Estadísticas del Compañero (Añadir compWillpower)
-  const compMelee = Math.round((cTotals.meleeBonus || 0) * 100);
-  const compRanged = Math.round((cTotals.rangedBonus || 0) * 100);
-  const compThrown = Math.round((cTotals.thrownBonus || 0) * 100);
-  const compMagic = Math.round((cTotals.magicBonus || 0) * 100);
-  const compCavalry = Math.round((cTotals.cavalryBonus || 0) * 100);
-  const compWillpower = Math.round((cTotals.willpowerBonus || 0) * 100); // 👈 ¡AÑADIR ESTA LÍNEA!
-
+  // 2. Extraer Estadísticas del Compañero
+  const ownedComps = getOwnedCompanions(profile);
+  const companionId = ownedComps.length > 0 ? ownedComps[0] : null; 
+  let compMelee = 0, compRanged = 0, compThrown = 0, compMagic = 0, compCavalry = 0, compWillpower = 0;
+  let compName = "Ninguno";
 
   if (companionId) {
     const compData = getPersonaje(companionId) || companions[companionId];
@@ -2531,12 +2526,12 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
     const compEq = getCompanionEquipmentFromPersonaje(companionId);
     const compEqTotals = sumEquipmentTotals(compEq);
 
-
     compMelee = Math.round((compEqTotals.meleeBonus || 0) * 100);
     compRanged = Math.round((compEqTotals.rangedBonus || 0) * 100);
     compThrown = Math.round((compEqTotals.thrownBonus || 0) * 100);
     compMagic = Math.round((compEqTotals.magicBonus || 0) * 100);
     compCavalry = Math.round((compEqTotals.cavalryBonus || 0) * 100);
+    compWillpower = Math.round((compEqTotals.willpowerBonus || 0) * 100);
   }
 
 
