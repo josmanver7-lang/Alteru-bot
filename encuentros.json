@@ -601,5 +601,60 @@
     "textoDerrota": "El equipamiento superior y la brutal agresividad de esta hueste armada terminan por aplastar tu resistencia en la absoluta oscuridad. Una ráfaga de proyectiles interrumpe tu movimiento y te derriba de rodillas, permitiendo que los guerreros orcos caigan sobre ti como buitres sedientos de sangre. Luchas con fiereza salvaje desde el suelo, pero el peso de las armaduras y el acero enemigo apagan tus fuerzas, sumiéndote en la inconsciencia mientras desvalijan tu equipo.",
     "peligro": 4,
     "xp": 24
+  },
+  [
+  {
+    "id": "ventisquero_montanas_blancas",
+    "categoria": "obstaculo",
+    "tipo": "terreno",
+    "titulo": "Ventisquero de las Montañas Blancas",
+    "region": ["lamedon", "blackroot vale", "pinnath gelin"],
+    "descripcion": "Una ventisca repentina azota el desfiladero, congelando el suelo y reduciendo la visibilidad a cero. Un paso en falso te enviará al abismo.",
+    "textoExito": "Mantienes la calma y avanzas asegurando cada pisada con tu equipo, logrando superar la cresta helada antes de que el frío entumezca tus músculos.",
+    "textoFracaso": "La ráfaga te ciega y resbalas por una pendiente escarpada. Logras detenerte a tiempo, pero el impacto y la congelación merman tus fuerzas.",
+    "textoDerrota": "Te desorientas por completo en medio de la tormenta blanca. Quedas atrapado horas sufriendo hipotermia severa hasta que el clima amaina y te ves forzado a regresar.",
+    "peligro": 3,
+    "xp": 15
+  },
+  {
+    "id": "desprendimiento_pinnath_gelin",
+    "categoria": "obstaculo",
+    "tipo": "terreno",
+    "titulo": "Desprendimiento en Pinnath Gelin",
+    "region": ["pinnath gelin", "andrast"],
+    "descripcion": "Un gran tramo del sendero de la colina ha colapsado recientemente, dejando un rastro de rocas inestables y tierra suelta que sigue cediendo.",
+    "textoExito": "Mides el terreno con ojo experto y cruzas con ligereza, saltando entre los bloques de piedra más firmes sin alterar el delicado equilibrio del derrumbe.",
+    "textoFracaso": "A mitad del cruce el suelo cede bajo tus pies. Caes un par de metros entre la grava, sufriendo raspaduras severas y magulladuras antes de ponerte a salvo.",
+    "textoDerrota": "Un bloque pesado se desliza y te atrapa una de las piernas. Pasas horas intentando liberarte mientras la tierra sigue cayendo, dejándote exhausto y herido.",
+    "peligro": 5,
+    "xp": 15
+  },
+  {
+    "id": "cienagas_del_morthond",
+    "categoria": "obstaculo",
+    "tipo": "terreno",
+    "titulo": "Ciénagas del Morthond",
+    "region": ["blackroot vale"],
+    "descripcion": "Las aguas estancadas del río Morthond ocultan lodo movedizo y raíces traicioneras capaces de succionar y atrapar a un caballo con su jinete.",
+    "textoExito": "Haciendo uso de una inquebrantable fuerza de voluntad, tanteas el fondo con una vara y avanzas lentamente por las zonas firmes hasta dejar atrás el fango pestilente.",
+    "textoFracaso": "Te hundes hasta la cintura en un pozo de fango denso. Debes luchar desesperadamente contra la succión, perdiendo parte de tu equipo e infiriéndote un gran desgaste físico.",
+    "textoDerrota": "El lodo movedizo te arrastra hacia el fondo. Solo logras salir tras un esfuerzo agónico que desgarra tus músculos, quedando moribundo y sin suministros en la orilla.",
+    "peligro": 4,
+    "xp": 20
+  },
+  {
+    "id": "acantilados_de_andrast",
+    "categoria": "obstaculo",
+    "tipo": "terreno",
+    "titulo": "Acantilados de Andrast",
+    "region": ["andrast"],
+    "descripcion": "El único paso practicable bordea un acantilado marino donde los vientos del oeste golpean con una violencia brutal, amenazando con arrojarte contra las rocas afiladas.",
+    "textoExito": "Te pegas a la pared de roca viva, aprovechando cada saliente para resistir las feroces ráfagas y completando el trayecto con una templanza admirable.",
+    "textoFracaso": "Una ráfaga imprevista rompe tu equilibrio. Te golpeas con fuerza contra el muro de piedra y pierdes el agarre, quedando suspendido peligrosamente antes de poder reincorporarte.",
+    "textoDerrota": "El viento te arranca del sendero. Caes varios metros hacia las salientes inferiores; sobrevives de milagro, pero el impacto rompe tus defensas y te deja gravemente herido.",
+    "peligro": 5,
+    "xp": 22
   }
+]
+
 ]
