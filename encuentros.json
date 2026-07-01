@@ -653,5 +653,31 @@
     "textoDerrota": "El viento te arranca del sendero. Caes varios metros hacia las salientes inferiores; sobrevives de milagro, pero el impacto rompe tus defensas y te deja gravemente herido.",
     "peligro": 5,
     "xp": 22
+  },
+  {
+    "id": "emisario_pelargir",
+    "tipo": "evento_especial",
+    "categoria": "social",
+    "titulo": "El Emisario de Pelargir",
+    "region": ["lebennin", "belfalas", "pelennor"],
+    "descripcion": "Un aristócrata de Gondor escoltado por hombres de armas te corta el paso, confundiéndote con un informante enemigo o un desertor. Resolver la situación requiere una gran capacidad de negociación y templanza.",
+    "textoExito": "Tus palabras elocuentes y tu firmeza disipan toda sospecha. El emisario no solo se disculpa, sino que comparte contigo provisiones y un salvoconducto para los vados colonizados.",
+    "textoFracaso": "Tu vacilación o tono tosco levanta sospechas. Te someten a un interrogatorio hostil durante horas y confiscan parte de tus pertenencias como 'depósito legal' antes de dejarte ir.",
+    "textoDerrota": "La negociación fracasa por completo. Ofendes al noble y sus guardias te reducen por la fuerza, despojándote de recursos y escoltándote de vuelta, bajo amenaza de calabozo.",
+    "peligro": 3,
+    "xp": 16
+  },
+  {
+    "id": "mecanismo_ruinas_anorien",
+    "tipo": "evento_especial",
+    "categoria": "exploracion",
+    "titulo": "El Mecanismo de Anórien",
+    "region": ["anorien", "pelennor"],
+    "descripcion": "Encuentras una losa oculta en una estructura numenóreana sellada por un complejo sistema de contrapesos y runas antiguas. Desbloquearla exige una agudeza mental y observación excepcionales.",
+    "textoExito": "Descifras el patrón geométrico de las runas y activas los contrapesos en el orden exacto, abriendo una cámara oculta que alberga pergaminos de tiempos antiguos llenos de conocimiento.",
+    "textoFracaso": "Un error en la secuencia activa una contrapeso neumático que libera gas rancio. Logras apartarte, pero la inhalación te debilita las vías respiratorias y te causa un dolor lacerante.",
+    "textoDerrota": "Fuerzas el mecanismo de forma errónea, provocando el colapso estructural de la bóveda. El techo se desploma sobre ti, hiriéndote de gravedad y sepultando el secreto para siempre.",
+    "peligro": 4,
+    "xp": 20
   }
 ]
