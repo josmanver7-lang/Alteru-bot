@@ -991,5 +991,52 @@
       "failure": "La fuerza bruta de Muzgash resulta inhumana. Su cimitarra impacta contra tu defensa con la violencia de un ariete, fracturando tu postura y entumeciendo tu brazo. Antes de que puedas reaccionar, un revés de su guantelete de hierro te golpea el rostro, nublando tu vista de dolor y carmesí. Tendido en el suelo, viendo la sombra de su hoja alzarse para dar el golpe de gracia, reúnes tus últimas fuerzas en un agónico arrastre, logrando escurrirte milagrosamente por una grieta de la roca mientras las crueles burlas del orco sellan tu derrota."
     }
   }
+},
+  {
+  "id": "caza_capitan_corba_belfalas",
+  "titulo": "La caza del Capitán Corba",
+  "destino": "Belfalas",
+  "nivel": 4,
+  "descripcion": "Un infame capitán corsario, conocido como Corba, acaba de desembarcar junto a un pequeño grupo de asaltantes en las abruptas zonas rocosas de la costa de Belfalas. Los informes de los vigías indican que posiblemente ya no se encuentre en el lugar exacto en el que amarraron sus botes; es imperativo rastrear minuciosamente toda la línea costera para localizarlo y eliminarlo antes de que logre internarse en tierra firme y reunirse con un contingente mayor de corsarios.",
+  "puntos": 170,
+  "xp": 170,
+  "conclusionGeneral": {
+    "exito": "Con el Capitán Corba eliminado y su hueste dispersa, la amenaza inmediata sobre las costas de Belfalas se ha disipado. Regresas al campamento con el acero manchado de sangre corsaria y la frente en alto. Tu superior recibe el informe con una mezcla de alivio y profundo respeto, otorgándote una generosa recompensa que hace justicia al peligro de enfrentar a un comandante de Umbar en su propio elemento.",
+    "fracaso": "El regreso de la patrulla es un calvario de dolor y vergüenza. Arrastrando los pies por los escarpados acantilados de Belfalas, con el equipo destrozado y el cuerpo marcado por el implacable acero enemigo, entregas un informe amargo: el capitán corsario ha escapado. En la distancia, el resplandor de las hogueras enemigas confirma que Corba se ha reunido con sus refuerzos, dejando la región a merced de su pillaje. No hay recompensa hoy, solo el peso de la derrota."
+  },
+  "encuentros": [
+    "enemigo_numeroso",
+    "obstaculo",
+    "evento_especial",
+    "enemigo_numeroso"
+  ],
+  "escenarioFinal": {
+    "enabled": true,
+    "titulo": "El filo de los riscos: Capitán Corba",
+    "descripcion": "Tras seguir un rastro esquivo de pisadas sobre la arena húmeda y restos de algas pisoteadas, los encuentras a varios kilómetros de sus naves. Resguardados entre las formaciones rocosas de la playa, el Capitán Corba y sus hombres se preparan minuciosamente para lo que parece un ataque inminente a una indefensa aldea pesquera cercana. La sorpresa está de tu lado, pero un solo paso en falso alertará a sus vigías. La única decisión es atacar o retirarse.",
+    "hasEnemies": true,
+    "enemyLabel": "Capitán Corba",
+    "enemyChance": 1.0,
+    "peligro": 4,
+    "categoria": "jefe",
+    "bonus": {
+      "meleeBonus": 0.06,
+      "damageBonus": 3,
+      "willpowerBonus": 0.15,
+      "damageReduction": 0.10
+    },
+    "allowedActions": [
+      "atacar",
+      "retirarse"
+    ],
+    "actionText": {
+      "atacar": "Afianzas el agarre de tu arma, respirando el aire espeso y salino de la costa. Saltas desde lo alto del risco rompiendo el silencio con un grito de guerra, decidido a interceptar al capitán corsario antes de que vierta la primera gota de sangre en la aldea pesquera.",
+      "retirarse": "La superioridad posicional de los corsarios entre las rocas te hace dudar. Envainas silenciosamente tu acero y comienzas a retroceder de espaldas sobre la grava movediza, buscando el amparo de los acantilados para retirarte antes de que sus patrullas corten tu única vía de escape."
+    },
+    "completionText": {
+      "success": "El combate se desata en una coreografía brutal de acero y espuma marina. Corba demuestra por qué lidera a los asaltantes, blandiendo un pesado sable curvo que silba en el aire y arranca chispas de la piedra con cada embestida. El oleaje ruge con fuerza, rompiendo contra las rocas y salpicando vuestro duelo. Aprovechando un violento vaivén del agua que desestabiliza al corsario sobre las algas resbaladizas, esquivas un tajo descendente y hunden tu filo con precisión letal en la juntura desprotegida de su armadura de cuero. El capitán ahoga un rugido de dolor que se transforma en un borboteo carmesí; sus ojos pierden el brillo de la codicia y se desploma pesadamente sobre la orilla, mientras la marea empieza a teñirse con su sangre oscura.",
+      "failure": "El terreno costero juega en tu contra de forma fatídica. En medio del caótico intercambio de golpes bajo la brisa salina, Corba finge un tropiezo y te arroja un puñado de arena gruesa directo a los ojos. Cegado y desorientado por el dolor, intentas levantar una defensa desesperada, pero el implacable sable del capitán corsario muerde profundamente tu costado, derribándote sobre las rocas afiladas. El dolor es ensordecedor. Mientras pierdes el conocimiento en la fría arena húmeda, escuchas la risa áspera de Corba ordenando a sus hombres reanudar la marcha hacia la aldea, dejándote atrás desangrándote en la orilla, salvándote por milagro de la muerte cuando la marea sube."
+    }
+  }
 }
 ]
