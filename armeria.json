@@ -3184,5 +3184,107 @@
     "precioBase": 900,
     "descripcion": "Escudo ovalado grande con fondo verde mar y borde metálico, decorado con motivos de estrellas, una gaviota y un ancla central en color blanco",
     "efecto": { "damageReduction": 0.02, "willpowerBonus": 0.01, "survivalBonus": 0.02, "thrownBonus": 0.02 }
-  }   
+  },
+  {
+    "id": "botas_jinete_rohan",
+    "nombre": "Botas de Jinete de la Marca",
+    "slot": "piernas",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 620,
+    "descripcion": "Altas y resistentes, diseñadas en Rohan para asegurar un agarre firme en los estribos.",
+    "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.03, "explorationBonus": 0.02 }
+  },
+  {
+    "id": "botas_cuero_valle",
+    "nombre": "Botas de Piel de Valle",
+    "slot": "piernas",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 580,
+    "descripcion": "Calzado flexible de los hombres del norte, excelente para las rutas de comercio a pie.",
+    "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.02, "negotiationBonus": 0.03, "explorationBonus": 0.03 }
+  },
+  {
+    "id": "botas_cuero_runico_imladris",
+    "nombre": "Botas de Cuero Rúnico de Imladris",
+    "slot": "piernas",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 3100,
+    "descripcion": "Botas de cuero fino bendecidas en Rivendel, sintonizadas perfectamente con las corrientes de poder.",
+    "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "stealthBonus": 0.04, "perceptionBonus": 0.04 }
+  },
+  {
+    "id": "botas_cuero_erudito_antiguo",
+    "nombre": "Botas de Cuero del Erudito Errante",
+    "slot": "piernas",
+    "raza": "general",
+    "rareza": "legendario",
+    "precioBase": 3250,
+    "descripcion": "Calzado ligero de cuero antiguo que amortigua el andar de los sabios que recorren la Tierra Media.",
+    "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "explorationBonus": 0.05, "survivalBonus": 0.04 }
+  },
+  {
+    "id": "grebas_acero_guardia",
+    "nombre": "Grebas de Acero de la Guardia de Meduseld",
+    "slot": "piernas",
+    "raza": "hombre",
+    "rareza": "legendario",
+    "precioBase": 3400,
+    "descripcion": "Pesadas placas de acero pulido con grabados equinos, forjadas para resistir las cargas más brutales.",
+    "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
+  },
+  {
+    "id": "grebas_acero_colinas_hierro",
+    "nombre": "Grebas de Acero de las Colinas de Hierro",
+    "slot": "piernas",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 3650,
+    "descripcion": "Forjadas con el metal más denso del norte. Pesadas, monolíticas e inamovibles.",
+    "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.05, "explorationBonus": 0.03 }
+  },
+  {
+    "id": "botas_estilizadas_alto_elfo",
+    "nombre": "Botas Estilizadas de los Altos Elfos",
+    "slot": "piernas",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 2200,
+    "descripcion": "Guarnecidas con hilos de plata; combinan una flexibilidad asombrosa con una defensa tenaz.",
+    "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "stealthBonus": 0.04, "perceptionBonus": 0.03 }
+  },
+  {
+    "id": "grebas_hierro_defensor_valle",
+    "nombre": "Grebas de Hierro del Defensor de Valle",
+    "slot": "piernas",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 2000,
+    "descripcion": "Protección norteña reforzada, forjada para resistir tanto el frío extremo como los asedios.",
+    "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
+  },
+  {
+    "id": "grebas_cuero_pesado_beornida",
+    "nombre": "Grebas de Cuero Pesado del Valle del Anduin",
+    "slot": "piernas",
+    "raza": "beornida",
+    "rareza": "superior",
+    "precioBase": 1900,
+    "descripcion": "Sólidas bandas de cuero endurecido, confeccionadas a la medida para cazadores de gran envergadura.",
+    "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.04, "explorationBonus": 0.03 }
+  },
+  {
+    "id": "botas_frontera_comarca",
+    "nombre": "Botas de Explorador de la Frontera",
+    "slot": "piernas",
+    "raza": "hobbit",
+    "rareza": "superior",
+    "precioBase": 980,
+    "descripcion": "Calzado inusual para un hobbit común, pero indispensable para los oficiales que vigilan los límites de la Comarca.",
+    "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.03, "stealthBonus": 0.05, "explorationBonus": 0.04 }
+  }
+]
+
 ]
