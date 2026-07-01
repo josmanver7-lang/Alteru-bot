@@ -2575,15 +2575,16 @@ function buildPowerComparisonBlock({ profile = {}, equipment = {}, encounter = {
     compWillpower = Math.round((compEqTotals.willpowerBonus || 0) * 100);
   }
 
-
-    // 3. Extraer Estadísticas del Enemigo (Leídas directamente de la raíz del JSON)
-  const eMelee = Math.round((encounter.meleeBonus || 0) * 100);
-  const eRanged = Math.round((encounter.rangedBonus || 0) * 100);
-  const eThrown = Math.round((encounter.thrownBonus || encounter.throwBonus || encounter.thrown || 0) * 100);
-  const eMagic = Math.round((encounter.magicBonus || 0) * 100);
-  const eCavalry = Math.round((encounter.cavalryBonus || encounter.cavalry || 0) * 100);
-  const eWillpower = Math.round((encounter.willpowerBonus || 0) * 100);
-  const eDmgRed = Math.round((encounter.damageReduction || 0) * 100);
+      // 3. Extraer Estadísticas del Enemigo (Soporta lectura desde la raíz o desde el objeto "bonus")
+  const eBonus = encounter.bonus || {};
+  
+  const eMelee = Math.round((encounter.meleeBonus || eBonus.meleeBonus || 0) * 100);
+  const eRanged = Math.round((encounter.rangedBonus || eBonus.rangedBonus || 0) * 100);
+  const eThrown = Math.round((encounter.thrownBonus || encounter.throwBonus || encounter.thrown || eBonus.thrownBonus || eBonus.throwBonus || eBonus.thrown || 0) * 100);
+  const eMagic = Math.round((encounter.magicBonus || eBonus.magicBonus || 0) * 100);
+  const eCavalry = Math.round((encounter.cavalryBonus || encounter.cavalry || eBonus.cavalryBonus || eBonus.cavalry || 0) * 100);
+  const eWillpower = Math.round((encounter.willpowerBonus || eBonus.willpowerBonus || 0) * 100);
+  const eDmgRed = Math.round((encounter.damageReduction || eBonus.damageReduction || 0) * 100);
 
   // 4. Función Auxiliar para Evaluar Ventajas
   const buildStatLine = (icon, name, userStat, compStat, enemyStat) => {
