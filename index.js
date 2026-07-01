@@ -560,22 +560,6 @@ const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes"
 function calcularSaludMaxima(profile = {}, equipment = {}) {
     return 100;
 }
-    const nivel = calculateLevelFromXP(profile.xp || 0);
-    const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
-    
-    // Vida base de 100 + 15 por cada nivel
-    let vidaMaxima = 100 + (nivel * 15);
-
-    // Sumar vida otorgada por los items de utilidad y equipo
-    for (const util of (profile.activeUtilities || [])) {
-        if (util?.efecto?.salud) vidaMaxima += Number(util.efecto.salud);
-    }
-    
-    if (equipment.pecho?.efecto?.salud) vidaMaxima += Number(equipment.pecho.efecto.salud);
-    if (equipment.amuleto?.efecto?.salud) vidaMaxima += Number(equipment.amuleto.efecto.salud);
-
-    return Math.round(vidaMaxima);
-}
 
 function getPlayerClassKey(profile = {}) { 
   return normalizeKey(profile?.class || profile?.clase || ""); 
