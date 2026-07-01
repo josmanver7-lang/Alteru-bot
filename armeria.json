@@ -3427,7 +3427,7 @@
     "descripcion": "Piezas pesadas de bronce con motifs rúnicos grabados en las fraguas antiguas.",
     "efecto": {
       "damageReduction": 0.015,
-      "survivalBonus": 0.03
+      "survivalBonus": 0.03,
       "willpowerBonus": 0.01
     }
   },
@@ -3455,7 +3455,7 @@
     "descripcion": "Inspiración de la Marca con placas superpuestas de hierro fijadas sobre una base textil.",
     "efecto": {
       "damageReduction": 0.03,
-      "survivalBonus": 0.05
+      "survivalBonus": 0.05,
       "willpowerBonus": 0.03
     }
   },
