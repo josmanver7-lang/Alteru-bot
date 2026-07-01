@@ -2755,8 +2755,20 @@ async function handleExpedicionStart(message, args) {
   await db.setQuotaState(message.author.id, "expedicion", state.attempts + 1, state.resetAt);
   const activeCompanions = getOwnedCompanions(profile);
   
-  let saludMax = 100;
-  let saludInicial = 100;
+  // --- INICIO DE LA CORRECCIÓN DE SALUD ---
+  let saludMax = calcularSaludMaxima(profile, equipment);
+  let saludInicial = profile.salud !== undefined ? profile.salud : saludMax;
+
+  // 1. Bloqueo si está en estado crítico (<= 30)
+  if (saludInicial <= 30) {
+    return message.reply(`⚠️ **¡Estás muy herido para realizar esta misión!**\n\nTu salud es crítica (${saludInicial}/${saludMax}). **Ve** a la tienda de Faelon para que pueda \`!curar\` tus heridas antes de aventurarte nuevamente.`);
+  }
+
+  // 2. Advertencia si está herido pero no crítico (< 100%)
+  let advertenciaSalud = "";
+  if (saludInicial < saludMax) {
+    advertenciaSalud = `\n\n🏥 *Nota: Estás herido (${saludInicial}/${saludMax}). Puedes visitar la tienda de Faelon para que pueda \`!curar\` tus heridas y viajar mejor preparado.*`;
+  }
 
   expeditions.set(message.author.id, {
     missionId: mission.id,
@@ -2966,10 +2978,20 @@ async function handleExpedicionDesafiar(message) {
     success = true;
   } else {
     let baseSuccess = 0.65 + (bonuses.captainBonus||0) + (bonuses.rangerBonus||0) + (affinityCombat.successBonus||0) + affinityBonus + bonoPrevencionBucle;
-    if (esObstaculo) {
-      let baseSuccessOb = 0.70 - ((activeEncounter.peligro || 1) * 0.04) + bonoPrevencionBucle;
-      baseSuccessOb += utilTotals.exploration * 0.85 + utilTotals.stealth * 0.20 + utilTotals.willpower * 0.15;
-      success = Math.random() < Math.max(0.30, Math.min(baseSuccessOb, 0.95));
+        if (esObstaculo) {
+      // 1. Bajamos la base a 50% y duplicamos el castigo del peligro a 8% por nivel
+      let baseSuccessOb = 0.50 - ((activeEncounter.peligro || 1) * 0.08) + bonoPrevencionBucle;
+      
+      // 2. Separamos la exigencia según el tipo de obstáculo
+      if (tipo === "terreno" || categoria === "terreno") {
+          // El terreno duro exige Supervivencia, Voluntad y algo de Exploración
+          baseSuccessOb += (utilTotals.survival * 0.60) + (utilTotals.willpower * 0.40) + (utilTotals.exploration * 0.30);
+      } else {
+          // Un obstáculo normal de exploración exige Exploración, Sigilo y Percepción
+          baseSuccessOb += (utilTotals.exploration * 0.70) + (utilTotals.stealth * 0.40) + (utilTotals.perception * 0.20);
+      }
+      
+      success = Math.random() < Math.max(0.20, Math.min(baseSuccessOb, 0.95)); // El mínimo éxito posible baja al 20%
     } else {
       success = Math.random() < Math.max(0.30, Math.min(baseSuccess, 0.95));
     }
@@ -3028,17 +3050,21 @@ async function handleExpedicionDesafiar(message) {
     }
   } else {
     // Fracaso en obstáculo
+        // Código existente de evasión...
     let evadioDano = Math.random() < Math.min(0.15 + (utilTotals.exploration || 0) * 0.40, 0.85);
     let danoFinalRecibido = 0;
     let textoCuracionOb = "";
 
     if (!evadioDano) {
-      let multObstaculo = activeEncounter.peligro <= 2 ? 2 : 4;
+      // AUMENTAMOS LOS MULTIPLICADORES DE DAÑO
+      let multObstaculo = activeEncounter.peligro <= 2 ? 4 : 7; // Antes: 2 y 4
       if (tipo === "terreno" || categoria === "terreno") {
-          multObstaculo = activeEncounter.peligro <= 2 ? 3 : 5;
+          multObstaculo = activeEncounter.peligro <= 2 ? 5 : 9; // Antes: 3 y 5
       }
 
-      let danoBase = Math.max(5, (activeEncounter.peligro || 1) * multObstaculo);
+      // Daño mínimo sube de 5 a 10 para que los roces siempre duelan
+      let danoBase = Math.max(10, (activeEncounter.peligro || 1) * multObstaculo);
+      
       const totalDmgRed = (bonuses.damageReduction || 0) + (affinityCombat.damageReduction || 0) + (eqPower.totals?.damageReduction || 0);
       danoFinalRecibido = Math.max(1, Math.floor(danoBase * (1 - totalDmgRed)));
       
