@@ -218,7 +218,7 @@
       "enemyChance": 0.99,
       "peligro": 3,
       "categoria": "enemigo_numeroso",
-      "bonus": { "damageBonus": 1, "meleeBonus": 0.05, "negotiationBonus": 0.03, "damageReduction": 0.09 },
+      "bonus": { "damageBonus": 1, "meleeBonus": 0.05, "negotiationBonus": 0.03, "damageReduction": 0.09, "willpowerBonus": 0.12 },
       "allowedActions": [
         "atacar",
         "rodear",
@@ -977,7 +977,7 @@
     "enemyChance": 1.0,
     "peligro": 3,
     "categoria": "jefe",
-    "bonus": { "meleeBonus": 0.04, "damageBonus": 2, "willpowerBonus": 0.02, "damageReduction": 0.08 },
+    "bonus": { "meleeBonus": 0.04, "damageBonus": 2, "willpowerBonus": 0.12, "damageReduction": 0.08 },
     "allowedActions": [
       "atacar",
       "retirarse"
