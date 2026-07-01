@@ -6,7 +6,7 @@
     "hands": 1,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 85,
+    "precioBase": 255,
     "descripcion": "Una hoja simple para empezar.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -17,7 +17,7 @@
     "hands": 1,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 95,
+    "precioBase": 285,
     "descripcion": "Ligera y útil para viajes menores.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -28,7 +28,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 240,
+    "precioBase": 720,
     "descripcion": "Arma larga y resistente de manufactura norteña.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -39,7 +39,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 480,
+    "precioBase": 1440,
     "descripcion": "Hoja precisa y elegante de Gondor.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -50,7 +50,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 280,
+    "precioBase": 840,
     "descripcion": "Ligera y refinada, pensada para la precisión.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -61,7 +61,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 840,
+    "precioBase": 2520,
     "descripcion": "Una hoja de gran equilibrio, casi ceremonial.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -72,7 +72,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 1640,
+    "precioBase": 4920,
     "descripcion": "Filo antiguo, fino y muy difícil de conseguir.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "stealthBonus": 0.06, "negotiationBonus": 0.05 }
   },
@@ -83,7 +83,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 70,
+    "precioBase": 210,
     "descripcion": "Más práctica que heroica, pero cumple su función.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -94,7 +94,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "superior",
-    "precioBase": 420,
+    "precioBase": 1260,
     "descripcion": "Una pieza inquietante con un aire antiguo.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -105,7 +105,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "comun",
-    "precioBase": 100,
+    "precioBase": 300,
     "descripcion": "Sólida, simple y de fabricación dura.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -113,10 +113,10 @@
     "id": "pua_acero_runico_erebor",
     "nombre": "Púa de Acero Rúnico de Erebor",
     "slot": "arma",
-    "hands": 1,
+    "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Arma rúnica forjada para expediciones exigentes.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -127,7 +127,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "Corta y fiable, aunque algo vieja.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -138,7 +138,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 280,
+    "precioBase": 840,
     "descripcion": "Diseñada para el combate rápido en campo abierto.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -149,7 +149,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 340,
+    "precioBase": 1020,
     "descripcion": "Ligera y silenciosa, ideal para moverse con sigilo.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -160,7 +160,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 750,
+    "precioBase": 2250,
     "descripcion": "Una hoja noble y exquisitamente terminada.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -171,7 +171,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 60,
+    "precioBase": 180,
     "descripcion": "Más robusta de lo que parece.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -182,7 +182,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 280,
+    "precioBase": 840,
     "descripcion": "Compacta y muy resistente.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -193,7 +193,7 @@
     "hands": 1,
     "raza": "beornida",
     "rareza": "forjado",
-    "precioBase": 300,
+    "precioBase": 900,
     "descripcion": "Pensada para cazar y sobrevivir.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -204,7 +204,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 210,
+    "precioBase": 630,
     "descripcion": "Una espada común, sólida y útil.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02 }
   },
@@ -215,7 +215,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 710,
+    "precioBase": 2130,
     "descripcion": "Diseñada para la carga y el combate a caballo.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -226,7 +226,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "Forjada para servir a la guardia de la ciudad.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -237,7 +237,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Elegante, silenciosa y de gran calidad.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -248,7 +248,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Una hoja de alto linaje y enorme refinamiento.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -259,7 +259,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1300,
+    "precioBase": 3900,
     "descripcion": "Hecha para aguantar golpes y devolverlos con fuerza.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -270,7 +270,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1440,
+    "precioBase": 4320,
     "descripcion": "Rudo y pesado, con agarre firme.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -281,7 +281,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 680,
+    "precioBase": 2040,
     "descripcion": "Más pesada y contundente.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -292,7 +292,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1530,
+    "precioBase": 4590,
     "descripcion": "Una gran hoja de guerra para romper líneas.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -303,7 +303,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "comun",
-    "precioBase": 340,
+    "precioBase": 1020,
     "descripcion": "Más de entrenamiento que de guerra.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02 }
   },
@@ -314,7 +314,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1650,
+    "precioBase": 4950,
     "descripcion": "Una pieza de gran equilibrio y belleza.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -325,7 +325,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 2260,
+    "precioBase": 6780,
     "descripcion": "Tan brutal como una puerta de forja.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -336,7 +336,7 @@
     "hands": 2,
     "raza": "beornida",
     "rareza": "legendario",
-    "precioBase": 3100,
+    "precioBase": 9300,
     "descripcion": "Pensado para pelear como una bestia.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -347,7 +347,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 290,
+    "precioBase": 870,
     "descripcion": "Arco simple de cazadores.",
     "efecto": { "willpowerBonus": 0.01, "rangedBonus": 0.02, "stealthBonus": 0.02, "perceptionBonus": 0.02 }
   },
@@ -358,7 +358,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 650,
+    "precioBase": 1950,
     "descripcion": "Arco compuesto de guerra.",
     "efecto": { "willpowerBonus": 0.02, "rangedBonus": 0.03, "damageBonus": 1, "stealthBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -369,7 +369,7 @@
     "hands": 2,
     "raza": ["hombre", "elfo"],
     "rareza": "superior",
-    "precioBase": 1420,
+    "precioBase": 4260,
     "descripcion": "Arco diseñado para largo alcance.",
     "efecto": { "willpowerBonus": 0.04, "rangedBonus": 0.04, "damageBonus": 2, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -380,7 +380,7 @@
     "hands": 2,
     "raza": ["hombre", "elfo"],
     "rareza": "legendario",
-    "precioBase": 3520,
+    "precioBase": 10560,
     "descripcion": "Arco especializado del Valle de la Raíz Negra.",
     "efecto": { "willpowerBonus": 0.06, "rangedBonus": 0.06, "damageBonus": 3, "stealthBonus": 0.06, "negotiationBonus": 0.05, "perceptionBonus": 0.06 }
   },
@@ -391,7 +391,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4210,
+    "precioBase": 12630,
     "descripcion": "Arco elfico de Lothlórien.",
     "efecto": { "willpowerBonus": 0.06, "rangedBonus": 0.06, "damageBonus": 3, "stealthBonus": 0.06, "negotiationBonus": 0.05, "perceptionBonus": 0.06 }
   },
@@ -402,7 +402,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "forjado",
-    "precioBase": 340,
+    "precioBase": 1020,
     "descripcion": "Honda especial de cuero con largo alcance.",
     "efecto": { "willpowerBonus": 0.02, "rangedBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -412,7 +412,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 5360,
+    "precioBase": 16080,
     "descripcion": "Una armadura propia de veteranos de Gondor.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.06 }
   },
@@ -422,7 +422,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 5450,
+    "precioBase": 16350,
     "descripcion": "Una pieza digna de un gran señor élfico.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.06 }
   },
@@ -432,7 +432,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 6320,
+    "precioBase": 18960,
     "descripcion": "Forjada para resistir guerras enteras.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.06 }
   },
@@ -442,7 +442,7 @@
     "slot": "capa",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Camuflaje y protección espiritual.",
     "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.06, "explorationBonus": 0.06, "perceptionBonus": 0.04 }
   },
@@ -452,7 +452,7 @@
     "slot": "capa",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3240,
+    "precioBase": 9720,
     "descripcion": "Capucha profunda y utilidad extrema.",
     "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.06, "explorationBonus": 0.06, "perceptionBonus": 0.04 }
   },
@@ -462,7 +462,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 3780,
+    "precioBase": 11340,
     "descripcion": "Protección frente al frío y la dureza del viaje.",
     "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.06, "explorationBonus": 0.06, "perceptionBonus": 0.04 }
   },
@@ -472,7 +472,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 2980,
+    "precioBase": 8940,
     "descripcion": "Resiste miedo y terrores antiguos.",
     "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.06, "explorationBonus": 0.06, "perceptionBonus": 0.04 }
   },
@@ -482,7 +482,7 @@
     "slot": "anillo",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3530,
+    "precioBase": 10590,
     "descripcion": "Inspira paz y estabilidad.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -492,7 +492,7 @@
     "slot": "anillo",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "descripcion": "Anillo de fortaleza inquebrantable.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -502,7 +502,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 540,
+    "precioBase": 1620,
     "descripcion": "Protección firme sin perder demasiada movilidad.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -512,7 +512,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 680,
+    "precioBase": 2040,
     "descripcion": "Ligera, elegante y trabajada con precisión.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -522,7 +522,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 640,
+    "precioBase": 1920,
     "descripcion": "Cuero endurecido sobre una base muy sólida.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -532,7 +532,7 @@
     "slot": "pecho",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 320,
+    "precioBase": 960,
     "descripcion": "Protección ligera y cómoda para rutas largas.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -542,7 +542,7 @@
     "slot": "brazos",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 110,
+    "precioBase": 330,
     "descripcion": "Mejoran el agarre y protegen las manos.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "explorationBonus": 0.02 }
   },
@@ -552,7 +552,7 @@
     "slot": "brazos",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 630,
+    "precioBase": 1890,
     "descripcion": "Pesados, precisos y muy resistentes.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -562,7 +562,7 @@
     "slot": "brazos",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 360,
+    "precioBase": 1080,
     "descripcion": "Finos y elegantes, más útiles de lo que parecen.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -572,7 +572,7 @@
     "slot": "brazos",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 820,
+    "precioBase": 2460,
     "descripcion": "Forja enana reforzada con runas de firmeza.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -582,7 +582,7 @@
     "slot": "brazos",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 85,
+    "precioBase": 255,
     "descripcion": "Abrigan y dan algo de protección.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "explorationBonus": 0.02 }
   },
@@ -592,7 +592,7 @@
     "slot": "hombros",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 380,
+    "precioBase": 1140,
     "descripcion": "Sencillas y funcionales.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -602,7 +602,7 @@
     "slot": "hombros",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 830,
+    "precioBase": 2490,
     "descripcion": "Protección ligera con adornos de plata.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -612,7 +612,7 @@
     "slot": "hombros",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 840,
+    "precioBase": 2520,
     "descripcion": "Robustas y de líneas duras.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03 }
   },
@@ -622,7 +622,7 @@
     "slot": "hombros",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Muy ligeras, pensadas para viajes tranquilos.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -632,7 +632,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Protección sólida para largas marchas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -642,7 +642,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 710,
+    "precioBase": 2130,
     "descripcion": "Apenas pesan y siguen protegiendo bien.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -652,7 +652,7 @@
     "slot": "piernas",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1630,
+    "precioBase": 4890,
     "descripcion": "Diseñadas para resistir impactos fuertes.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -662,7 +662,7 @@
     "slot": "piernas",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 110,
+    "precioBase": 330,
     "descripcion": "Adaptadas para una zancada corta y segura.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "explorationBonus": 0.02 }
   },
@@ -672,7 +672,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 560,
+    "precioBase": 1680,
     "descripcion": "Protección clásica, simple y efectiva.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -682,7 +682,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1320,
+    "precioBase": 3960,
     "descripcion": "Pieza de élite de Gondor.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "perceptionBonus": 0.04 }
   },
@@ -692,7 +692,7 @@
     "slot": "casco",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1640,
+    "precioBase": 4920,
     "descripcion": "Ligero, elegantemente terminado.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "perceptionBonus": 0.04 }
   },
@@ -702,7 +702,7 @@
     "slot": "casco",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 2950,
+    "precioBase": 8850,
     "descripcion": "Una pieza de gran prestigio y defensa.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "perceptionBonus": 0.06 }
   },
@@ -712,7 +712,7 @@
     "slot": "casco",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "descripcion": "Pesado, imponente y muy difícil de perforar.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "perceptionBonus": 0.06 }
   },
@@ -722,7 +722,7 @@
     "slot": "casco",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 95,
+    "precioBase": 285,
     "descripcion": "Protección discreta para el camino.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "perceptionBonus": 0.02 }
   },
@@ -732,7 +732,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 90,
+    "precioBase": 270,
     "descripcion": "Una pieza modesta pero útil.",
     "efecto": { "willpowerBonus": 0.01, "explorationBonus": 0.02, "negotiationBonus": 0.02, "perceptionBonus": 0.02, "healingBonus": 0.02, "survivalBonus": 0.01 }
   },
@@ -742,7 +742,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 180,
+    "precioBase": 540,
     "descripcion": "Refuerza la voluntad y la firmeza.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "explorationBonus": 0.03, "negotiationBonus": 0.03, "perceptionBonus": 0.03, "healingBonus": 0.03 }
   },
@@ -752,7 +752,7 @@
     "slot": "anillo",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 360,
+    "precioBase": 1080,
     "descripcion": "Ligero, fino y de gran calidad.",
     "efecto": { "willpowerBonus": 0.04, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04, "survivalBonus": 0.03 }
   },
@@ -762,7 +762,7 @@
     "slot": "anillo",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 420,
+    "precioBase": 1260,
     "descripcion": "Sólido y grabado con runas de resistencia.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04 }
   },
@@ -775,7 +775,7 @@
     "forma": "redonda",
     "material": "madera de roble",
     "rareza": "comun",
-    "precioBase": 60,
+    "precioBase": 180,
     "descripcion": "Un disco de madera reforzado. Poco más que una tapa de barril, pero mejor que nada.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -788,7 +788,7 @@
     "forma": "redonda",
     "material": "madera y hierro",
     "rareza": "comun",
-    "precioBase": 90,
+    "precioBase": 270,
     "descripcion": "Un escudo de viaje típico de los habitantes del cruce de caminos.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -801,7 +801,7 @@
     "forma": "redonda",
     "material": "madera de fresno",
     "rareza": "comun",
-    "precioBase": 110,
+    "precioBase": 330,
     "descripcion": "Ligero y eficaz para la caballería rápida de Rohan.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -814,7 +814,7 @@
     "forma": "redonda",
     "material": "acero dorado",
     "rareza": "legendario",
-    "precioBase": 2800,
+    "precioBase": 8400,
     "descripcion": "Un emblema de poder. El diseño de sol brilla incluso en la batalla.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -827,7 +827,7 @@
     "forma": "calandra (heater)",
     "material": "acero de Gondor",
     "rareza": "forjado",
-    "precioBase": 450,
+    "precioBase": 1350,
     "descripcion": "Diseño clásico de infantería para formar muros de escudos.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -840,7 +840,7 @@
     "forma": "calandra (heater)",
     "material": "acero reforzado",
     "rareza": "superior",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "Escudo con el Árbol Blanco grabado. Inmóvil como la roca.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -853,7 +853,7 @@
     "forma": "calandra (heater)",
     "material": "aleación de mithril and acero",
     "rareza": "legendario",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Una obra maestra de la forja de los Hombres. Ligero y virtualmente indestructible.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -866,7 +866,7 @@
     "forma": "ovalada",
     "material": "acero forjado en frío",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Elegante y curvo, diseñado para desviar flechas con gracia.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "negotiationBonus": 0.02 }
   },
@@ -879,7 +879,7 @@
     "forma": "ovalada",
     "material": "mithril puro",
     "rareza": "legendario",
-    "precioBase": 4200,
+    "precioBase": 12600,
     "descripcion": "Parece hecho de luz estelar sólida. Protege contra el miedo y el metal.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -892,7 +892,7 @@
     "forma": "ovalada",
     "material": "madera de mallorn",
     "rareza": "forjado",
-    "precioBase": 380,
+    "precioBase": 1140,
     "descripcion": "Escudo de los exploradores de Lothlórien, diseñado para el camuflaje.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -905,7 +905,7 @@
     "forma": "ovalada",
     "material": "acero élfico plateado",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Refleja la luz del bosque. Una pieza de artesanía antigua.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "negotiationBonus": 0.02 }
   },
@@ -918,7 +918,7 @@
     "forma": "rectangular",
     "material": "hierro forjado",
     "rareza": "forjado",
-    "precioBase": 400,
+    "precioBase": 1200,
     "descripcion": "Pesado y robusto, ideal para pasillos estrechos.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -931,7 +931,7 @@
     "forma": "rectangular",
     "material": "acero enano endurecido",
     "rareza": "superior",
-    "precioBase": 1350,
+    "precioBase": 4050,
     "descripcion": "Escudo con bordes dentados diseñado para golpear mientras bloquea.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -944,7 +944,7 @@
     "forma": "rectangular",
     "material": "acero rúnico y mithril",
     "rareza": "legendario",
-    "precioBase": 3800,
+    "precioBase": 11400,
     "descripcion": "Las runas inscritas en este escudo brillan cuando se acercan orcos.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -955,7 +955,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Arco de madera oscura, flexible y mortalmente silencioso.",
     "efecto": { "willpowerBonus": 0.02, "rangedBonus": 0.03, "damageBonus": 1, "stealthBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -966,8 +966,8 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 450,
-    "descripcion": "Pequeña hoja de acero élfico, perfecta para desollar o defensa.",
+    "precioBase": 1350,
+    "descripcion": "Pequeña hoja de acero élfico, perfecta para desollar o defense.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
   {
@@ -976,7 +976,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1350,
+    "precioBase": 4050,
     "descripcion": "Tratado con resinas de árbol para resistir el agua y los golpes.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "negotiationBonus": 0.04 }
   },
@@ -986,7 +986,7 @@
     "slot": "capa",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Capa tejida con fibras naturales que confunden la vista entre los árboles.",
     "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.04, "explorationBonus": 0.04, "perceptionBonus": 0.02 }
   },
@@ -996,7 +996,7 @@
     "slot": "casco",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1450,
+    "precioBase": 4350,
     "descripcion": "Yelmo ligero con motivos de hojas grabadas en el metal.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "perceptionBonus": 0.04 }
   },
@@ -1007,7 +1007,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Robusta hacha de hierro, ruda pero devastadora.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1017,7 +1017,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "Cuero pesado que absorbe impactos con facilidad.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.04 }
   },
@@ -1027,7 +1027,7 @@
     "slot": "brazos",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 550,
+    "precioBase": 1650,
     "descripcion": "Brutales y sencillos, típicos de los hombres del Val del Anduin.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1037,7 +1037,7 @@
     "slot": "amuleto",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 980,
+    "precioBase": 2940,
     "descripcion": "Otorga una ferocidad inusual al portador.",
     "efecto": { "willpowerBonus": 0.04, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04, "survivalBonus": 0.03 }
   },
@@ -1047,7 +1047,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Protección para las piernas en terrenos accidentados.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1058,7 +1058,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 4200,
+    "precioBase": 12600,
     "descripcion": "Espada de gran peso y elegancia, símbolo del servicio a Gondor.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1068,7 +1068,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 7200,
+    "precioBase": 21600,
     "descripcion": "Acero negro grabado con el Árbol Blanco. Indestructible.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.06 }
   },
@@ -1078,7 +1078,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2100,
+    "precioBase": 6300,
     "descripcion": "Famoso yelmo con alas que impone respeto en el campo.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "perceptionBonus": 0.04 }
   },
@@ -1088,7 +1088,7 @@
     "slot": "capa",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1900,
+    "precioBase": 5700,
     "descripcion": "Manto que se confunde perfectamente con los matorrales.",
     "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.04, "explorationBonus": 0.04, "perceptionBonus": 0.02 }
   },
@@ -1098,7 +1098,7 @@
     "slot": "anillo",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 4500,
+    "precioBase": 13500,
     "descripcion": "Un anillo que recuerda la gloria de Númenor.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -1109,7 +1109,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Equilibrada para lanzar o golpear.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -1119,7 +1119,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2400,
+    "precioBase": 7200,
     "descripcion": "Anillas pequeñas de acero templado.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.04 }
   },
@@ -1129,7 +1129,7 @@
     "slot": "hombros",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 1300,
+    "precioBase": 3900,
     "descripcion": "Pesadas y sólidas para bloquear ataques desde arriba.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -1139,7 +1139,7 @@
     "slot": "brazos",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1500,
+    "precioBase": 4500,
     "descripcion": "Permiten trabajar el metal al rojo vivo sin quemarse.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -1149,7 +1149,7 @@
     "slot": "casco",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 950,
+    "precioBase": 2850,
     "descripcion": "Resistente a caídas de rocas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -1160,7 +1160,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1600,
+    "precioBase": 4800,
     "descripcion": "Una lanza de gran alcance para defensa de murallas.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1171,7 +1171,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3100,
+    "precioBase": 9300,
     "descripcion": "Brilla ligeramente con la luz de la luna.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "stealthBonus": 0.06, "negotiationBonus": 0.05 }
   },
@@ -1181,7 +1181,7 @@
     "slot": "anillo",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Refuerza la agilidad y el espíritu.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04 }
   },
@@ -1191,7 +1191,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Flexibles y resistentes.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -1201,7 +1201,7 @@
     "slot": "amuleto",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Un cristal que parece capturar la luz estelar.",
     "efecto": { "willpowerBonus": 0.02, "explorationBonus": 0.03, "negotiationBonus": 0.03, "perceptionBonus": 0.03, "healingBonus": 0.03, "survivalBonus": 0.02 }
   },
@@ -1212,7 +1212,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 80,
+    "precioBase": 240,
     "descripcion": "Simple honda de cuero, muy efectiva en manos hábiles.",
     "efecto": { "willpowerBonus": 0.01, "rangedBonus": 0.02, "stealthBonus": 0.02, "perceptionBonus": 0.02 }
   },
@@ -1222,7 +1222,7 @@
     "slot": "pecho",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 250,
+    "precioBase": 750,
     "descripcion": "Muy cómodo para largos paseos.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -1233,7 +1233,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "No es un arma, pero ayuda mucho en el camino.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1243,7 +1243,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Un manto gastado que protege contra todo clima.",
     "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.04, "explorationBonus": 0.04, "perceptionBonus": 0.02 }
   },
@@ -1253,7 +1253,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "descripcion": "Una pieza antigua encontrada en ruinas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "explorationBonus": 0.03, "negotiationBonus": 0.03, "perceptionBonus": 0.03, "healingBonus": 0.03 }
   },
@@ -1263,7 +1263,7 @@
     "slot": "piernas",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Calzado resistente para largas jornadas de camino.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "explorationBonus": 0.02 }
   },
@@ -1273,7 +1273,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Flexibles y silenciosas, ideales para moverse por bosques.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1283,7 +1283,7 @@
     "slot": "piernas",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "Pesadas y sólidas, diseñadas para no resbalar en la roca.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -1293,7 +1293,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 500,
+    "precioBase": 1500,
     "descripcion": "Aislantes y duras, preparadas para la nieve.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1303,7 +1303,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "Un cinto simple con varios ganchos para llevar equipo extra.",
     "efecto": { "willpowerBonus": 0.01, "explorationBonus": 0.02, "healingBonus": 0.02 }
   },
@@ -1313,7 +1313,7 @@
     "slot": "accesorio",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 950,
+    "precioBase": 2850,
     "descripcion": "Reforzado con acero para proteger el torso bajo.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02, "healingBonus": 0.04 }
   },
@@ -1323,7 +1323,7 @@
     "slot": "accesorio",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 2800,
+    "precioBase": 8400,
     "descripcion": "Da una estabilidad sobrenatural al usuario.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "explorationBonus": 0.06, "negotiationBonus": 0.04, "healingBonus": 0.06 }
   },
@@ -1333,7 +1333,7 @@
     "slot": "accesorio",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Ligero como el aire pero increíblemente resistente.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "explorationBonus": 0.04, "negotiationBonus": 0.02, "healingBonus": 0.04 }
   },
@@ -1344,7 +1344,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1950,
+    "precioBase": 5850,
     "descripcion": "Un arma brutal para romper armaduras pesadas.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1355,7 +1355,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 450,
+    "precioBase": 1350,
     "descripcion": "Sencilla, pesada y efectiva.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -1366,7 +1366,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1700,
+    "precioBase": 5100,
     "descripcion": "Lanza larga con hacha en la punta para controlar el frente.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1377,7 +1377,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 800,
+    "precioBase": 2400,
     "descripcion": "Muy larga y equilibrada para lanzamientos precisos.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1387,7 +1387,7 @@
     "slot": "amuleto",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "descripcion": "Un objeto antiguo que parece irradiar luz propia.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -1397,7 +1397,7 @@
     "slot": "amuleto",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1600,
+    "precioBase": 4800,
     "descripcion": "Graba una protección constante sobre el portador.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04 }
   },
@@ -1407,7 +1407,7 @@
     "slot": "amuleto",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 750,
+    "precioBase": 2250,
     "descripcion": "Símbolo de conexión con el bosque.",
     "efecto": { "willpowerBonus": 0.02, "explorationBonus": 0.03, "negotiationBonus": 0.03, "perceptionBonus": 0.03, "healingBonus": 0.03, "survivalBonus": 0.02 }
   },
@@ -1417,7 +1417,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 1250,
+    "precioBase": 3750,
     "descripcion": "Diseñado para no obstruir la visión ni el oído.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -1427,7 +1427,7 @@
     "slot": "casco",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Yelmo que cubre hasta la barbilla.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "perceptionBonus": 0.04 }
   },
@@ -1437,7 +1437,7 @@
     "slot": "brazos",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 800,
+    "precioBase": 2400,
     "descripcion": "Brutales pero cálidos, mejoran el agarre.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -1447,7 +1447,7 @@
     "slot": "hombros",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Hombreras anchas que protegen cuello y hombros.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03 }
   },
@@ -1457,7 +1457,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 750,
+    "precioBase": 2250,
     "descripcion": "Ligeras, con refuerzos en las rodillas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1467,7 +1467,7 @@
     "slot": "anillo",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 3900,
+    "precioBase": 11700,
     "descripcion": "Mejora la precisión a grandes distancias.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -1477,7 +1477,7 @@
     "slot": "anillo",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Ayuda a mantener la calma en el calor del combate.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.04, "perceptionBonus": 0.04, "healingBonus": 0.04 }
   },
@@ -1487,7 +1487,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "descripcion": "Capa pesada que mantiene el calor en las cumbres.",
     "efecto": { "willpowerBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1498,7 +1498,7 @@
     "hands": 1,
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 1300,
+    "precioBase": 3900,
     "descripcion": "Hoja que parece absorber la light.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -1509,7 +1509,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "descripcion": "Un arco diseñado para abatir enemigos desde gran distancia.",
     "efecto": { "willpowerBonus": 0.06, "rangedBonus": 0.06, "damageBonus": 3, "stealthBonus": 0.06, "negotiationBonus": 0.05, "perceptionBonus": 0.06 }
   },
@@ -1520,7 +1520,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 420,
+    "precioBase": 1260,
     "descripcion": "Espada de uso diario para los habitantes de los Valles.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -1531,7 +1531,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 4500,
+    "precioBase": 13500,
     "descripcion": "Un arma que requiere gran fuerza para ser blandida.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1541,7 +1541,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 1150,
+    "precioBase": 3450,
     "descripcion": "Una cota de malla tradicional, muy fiable.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -1551,7 +1551,7 @@
     "slot": "piernas",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 90,
+    "precioBase": 270,
     "descripcion": "Cómodas para andar descalzo, pero con suela dura.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "explorationBonus": 0.02 }
   },
@@ -1562,7 +1562,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Un bastón de madera simple, ideal para quienes comienzan a estudiar los misterios.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1573,7 +1573,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 210,
+    "precioBase": 630,
     "descripcion": "Reforzado con hierro en la base para mayor durabilidad en caminos de barro.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1584,7 +1584,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Hecho con madera de Mallorn, altamente receptivo a la energía de su portador.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1595,7 +1595,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 4200,
+    "precioBase": 12600,
     "descripcion": "Un bastón de piedra y metal grabado con runas de poder antiguo.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1606,7 +1606,7 @@
     "hands": 2,
     "raza": "hobbit",
     "rareza": "superior",
-    "precioBase": 750,
+    "precioBase": 2250,
     "descripcion": "Tallado con motivos campestres, muy apreciado por los hobbits eruditos.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1617,7 +1617,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1900,
+    "precioBase": 5700,
     "descripcion": "Bastón de mando utilizado por los oficiales de la Torre.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1628,7 +1628,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4500,
+    "precioBase": 13500,
     "descripcion": "Irradia una luz tenue y reconfortante en la oscuridad.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1639,7 +1639,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 950,
+    "precioBase": 2850,
     "descripcion": "Un trozo de roca esculpida que sirve como bastón de apoyo.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1650,7 +1650,7 @@
     "hands": 2,
     "raza": "hobbit",
     "rareza": "forjado",
-    "precioBase": 500,
+    "precioBase": 1500,
     "descripcion": "Raíz nudosa tratada con aceites protectores.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1661,7 +1661,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3800,
+    "precioBase": 11400,
     "descripcion": "Bastón antiguo que perteneció a un maestro de los montaraces.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1672,7 +1672,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2100,
+    "precioBase": 6300,
     "descripcion": "Bastón elegante con tallados de flores plateadas.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1683,7 +1683,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2500,
+    "precioBase": 7500,
     "descripcion": "Engastado con oro, aumenta la capacidad de canalizar energía rúnica.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1694,7 +1694,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 700,
+    "precioBase": 2100,
     "descripcion": "Madera rústica, pesada y muy resistente a los golpes.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1705,7 +1705,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Flexible y equilibrado para rastrear en el bosque.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1716,7 +1716,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4100,
+    "precioBase": 12300,
     "descripcion": "Un bastón de una belleza inigualable, forjado en Rivendel.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1727,7 +1727,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 1600,
+    "precioBase": 4800,
     "descripcion": "Bastón de estudio que ayuda a la concentración mental.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1738,7 +1738,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1450,
+    "precioBase": 4350,
     "descripcion": "Casi una barra de hierro, funciona como maza en caso de emergencia.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1749,7 +1749,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 800,
+    "precioBase": 2400,
     "descripcion": "Símbolo de autoridad menor en los puestos de vigilancia.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1760,7 +1760,7 @@
     "hands": 2,
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "Simple, ligero y perfecto para caminatas dominicales.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1771,7 +1771,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Imbuido de una energía espectral que intimida a los no muertos.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1782,7 +1782,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Bastón de madera resistente con una punta de metal grabada.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1793,7 +1793,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Ligero y perfectamente equilibrado, tallado por maestros elfos.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1804,7 +1804,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 950,
+    "precioBase": 2850,
     "descripcion": "Una barra de hierro forjada para durar siglos.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -1815,7 +1815,7 @@
     "hands": 2,
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 140,
+    "precioBase": 420,
     "descripcion": "Un bastón simple, sin pretensiones, ideal para paseos.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1826,7 +1826,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 5200,
+    "precioBase": 15600,
     "descripcion": "Un bastón que canaliza los elementos a través de sus runas.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1837,7 +1837,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4800,
+    "precioBase": 14400,
     "descripcion": "Un bastón antiguo que brilla con la luz de las estrellas.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1848,7 +1848,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Madera oscura que se camufla perfectamente entre los árboles.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1859,7 +1859,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2400,
+    "precioBase": 7200,
     "descripcion": "Bastón masivo que puede actuar como martillo en apuros.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -1870,7 +1870,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 6000,
+    "precioBase": 18000,
     "descripcion": "Un bastón imbuido con una sabiduría antigua y un poder oculto.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -1881,7 +1881,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 180,
+    "precioBase": 540,
     "descripcion": "Madera tallada rudimentariamente para ayudar en la nieve.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -1891,7 +1891,7 @@
     "slot": "accesorio",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 700,
+    "precioBase": 2100,
     "descripcion": "Cinturón ancho de cuero con placas de hierro remachadas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -1901,7 +1901,7 @@
     "slot": "accesorio",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 550,
+    "precioBase": 1650,
     "descripcion": "Más decorativo que defensivo, pero muy resistente.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -1911,7 +1911,7 @@
     "slot": "accesorio",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 450,
+    "precioBase": 1350,
     "descripcion": "Cinturón robusto para colgar armas y bolsas.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -1921,7 +1921,7 @@
     "slot": "accesorio",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 90,
+    "precioBase": 270,
     "descripcion": "Simple y ajustable.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05 }
   },
@@ -1931,7 +1931,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Gruesa y pesada, protege del frío extremo.",
     "efecto": { "willpowerBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -1941,7 +1941,7 @@
     "slot": "capa",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Tejido con colores que cambian sutilmente.",
     "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.04, "explorationBonus": 0.04, "perceptionBonus": 0.02 }
   },
@@ -1951,7 +1951,7 @@
     "slot": "capa",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3900,
+    "precioBase": 11700,
     "descripcion": "Un manto que parece fundirse con la oscuridad.",
     "efecto": { "willpowerBonus": 0.06, "stealthBonus": 0.06, "explorationBonus": 0.06, "perceptionBonus": 0.04 }
   },
@@ -1961,7 +1961,7 @@
     "slot": "casco",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 750,
+    "precioBase": 2250,
     "descripcion": "Robusto y funcional, cubre gran parte del rostro.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -1971,7 +1971,7 @@
     "slot": "casco",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "descripcion": "Ligero, ideal para exploradores.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -1981,7 +1981,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 850,
+    "precioBase": 2550,
     "descripcion": "Casco de acero con protector nasal reforzado.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "perceptionBonus": 0.03 }
   },
@@ -1991,7 +1991,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "No hacen ruido al caminar, perfectas para emboscadas.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2001,7 +2001,7 @@
     "slot": "piernas",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Casi imposibles de perforar, muy estables.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2011,7 +2011,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 650,
+    "precioBase": 1950,
     "descripcion": "Calzado fiable para largas campañas militares.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -2022,7 +2022,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "descripcion": "Un hacha rústica diseñada para el combate cerrado.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2033,7 +2033,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 4500,
+    "precioBase": 13500,
     "descripcion": "Una espada larga forjada con acero de Númenor.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2044,7 +2044,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1500,
+    "precioBase": 4500,
     "descripcion": "Hoja curva con grabados que brillan débilmente.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2055,7 +2055,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "descripcion": "Una maza pesada que parece destrozar la roca al impactar.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2066,7 +2066,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "forjado",
-    "precioBase": 350,
+    "precioBase": 1050,
     "descripcion": "Bien equilibrada, sorprendentemente afilada.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2077,7 +2077,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1800,
+    "precioBase": 5400,
     "descripcion": "Arco diseñado para la defensa de murallas.",
     "efecto": { "willpowerBonus": 0.04, "rangedBonus": 0.04, "damageBonus": 2, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2088,7 +2088,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2000,
+    "precioBase": 6000,
     "descripcion": "Dos hojas pesadas capaces de partir escudos.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -2098,7 +2098,7 @@
     "slot": "amuleto",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4000,
+    "precioBase": 12000,
     "descripcion": "Un amuleto que otorga claridad mental y agilidad.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -2108,7 +2108,7 @@
     "slot": "anillo",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 4200,
+    "precioBase": 12600,
     "descripcion": "Un anillo imponente que denota autoridad suprema.",
     "efecto": { "willpowerBonus": 0.06, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06, "survivalBonus": 0.04 }
   },
@@ -2118,7 +2118,7 @@
     "slot": "anillo",
     "raza": "elfo",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Un anillo sencillo, sin adornos pero elegante.",
     "efecto": { "willpowerBonus": 0.01, "explorationBonus": 0.02, "negotiationBonus": 0.02, "perceptionBonus": 0.02, "healingBonus": 0.02, "survivalBonus": 0.01 }
   },
@@ -2129,7 +2129,7 @@
     "hands": 1,
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 250,
+    "precioBase": 750,
     "descripcion": "Escudo pequeño, rápido y sólido.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -2139,7 +2139,7 @@
     "slot": "hombros",
     "raza": "general",
     "rareza": "forjado",
-    "precioBase": 400,
+    "precioBase": 1200,
     "descripcion": "Protección básica contra tajos.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -2149,7 +2149,7 @@
     "slot": "brazos",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 550,
+    "precioBase": 1650,
     "descripcion": "Guantes rígidos que ofrecen protección total.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -2159,7 +2159,7 @@
     "slot": "piernas",
     "raza": "hobbit",
     "rareza": "forjado",
-    "precioBase": 300,
+    "precioBase": 900,
     "descripcion": "Protección cómoda para el camino.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -2169,7 +2169,7 @@
     "slot": "casco",
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "Una capucha de tela gruesa para cubrir el rostro.",
     "efecto": { "willpowerBonus": 0.01, "damageReduction": 0.02, "survivalBonus": 0.01, "stealthBonus": 0.05, "perceptionBonus": 0.02 }
   },
@@ -2180,7 +2180,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "comun",
-    "precioBase": 90,
+    "precioBase": 270,
     "descripcion": "No más que una rama recta, pero útil.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -2190,7 +2190,7 @@
     "slot": "anillo",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 300,
+    "precioBase": 900,
     "descripcion": "Un anillo sólido que mejora la resistencia física.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "explorationBonus": 0.03, "negotiationBonus": 0.03, "perceptionBonus": 0.03, "healingBonus": 0.03 }
   },
@@ -2201,7 +2201,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 6500,
+    "precioBase": 19500,
     "descripcion": "Hoja que brilla con un tono esmeralda al detectar el mal. Significa 'Segadora Verde'.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2212,7 +2212,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 6200,
+    "precioBase": 18600,
     "descripcion": "Espada curva que fluye como las olas del mar, forjada en los puertos.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2223,7 +2223,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 6800,
+    "precioBase": 20400,
     "descripcion": "La hoja parece capturar la luz de las estrellas de Varda.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2234,7 +2234,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 6100,
+    "precioBase": 18300,
     "descripcion": "Acero de Númenor grabado con historias de héroes antiguos.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2245,7 +2245,7 @@
     "hands": 1,
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Una espada silenciosa, ideal para emboscadas nocturnas.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2256,7 +2256,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 7200,
+    "precioBase": 21600,
     "descripcion": "Mandoble pesado que resuena con cada impacto como un trueno.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2267,7 +2267,7 @@
     "hands": 2,
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 5800,
+    "precioBase": 17400,
     "descripcion": "Bastón de roble anciano con inscripciones rúnicas de gran power.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2278,7 +2278,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 5500,
+    "precioBase": 16500,
     "descripcion": "Estructura metálica compleja para enfocar energías elementales.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2289,7 +2289,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2800,
+    "precioBase": 8400,
     "descripcion": "Delicado bastón de madera blanca, tallado con esmero.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -2300,7 +2300,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 700,
+    "precioBase": 2100,
     "descripcion": "Bastón pesado y rústico, capaz de romper madera.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -2311,7 +2311,7 @@
     "hands": 2,
     "raza": "hobbit",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "descripcion": "Ayuda a mantener el paso en largas travesías.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -2322,7 +2322,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Escudo grande y pesado con el emblema de Gondor.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -2333,7 +2333,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 5200,
+    "precioBase": 15600,
     "descripcion": "Hecho con placas de metal que resisten el fuego.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -2343,7 +2343,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "descripcion": "Malla ligera que brilla como si fuera de plata pura.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "negotiationBonus": 0.04 }
   },
@@ -2353,7 +2353,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2800,
+    "precioBase": 8400,
     "descripcion": "Gruesa coraza diseñada para soportar golpes directos.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.04 }
   },
@@ -2363,7 +2363,7 @@
     "slot": "capa",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Capa teñida de rojo, resistente a las inclemencias.",
     "efecto": { "willpowerBonus": 0.04, "stealthBonus": 0.04, "explorationBonus": 0.04, "perceptionBonus": 0.02 }
   },
@@ -2373,7 +2373,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 4500,
+    "precioBase": 13500,
     "descripcion": "El yelmo clásico con alas, símbolo de alto rango.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "perceptionBonus": 0.06 }
   },
@@ -2383,7 +2383,7 @@
     "slot": "piernas",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1600,
+    "precioBase": 4800,
     "descripcion": "Protección total para la parte inferior de las piernas.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2393,7 +2393,7 @@
     "slot": "brazos",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1500,
+    "precioBase": 4500,
     "descripcion": "Guantes finos que permiten gran destreza.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "stealthBonus": 0.01, "explorationBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2403,7 +2403,7 @@
     "slot": "accesorio",
     "raza": "general",
     "rareza": "superior",
-    "precioBase": 2500,
+    "precioBase": 7500,
     "descripcion": "Un cinturón que denota riqueza y estatus.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "explorationBonus": 0.04, "negotiationBonus": 0.02, "healingBonus": 0.04 }
   },
@@ -2413,7 +2413,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Perfectas para acechar en bosques y campos.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -2423,7 +2423,7 @@
     "slot": "hombros",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 1200,
+    "precioBase": 3600,
     "descripcion": "Hombreras que protegen contra ataques pesados.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.02, "stealthBonus": 0.03 }
   },
@@ -2433,7 +2433,7 @@
     "slot": "amuleto",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 5500,
+    "precioBase": 16500,
     "descripcion": "Un amuleto que contiene una runa de protección poderosa.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "explorationBonus": 0.06, "negotiationBonus": 0.06, "perceptionBonus": 0.06, "healingBonus": 0.06 }
   },
@@ -2444,7 +2444,7 @@
     "hands": 1,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Pequeña y equilibrada para lanzamientos rápidos.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2455,7 +2455,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2400,
+    "precioBase": 7200,
     "descripcion": "Un arma de asta intimidante.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "damageBonus": 2, "negotiationBonus": 0.02 }
   },
@@ -2466,7 +2466,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 450,
+    "precioBase": 1350,
     "descripcion": "Espada de dos manos estándar, fiable en combate.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02 }
   },
@@ -2477,7 +2477,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "legendario",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "descripcion": "Pequeña daga con incrustaciones, increíblemente afilada.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "stealthBonus": 0.06, "negotiationBonus": 0.05 }
   },
@@ -2488,7 +2488,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Herramienta ruda que sirve perfectamente como arma.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02 }
   },
@@ -2499,7 +2499,7 @@
     "hands": 2,
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 5500,
+    "precioBase": 16500,
     "descripcion": "Punta de plata bendecida, legendaria en las batallas de defensa.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2510,7 +2510,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "comun",
-    "precioBase": 200,
+    "precioBase": 600,
     "descripcion": "Arco de madera simple, pero eficaz en manos élficas.",
     "efecto": { "willpowerBonus": 0.01, "rangedBonus": 0.02, "stealthBonus": 0.02, "perceptionBonus": 0.02 }
   },
@@ -2521,7 +2521,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 800,
+    "precioBase": 2400,
     "descripcion": "Martillo equilibrado para el combate y el trabajo.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "damageBonus": 1, "negotiationBonus": 0.01 }
   },
@@ -2532,7 +2532,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Espada de viaje, ligera y resistente.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2543,7 +2543,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 7000,
+    "precioBase": 21000,
     "descripcion": "Un arma que brilla con la luz de los tesoros de Erebor.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2554,7 +2554,7 @@
     "hands": 1,
     "raza": "hobbit",
     "rareza": "superior",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "descripcion": "Un mazo pequeño que sorprende por su peso.",
     "efecto": { "willpowerBonus": 0.04, "meleeBonus": 0.04, "negotiationBonus": 0.02 }
   },
@@ -2565,7 +2565,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 6200,
+    "precioBase": 18600,
     "descripcion": "Lanza larga que parece de hielo eterno.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 3, "negotiationBonus": 0.05 }
   },
@@ -2576,7 +2576,7 @@
     "hands": 1,
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 400,
+    "precioBase": 1200,
     "descripcion": "Hoja robusta de acero del Anduin.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2587,7 +2587,7 @@
     "hands": 2,
     "raza": "enano",
     "rareza": "comun",
-    "precioBase": 160,
+    "precioBase": 480,
     "descripcion": "Bastón simple para comenzar los estudios rúnicos.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02 }
   },
@@ -2598,7 +2598,7 @@
     "hands": 2,
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2400,
+    "precioBase": 7200,
     "descripcion": "Arco recurvo con gran potencia de tiro.",
     "efecto": { "willpowerBonus": 0.04, "rangedBonus": 0.04, "damageBonus": 2, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2609,7 +2609,7 @@
     "hands": 1,
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 480,
+    "precioBase": 1440,
     "descripcion": "Sólida y contundente, ideal para combate cerrado.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2621,7 +2621,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 80,
+    "precioBase": 240,
     "descripcion": "Un cuchillo simple de hierro, desgastado por el barro de las marchas y el uso diario, pero afilado con regularidad para cortes rápidos.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -2633,7 +2633,7 @@
     "tipo": "arma",
     "raza": "enano",
     "rareza": "comun",
-    "precioBase": 45,
+    "precioBase": 135,
     "descripcion": "Herramienta tosca y pesada forjada en fraguas comunes, ideal para propiciar un impacto contundente a corta distancia.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02 }
   },
@@ -2645,7 +2645,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "comun",
-    "precioBase": 50,
+    "precioBase": 150,
     "descripcion": "Una hoja ligera y equilibrada que los jóvenes elfos emplean para adiestrar el brazo en lanzamientos limpios.",
     "efecto": { "willpowerBonus": 0.01, "meleeBonus": 0.02, "stealthBonus": 0.02 }
   },
@@ -2657,7 +2657,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 180,
+    "precioBase": 540,
     "descripcion": "Jabalina corta con punta de acero reforzado, diseñada para atravesar el cuero antes de que el enemigo logre acortar distancias en el campo de batalla.",
     "efecto": { "willpowerBonus": 0.02, "thrownBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -2669,7 +2669,7 @@
     "tipo": "arma",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 195,
+    "precioBase": 585,
     "descripcion": "Forjada en las profundidades de la Montaña Solitaria; el balance entre su mango de fresno y la hoja de acero templado es impecable.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2681,7 +2681,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 210,
+    "precioBase": 630,
     "descripcion": "Artesanía esbelta de madera flexible y punta de hoja perfoliada que hiende el aire sin emitir silbido alguno.",
     "efecto": { "willpowerBonus": 0.02, "meleeBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -2693,7 +2693,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 520,
+    "precioBase": 1560,
     "descripcion": "Armamento pesado forjado en la capital de Gondor, capaz de astillar escudos de madera reforzada y romper filas de asalto orcas.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2705,7 +2705,7 @@
     "tipo": "arma",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 550,
+    "precioBase": 1650,
     "descripcion": "Una pieza maciza de metal oscuro y denso. Su brutal impacto hunde cotas de malla y parte huesos al primer contacto.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2717,7 +2717,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 580,
+    "precioBase": 1740,
     "descripcion": "Una hoja oscurecida por completo para evitar reflejos de luz, idónea para las emboscadas letales bajo las copas más sombrías del bosque.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2729,7 +2729,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 1450,
+    "precioBase": 4350,
     "descripcion": "Un baluarte histórico custodiado en la Ciudadela; su punta pulida brilla con el orgullo inquebrantable de los Reyes de antaño.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2741,7 +2741,7 @@
     "tipo": "arma",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 1550,
+    "precioBase": 4650,
     "descripcion": "Forjada en los días de gloria bajo la montaña. Sus runas grabadas laten levemente ante la presencia enemiga y posee un vuelo de precisión matemática.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05 }
   },
@@ -2753,7 +2753,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 1650,
+    "precioBase": 4950,
     "descripcion": "Una reliquia moldeada bajo la luz estelar en Rivendel. Ignora por completo la fricción del viento, cobrando vidas en silencio antes de ser vista.",
     "efecto": { "willpowerBonus": 0.06, "meleeBonus": 0.06, "damageBonus": 1, "stealthBonus": 0.06, "negotiationBonus": 0.05 }
   },
@@ -2765,7 +2765,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 35,
+    "precioBase": 105,
     "descripcion": "Una vara simple de madera con la punta endurecida directamente al fuego. Cumple su función en la caza menor, aunque el peso no está perfectamente distribuido.",
     "efecto": { "willpowerBonus": 0.01, "thrownBonus": 0.02, "perceptionBonus": 0.02 }
   },
@@ -2777,7 +2777,7 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 190,
+    "precioBase": 570,
     "descripcion": "Diseñada en Rohan para la guerra a caballo. El astil de fresno absorbe las vibraciones del galope y la punta de acero remachada tiene forma de hoja de sauce.",
     "efecto": { "willpowerBonus": 0.02, "thrownBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -2789,7 +2789,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 185,
+    "precioBase": 555,
     "descripcion": "Una hoja larga y delgada perfectamente contrapesada en la empuñadura. Su acero está oscurecido intencionadamente para evitar destellos que delaten la posición del lanzador entre la maleza.",
     "efecto": { "willpowerBonus": 0.02, "thrownBonus": 0.03, "stealthBonus": 0.03, "negotiationBonus": 0.01, "perceptionBonus": 0.03 }
   },
@@ -2801,7 +2801,7 @@
     "tipo": "arma",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 540,
+    "precioBase": 1620,
     "descripcion": "La hoja de este hacha cuenta con un diseño aerodinámico curvado que estabiliza el giro en el aire, garantizando un impacto profundo incluso a distancias cortas.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2813,7 +2813,7 @@
     "tipo": "arma",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 560,
+    "precioBase": 1680,
     "descripcion": "Tallada en madera flexible de mallorn joven. Su aerodinámica es tan perfecta que hiende el aire con un susurro casi imperceptible, alcanzando rangos sobresalientes.",
     "efecto": { "willpowerBonus": 0.04, "thrownBonus": 0.04, "stealthBonus": 0.04, "negotiationBonus": 0.02, "perceptionBonus": 0.04 }
   },
@@ -2825,17 +2825,17 @@
     "tipo": "arma",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 1500,
+    "precioBase": 4500,
     "descripcion": "Jabalina legendaria cuyo astil lleva grabadas las crónicas de los Señores de los Caballos. Al ser arrojada a pleno galope, el acero produce un silbido ensordecedor que aterra a las monturas enemigas.",
     "efecto": { "willpowerBonus": 0.06, "thrownBonus": 0.06, "damageBonus": 1, "negotiationBonus": 0.05, "perceptionBonus": 0.06 }
   },
-    {
+  {
     "id": "tunica_seguidor_orden",
     "nombre": "Túnica de Seguidor de la Orden",
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 180,
+    "precioBase": 540,
     "descripcion": "Una vestidura simple utilizada por los aspirantes y sabios menores de las tierras del norte.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02, "healingBonus": 0.01 }
   },
@@ -2845,7 +2845,7 @@
     "slot": "pecho",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Cómoda, holgada y con amplios bolsillos perfectos para guardar pergaminos, notas o un poco de hierba de pipa.",
     "efecto": { "willpowerBonus": 0.01, "magicBonus": 0.02, "stealthBonus": 0.02, "healingBonus": 0.01 }
   },
@@ -2855,7 +2855,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 480,
+    "precioBase": 1440,
     "descripcion": "Tejida por los elfos que abandonaron la Gran Marcha antes de cruzar las montañas, impregnada con la magia sutil de los bosques originarios.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "stealthBonus": 0.03, "healingBonus": 0.02 }
   },
@@ -2865,7 +2865,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 520,
+    "precioBase": 1560,
     "descripcion": "Hecho de cuero grueso curtido. Canaliza la energía rúnica de la piedra sin la incomodidad ni la ridiculez de una túnica larga.",
     "efecto": { "willpowerBonus": 0.02, "magicBonus": 0.03, "survivalBonus": 0.02, "healingBonus": 0.02 }
   },
@@ -2875,7 +2875,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1250,
+    "precioBase": 3750,
     "descripcion": "Vestidura reservada para aquellos que desentierran las viejas crónicas en los archivos más profundos de la Ciudadela.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "negotiationBonus": 0.02, "healingBonus": 0.03 }
   },
@@ -2885,7 +2885,7 @@
     "slot": "pecho",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Una prenda robusta reforzada con láminas de bronce que resuena con los cánticos antiguos de las raíces del mundo.",
     "efecto": { "willpowerBonus": 0.04, "magicBonus": 0.04, "survivalBonus": 0.04, "healingBonus": 0.03 }
   },
@@ -2895,7 +2895,7 @@
     "slot": "pecho",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 4200,
+    "precioBase": 12600,
     "descripcion": "Una pieza legendaria de la Primera Edad, tejida con hilos de luz por los Elfos del Mar que jamás pisaron las tierras de Beleriand.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "stealthBonus": 0.05, "healingBonus": 0.05, "damageReduction": 0.02 }
   },
@@ -2908,7 +2908,7 @@
     "raza": ["hombre"],
     "rareza": "común",
     "material": "fresno y hierro",
-    "precioBase": 120,
+    "precioBase": 360,
     "descripcion": "Una lanza robusta con punta alada, diseñada para mantener la formación a pie junto a tus compañeros.",
     "efecto": { "meleeBonus": 0.01, "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.01 }
   },
@@ -2921,7 +2921,7 @@
     "raza": ["hombre"],
     "rareza": "superior",
     "material": "roble reforzado",
-    "precioBase": 450,
+    "precioBase": 1350,
     "descripcion": "Lanza de infantería ligera balanceada para el combate cerrado a una mano.",
     "efecto": { "meleeBonus": 0.04, "damageBonus": 1, "willpowerBonus": 0.03, "negotiationBonus": 0.03, "survivalBonus": 0.03 }
   },
@@ -2934,7 +2934,7 @@
     "raza": ["hombre"],
     "rareza": "común",
     "material": "fresno",
-    "precioBase": 150,
+    "precioBase": 450,
     "descripcion": "Ligera, flexible y balanceada para ser empuñada al galope con una sola mano.",
     "efecto": { "meleeBonus": 0.01, "willpowerBonus": 0.01, "negotiationBonus": 0.01, "survivalBonus": 0.01 }
   },
@@ -2947,7 +2947,7 @@
     "raza": ["hombre"],
     "rareza": "forjado",
     "material": "acero de la marca",
-    "precioBase": 680,
+    "precioBase": 2040,
     "descripcion": "Una lanza de caballería con punta de aguja pulida, optimizada para el impacto inicial.",
     "efecto": { "meleeBonus": 0.02, "willpowerBonus": 0.02, "negotiationBonus": 0.02, "survivalBonus": 0.02 }
   },
@@ -2959,7 +2959,7 @@
     "hand": 1,
     "raza": ["hombre"],
     "rareza": "superior",
-    "precioBase": 1850,
+    "precioBase": 5550,
     "descripcion": "Portada por los líderes de los Éored. Su presencia en la vanguardia infunde un valor inquebrantable.",
     "efecto": { "meleeBonus": 0.04, "damageBonus": 1, "willpowerBonus": 0.03, "negotiationBonus": 0.03, "survivalBonus": 0.03 }
   },
@@ -2971,7 +2971,7 @@
     "hand": 1,
     "raza": ["hombre"],
     "rareza": "legendario",
-    "precioBase": 5200,
+    "precioBase": 15600,
     "descripcion": "Una reliquia forjada en los días de Eorl el Joven. Rompe las filas enemigas como un rayo verde y dorado.",
     "efecto": { "meleeBonus": 0.06, "damageBonus": 2, "willpowerBonus": 0.04, "negotiationBonus": 0.04, "survivalBonus": 0.04 }
   },
@@ -2981,7 +2981,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 640,
+    "precioBase": 1920,
     "descripcion": "Chaqueta de cuero flexible tratada con grasa, óptima para resistir el viento cabalgando.",
     "efecto": { "damageReduction": 0.02, "survivalBonus": 0.01, "willpowerBonus": 0.01 }
   },
@@ -2991,7 +2991,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 1540,
+    "precioBase": 4620,
     "descripcion": "Eslabones de hierro remachados sobre cuero, equilibrados para no entorpecer la montura.",
     "efecto": { "damageReduction": 0.04, "survivalBonus": 0.02, "willpowerBonus": 0.02 }
   },
@@ -3001,7 +3001,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 3130,
+    "precioBase": 9390,
     "descripcion": "Protección pesada entrelazada con refuerzos de cuero curtido procedentes de las forjas de Edoras.",
     "efecto": { "damageReduction": 0.05, "survivalBonus": 0.03, "willpowerBonus": 0.03, "negotiationBonus": 0.01 }
   },
@@ -3011,7 +3011,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 5200,
+    "precioBase": 15600,
     "descripcion": "Una mítica loriga de escamas doradas y acero brunido que repele los ataques e inspira a los aliados.",
     "efecto": { "damageReduction": 0.06, "survivalBonus": 0.05, "willpowerBonus": 0.05, "negotiationBonus": 0.03 }
   },
@@ -3021,7 +3021,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 650,
+    "precioBase": 1950,
     "descripcion": "Ropa acolchada de hilos densos usada por los bateleros para protegerse del frío norteño.",
     "efecto": { "damageReduction": 0.01, "survivalBonus": 0.02, "explorationBonus": 0.01 }
   },
@@ -3031,7 +3031,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 1320,
+    "precioBase": 3960,
     "descripcion": "Peto de cuero endurecido y encerado, diseñado para repeler la humedad de la Ciudad del Lago.",
     "efecto": { "damageReduction": 0.03, "survivalBonus": 0.03, "explorationBonus": 0.02 }
   },
@@ -3041,7 +3041,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "descripcion": "Placas de metal superpuestas imitando escamas de pez, forjadas con acero importado de Erebor.",
     "efecto": { "damageReduction": 0.05, "survivalBonus": 0.04, "negotiationBonus": 0.03, "explorationBonus": 0.02 }
   },
@@ -3051,7 +3051,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 4900,
+    "precioBase": 14700,
     "descripcion": "Una obra maestra de placas de acero e incrustaciones preciosas que rememora la restauración de la estirpe de Girion.",
     "efecto": { "damageReduction": 0.06, "survivalBonus": 0.04, "willpowerBonus": 0.04, "negotiationBonus": 0.05 }
   },
@@ -3061,7 +3061,7 @@
     "slot": "escudo",
     "raza": "hombre",
     "rareza": "comun",
-    "precio": 350,
+    "precio": 1050,
     "descripcion": "Escudo redondo y plano hecho de tablas de pino unidas con bandas de cuero.",
     "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
   },
@@ -3071,7 +3071,7 @@
     "slot": "escudo",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 780,
+    "precioBase": 2340,
     "descripcion": "Ligero y robusto, con un umbo de hierro central para desviar estocadas sobre la montura.",
     "efecto": { "damageReduction": 0.02, "meleeBonus": 0.01, "survivalBonus": 0.01 }
   },
@@ -3081,7 +3081,7 @@
     "slot": "escudo",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1600,
+    "precioBase": 4800,
     "descripcion": "Ostenta el característico diseño del caballo tallado, reforzado con un fuerte aro perimetral de acero.",
     "efecto": { "damageReduction": 0.04, "meleeBonus": 0.02, "willpowerBonus": 0.02, "survivalBonus": 0.02 }
   },
@@ -3091,7 +3091,7 @@
     "slot": "escudo",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "descripcion": "Escudo real recubierto de bronce labrado con los caballos gemelos; detiene golpes devastadores.",
     "efecto": { "damageReduction": 0.06, "meleeBonus": 0.03, "willpowerBonus": 0.05, "survivalBonus": 0.03 }
   },
@@ -3101,7 +3101,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 230,
+    "precioBase": 690,
     "descripcion": "Un capacete básico que protege la parte superior del cráneo sin obstruir la visión.",
     "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
   },
@@ -3111,7 +3111,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1300,
+    "precioBase": 3900,
     "descripcion": "Yelmo bruñido con grabados de hilos de plata, protectores fijos para las mejillas y una larga crin.",
     "efecto": { "damageReduction": 0.03, "survivalBonus": 0.03, "willpowerBonus": 0.02 }
   },
@@ -3121,7 +3121,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3300,
+    "precioBase": 9900,
     "descripcion": "Adornado con crines fluidas que ondean en la carga; una pieza real que infunde pavor.",
     "efecto": { "damageReduction": 0.04, "survivalBonus": 0.04, "willpowerBonus": 0.05, "negotiationBonus": 0.02 }
   },
@@ -3131,7 +3131,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 220,
+    "precioBase": 660,
     "descripcion": "Casco esférico utilitario, fácil de producir y común entre las milicias fluviales.",
     "efecto": { "damageReduction": 0.01, "survivalBonus": 0.01 }
   },
@@ -3141,7 +3141,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 650,
+    "precioBase": 1950,
     "descripcion": "Yelmo reforzado con solapas batientes acolchadas que cuidan los laterales de la cara contra el viento helado.",
     "efecto": { "damageReduction": 0.02, "explorationBonus": 0.01, "survivalBonus": 0.01 }
   },
@@ -3151,7 +3151,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "descripcion": "Elegante protección de acero que denota rango, decorada con motivos que recuerdan a las aves del lago.",
     "efecto": { "damageReduction": 0.03, "survivalBonus": 0.02, "negotiationBonus": 0.02 }
   },
@@ -3161,7 +3161,7 @@
     "slot": "casco",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Forjado con aleaciones secretas de Erebor, su silueta evoca la caída del gran enemigo de la región.",
     "efecto": { "damageReduction": 0.04, "willpowerBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -3171,7 +3171,7 @@
     "slot": "pecho",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 3500,
+    "precioBase": 10500,
     "descripcion": "Dividido heráldicamente, protegido con una placa pectoral de acero con el grabado del Árbol Blanco",
     "efecto": { "damageReduction": 0.05, "willpowerBonus": 0.04, "survivalBonus": 0.04 }
   },
@@ -3181,7 +3181,7 @@
     "slot": "escudo",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 900,
+    "precioBase": 2700,
     "descripcion": "Escudo ovalado grande con fondo verde mar y borde metálico, decorado con motivos de estrellas, una gaviota y un ancla central en color blanco",
     "efecto": { "damageReduction": 0.02, "willpowerBonus": 0.01, "survivalBonus": 0.02, "thrownBonus": 0.02 }
   },
@@ -3191,7 +3191,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 620,
+    "precioBase": 1860,
     "descripcion": "Altas y resistentes, diseñadas en Rohan para asegurar un agarre firme en los estribos.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.03, "survivalBonus": 0.03, "explorationBonus": 0.02 }
   },
@@ -3201,7 +3201,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 580,
+    "precioBase": 1740,
     "descripcion": "Calzado flexible de los hombres del norte, excelente para las rutas de comercio a pie.",
     "efecto": { "willpowerBonus": 0.02, "damageReduction": 0.02, "negotiationBonus": 0.03, "explorationBonus": 0.03 }
   },
@@ -3211,7 +3211,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3100,
+    "precioBase": 9300,
     "descripcion": "Botas de cuero fino bendecidas en Rivendel, sintonizadas perfectamente con las corrientes de poder.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "stealthBonus": 0.04, "perceptionBonus": 0.04 }
   },
@@ -3221,7 +3221,7 @@
     "slot": "piernas",
     "raza": "general",
     "rareza": "legendario",
-    "precioBase": 3250,
+    "precioBase": 9750,
     "descripcion": "Calzado ligero de cuero antiguo que amortigua el andar de los sabios que recorren la Tierra Media.",
     "efecto": { "willpowerBonus": 0.06, "magicBonus": 0.06, "explorationBonus": 0.05, "survivalBonus": 0.04 }
   },
@@ -3231,7 +3231,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "legendario",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "descripcion": "Pesadas placas de acero pulido con grabados equinos, forjadas para resistir las cargas más brutales.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.04, "negotiationBonus": 0.04 }
   },
@@ -3241,7 +3241,7 @@
     "slot": "piernas",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 3650,
+    "precioBase": 10950,
     "descripcion": "Forjadas con el metal más denso del norte. Pesadas, monolíticas e inamovibles.",
     "efecto": { "willpowerBonus": 0.06, "damageReduction": 0.06, "survivalBonus": 0.05, "explorationBonus": 0.03 }
   },
@@ -3251,7 +3251,7 @@
     "slot": "piernas",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 2200,
+    "precioBase": 6600,
     "descripcion": "Guarnecidas con hilos de plata; combinan una flexibilidad asombrosa con una defensa tenaz.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "stealthBonus": 0.04, "perceptionBonus": 0.03 }
   },
@@ -3261,7 +3261,7 @@
     "slot": "piernas",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2000,
+    "precioBase": 6000,
     "descripcion": "Protección norteña reforzada, forjada para resistir tanto el frío extremo como los asedios.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.03, "negotiationBonus": 0.02 }
   },
@@ -3271,7 +3271,7 @@
     "slot": "piernas",
     "raza": "beornida",
     "rareza": "superior",
-    "precioBase": 1900,
+    "precioBase": 5700,
     "descripcion": "Sólidas bandas de cuero endurecido, confeccionadas a la medida para cazadores de gran envergadura.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.04, "survivalBonus": 0.04, "explorationBonus": 0.03 }
   },
@@ -3281,7 +3281,7 @@
     "slot": "piernas",
     "raza": "hobbit",
     "rareza": "superior",
-    "precioBase": 980,
+    "precioBase": 2940,
     "descripcion": "Calzado inusual para un hobbit común, pero indispensable para los oficiales que vigilan los límites de la Comarca.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.03, "stealthBonus": 0.05, "explorationBonus": 0.04 }
   }, 
@@ -3290,7 +3290,7 @@
     "nombre": "Hombreras Acolchadas Hobbit",
     "raza": "hobbit",
     "rareza": "comun",
-    "precioBase": 150,
+    "precioBase": 450,
     "slot": "hombros",
     "descripcion": "Capas de tela gruesa y lana que ofrecen una protección mínima pero cómoda.",
     "efecto": {
@@ -3305,7 +3305,7 @@
     "nombre": "Gorguera de Cuero Reforzado",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 430,
+    "precioBase": 1290,
     "slot": "hombros",
     "descripcion": "Pieza semicircular de cuero simple que cubre el cuello y el inicio del pecho.",
     "efecto": {
@@ -3319,7 +3319,7 @@
     "nombre": "Guardahombros de Cuero Entrelazado de la Marca",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 840,
+    "precioBase": 2520,
     "slot": "hombros",
     "descripcion": "Diseño ligero de tiras de cuero trenzado, común entre los jinetes de las llanuras.",
     "efecto": {
@@ -3334,7 +3334,7 @@
     "nombre": "Hombreras de Hojas Orgánicas",
     "raza": "elfo",
     "rareza": "comun",
-    "precioBase": 240,
+    "precioBase": 720,
     "slot": "hombros",
     "descripcion": "Hombreras ligeras hechas de hojas tratadas y cuero fino, enfocadas en la supervivencia.",
     "efecto": {
@@ -3349,7 +3349,7 @@
     "nombre": "Hombreras de Cuero Tachonado del Folde Oeste",
     "raza": "hombre",
     "rareza": "forjado",
-    "precioBase": 600,
+    "precioBase": 1800,
     "slot": "hombros",
     "descripcion": "Cuero robusto reforzado con remaches metálicos para absorber impactos.",
     "efecto": {
@@ -3364,7 +3364,7 @@
     "nombre": "Hombreras Bordadas Élfica",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 830,
+    "precioBase": 2490,
     "slot": "hombros",
     "descripcion": "Protecciones ligeras con refuerzos metálicos discretos y bordados tradicionales.",
     "efecto": {
@@ -3380,7 +3380,7 @@
     "nombre": "Hombreras de Piedra y Acero",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 1300,
+    "precioBase": 3900,
     "slot": "hombros",
     "descripcion": "Diseño enano robusto que combina encajes de piedra ceremonial con soporte de acero.",
     "efecto": {
@@ -3394,7 +3394,7 @@
     "nombre": "Gorguera Triangular de Acero",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1430,
+    "precioBase": 4290,
     "slot": "hombros",
     "descripcion": "Placa pectoral triangular de acero pulido que se extiende hacia las uniones del hombro.",
     "efecto": {
@@ -3408,7 +3408,7 @@
     "nombre": "Espaldones de Acero Batido",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 890,
+    "precioBase": 2670,
     "slot": "hombros",
     "descripcion": "Placas de acero trabajadas a martillo que descienden cubriendo la parte superior del brazo.",
     "efecto": {
@@ -3422,7 +3422,7 @@
     "nombre": "Hombreras de Bronce Grabado de Nogrod",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 1100,
+    "precioBase": 3300,
     "slot": "hombros",
     "descripcion": "Piezas pesadas de bronce con motifs rúnicos grabados en las fraguas antiguas.",
     "efecto": {
@@ -3436,7 +3436,7 @@
     "nombre": "Gorja de Acero Pulido",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1780,
+    "precioBase": 5340,
     "slot": "hombros",
     "descripcion": "Hombreras pesadas de caballero que bajan protegiendo el bíceps con metal reluciente.",
     "efecto": {
@@ -3450,7 +3450,7 @@
     "nombre": "Hombreras de Escamas de Hierro de Rohan",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1850,
+    "precioBase": 5550,
     "slot": "hombros",
     "descripcion": "Inspiración de la Marca con placas superpuestas de hierro fijadas sobre una base textil.",
     "efecto": {
@@ -3464,7 +3464,7 @@
     "nombre": "Guardahombros de Cuero y Seda de Rivendel",
     "raza": "elfo",
     "rareza": "forjado",
-    "precioBase": 640,
+    "precioBase": 1920,
     "slot": "hombros",
     "descripcion": "Ajuste anatómico flexible y silencioso que prioriza la agilidad y el sigilo.",
     "efecto": {
@@ -3479,7 +3479,7 @@
     "nombre": "Hombreras de Placas Pesadas de las Montañas Azules",
     "raza": "enano",
     "rareza": "forjado",
-    "precioBase": 890,
+    "precioBase": 2670,
     "slot": "hombros",
     "descripcion": "Bloques macizos de metal que cubren los hombros y parte de las extremidades superiores.",
     "efecto": {
@@ -3493,7 +3493,7 @@
     "nombre": "Hombreras de la Guardia de la Torre",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1900,
+    "precioBase": 5700,
     "slot": "hombros",
     "descripcion": "Equipamiento reglamentario de la Ciudadela, placas pesadas con un acabado impecable.",
     "efecto": {
@@ -3507,7 +3507,7 @@
     "nombre": "Hombreras de Placas Angulares de Erebor",
     "raza": "enano",
     "rareza": "superior",
-    "precioBase": 2100,
+    "precioBase": 6300,
     "slot": "hombros",
     "descripcion": "Placas angulares superpuestas talladas al estilo inconfundible de la Montaña Solitaria.",
     "efecto": {
@@ -3521,14 +3521,13 @@
     "nombre": "Gola de Hierro de Dol Amroth",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 2000,
+    "precioBase": 6000,
     "slot": "hombros",
     "descripcion": "Pieza de herrería costera que resguarda el cuello, clavículas y parte superior del pecho.",
     "efecto": {
       "damageReduction": 0.03,
       "survivalBonus": 0.05,
       "willpowerBonus": 0.03
-
     }
   },
   {
@@ -3536,7 +3535,7 @@
     "nombre": "Hombreras Gráciles del Bosque Verde",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1780,
+    "precioBase": 5340,
     "slot": "hombros",
     "descripcion": "Diseño cinematográfico orgánico y estilizado, optimizado para exploradores forestales.",
     "efecto": {
@@ -3551,7 +3550,7 @@
     "nombre": "Hombreras de Lana y Cuero de la Comarca",
     "raza": "hobbit",
     "rareza": "superior",
-    "precioBase": 1400,
+    "precioBase": 4200,
     "slot": "hombros",
     "descripcion": "Reforzadas para resistir los viajes largos sin sacrificar la movilidad del mediano.",
     "efecto": {
@@ -3566,7 +3565,7 @@
     "nombre": "Grandes Espaldarones de Gondolin",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3400,
+    "precioBase": 10200,
     "slot": "hombros",
     "descripcion": "La cúspide de la protección; placas monumentales que cubren el brazo hasta el codo.",
     "efecto": {
@@ -3580,7 +3579,7 @@
     "nombre": "Espaldillas Doradas de Lothlórien",
     "raza": "elfo",
     "rareza": "legendario",
-    "precioBase": 3850,
+    "precioBase": 11550,
     "slot": "hombros",
     "descripcion": "Aleación ultraligera imbuida de reflejos arbóreos que potencian el sigilo absoluto.",
     "efecto": {
@@ -3595,7 +3594,7 @@
     "nombre": "Guardahombros de Oro y Acero de Khazad-dûm",
     "raza": "enano",
     "rareza": "legendario",
-    "precioBase": 3950,
+    "precioBase": 11850,
     "slot": "hombros",
     "descripcion": "Reliquia masiva de las profundidades, blindaje impenetrable con incrustaciones áureas.",
     "efecto": {
@@ -3609,7 +3608,7 @@
     "nombre": "Guardahombros del Jinete de Ponis de los Gamos",
     "raza": "hobbit",
     "rareza": "legendario",
-    "precioBase": 3200,
+    "precioBase": 9600,
     "slot": "hombros",
     "descripcion": "Equipo legendario de cuero endurecido excepcional y hebillas pulidas de herencia.",
     "efecto": {
@@ -3624,7 +3623,7 @@
     "nombre": "Hombrera del Explorador",
     "raza": "hombre",
     "rareza": "comun",
-    "precioBase": 200,
+    "precioBase": 600,
     "slot": "hombros",
     "descripcion": "Permite llevar un cinturón que atraviesa el pecho a modo de bolso para guardar cosas para explorar.",
     "efecto": {
@@ -3638,7 +3637,7 @@
     "nombre": "Manto de Erudito Élfico",
     "raza": "elfo",
     "rareza": "superior",
-    "precioBase": 1650,
+    "precioBase": 4950,
     "slot": "hombros",
     "descripcion": "Manto ceremonial para eruditos que incrementa la canalización de la energía mística.",
     "efecto": {
@@ -3653,7 +3652,7 @@
     "nombre": "Manto de Erudito de la Capital",
     "raza": "hombre",
     "rareza": "superior",
-    "precioBase": 1650,
+    "precioBase": 4950,
     "slot": "hombros",
     "descripcion": "Manto ceremonial para eruditos que incrementa la canalización de la energía mística.",
     "efecto": {
