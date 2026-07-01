@@ -558,6 +558,8 @@ const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes"
 // ==========================================
 
 function calcularSaludMaxima(profile = {}, equipment = {}) {
+    return 100;
+}
     const nivel = calculateLevelFromXP(profile.xp || 0);
     const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
     
