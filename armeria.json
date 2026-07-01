@@ -3284,5 +3284,383 @@
     "precioBase": 980,
     "descripcion": "Calzado inusual para un hobbit común, pero indispensable para los oficiales que vigilan los límites de la Comarca.",
     "efecto": { "willpowerBonus": 0.04, "damageReduction": 0.03, "stealthBonus": 0.05, "explorationBonus": 0.04 }
+  }, 
+  {
+    "id": "hombreras_acolchadas_hobbit",
+    "nombre": "Hombreras Acolchadas Hobbit",
+    "raza": "hobbit",
+    "rareza": "comun",
+    "precioBase": 150,
+    "slot": "hombros",
+    "descripcion": "Capas de tela gruesa y lana que ofrecen una protección mínima pero cómoda.",
+    "efecto": {
+      "damageReduction": 0.00,
+      "survivalBonus": 0.01,
+      "explorationBonus": 0.04,
+      "stealthBonus": 0.01
+    }
+  },
+  {
+    "id": "gorguera_cuero_reforzado",
+    "nombre": "Gorguera de Cuero Reforzado",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 430,
+    "slot": "hombros",
+    "descripcion": "Pieza semicircular de cuero simple que cubre el cuello y el inicio del pecho.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.01,
+      "explorationBonus": 0.02
+    }
+  },
+  {
+    "id": "guardahombros_cuero_marca",
+    "nombre": "Guardahombros de Cuero Entrelazado de la Marca",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 840,
+    "slot": "hombros",
+    "descripcion": "Diseño ligero de tiras de cuero trenzado, común entre los jinetes de las llanuras.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "explorationBonus": 0.03,
+      "stealthBonus": 0.01
+    }
+  },
+  {
+    "id": "hombreras_hojas_organicas",
+    "nombre": "Hombreras de Hojas Orgánicas",
+    "raza": "elfo",
+    "rareza": "comun",
+    "precioBase": 240,
+    "slot": "hombros",
+    "descripcion": "Hombreras ligeras hechas de hojas tratadas y cuero fino, enfocadas en la supervivencia.",
+    "efecto": {
+      "survivalBonus": 0.02,
+      "explorationBonus": 0.04,
+      "stealthBonus": 0.01,
+      "healingBonus": 0.015
+    }
+  },
+  {
+    "id": "hombreras_cuero_folde",
+    "nombre": "Hombreras de Cuero Tachonado del Folde Oeste",
+    "raza": "hombre",
+    "rareza": "forjado",
+    "precioBase": 600,
+    "slot": "hombros",
+    "descripcion": "Cuero robusto reforzado con remaches metálicos para absorber impactos.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "explorationBonus": 0.03,
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "hombreras_bordadas_elficas",
+    "nombre": "Hombreras Bordadas Élfica",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 830,
+    "slot": "hombros",
+    "descripcion": "Protecciones ligeras con refuerzos metálicos discretos y bordados tradicionales.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "stealthBonus": 0.01,
+      "healingBonus": 0.02,
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "hombreras_piedra_acero",
+    "nombre": "Hombreras de Piedra y Acero",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 1300,
+    "slot": "hombros",
+    "descripcion": "Diseño enano robusto que combina encajes de piedra ceremonial con soporte de acero.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "gorguera_triangular_acero",
+    "nombre": "Gorguera Triangular de Acero",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1430,
+    "slot": "hombros",
+    "descripcion": "Placa pectoral triangular de acero pulido que se extiende hacia las uniones del hombro.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.03,
+      "willpowerBonus": 0.02
+    }
+  },
+  {
+    "id": "espaldones_acero_batido",
+    "nombre": "Espaldones de Acero Batido",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 890,
+    "slot": "hombros",
+    "descripcion": "Placas de acero trabajadas a martillo que descienden cubriendo la parte superior del brazo.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "hombreras_bronce_nogrod",
+    "nombre": "Hombreras de Bronce Grabado de Nogrod",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 1100,
+    "slot": "hombros",
+    "descripcion": "Piezas pesadas de bronce con motifs rúnicos grabados en las fraguas antiguas.",
+    "efecto": {
+      "damageReduction": 0.015,
+      "survivalBonus": 0.03
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "gorja_acero_pulido",
+    "nombre": "Gorja de Acero Pulido",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1780,
+    "slot": "hombros",
+    "descripcion": "Hombreras pesadas de caballero que bajan protegiendo el bíceps con metal reluciente.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.04,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "hombreras_escamas_rohan",
+    "nombre": "Hombreras de Escamas de Hierro de Rohan",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1850,
+    "slot": "hombros",
+    "descripcion": "Inspiración de la Marca con placas superpuestas de hierro fijadas sobre una base textil.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "guardahombros_seda_rivendel",
+    "nombre": "Guardahombros de Cuero y Seda de Rivendel",
+    "raza": "elfo",
+    "rareza": "forjado",
+    "precioBase": 640,
+    "slot": "hombros",
+    "descripcion": "Ajuste anatómico flexible y silencioso que prioriza la agilidad y el sigilo.",
+    "efecto": {
+      "damageReduction": 0.02,
+      "survivalBonus": 0.04,
+      "stealthBonus": 0.02,
+      "willpowerBonus": 0.01
+    }
+  },
+  {
+    "id": "hombreras_montanas_azules",
+    "nombre": "Hombreras de Placas Pesadas de las Montañas Azules",
+    "raza": "enano",
+    "rareza": "forjado",
+    "precioBase": 890,
+    "slot": "hombros",
+    "descripcion": "Bloques macizos de metal que cubren los hombros y parte de las extremidades superiores.",
+    "efecto": {
+      "damageReduction": 0.02,
+      "survivalBonus": 0.04,
+      "willpowerBonus": 0.02
+    }
+  },
+  {
+    "id": "hombreras_guardia_torre",
+    "nombre": "Hombreras de la Guardia de la Torre",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1900,
+    "slot": "hombros",
+    "descripcion": "Equipamiento reglamentario de la Ciudadela, placas pesadas con un acabado impecable.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "hombreras_placas_erebor",
+    "nombre": "Hombreras de Placas Angulares de Erebor",
+    "raza": "enano",
+    "rareza": "superior",
+    "precioBase": 2100,
+    "slot": "hombros",
+    "descripcion": "Placas angulares superpuestas talladas al estilo inconfundible de la Montaña Solitaria.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "gola_hierro_amroth",
+    "nombre": "Gola de Hierro de Dol Amroth",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 2000,
+    "slot": "hombros",
+    "descripcion": "Pieza de herrería costera que resguarda el cuello, clavículas y parte superior del pecho.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05,
+      "willpowerBonus": 0.03
+
+    }
+  },
+  {
+    "id": "hombreras_bosque_verde",
+    "nombre": "Hombreras Gráciles del Bosque Verde",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 1780,
+    "slot": "hombros",
+    "descripcion": "Diseño cinematográfico orgánico y estilizado, optimizado para exploradores forestales.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05,
+      "stealthBonus": 0.02,
+      "willpowerBonus": 0.02
+    }
+  },
+  {
+    "id": "hombreras_lana_comarca",
+    "nombre": "Hombreras de Lana y Cuero de la Comarca",
+    "raza": "hobbit",
+    "rareza": "superior",
+    "precioBase": 1400,
+    "slot": "hombros",
+    "descripcion": "Reforzadas para resistir los viajes largos sin sacrificar la movilidad del mediano.",
+    "efecto": {
+      "damageReduction": 0.03,
+      "survivalBonus": 0.05,
+      "stealthBonus": 0.02,
+      "willpowerBonus": 0.02
+    }
+  },
+  {
+    "id": "espaldones_gondolin",
+    "nombre": "Grandes Espaldarones de Gondolin",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 3400,
+    "slot": "hombros",
+    "descripcion": "La cúspide de la protección; placas monumentales que cubren el brazo hasta el codo.",
+    "efecto": {
+      "damageReduction": 0.04,
+      "survivalBonus": 0.06,
+      "willpowerBonus": 0.04
+    }
+  },
+  {
+    "id": "espaldillas_doradas_lothlorien",
+    "nombre": "Espaldillas Doradas de Lothlórien",
+    "raza": "elfo",
+    "rareza": "legendario",
+    "precioBase": 3850,
+    "slot": "hombros",
+    "descripcion": "Aleación ultraligera imbuida de reflejos arbóreos que potencian el sigilo absoluto.",
+    "efecto": {
+      "damageReduction": 0.04,
+      "survivalBonus": 0.06,
+      "stealthBonus": 0.03,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "guardahombros_khazad_dum",
+    "nombre": "Guardahombros de Oro y Acero de Khazad-dûm",
+    "raza": "enano",
+    "rareza": "legendario",
+    "precioBase": 3950,
+    "slot": "hombros",
+    "descripcion": "Reliquia masiva de las profundidades, blindaje impenetrable con incrustaciones áureas.",
+    "efecto": {
+      "damageReduction": 0.04,
+      "survivalBonus": 0.06,
+      "willpowerBonus": 0.04
+    }
+  },
+  {
+    "id": "guardahombros_jinete_gamos",
+    "nombre": "Guardahombros del Jinete de Ponis de los Gamos",
+    "raza": "hobbit",
+    "rareza": "legendario",
+    "precioBase": 3200,
+    "slot": "hombros",
+    "descripcion": "Equipo legendario de cuero endurecido excepcional y hebillas pulidas de herencia.",
+    "efecto": {
+      "damageReduction": 0.04,
+      "survivalBonus": 0.06,
+      "stealthBonus": 0.03,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "hombrera_explorador",
+    "nombre": "Hombrera del Explorador",
+    "raza": "hombre",
+    "rareza": "comun",
+    "precioBase": 200,
+    "slot": "hombros",
+    "descripcion": "Permite llevar un cinturón que atraviesa el pecho a modo de bolso para guardar cosas para explorar.",
+    "efecto": {
+      "willpowerBonus": 0.01,
+      "survivalBonus": 0.01,
+      "explorationBonus": 0.04
+    }
+  },
+  {
+    "id": "manto_erudito_elfico",
+    "nombre": "Manto de Erudito Élfico",
+    "raza": "elfo",
+    "rareza": "superior",
+    "precioBase": 1650,
+    "slot": "hombros",
+    "descripcion": "Manto ceremonial para eruditos que incrementa la canalización de la energía mística.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "magicBonus": 0.04,
+      "willpowerBonus": 0.03
+    }
+  },
+  {
+    "id": "manto_erudito_capital",
+    "nombre": "Manto de Erudito de la Capital",
+    "raza": "hombre",
+    "rareza": "superior",
+    "precioBase": 1650,
+    "slot": "hombros",
+    "descripcion": "Manto ceremonial para eruditos que incrementa la canalización de la energía mística.",
+    "efecto": {
+      "damageReduction": 0.01,
+      "survivalBonus": 0.03,
+      "magicBonus": 0.04,
+      "willpowerBonus": 0.03
+    }
   }
 ]
