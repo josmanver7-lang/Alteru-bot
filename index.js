@@ -215,7 +215,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     let poderMatrizEnemigo = Math.floor(poderStatsEnemigo * 100);
 
     // 2: El daño del enemigo suma su peligro * 7, su damageBonus y TODO el poder de sus stats
-    let danoPlanoEnemigo = ((encounter.peligro || 0) * 7) + (encounter.damageBonus || 0) + poderMatrizEnemigo;
+    let danoPlanoEnemigo = ((encounter.peligro || 0) * 8) + (encounter.damageBonus || 0) + poderMatrizEnemigo;
 
     // Multiplicamos por el nuevo willpowerBonus (en vez de successBonus)
     let poderFinalJugador = danoPlanoJugador * (1 + (eqPower.totals.willpowerBonus || 0) + bonosExtra);
@@ -1432,13 +1432,13 @@ const FINAL_SCENE_COMMANDS = {
 
 
 const FINAL_SCENE_RULES = {
-  atacar: { successChance: 0.68, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 18 },
-  rodear: { successChance: 0.84, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 8 },
-  explorar: { successChance: 0.82, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 6 },
-  infiltrar: { successChance: 0.65, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 10 },
-  negociar: { successChance: 0.62, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 4 },
-  esperar: { successChance: 0.90, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 2 },
-  retirarse: { successChance: 0.99, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 0 }
+  atacar: { successChance: 0.68, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 90 },
+  rodear: { successChance: 0.84, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 70 },
+  explorar: { successChance: 0.82, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 70 },
+  infiltrar: { successChance: 0.65, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 70 },
+  negociar: { successChance: 0.62, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 70 },
+  esperar: { successChance: 0.90, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 40 },
+  retirarse: { successChance: 0.99, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 20 }
 };
 
 
@@ -1531,10 +1531,17 @@ async function resolveFinalScenarioAction(message, expedition) {
   let successChance = Number(rules.successChance ?? 0.5);
   const finalDanger = Number(scenario.danger ?? scenario.peligro ?? 0);
 
-  if (finalDanger >= 7) successChance -= 0.12;
-  else if (finalDanger >= 5) successChance -= 0.08;
-  else if (finalDanger >= 3) successChance -= 0.04;
-  else if (finalDanger > 0) successChance += 0.02;
+  if (finalDanger === 0) {
+  successChance = 1.0; // 100% de probabilidad de éxito
+} else if (finalDanger >= 7) {
+  successChance -= 0.12;
+} else if (finalDanger >= 5) {
+  successChance -= 0.08;
+} else if (finalDanger >= 3) {
+  successChance -= 0.04;
+} else if (finalDanger > 0) {
+  successChance += 0.02;
+}
   
   if (normalizedAction === "atacar") {
     successChance += affinityCombat.successBonus + (combatBonus.captainBonus * 0.2) + (combatBonus.strongEnemyBonus * 0.1) + (scenario.hasEnemies ? 0.12 : -0.30) + (playerClassBonus.attackBonus || 0);
