@@ -215,7 +215,7 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     let poderMatrizEnemigo = Math.floor(poderStatsEnemigo * 100);
 
     // 2: El daño del enemigo suma su peligro * 7, su damageBonus y TODO el poder de sus stats
-    let danoPlanoEnemigo = ((encounter.peligro || 0) * 8) + (encounter.damageBonus || 0) + poderMatrizEnemigo;
+    let danoPlanoEnemigo = ((encounter.peligro || 0) * 10) + (encounter.damageBonus || 0) + poderMatrizEnemigo;
 
     // Multiplicamos por el nuevo willpowerBonus (en vez de successBonus)
     let poderFinalJugador = danoPlanoJugador * (1 + (eqPower.totals.willpowerBonus || 0) + bonosExtra);
@@ -2786,7 +2786,7 @@ async function handleExpedicionStart(message, args) {
   await db.updateTravelerData(message.author.id, { activeCompanions });
   
   const reactionAsync = await getCompanionReactionsText(message.author.id, activeCompanions, { encounter: mission.titulo }, "inicio");
-  const textoExpedicion = `📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reactionAsync}`;
+  const textoExpedicion = `${advertenciaSalud}\n📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reactionAsync}`;
   return replyLong(message, textoExpedicion);
 }
 
@@ -2936,7 +2936,7 @@ async function handleExpedicionDesafiar(message) {
 
     if (!resultado.exito) {
       const tieneANieriel = owned.includes("nieriel");
-      let multiplicadorPeligro = activeEncounter.peligro <= 2 ? (tieneANieriel ? 3 : 4) : (tieneANieriel ? 5 : 7);
+      let multiplicadorPeligro = activeEncounter.peligro <= 2 ? (tieneANieriel ? 6 : 8) : (tieneANieriel ? 9 : 11);
       let danoRecibido = (activeEncounter.peligro * multiplicadorPeligro) + (activeEncounter.damageBonus || 0);
       const reduccionTotal = Math.min((eqPower.totals?.damageReduction || 0) + (combatBonus.damageReduction || 0), 0.80);
       danoRecibido -= (danoRecibido * reduccionTotal);
