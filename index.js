@@ -131,13 +131,6 @@ async function chatWithAI({
 //      SISTEMA DE COMBATE: HUESTES MIXTAS
 // ==========================================
 
-    meleeBonus:    { cavalryBonus: 2.0,  thrownBonus: -1.5, rangedBonus: -1.5, magicBonus: -2.0 },
-    rangedBonus:   { meleeBonus: 1.5,    magicBonus: 1.5,   thrownBonus: -1.5, cavalryBonus: -2.0 },
-    thrownBonus:   { rangedBonus: 1.5,   magicBonus: 1.5,   meleeBonus: 1.5,   cavalryBonus: -1.5 },
-    magicBonus:    { meleeBonus: 2.0,    rangedBonus: -1.5, thrownBonus: -1.5, cavalryBonus: -1.5 },
-    cavalryBonus:  { rangedBonus: 2.0,   thrownBonus: 1.5,  magicBonus: 1.5,   meleeBonus: -2.0 }
-};
-
 function mapStatsToMatrixKeys(statsObj = {}) {
     // Aseguramos la lectura si los stats vienen dentro de .stats o .atributos
     const src = statsObj.stats || statsObj.atributos || statsObj;
