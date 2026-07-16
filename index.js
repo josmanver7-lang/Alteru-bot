@@ -5,6 +5,9 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// ==================== IMPORTS DE MÓDULOS ====================
+import * as Config from './modules/config.js';
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -124,23 +127,10 @@ async function chatWithAI({
   }
 }
 
-// ================================
-// CUOTAS + TIEMPOS
-// ================================
-
-const ADMIN_USER_ID = process.env.ADMIN_USER_ID || process.env.OWNER_ID || "276922628613079040";
-
-const TRIVIA_LIMIT = 3;
-const TRIVIA_WINDOW_MS = 12 * 60 * 60 * 1000;
-
-const EXPEDITION_LIMIT = 3;
-const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;
-
 // ==========================================
 //      SISTEMA DE COMBATE: HUESTES MIXTAS
 // ==========================================
 
-const COMBAT_MATRIX = {
     meleeBonus:    { cavalryBonus: 2.0,  thrownBonus: -1.5, rangedBonus: -1.5, magicBonus: -2.0 },
     rangedBonus:   { meleeBonus: 1.5,    magicBonus: 1.5,   thrownBonus: -1.5, cavalryBonus: -2.0 },
     thrownBonus:   { rangedBonus: 1.5,   magicBonus: 1.5,   meleeBonus: 1.5,   cavalryBonus: -1.5 },
@@ -282,11 +272,6 @@ let establoCache = null;
 
 let exploracionCache = null;
 
-const EXPLORATION_LIMIT = 1;
-const EXPLORATION_WINDOW_MS = 12 * 60 * 60 * 1000;
-const EXPLORATION_POINT_MIN = 10;
-const EXPLORATION_POINT_MAX = 200;
-
 function getExplorationBonusPercent(profile = {}, equipment = {}) {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
   const classBonus = getPlayerClassBonus(profile);
@@ -399,7 +384,6 @@ async function handleExploracionCommand(message) {
 // NIVEL Y RANGOS POR XP
 // ================================
 
-const LEVEL_XP_REQUIREMENTS = {
   1: 0, 2: 1000, 3: 2500, 4: 5000, 5: 10000, 
   6: 17500, 7: 27500, 8: 42500, 9: 62500, 10: 82500
 };
@@ -550,8 +534,6 @@ const PLAYER_CLASS_BONUS = {
   marinero: { explorationBonus: 0.04, willpowerBonus: 0.08 }, 
   beornida: { meleeBonus: 0.06, damageReduction: 0.04 } 
 }; 
-
-const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades", "monturas", "bardas"];
 
 // ==========================================
 //          FUNCIONES AUXILIARES
