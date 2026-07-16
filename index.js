@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 // ==================== IMPORTS DE MÓDULOS ====================
 import * as Config from './modules/config.js';
+import * as Utils from './modules/utils.js'; 
 
 const client = new Client({
   intents: [
