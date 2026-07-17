@@ -2879,7 +2879,6 @@ async function handleExpedicionStart(message, args) {
     finalScenario: getFinalScenarioConfig(mission)
   });
 
-
   await db.updateTravelerData(message.author.id, { activeCompanions });
   
   const reactionAsync = await getCompanionReactionsText(message.author.id, activeCompanions, { encounter: mission.titulo }, "inicio");
@@ -2891,7 +2890,6 @@ async function handleExpedicionStart(message, args) {
 // ==========================================
 //   RESOLUCIÓN DE ENCUENTROS Y TRANSICIONES
 // ==========================================
-
 
 async function handleExpedicionDesafiar(message) {
   if (!expeditions.has(message.author.id)) {
@@ -2941,7 +2939,6 @@ async function handleExpedicionDesafiar(message) {
         
         const finalAllowedActions = escenario.allowedActions || (enemyPresent ? ["atacar", "rodear", "retirarse"] : ["retirarse", "inspeccionar", "hablar"]);
 
-
         expedition.currentEncounter = {
           ...escenario, tipo: "escenario_final", categoria: "final", active: true, enemyPresent, allowedActions: finalAllowedActions
         };
@@ -2952,7 +2949,7 @@ async function handleExpedicionDesafiar(message) {
          id: escenario.enemyLabel || escenario.titulo || "Rival",
          tipo: escenario.categoria || "enemigo_numeroso",
          peligro: Number(escenario.peligro || 1),
-         ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
+         ...(typeof Combat.mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
        };
           powerBlock = Combat.buildPowerComparisonBlock({ profile, equipment, encounter: dummyEncounter });
         }
@@ -2966,8 +2963,6 @@ async function handleExpedicionDesafiar(message) {
         textoFinalScenario += `\n${reactionAsync}`;
         return message.reply(textoFinalScenario);
       }
-
-
       // Cerrar expedición si no hay escenario final
       const xpTotal = expedition.xpEarned + (expedition.mission.xp || 0);
       const puntosTotal = expedition.pointsEarned + (expedition.mission.puntos || 0);
@@ -2979,7 +2974,6 @@ async function handleExpedicionDesafiar(message) {
       expeditions.delete(message.author.id);
       return message.reply(`🎉 **Misión completada con éxito**\n\n${expedition.mission.textoExito || "¡Has completado con éxito la expedición!"}\n\n🏆 Puntos: +${puntosTotal}\n📚 XP: +${xpTotal}\n` + utilMsg);
     }
-
 
     const encounters = await loadEncounters();
     const destino = Utils.normalizeKey(expedition.mission.destino);
@@ -2995,20 +2989,16 @@ async function handleExpedicionDesafiar(message) {
       if (safe.length) lista = safe;
     }
 
-
     if (!lista.length) {
       lista = [{ id: `fallback_${encuentroId}`, titulo: "Encuentro en el camino", descripcion: "La expedición avanza hacia un desafío.", tipo: encuentroId, categoria: encuentroId, peligro: Math.max(1, Math.min(10, nivelJugador)) }];
     }
 
-
     const encounterBase = lista[Math.floor(Math.random() * lista.length)];
     let finalEncounter = { ...encounterBase };
-
 
     expedition.pendingStartHeal = false;
     expedition.currentEncounter = finalEncounter;
     expedition.phase = "running";
-
 
     const powerBlock = Combat.buildPowerComparisonBlock({ profile, equipment, encounter: finalEncounter });
     const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
@@ -3173,7 +3163,6 @@ async function handleExpedicionDesafiar(message) {
           multObstaculo = activeEncounter.peligro <= 2 ? 5 : 9; // Antes: 3 y 5
       }
 
-
       // Daño mínimo sube de 5 a 10 para que los roces siempre duelan
       let danoBase = Math.max(10, (activeEncounter.peligro || 1) * multObstaculo);
       
@@ -3193,13 +3182,10 @@ async function handleExpedicionDesafiar(message) {
       return message.reply(`💀 **Has caído...**\n\n${activeEncounter.textoDerrota || "El desafío te superó."}\n\nLa expedición fracasa. Eres rescatado y devuelto al campamento.\n*(Tu salud ha sido restaurada al máximo)*`);
     }
 
-
     activeEncounter.peligro = Math.max(0, activeEncounter.peligro - 1);
     activeEncounter.probabilidadBonus = (activeEncounter.probabilidadBonus || 0) + 0.30;
 
-
     const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "fracaso", dano: danoFinalRecibido }, "fracaso");
-
 
     let msgObs = `⚠️ **Contratiempo**\n\n${activeEncounter.textoFracaso || "Tropiezas y fallas en tu intento de superar el obstáculo."}\n\n`;
     if (evadioDano) {
@@ -3347,9 +3333,6 @@ client.on("messageCreate", async (message) => {
     // Obtenemos las acciones permitidas por el escenario actual
     const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
     const allowedActions = scenario?.allowedActions || [];
-
-
-
 
     if (allowedActions.includes(normalizedAction)) {
       // 🚀 AQUÍ SE INVOCA TU FUNCIÓN DEFINITIVA:
