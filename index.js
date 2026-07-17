@@ -1880,13 +1880,7 @@ async function startFinalScenario(message, expedition) {
   const encounter = expedition.currentEncounter || scenario;
   const hasEnemies = encounter.enemyPresent ?? encounter.hasEnemies ?? scenario.hasEnemies ?? true;
 
-
-
-
   const dangerText = getFinalScenarioDangerText(scenario);
-
-
-
 
   if (!hasEnemies) {
     const mission = expedition.mission || {};
@@ -1894,14 +1888,8 @@ async function startFinalScenario(message, expedition) {
     const xpReward = expedition.xpEarned + Number(scenario.xpBonus ?? 0) + Number(mission.xp ?? 10);
     const pointReward = expedition.pointsEarned + Number(scenario.pointsBonus ?? 0) + Number(mission.puntos ?? 5);
 
-
-
-
     const affinityTargets = getFinalScenarioAffinityTargets("retirarse", party);
     const affinityLines = [];
-
-
-
 
     for (const cid of affinityTargets) {
       const result = await addAffinityWithRankMessage(message.author.id, cid, encounter, "retirarse", "victoria");
@@ -1911,24 +1899,15 @@ async function startFinalScenario(message, expedition) {
       if (result.rankMessage) affinityLines.push(`  ${result.rankMessage}`);
     }
 
-
-
-
     const reactions = [];
     for (const cid of party.slice(0, 3)) {
       const line = await companionReaction(cid, { ...encounter, userId: message.author.id }, "mision_completada");
       if (line) reactions.push(`💬 ${line}`);
     }
 
-
-
-
     await db.addXP(message.author.id, xpReward);
     await db.addPoints(message.author.id, pointReward);
     const utilMsg = await decrementUtilities(message.author.id);
-
-
-
 
     await clearExpeditionParty(message.author.id);
     expedition.pendingFinalScenario = false;
@@ -1936,18 +1915,12 @@ async function startFinalScenario(message, expedition) {
     expedition.currentEncounter = null;
     expeditions.delete(message.author.id);
 
-
-
-
     let text = `✅ **${scenario.titulo || scenario.title || mission.titulo || "Escenario final"}**\n\n${scenario.description || scenario.descripcion || mission.descripcion || ""}\n\nPeligro: ${dangerText}\n\n${completionText}\n\n🏆 Recompensa Total: +${pointReward} pts | +${xpReward} XP`;
     if (affinityLines.length) text += `\n\n🤝 Afinidad ganada:\n${affinityLines.join("\n")}`;
     if (reactions.length) text += `\n\n${reactions.join("\n")}`;
     text += `\n\nLa expedición ha concluido.` + utilMsg;
     return message.reply(text);
   }
-
-
-
 
   const reactions = [];
   for (const cid of party.slice(0, 3)) {
@@ -1960,12 +1933,8 @@ async function startFinalScenario(message, expedition) {
       userId: message.author.id
     }, "encounter");
 
-
-
-
     if (line) reactions.push(`💬 ${line}`);
   }
-
 
     const descToUse = scenario.description || "Te enfrentas al desenlace de tu expedición.";
   
@@ -1994,9 +1963,6 @@ async function startFinalScenario(message, expedition) {
 //        LLAMADAS API E INTERACCIONES IA
 // ==========================================
 
-
-
-
 function getCompanionLore(companionId) {
   const personaje = getPersonaje(companionId);
   return {
@@ -2005,9 +1971,6 @@ function getCompanionLore(companionId) {
     clase: personaje?.clase || companions[companionId]?.clase || ""
   };
 }
-
-
-
 
 function buildCompanionSystemPrompt({ personaje, affinity = 0, mode = "encounter", context = {} }) {
   const nombre = personaje?.nombre || "Compañero";
@@ -3072,7 +3035,7 @@ async function handleExpedicionDesafiar(message) {
              peligro: Number(escenario.peligro || 1),
              ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
           };
-          powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: dummyEncounter });
+          powerBlock = Combat.buildPowerComparisonBlock({ profile, equipment, encounter: dummyEncounter });
         }
 
 
@@ -3129,7 +3092,7 @@ async function handleExpedicionDesafiar(message) {
     expedition.phase = "running";
 
 
-    const powerBlock = buildPowerComparisonBlock({ profile, equipment, encounter: finalEncounter });
+    const powerBlock = Combat.buildPowerComparisonBlock({ profile, equipment, encounter: finalEncounter });
     const accionRequerida = finalEncounter.tipo === "evento_especial" ? "!interactuar" : "!desafiar";
     let textoEncuentro = buildEncounterCard(finalEncounter, accionRequerida, powerBlock);
     return message.reply(textoEncuentro);
@@ -3425,7 +3388,6 @@ async function handleExpedicionDesafiar(message) {
     textoResultado = `✨ **Evento Superado**\n\n${activeEncounter.textoExito || "Has manejado la situación correctamente."}`;
   }
 
-
   // ==========================================
   // 4. TRANSICIÓN AL SIGUIENTE ENCUENTRO (MANEJO DE OBSTÁCULOS)
   // ==========================================
@@ -3446,7 +3408,6 @@ async function handleExpedicionDesafiar(message) {
     const accionRequerida = (expedition.currentEncounter.tipo === "evento_especial") ? "!interactuar" : "!desafiar";
     textoResultado += `\n\n---\n⚠️ **El obstáculo revela una complicación secundaria:**\n📜 *${nextSub.titulo}*\n${nextSub.descripcion}\n\n👉 Usa \`${accionRequerida}\` para afrontar esta nueva fase.`;
 
-
   } else {
     // Si ya era un subencuentro o no tenía ninguno, avanzamos limpiamente al siguiente encuentro principal o escenario final
     expedition.currentEncounter = null;
@@ -3454,31 +3415,20 @@ async function handleExpedicionDesafiar(message) {
     textoResultado += `\n\n---\nResuelves la situación y estás listo para avanzar en la expedición.\n🗺️ Usa /desafiar para continuar el viaje.`;
   }
 
-
   return message.reply(textoResultado);
 }
-
 
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
 // ==========================================
 
-
-
-
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!ALLOWED_CHANNEL_IDS.has(message.channelId)) return;
 
-
-
-
   const content = message.content.trim();
   const args = content.split(/\s+/);
   const command = args[0].toLowerCase();
-
-
-
 
   const expedition = expeditions.get(message.author.id);
   
@@ -3507,20 +3457,11 @@ client.on("messageCreate", async (message) => {
     const game = triviaGames.get(message.author.id);
     const textNormalize = Utils.normalizeText(content);
 
-
-
-
     const correctRaw = game.question.respuestaCorrecta || game.question.respuesta || game.question.answer || "";
     const correctNormalize = Utils.normalizeText(correctRaw);
     let isCorrect = textNormalize === correctNormalize;
 
-
-
-
     const optionIndex = { a: 0, b: 1, c: 2, d: 3, 1: 0, 2: 1, 3: 2, 4: 3 };
-
-
-
 
     if (!isCorrect && Array.isArray(game.options) && game.options.length) {
       const idx = optionIndex[textNormalize];
@@ -3528,8 +3469,6 @@ client.on("messageCreate", async (message) => {
         isCorrect = Utils.normalizeText(game.options[idx]) === correctNormalize;
       }
     }
-
-
 
 
     if (!isCorrect && textNormalize.includes(correctNormalize)) isCorrect = true;
@@ -3569,8 +3508,6 @@ client.on("messageCreate", async (message) => {
   }
 
 
-
-
   // ========================================
   // ESCENARIO FINAL ACTIVO
   // ========================================
@@ -3579,13 +3516,9 @@ client.on("messageCreate", async (message) => {
     const finalAction = FINAL_SCENE_COMMANDS[command];
 
 
-
-
     if (finalAction) {
       return resolveFinalScenarioAction(message, activeExpedition, finalAction);
     }
-
-
 
 
     const scenario = activeExpedition.finalScenario;
