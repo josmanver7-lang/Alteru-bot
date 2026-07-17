@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 import * as Config from './modules/config.js';
 import * as Utils from './modules/utils.js'; 
 
+// Combat Matrix desde config
+const COMBAT_MATRIX = Config.COMBAT_MATRIX;
 
 const client = new Client({
   intents: [
@@ -153,7 +155,6 @@ async function chatWithAI({
 //      SISTEMA DE COMBATE: HUESTES MIXTAS
 // ==========================================
 
-
 function mapStatsToMatrixKeys(statsObj = {}) {
     // Aseguramos la lectura si los stats vienen dentro de .stats o .atributos
     const src = statsObj.stats || statsObj.atributos || statsObj;
@@ -174,35 +175,30 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
     
     if (Object.values(playerMatrixStats).every(v => v === 0)) playerMatrixStats.meleeBonus = 0.1;
 
-
     const enemyMatrixStats = mapStatsToMatrixKeys(encounter);
     if (Object.values(enemyMatrixStats).every(v => v === 0)) enemyMatrixStats.meleeBonus = 0.1;
 
-
     let modificadorPuntos = 0;
-
 
     for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
         if (pVal > 0) {
             for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
-                if (eVal > 0 && COMBAT_MATRIX[pKey]?.[eKey]) {
-                    modificadorPuntos += (COMBAT_MATRIX[pKey][eKey] * Math.min(pVal, eVal));
+                if (eVal > 0 && Config.COMBAT_MATRIX[pKey]?.[eKey]) {
+                    modificadorPuntos += (Config.COMBAT_MATRIX[pKey][eKey] * Math.min(pVal, eVal));
                 }
             }
         }
     }
-
 
     for (const [eKey, eVal] of Object.entries(enemyMatrixStats)) {
         if (eVal > 0) {
             for (const [pKey, pVal] of Object.entries(playerMatrixStats)) {
-                if (pVal > 0 && COMBAT_MATRIX[eKey]?.[pKey]) {
-                    modificadorPuntos -= (COMBAT_MATRIX[eKey][pKey] * Math.min(eVal, pVal));
+                if (pVal > 0 && Config.COMBAT_MATRIX[eKey]?.[pKey]) {
+                    modificadorPuntos -= (Config.COMBAT_MATRIX[eKey][pKey] * Math.min(eVal, pVal));
                 }
             }
         }
     }
-
 
     const nivelJugador = calculateLevelFromXP(profile.xp || 0);
     
@@ -278,11 +274,6 @@ function resolverCombateMixto(profile, equipment, encounter, bonuses, affinityCo
         enemyStats: enemyMatrixStats    // NUEVO
     };
 }
-
-
-
-
-
 
 // ================================
 // MAPAS EN MEMORIA
@@ -752,11 +743,10 @@ function Utils.formatPrice(value) {
 
 
 function normalizeInventory(inventory = {}) {
-  const base = Object.fromEntries(INVENTORY_CATEGORIES.map(c => [c, []]));
+  const base = Object.fromEntries(Config.INVENTORY_CATEGORIES.map(c => [c, []]));
   const raw = inventory && typeof inventory === "object" ? inventory : {};
 
-
-  for (const cat of INVENTORY_CATEGORIES) {
+  for (const cat of Config.INVENTORY_CATEGORIES) {
     const arr = Array.isArray(raw[cat]) ? raw[cat] : [];
     base[cat] = arr.filter(Boolean).map(item => ({
       ...item,
@@ -1592,16 +1582,9 @@ function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "
 }
 
 
-
-
-
-
 // ==========================================
 //        ESCENARIOS FINALES
 // ==========================================
-
-
-
 
 const FINAL_SCENE_COMMANDS = {
   "!atacar": "atacar",
@@ -1615,9 +1598,6 @@ const FINAL_SCENE_COMMANDS = {
   "!abandonar": "retirarse"
 };
 
-
-
-
 const FINAL_SCENE_RULES = {
   atacar: { successChance: 0.68, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 90 },
   rodear: { successChance: 0.84, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 70 },
@@ -1627,9 +1607,6 @@ const FINAL_SCENE_RULES = {
   esperar: { successChance: 0.90, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 40 },
   retirarse: { successChance: 0.99, rewardMultiplierSuccess: 1, rewardMultiplierFailure: 1, damageOnFail: 20 }
 };
-
-
-
 
 function getFinalScenarioConfig(mission = {}, expedition = {}) {
   const raw = expedition.finalScenario || mission.escenarioFinal || mission.finalScenario || mission.finalEscenario || {};
@@ -2285,14 +2262,9 @@ Puntos: ${profile?.points || 0}
 }
 
 
-
-
 // ==========================================
 //         CARGA DE ARCHIVOS JSON/TEXT
 // ==========================================
-
-
-
 
 async function loadAlteruLore() {
   const loreRaw = await readFile(path.join(__dirname, 'alteru.json'), 'utf8');
