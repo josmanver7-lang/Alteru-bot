@@ -150,24 +150,6 @@ async function chatWithAI({
   }
 }
 
-
-// ==========================================
-//      SISTEMA DE COMBATE: HUESTES MIXTAS
-// ==========================================
-
-function mapStatsToMatrixKeys(statsObj = {}) {
-    // Aseguramos la lectura si los stats vienen dentro de .stats o .atributos
-    const src = statsObj.stats || statsObj.atributos || statsObj;
-    return {
-        meleeBonus: src.meleeBonus || src.combatBonus || 0,
-        rangedBonus: src.rangedBonus || 0,
-        thrownBonus: src.thrownBonus || src.throwBonus || 0,
-        magicBonus: src.magicBonus || 0,
-        cavalryBonus: src.cavalryBonus || src.mountedBonus || 0
-    };
-}
-
-
 // ================================
 // MAPAS EN MEMORIA
 // ================================
@@ -737,7 +719,7 @@ function getInventoryCategoryForItem(item) {
 
 function findInventoryItem(inventory, query) {
   const q = Utils.normalizeKey(query);
-  for (const cat of INVENTORY_CATEGORIES) {
+  for (const cat of Config.INVENTORY_CATEGORIES) {
     const found = (inventory?.[cat] || []).find(item =>
       Utils.normalizeKey(item.id) === q || Utils.normalizeKey(item.nombre) === q
     );
@@ -1078,7 +1060,7 @@ function getOwnedCompanions(profile) {
     : (profile?.hiredCompanions || profile?.companions || []);
 
 
-  return [...new Set(list.map(normalizeKey))];
+  return [...new Set(list.map(Utils.normalizeKey))];
 }
 
 
@@ -2101,14 +2083,8 @@ function buildSystemPrompt(lore, profile) {
 * Mantén siempre el diálogo vivo por encima del formato de un bot tradicional.
 * No inventes datos que no estén en tu base de datos. 
 
-
-
-
 ## 2. REGLAS DE ORO
 * Nunca digas que eres una IA. Usa acciones o gestos entre asteriscos para ambientar la escena.
-
-
-
 
 ## 3. RELACIÓN CON EL VIAJERO
 Raza: ${profile?.race || "desconocida"}
@@ -2172,15 +2148,9 @@ async function loadEncounters() {
   } catch { return []; }
 }
 
-
-
-
 // ==========================================
 //   FUNCIONES DE SELECCIÓN DE CATÁLOGO
 // ==========================================
-
-
-
 
 async function getCatalogStateItems(catalogName, catalogItems) {
   const state = await db.getEventState(catalogName).catch(() => null);
@@ -2188,18 +2158,12 @@ async function getCatalogStateItems(catalogName, catalogItems) {
   return { state, items };
 }
 
-
-
-
 function getResolvedEquipment(profile = {}, equipmentRaw = null) {
   if (equipmentRaw && typeof equipmentRaw === "object" && !Array.isArray(equipmentRaw)) return equipmentRaw;
   if (profile?.equipment && typeof profile.equipment === "object" && !Array.isArray(profile.equipment)) return profile.equipment;
   if (profile?.equipo && typeof profile.equipo === "object" && !Array.isArray(profile.equipo)) return profile.equipo;
   return {};
 }
-
-
-
 
 function findInventoryItemLoose(inventory, query) {
   const q = Utils.normalizeKey(query);
@@ -2216,21 +2180,13 @@ function findInventoryItemLoose(inventory, query) {
   return null;
 }
 
-
-
-
 function saveResolvedEquipment(profile = {}, equipment = {}) {
   return { equipment, equipo: equipment };
 }
 
-
-
-
 async function renderCatalogEmbed(catalogName, items, title, profile = {}, cycleId = 0, customHeader = "") {
   let emoji = "⚔️";
   let color = "#4A5568"; // Gris acero (Armerías)
-
-
 
 
   if (catalogName === "tienda") {
@@ -2241,29 +2197,18 @@ async function renderCatalogEmbed(catalogName, items, title, profile = {}, cycle
     color = "#D69E2E"; // Dorado/Ámbar
   }
 
-
-
-
   const embed = new EmbedBuilder()
     .setTitle(`${emoji} ${title}`)
     .setColor(color)
     .setFooter({ text: 'Usa !comprar <id>, !equipar <id> o !usar <id>.' });
 
-
-
-
   // Comenzamos la descripción con el header personalizado (si existe)
   let descripcion = customHeader;
-
-
-
 
   for (const item of items) {
     const price = await db.getDynamicPrice(catalogName, item);
     const remaining = profile ? getItemRemainingSlots(profile, catalogName, item, cycleId) : null;
     const maxSlots = getDefaultSlots(catalogName, item);
-
-
 
 
     descripcion += `• **${item.nombre}** (ID: \`${item.id}\`)\n`;
@@ -2280,23 +2225,14 @@ async function renderCatalogEmbed(catalogName, items, title, profile = {}, cycle
     descripcion += `  **Efecto:** ${formatEffect(item.efecto)}\n\n`;
   }
 
-
-
-
   embed.setDescription(descripcion || 'No hay objetos disponibles en este catálogo.');
   return embed;
 }
-
-
-
 
 function Utils.chunkDiscordText(text, limit = 1900) {
   const chunks = [];
   const blocks = String(text).split("\n\n");
   let current = "";
-
-
-
 
   for (const block of blocks) {
     const candidate = current ? `${current}\n\n${block}` : block;
@@ -2320,15 +2256,9 @@ function Utils.chunkDiscordText(text, limit = 1900) {
   return chunks;
 }
 
-
-
-
 async function Utils.replyLong(message, text) {
   const chunks = Utils.chunkDiscordText(text, 1900);
   if (!chunks.length) return message.reply("—");
-
-
-
 
   const first = await message.reply(chunks[0]);
   for (const chunk of chunks.slice(1)) {
@@ -2336,9 +2266,6 @@ async function Utils.replyLong(message, text) {
   }
   return first;
 }
-
-
-
 
 async function decrementUtilities(userId) {
   const profile = await db.getProfile(userId);
@@ -2355,15 +2282,9 @@ async function decrementUtilities(userId) {
   return "";
 }
 
-
-
-
 // ==========================================
 //         CONFIGURACIÓN DEL CLIENTE
 // ==========================================
-
-
-
 
 const ALLOWED_CHANNEL_IDS = new Set([
   "1514198998838284288",
@@ -2625,8 +2546,6 @@ async function handleOnboarding(message, profile) {
     await db.updateTravelerData(userId, { onboardingStage: "name" });
     return message.reply(buildOnboardingIntroText());
   }
-
-
 
 
   if (stage === "name") {
@@ -3030,14 +2949,13 @@ async function handleExpedicionDesafiar(message) {
         let powerBlock = "";
         if (enemyPresent) {
           const dummyEncounter = {
-             id: escenario.enemyLabel || escenario.titulo || "Rival",
-             tipo: escenario.categoria || "enemigo_numeroso",
-             peligro: Number(escenario.peligro || 1),
-             ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
-          };
+         id: escenario.enemyLabel || escenario.titulo || "Rival",
+         tipo: escenario.categoria || "enemigo_numeroso",
+         peligro: Number(escenario.peligro || 1),
+         ...(typeof mapStatsToMatrixKeys === 'function' ? mapStatsToMatrixKeys(escenario.bonus || {}) : (escenario.bonus || {}))
+       };
           powerBlock = Combat.buildPowerComparisonBlock({ profile, equipment, encounter: dummyEncounter });
         }
-
 
         const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: escenario.titulo, resultado: "inicio" }, "inicio");
         let textoFinalScenario = `🌑 **Escenario final: ${escenario.titulo || "Cierre de misión"}**\n\n${escenario.descripcion}\n\n`;
@@ -3098,14 +3016,12 @@ async function handleExpedicionDesafiar(message) {
     return message.reply(textoEncuentro);
   }
 
-
   // === RESOLVER ENCUENTRO ACTUAL (El jugador usó !desafiar frente a un desafío) ===
   let activeEncounter = expedition.currentEncounter;
   if (activeEncounter.tipo === "escenario_final") {
     expedition.pendingFinalScenario = true;
     return startFinalScenario(message, expedition);
   }
-
 
   const bonuses = getCompanionBonus(profile);
   const eqPower = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
@@ -3114,23 +3030,19 @@ async function handleExpedicionDesafiar(message) {
   let affinityBonus = 0;
   for (const comp of owned) affinityBonus += getAffinityBonus(profile, comp);
 
-
   let success = false;
   const tipo = Utils.normalizeKey(activeEncounter.tipo);
   const categoria = Utils.normalizeKey(activeEncounter.categoria);
   const esObstaculo = tipo === "obstaculo" || categoria === "obstaculo" || tipo === "terreno";
   const esCombate = !esObstaculo && (["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(tipo) || ["combate", "enemigo_numeroso", "enemigo_poderoso", "jefe"].includes(categoria));
 
-
   const bonoPrevencionBucle = activeEncounter.probabilidadBonus || 0;
-
 
   // Lógica de Combate y Obstáculos
   if (esCombate) {
     const combatBonus = typeof getCompanionBonus === "function" ? getCompanionBonus(owned) : { damageReduction: 0, faelonHeal: 0 };
-    let resultado = resolverCombateMixto(profile, equipment, activeEncounter, combatBonus, affinityCombat);
+    let resultado = Combat.resolverCombateMixto(profile, equipment, activeEncounter, combatBonus, affinityCombat);
     if (!resultado.exito && Math.random() < (0.30 + bonoPrevencionBucle)) resultado.exito = true;
-
 
     if (!resultado.exito) {
       const tieneANieriel = owned.includes("nieriel");
@@ -3141,14 +3053,12 @@ async function handleExpedicionDesafiar(message) {
       let danoFinal = Math.max(1, Math.round(danoRecibido));
       let textoAdicional = "";
 
-
       if (tieneANieriel && (expedition.saludActual - danoFinal) <= 0 && !expedition.nierielShieldUsed) {
         danoFinal = expedition.saludActual - 1; 
         expedition.nierielShieldUsed = true;
         textoAdicional += ` 🦢 *Nieriel interviene con la Senda del Cisne, mitigando el golpe letal y salvándote la vida (Quedas a 1 HP).*\n\n`;
       }
-
-
+      
       expedition.saludActual -= danoFinal;
       let curacionAdicional = aplicarCuracionPorBonus(expedition, bonuses, adventureBonuses);
       if (curacionAdicional > 0) textoAdicional += ` 💚 *Gracias a tu bonus de curación, recuperas rápidamente ${curacionAdicional} HP tras el ataque.*\n\n`;
@@ -3161,11 +3071,9 @@ async function handleExpedicionDesafiar(message) {
         return message.reply(`💀 **Derrota Definitiva**\n\n${activeEncounter.textoDerrota || "Has sucumbido ante el enemigo."}\n\nRecibes **${danoFinal}** de daño. Tu salud llegó a 0 y la expedición fracasa. Eres llevado de vuelta al campamento.\n*(Tu salud ha sido restaurada al máximo)*`);
       }
 
-
       activeEncounter.peligro = Math.max(0, activeEncounter.peligro - 1);
       activeEncounter.probabilidadBonus = (activeEncounter.probabilidadBonus || 0) + 0.25;
-
-
+      
       const reactionAsync = await getCompanionReactionsText(message.author.id, owned, { encounter: activeEncounter, resultado: "fracaso", dano: danoFinal }, "fracaso");
       let msgFail = `⚠️ **Combate Prolongado**\n\n${activeEncounter.textoFracaso || "Tu estrategia falló y el enemigo logró herirte."}\n\n`;
       if (textoAdicional) msgFail += `${textoAdicional}`;
