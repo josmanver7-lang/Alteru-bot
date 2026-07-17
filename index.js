@@ -1686,10 +1686,13 @@ async function resolveFinalScenarioAction(message, expedition) {
   
   const finalResolutionText = buildFinalResolutionText(normalizedAction, success, scenario);
 
-
-  if (success && activeEncounter.subescenarios && activeEncounter.subescenarios.length > 0 && !activeEncounter.isSub) {
-    let selectedSub = activeEncounter.subescenarios[Math.floor(Math.random() * activeEncounter.subescenarios.length)];
-
+    if (success && (activeEncounter.subEscenarios || activeEncounter.subescenarios) && 
+      (activeEncounter.subEscenarios || activeEncounter.subescenarios).length > 0 && 
+      !activeEncounter.isSub) {
+    
+    const subList = activeEncounter.subEscenarios || activeEncounter.subescenarios;
+    const indexAleatorio = Math.floor(Math.random() * subList.length);
+    let selectedSub = subList[indexAleatorio];
 
     if (typeof selectedSub === "string") {
         const encountersPool = await loadEncounters();
@@ -1700,21 +1703,19 @@ async function resolveFinalScenarioAction(message, expedition) {
         };
     }
 
-
     expedition.currentEncounter = {
       ...selectedSub,
       isSub: true,
       parentEncounter: activeEncounter,
-      tipo: selectedSub.tipo || "escenario_final",
-      categoria: selectedSub.categoria || "final"
+      tipo: selectedSub.tipo || activeEncounter.tipo || "escenario_final",
+      categoria: selectedSub.categoria || activeEncounter.categoria || "final"
     };
     
     let texto = `🏁 **${scenario.title || scenario.titulo || "Escenario Final"}**\n\n${actionText}\n${combatBlock}`;
     if (finalResolutionText && finalResolutionText !== actionText) texto += `\n${finalResolutionText}\n`;
-    texto += `\n---\n⚠️ **Un giro inesperado altera el final de la misión:**\n📜 *${selectedSub.titulo}*\n${selectedSub.descripcion}\n\n🗺️ Usa /desafiar para continuar tu viaje.`;
+    texto += `\n---\n⚠️ **Un giro inesperado altera el final de la misión:**\n📜 *${selectedSub.titulo}*\n${selectedSub.descripcion}\n\n🗺️ Usa \`!desafiar\` para continuar tu viaje.`;
     return message.reply(texto);
   }
-
 
   if (success) {
     const xpGain = expedition.xpEarned + Number(scenario.xpBonus ?? 0) + Number(mission.xp ?? 10);
@@ -1794,23 +1795,15 @@ async function resolveFinalScenarioAction(message, expedition) {
   }
 }
 
-
 function getFinalScenarioDangerText(scenario = {}) {
   const danger = Number(scenario.danger ?? scenario.peligro ?? 0);
   if (!danger) return "Ninguno";
   return Utils.getDangerText(danger);
 }
-
-
-
-
 function getFinalScenarioActionStartText(action, expedition) {
   const scenario = expedition.finalScenario || {};
   const title = scenario.titulo || expedition.mission?.titulo || "Escenario final";
   const act = Utils.normalizeKey(action);
-
-
-
 
   switch (act) {
     case "atacar": return `🗡️ **${title}**\n\nDecides atacar de frente. No hay marcha atrás: tomas posición y buscas romper la defensa enemiga resuelto a vencer.`;
