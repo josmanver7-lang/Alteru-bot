@@ -351,11 +351,20 @@ function obtenerRangoNivel(level = 1) {
   return "Viajero del campamento";
 }
 
+// ==================== CONSTANTES GLOBALES ====================
+const EXPEDITION_WINDOW_MS = 12 * 60 * 60 * 1000;   
+const EXPLORATION_WINDOW_MS = 24 * 60 * 60 * 1000;  
+const TRIVIA_WINDOW_MS = 60 * 60 * 1000;            
+
+const EXPEDITION_LIMIT = 3;
+const EXPLORATION_LIMIT = 2;
+const TRIVIA_LIMIT = 5;
+
+const ADMIN_USER_ID = "276922628613079040"; 
 
 // ================================
 // COMPAÑEROS Y BONIFICACIONES
 // ================================
-
 
 const companions = {
   alteru: {
