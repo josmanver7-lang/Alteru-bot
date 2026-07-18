@@ -2075,44 +2075,6 @@ async function renderCatalogEmbed(catalogName, items, title, profile = {}, cycle
   return embed;
 }
 
-function Utils.chunkDiscordText(text, limit = 1900) {
-  const chunks = [];
-  const blocks = String(text).split("\n\n");
-  let current = "";
-
-  for (const block of blocks) {
-    const candidate = current ? `${current}\n\n${block}` : block;
-    if (candidate.length <= limit) {
-      current = candidate;
-      continue;
-    }
-    if (current) chunks.push(current);
-    if (block.length <= limit) {
-      current = block;
-    } else {
-      let start = 0;
-      while (start < block.length) {
-        chunks.push(block.slice(start, start + limit));
-        start += limit;
-      }
-      current = "";
-    }
-  }
-  if (current) chunks.push(current);
-  return chunks;
-}
-
-async function Utils.replyLong(message, text) {
-  const chunks = Utils.chunkDiscordText(text, 1900);
-  if (!chunks.length) return message.reply("—");
-
-  const first = await message.reply(chunks[0]);
-  for (const chunk of chunks.slice(1)) {
-    await message.channel.send(chunk);
-  }
-  return first;
-}
-
 async function decrementUtilities(userId) {
   const profile = await db.getProfile(userId);
   let utils = profile.activeUtilities || [];
