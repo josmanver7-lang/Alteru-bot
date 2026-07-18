@@ -1243,13 +1243,6 @@ function getFinalScenarioAffinityTargets(action, owned = []) {
   return (poolByAction[normalizeFinalAction(action)] || owned).filter(id => owned.includes(id));
 }
 
-function Utils.getDangerText(peligro) {
-  if (peligro <= 2) return "Bajo";
-  if (peligro <= 4) return "Moderado";
-  if (peligro <= 6) return "Alto";
-  return "Extremo";
-}
-
 function Utils.shuffleArray(arr) {
   const copy = [...arr];
   for (let i = copy.length - 1; i > 0; i--) {
