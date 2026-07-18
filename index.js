@@ -618,12 +618,6 @@ async function loadCatalog(filename) {
   }
 }
 
-
-function Utils.formatPrice(value) {
-  return `${Number(value || 0)} pts`;
-}
-
-
 function normalizeInventory(inventory = {}) {
   const base = Object.fromEntries(Config.INVENTORY_CATEGORIES.map(c => [c, []]));
   const raw = inventory && typeof inventory === "object" ? inventory : {};
@@ -638,42 +632,34 @@ function normalizeInventory(inventory = {}) {
   return base;
 }
 
-
 function ensureInventoryCategory(inventory, item) {
   const category = getInventoryCategoryForItem(item);
   if (!inventory[category]) inventory[category] = [];
   return category;
 }
 
-
 function addItemBackToInventory(inventory, item, reason = "equipar") {
   if (!item) return;
-
 
   const category = ensureInventoryCategory(inventory, item);
   const stackable = isStackableItem(item);
 
-
   const idx = inventory[category].findIndex(x => Utils.normalizeKey(x.id) === Utils.normalizeKey(item.id));
-
 
   if (stackable && idx !== -1) {
     inventory[category][idx].cantidad = Math.max(1, Number(inventory[category][idx].cantidad || 1) + 1);
     return;
   }
 
-
   if (idx === -1) {
     inventory[category].push(normalizeItemEntry(item, { cantidad: 1, recuperadoPor: reason }));
   }
 }
 
-
 function removeItemFromInventory(inventory, category, item) {
   if (!inventory[category]) inventory[category] = [];
   const idx = inventory[category].findIndex(x => Utils.normalizeKey(x.id) === Utils.normalizeKey(item.id));
   if (idx === -1) return;
-
 
   if (isStackableItem(inventory[category][idx])) {
     inventory[category][idx].cantidad = Math.max(0, Number(inventory[category][idx].cantidad || 1) - 1);
@@ -684,7 +670,6 @@ function removeItemFromInventory(inventory, category, item) {
     inventory[category].splice(idx, 1);
   }
 }
-
 
 function normalizeItemEntry(item, extra = {}) {
   return {
@@ -702,11 +687,9 @@ function normalizeItemEntry(item, extra = {}) {
   };
 }
 
-
 function getInventoryCategoryForItem(item) {
   const tipo = Utils.normalizeKey(item?.tipo || "");
   const slot = Utils.normalizeKey(item?.slot || "");
-
 
   if (tipo === "consumible" || tipo === "utilidad") {
      if (tipo === "utilidad") return "utilidades";
@@ -719,10 +702,8 @@ function getInventoryCategoryForItem(item) {
   if (slot === "montura" || slot === "caballo") return "monturas"; 
   if (slot === "barda" || slot === "brida") return "bardas";
 
-
   return "permanentes";
 }
-
 
 function findInventoryItem(inventory, query) {
   const q = Utils.normalizeKey(query);
@@ -735,12 +716,10 @@ function findInventoryItem(inventory, query) {
   return null;
 }
 
-
 function canEquipItem(profile, item, currentEquipment = {}) {
   // 1. Normalizamos los datos para evitar problemas de mayúsculas/espacios
   const itemRaza = Utils.normalizeKey(item.raza || "general");
   const playerRaza = Utils.normalizeKey(profile.race || "");
-
 
   // 2. Verificamos si el objeto tiene restricción de raza
   if (itemRaza !== "general" && itemRaza !== "ninguno" && itemRaza !== "todos") {
@@ -753,21 +732,17 @@ function canEquipItem(profile, item, currentEquipment = {}) {
     }
   }
 
-
   // Si pasa todas las validaciones, permitimos equiparlo
   return { ok: true, reason: "" };
 }
-
 
 function isStackableItem(item) {
   const tipo = Utils.normalizeKey(item?.tipo || "");
   return tipo === "consumible" || tipo === "regalo" || tipo === "utilidad";
 }
 
-
 function getEquipSlotForItem(item, currentEquipment = {}) {
   const slot = Utils.normalizeKey(item?.slot || item?.tipo || "");
-
 
   // 1. Armas: Todo lo que sea un arma va directo a la ranura visible "arma"
   if (["arma", "arma_1_mano", "arma_2_manos", "daga", "daga_1_mano", "hands"].includes(slot)) {
@@ -783,7 +758,6 @@ function getEquipSlotForItem(item, currentEquipment = {}) {
   if (slot === "capa") return "capa";
   if (slot === "montura" || slot === "caballo") return "montura";
   if (slot === "barda" || slot === "brida") return "barda";
-
 
   // 3. Anillos y Accesorios
   if (slot === "anillo") {
