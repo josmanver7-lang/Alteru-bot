@@ -879,7 +879,6 @@ function sumEquipmentTotals(equipment = {}) {
   return totals;
 }
 
-
 function formatEquipmentTotals(totals) {
   const parts = [];
   if (totals.damageBonus) parts.push(`+${totals.damageBonus} Daño`);
@@ -959,40 +958,12 @@ async function getCurrentTablonSelection() {
   return shuffled.slice(0, 5);
 }
 
-function Utils.normalizeDifficulty(value) {
-  return Utils.normalizeText(value || "normal");
-}
-
-function Utils.formatRemainingTime(ms) {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
-
-
-function Utils.normalizeKey(text) {
-  return String(text || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\p{L}\p{N}\s_-]/gu, "")
-    .trim()
-    .replace(/\s+/g, "_");
-}
-
-
 function buildPersonajesCache(input) {
   if (Array.isArray(input)) {
     return Object.fromEntries(
       input.filter(Boolean).map(p => [Utils.normalizeKey(p.id || p.nombre), p])
     );
   }
-
 
   if (input && typeof input === "object") {
     return Object.fromEntries(
@@ -1002,57 +973,29 @@ function buildPersonajesCache(input) {
   return {};
 }
 
-
 function getPersonaje(id) {
   return personajesCache[Utils.normalizeKey(id)] || null;
 }
-
 
 function getOwnedCompanions(profile) {
   const list = profile?.activeCompanions?.length
     ? profile.activeCompanions
     : (profile?.hiredCompanions || profile?.companions || []);
 
-
   return [...new Set(list.map(Utils.normalizeKey))];
 }
-
 
 function getPersonalityText(id) {
   const p = getPersonaje(id);
   if (!p) return "Sin definir";
 
-
   const raw =
     p.personalidadCorta || p.personalidadBreve || p.personalidad ||
     p.rasgos || p.caracter || p.descripcionCorta || p.descripcion || p.tono || "";
 
-
   const text = String(raw).trim();
   return text || "Sin definir";
 }
-
-
-function Utils.getCompanionIcon(id) {
-  switch (Utils.normalizeKey(id)) {
-    case "cirdil":
-    case "andaer": return "🛡️";
-    case "duinor": return "⚔️";
-    case "alteru":
-    case "nieriel": return "🎖️";
-    case "montaraces": return "🏹";
-    case "faelon": return "🌿";
-    default: return "•";
-  }
-}
-
-
-function Utils.compactLine(text, maxWords = 40) {
-  const words = String(text || "").replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
-  if (words.length <= maxWords) return words.join(" ");
-  return `${words.slice(0, maxWords).join(" ")}…`;
-}
-
 
 function getAffinityBonus(profile, companionId) {
   const affinity = profile.affinity || {};
@@ -1064,7 +1007,6 @@ function getAffinityBonus(profile, companionId) {
   return 0;
 }
 
-
 function getCompanionEquipmentFromPersonaje(companionId) {
   const key = Utils.normalizeKey(companionId);
   // Revisa la caché primero, si no, usa los datos harcodeados
@@ -1072,10 +1014,8 @@ function getCompanionEquipmentFromPersonaje(companionId) {
   
   if (!personaje) return {};
 
-
   const rawEq = personaje.equipo || personaje.armamento || personaje.equipment || personaje.items || {};
   const formattedEq = {};
-
 
   if (Array.isArray(rawEq)) {
     for (const item of rawEq) {
@@ -1107,7 +1047,6 @@ function getCompanionEquipmentFromPersonaje(companionId) {
       barda: rawEq.barda || personaje.barda || ""
     });
   }
-
 
   return formattedEq;
 }
@@ -1245,27 +1184,22 @@ function getAffinityCombatBonus(profile, owned = []) {
   };
 }
 
-
 async function addAffinityWithRankMessage(userId, companionId, encounter, mode, outcome) {
   const beforeProfile = await db.getProfile(userId);
   const beforeValue = (beforeProfile.affinity || {})[companionId] || 0;
   const beforeRank = getAffinityRank(beforeValue);
 
-
   const gain = getAffinityGain(encounter, mode, outcome);
   await db.addAffinity(userId, companionId, gain);
 
-
   const afterValue = beforeValue + gain;
   const afterRank = getAffinityRank(afterValue);
-
 
   return {
     gain,
     rankMessage: beforeRank !== afterRank ? getAffinityRankText(companionId, afterRank) : null
   };
 }
-
 
 function getAffinityRank(value) {
   if (value >= 100) return "Compañero de Confianza";
@@ -1275,7 +1209,6 @@ function getAffinityRank(value) {
   return "Desconocido";
 }
 
-
 function normalizeFinalAction(value) {
   const key = Utils.normalizeKey(value);
   if (["huir", "escapar", "retirarse", "retirada", "abandonar"].includes(key)) return "retirarse";
@@ -1284,7 +1217,6 @@ function normalizeFinalAction(value) {
   return key;
 }
 
-
 function getFinalScenarioActionText(encounter = {}, action = "atacar", outcome = "success") {
   const key = normalizeFinalAction(action);
   const block = encounter?.actionText?.[key] || encounter?.resultados?.[key] || encounter?.finales?.[key] || encounter?.final?.[key] || {};
@@ -1292,7 +1224,6 @@ function getFinalScenarioActionText(encounter = {}, action = "atacar", outcome =
   if (outcome === "success") return block.successText || block.textoExito || block.exito || "";
   return block.failText || block.textoFracaso || block.fracaso || "";
 }
-
 
 function getFinalScenarioReactionIds(action, owned = []) {
   const poolByAction = {
@@ -1303,7 +1234,6 @@ function getFinalScenarioReactionIds(action, owned = []) {
   return poolByAction[normalizeFinalAction(action)] || owned.slice(0, 3);
 }
 
-
 function getFinalScenarioAffinityTargets(action, owned = []) {
   const poolByAction = {
     atacar: ["duinor", "cirdil", "alteru"],
@@ -1313,14 +1243,12 @@ function getFinalScenarioAffinityTargets(action, owned = []) {
   return (poolByAction[normalizeFinalAction(action)] || owned).filter(id => owned.includes(id));
 }
 
-
 function Utils.getDangerText(peligro) {
   if (peligro <= 2) return "Bajo";
   if (peligro <= 4) return "Moderado";
   if (peligro <= 6) return "Alto";
   return "Extremo";
 }
-
 
 function Utils.shuffleArray(arr) {
   const copy = [...arr];
@@ -1331,12 +1259,10 @@ function Utils.shuffleArray(arr) {
   return copy;
 }
 
-
 async function refreshTablonSelection() {
   const missions = await loadMissions();
   tablonSelection = Utils.shuffleArray(missions).slice(0, 5);
 }
-
 
 async function clearExpeditionParty(userId) {
   await db.updateTravelerData(userId, {
@@ -1346,10 +1272,8 @@ async function clearExpeditionParty(userId) {
   });
 }
 
-
 function getEncounterSubOptions(encounter, encountersPool = []) {
   if (!encounter) return [];
-
 
   const directList = Array.isArray(encounter.subencuentros)
     ? encounter.subencuentros
@@ -1358,7 +1282,6 @@ function getEncounterSubOptions(encounter, encountersPool = []) {
       : Array.isArray(encounter.variantes)
         ? encounter.variantes
         : [];
-
 
   const direct = directList
     .slice(0, 3)
@@ -1375,16 +1298,13 @@ function getEncounterSubOptions(encounter, encountersPool = []) {
     e && (e.parentId === encounter.id || e.grupo === encounter.id || e.padre === encounter.id)
   );
 
-
   const unique = [...new Map([...direct, ...linked].map(e => [e.id || Utils.normalizeKey(e.titulo), e])).values()];
   return unique.slice(0, 3);
 }
 
-
 function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "") {
   const peligroTexto = encounter?.peligro ? Utils.getDangerText(encounter.peligro) : "Ninguno";
   const baseText = encounter?.textoInicio || encounter?.descripcion || encounter?.description || "Te adentras en territorio desconocido...";
-
 
   // NUEVO: Renderizado de los stats de la matriz para encuentros normales
   const enemyStats = [];
@@ -1395,21 +1315,16 @@ function buildEncounterCard(encounter, commandHint = "!desafiar", powerBlock = "
   if (src.magicBonus) enemyStats.push(`Magia +${Math.round(src.magicBonus * 100)}%`);
   if (src.cavalryBonus || src.mountedBonus) enemyStats.push(`Caballería +${Math.round((src.cavalryBonus || src.mountedBonus) * 100)}%`);
 
-
   const statsText = enemyStats.length > 0 ? `\n📊 Atributos Enemigos: **${enemyStats.join(" | ")}**` : "";
 
-
   let text = `⚠️ **${encounter.titulo || encounter.title || "Evento en curso"}**\n\n${baseText}`;
-
 
   if (powerBlock) text += `\n\n${powerBlock}`;
   // Incorporamos el statsText a la salida
   text += `\n\nPeligro: ${peligroTexto}${statsText}\nUsa: ${commandHint}`;
 
-
   return text;
 }
-
 
 // ==========================================
 //        ESCENARIOS FINALES
