@@ -734,7 +734,7 @@ async function runFixedSlot(client, loreCache, slot, dayStartMs) {
   }
 
   if (slot.type === "dialogue") {
-    await companionDialogue(client, loreCache, slot.id);
+  await companionReaction(pick(companionIds), { titulo: "Diálogo Automático", tipo: "evento_especial", categoria: "social", descripcion: "Escena automática del scheduler." }, "auto");
   }
 }
 
