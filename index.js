@@ -898,36 +898,29 @@ function formatEquipmentTotals(totals) {
   if (totals.magicBonus) parts.push(`+${Math.round(totals.magicBonus * 100)}% Magia`);
   if (totals.cavalryBonus) parts.push(`+${Math.round(totals.cavalryBonus * 100)}% Caballería`);
 
-
   return parts.length ? parts.join(" | ") : "Sin bonos extra";
 }
-
 
 function formatInventoryLine(item) {
   const qty = Math.max(1, Number(item.cantidad || 1));
   return `• **${item.nombre}**${qty > 1 ? ` x${qty}` : ""}`;
 }
 
-
 async function getCatalogPool() {
   const pool = [];
-
 
   const tienda = tiendaCache || await loadCatalog("tienda.json").catch(() => null);
   const armeria = armeriaCache || await loadCatalog("armeria.json").catch(() => null);
   const establo = establoCache || await loadCatalog("establo.json").catch(() => null);
   const merchantState = await db.getEventState("merchant").catch(() => null);
 
-
   const tiendaItems = Array.isArray(tienda) ? tienda : Array.isArray(tienda?.items) ? tienda.items : [];
   const armeriaItems = Array.isArray(armeria) ? armeria : Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : [];
   const establoItems = Array.isArray(establo) ? establo : Array.isArray(establo?.items) ? establo.items : [];
 
-
   for (const item of tiendaItems) pool.push({ ...item, catalogName: "tienda" });
   for (const item of armeriaItems) pool.push({ ...item, catalogName: "armeria" });
   for (const item of establoItems) pool.push({ ...item, catalogName: "establo" });
-
 
   if (merchantState?.active && Array.isArray(merchantState.stock)) {
     for (const item of merchantState.stock) {
@@ -935,15 +928,12 @@ async function getCatalogPool() {
     }
   }
 
-
   return pool;
 }
-
 
 async function findCatalogItemByQuery(query) {
   const q = Utils.normalizeKey(query);
   const pool = await getCatalogPool();
-
 
   return pool.find(item => {
     const id = Utils.normalizeKey(item.id);
@@ -951,7 +941,6 @@ async function findCatalogItemByQuery(query) {
     return id === q || nombre === q || nombre.includes(q);
   }) || null;
 }
-
 
 async function getCurrentPriceForItem(item) {
   const catalogName = item.catalogName || "tienda";
@@ -961,40 +950,24 @@ async function getCurrentPriceForItem(item) {
   return Number(item.precioBase ?? item.precio ?? 0);
 }
 
-
 async function getCurrentTablonSelection() {
   const state = await db.getEventState("tablon");
   if (Array.isArray(state?.selection) && state.selection.length) return state.selection;
-
 
   const missions = await loadMissions();
   const shuffled = [...missions].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 5);
 }
 
-
-function Utils.normalizeText(text) {
-  if (!text) return '';
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") 
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¿?¡]/g, "") 
-    .trim();
-}
-
-
 function Utils.normalizeDifficulty(value) {
   return Utils.normalizeText(value || "normal");
 }
-
 
 function Utils.formatRemainingTime(ms) {
   const total = Math.max(0, Math.ceil(ms / 1000));
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
-
 
   if (h > 0) return `${h}h ${m}m`;
   if (m > 0) return `${m}m ${s}s`;
