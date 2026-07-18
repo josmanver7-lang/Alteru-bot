@@ -69,6 +69,36 @@ Rango: ${obtenerRango(profile?.points || 0)}
 `.trim();
 }
 
+async function publishCompanionScene(client, dayStartMs, slotNumber = 1) {
+  const channel = await fetchChannel(client);
+  if (!channel) return;
+
+  const companionId = pick(companionIds);
+  const lore = getCompanionLore(companionId);
+  const nombre = lore.nombre || companionNames[companionId] || companionId;
+
+  const prompt = `
+Escribe una escena corta y ambientada de rol (máximo 120 palabras) donde ${nombre} interactúa con viajeros en el campamento.
+El tono debe ser natural, inmersivo y con un toque de personalidad del personaje.
+No uses diálogos largos. Enfócate en una acción o momento vivo.
+`.trim();
+
+  let text = `*${nombre} camina por el campamento observando a los viajeros.*`;
+
+  try {
+    const aiText = await generateAITextStrict(prompt, 180);
+    if (aiText && aiText.trim()) text = aiText.trim();
+  } catch (err) {
+    console.error("Error generando escena de compañero:", err);
+  }
+
+  try {
+    await channel.send(`🌄 **Escena del Campamento**\n\n${text}`);
+  } catch (err) {
+    console.error("Error enviando escena:", err);
+  }
+}
+
 // ===============================================
 // FUNCIÓN PRINCIPAL DE IA
 // ===============================================
