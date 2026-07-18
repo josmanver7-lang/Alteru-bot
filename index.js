@@ -313,11 +313,18 @@ async function handleExploracionCommand(message) {
 // NIVEL Y RANGOS POR XP
 // ================================
 
-
-  1: 0, 2: 1000, 3: 2500, 4: 5000, 5: 10000, 
-  6: 17500, 7: 27500, 8: 42500, 9: 62500, 10: 82500
+const LEVEL_XP_REQUIREMENTS = {
+  1: 0,
+  2: 1000,
+  3: 2500,
+  4: 5000,
+  5: 10000,
+  6: 17500,
+  7: 27500,
+  8: 42500,
+  9: 62500,
+  10: 82500
 };
-
 
 function calculateLevelFromXP(xp = 0) {
   const totalXP = Number(xp || 0);
