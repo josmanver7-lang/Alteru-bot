@@ -154,7 +154,6 @@ async function chatWithAI({
 // MAPAS EN MEMORIA
 // ================================
 
-
 let personajesCache = {};
 let loreCache = null;
 let tablonSelection = [];
@@ -173,9 +172,7 @@ let establoCache = null;
 // EXPLORACIÓN
 // ================================
 
-
 let exploracionCache = null;
-
 
 function getExplorationBonusPercent(profile = {}, equipment = {}) {
   const eq = getEquipmentPowerSummary(equipment, profile.activeUtilities || []);
@@ -312,6 +309,11 @@ async function handleExploracionCommand(message) {
 // ================================
 // NIVEL Y RANGOS POR XP
 // ================================
+
+const EXPLORATION_POINT_MIN = 10;
+const EXPLORATION_POINT_MAX = 150;
+
+const INVENTORY_CATEGORIES = ["consumibles", "armas", "armaduras", "permanentes", "utilidades", "monturas", "bardas"];
 
 const LEVEL_XP_REQUIREMENTS = {
   1: 0,
