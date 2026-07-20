@@ -2962,21 +2962,19 @@ client.on("messageCreate", async (message) => {
 
   const expedition = expeditions.get(message.author.id);
   
+  // === ESCENARIO FINAL ===
   if (expedition && expedition.pendingFinalScenario) {
-    // Normalizamos el mensaje quitando el "!" si lo usan como comando, o dejándolo limpio
     const normalizedAction = message.content.toLowerCase().replace("!", "").trim();
-    
-    // Obtenemos las acciones permitidas por el escenario actual
     const scenario = expedition.finalScenario || expedition.mission?.escenarioFinal;
     const allowedActions = scenario?.allowedActions || [];
 
     if (allowedActions.includes(normalizedAction)) {
-      // 🚀 AQUÍ SE INVOCA TU FUNCIÓN DEFINITIVA:
       return resolveFinalScenarioAction(message, expedition);
     }
   }
 
-    else if (command === "!tablon") {
+  // === COMANDOS NORMALES ===
+  if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
 
@@ -2994,8 +2992,7 @@ client.on("messageCreate", async (message) => {
 
     texto += "Usa `!expedicion <numero>` para comenzar.";
     return Utils.replyLong(message, texto);
-    }
-
+  }
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
@@ -3256,12 +3253,6 @@ Rango: ${obtenerRangoNivel(power.level)}
 Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? profile.salud : 100}/100 
 
 
-
-
-
-
-
-
 📊 Trivia: Correctas: ${profile.correctas || 0} | Incorrectas: ${profile.incorrectas || 0} 
 🔥 Racha Actual: ${profile.rachaActual || 0} | Mejor: ${profile.mejorRacha || 0}` 
     ); 
@@ -3294,10 +3285,7 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const profile = await db.getProfile(message.author.id);
     const inventory = normalizeInventory(profile.inventory);
 
-
-
-
-    let texto = "🎒 **INVENTARIO**\n\n";
+   let texto = "🎒 **INVENTARIO**\n\n";
     for (const cat of INVENTORY_CATEGORIES) {
       const items = inventory[cat] || [];
       texto += `__${cat.toUpperCase()}__\n`;
@@ -3327,16 +3315,10 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       ["montura", "Montura"], ["barda", "Barda"] // <-- AÑADIDOS AQUÍ
     ];
 
-
-
-
     for (const [slotKey, label] of slots) { 
       const item = equipment?.[slotKey]; 
       texto += `${label}: ${item?.nombre || "—"}\n`; 
     } 
-
-
-
 
     const utils = profile.activeUtilities || [];
     if (utils.length > 0) {
@@ -3356,23 +3338,13 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       return message.reply("Debes definir tu raza y clase en tu perfil antes de equipar."); 
     }
 
-
-
-
     // 1. Obtener el nombre del objeto que el usuario quiere equipar (Ej: corcel_rohan)
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!equipar <nombre del objeto>`.");
     
     const nombreItem = query; // Asignamos el query a la variable nombreItem
-
-
-
-
     // 2. Inicializar y normalizar el inventario ANTES de usarlo
     const inventory = normalizeInventory(profile.inventory);
-
-
-
 
     // 3. Ahora sí, buscar el objeto en el inventario
     const found = findInventoryItem(inventory, nombreItem);
@@ -3381,42 +3353,23 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
         return message.reply("No tienes ese objeto en tu inventario.");
     }
 
-
-
-
     const item = found.item;
     const category = found.category; // Ahora encontrará correctamente 'monturas'
-
-
-
-
+    
     // 4. Validar el tipo de objeto
     if (item.tipo === "utilidad" || item.tipo === "consumible") {
       return message.reply(`Ese objeto es un consumible o utilidad. Usa \`!usar <nombre>\`.`);
     }
-
-
-
-
     // 5. Procesar el equipamiento
     const equipmentRaw = await db.getEquipment?.(message.author.id).catch?.(() => null);
     const equipment = getResolvedEquipment(profile, equipmentRaw);
 
-
-
-
     const equipSlot = getEquipSlotForItem(item, equipment);
     if (!equipSlot) return message.reply(`**${item.nombre}** no se puede equipar.`);
-
-
-
 
     if (equipSlot === "barda" && !equipment.montura) {
       return message.reply("🐎 No tienes ninguna montura equipada para colocarle una barda.");
     }
-
-
-
 
     if (!["montura", "caballo", "barda", "brida"].includes(Utils.normalizeKey(item.slot))) {
       const equipCheck = canEquipItem(profile, item, equipment);
@@ -3801,14 +3754,9 @@ resetear"
   }
 
 
-
-
   else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
-
-
-
 
     if (!selection) {
       const missions = await loadMissions();
@@ -3817,16 +3765,10 @@ resetear"
       await db.setEventState("tablon", { cycleId: state?.cycleId || Date.now(), lastAt: Date.now(), nextAt: Date.now() + (12 * 60 * 60 * 1000), selection }).catch(() => {});
     }
 
-
-
-
     let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
     selection.forEach((m, i) => {
       texto += `${i + 1}. ${m.titulo}\n📍 ${m.destino}\n⚠ Nivel ${m.nivel}\n🎖 ${m.puntos} pts\n📚 ${m.xp} XP\n\n`;
     });
-
-
-
 
     texto += "────────────────\n\n🤝 Compañeros del campamento\n\n";
     const orden = ["montaraces", "alteru", "cirdil", "duinor", "andaer", "nieriel", "faelon"];
@@ -3845,22 +3787,15 @@ resetear"
     const catalogItems = getCatalogItems(data);
     if (!catalogItems.length) return message.reply("La tienda está vacía o no está disponible.");
 
-
-
-
     const profile = await db.getProfile(message.author.id);
     const { state, items } = await getCatalogStateItems("tienda", catalogItems);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
     const limitedItems = items.slice(0, 15);
 
-
-
-
     // LÍNEAS NUEVAS: Cambiamos renderCatalog por renderCatalogEmbed
     const embed = await renderCatalogEmbed("tienda", limitedItems, "TIENDA DEL CAMPAMENTO", profile, cycleId);
     return message.reply({ embeds: [embed] });
   }
-
 
     else if (command === "!armeria1") {
     const state = await db.getEventState("armeria1").catch(() => null);
@@ -4197,9 +4132,6 @@ resetear"
     await db.updateTravelerData(message.author.id, { salud: 100 });
     if (expedition?.pendingStartHeal) expedition.pendingStartHeal = false;
 
-
-
-
     return message.reply(`🌿 **Tienda de Faelon**\n\nFaelon toma hojas de Rivendel, prepara un ungüento suave y limpia tus heridas con cuidado. El dolor cede poco a poco hasta dejarte de nuevo en pie.\n\n❤️ Salud restaurada: **100/100**\n\nFaelon te observa con serenidad y te aconseja no andar solo.`);
   }
   // ========================================
@@ -4210,9 +4142,6 @@ resetear"
   else if (command === "!desafiar") return handleExpedicionDesafiar(message);
   else if (command === "!volver") return handleExpedicionVolver(message);
   else if (command === "!exploracion") return handleExploracionCommand(message);
-
-
-
 
   // ========================================
   // SISTEMA DE TRIVIA
