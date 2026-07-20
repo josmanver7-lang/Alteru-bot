@@ -1829,9 +1829,6 @@ Instrucciones:
 - Si es charla directa, responde natural y cercano.`;
 }
 
-
-
-
 async function askCompanionAI({ personaje, affinity = 0, mode = "encounter", context = {}, userMessage = "" }) {
   const systemPrompt = buildCompanionSystemPrompt({ personaje, affinity, mode, context });
   const raw = await chatWithAI({
@@ -1841,22 +1838,13 @@ async function askCompanionAI({ personaje, affinity = 0, mode = "encounter", con
     maxTokens: 120
   });
 
-
-
-
   const nombre = personaje?.nombre || "Compañero";
   const clean = String(raw || "").trim();
   if (!clean) return `${nombre}: *asiente en silencio*`;
 
-
-
-
   const withoutName = clean.replace(new RegExp(`^${nombre}\\s*:\\s*`, "i"), "").trim();
   return `${nombre}: ${Utils.compactLine(withoutName, 18)}`;
 }
-
-
-
 
 async function companionReaction(companionId, context, mode = "encounter") {
   const personaje = getPersonaje(companionId) || companions[companionId];
@@ -1877,23 +1865,14 @@ async function companionReaction(companionId, context, mode = "encounter") {
   }
 }
 
-
-
-
 async function askGroq(userId, userMessage, lore) {
   const profile = await db.getProfile(userId);
   const systemPrompt = buildSystemPrompt(lore, profile);
-
-
-
 
   if (!conversationMemory.has(userId)) conversationMemory.set(userId, []);
   const history = conversationMemory.get(userId);
   history.push({ role: "user", content: userMessage });
   if (history.length > 10) history.shift();
-
-
-
 
   try {
     const reply = await chatWithAI({ systemPrompt, messages: history, temperature: 0.85, maxTokens: 300 });
@@ -1907,24 +1886,15 @@ async function askGroq(userId, userMessage, lore) {
   }
 }
 
-
-
-
 async function announceDawnReset(client) {
   const dawnCompanionId = ["faelon", "nieriel", "cirdil", "andaer", "duinor", "alteru", "montaraces"][Math.floor(Math.random() * 7)];
   const line = await companionReaction(dawnCompanionId, { titulo: "Amanecer", tipo: "evento_especial", categoria: "social", descripcion: "Las nuevas tareas despiertan con la luz del alba." }, "amanecer");
   const channelId = process.env.ANNOUNCEMENTS_CHANNEL_ID;
   if (!channelId) return;
 
-
-
-
   const channel = await client.channels.fetch(channelId).catch(() => null);
   if (channel?.isTextBased()) await channel.send(`🌅 ${line}`);
 }
-
-
-
 
 function buildSystemPrompt(lore, profile) {
   return `
@@ -1970,9 +1940,6 @@ async function loadAlteruLore() {
   return lore;
 }
 
-
-
-
 async function loadQuestions() {
   try {
     const raw = await readFile(path.join(__dirname, 'preguntas.json'), 'utf8');
@@ -1980,18 +1947,12 @@ async function loadQuestions() {
   } catch { return []; }
 }
 
-
-
-
 async function loadMissions() {
   try {
     const raw = await readFile(path.join(__dirname, "misiones.json"), "utf8");
     return JSON.parse(raw);
   } catch { return []; }
 }
-
-
-
 
 async function loadEncounters() {
   try {
@@ -2105,23 +2066,14 @@ const ALLOWED_CHANNEL_IDS = new Set([
   "1512731937473560622"
 ]);
 
-
-
-
 client.once("ready", async () => {
   await db.connectDB();
   loreCache = await loadAlteruLore();
-
-
-
 
   tiendaCache = await loadCatalog("tienda.json");
   armeriaCache = await loadCatalog("armeria.json");
   mercaderCache = await loadCatalog("mercader.json");
   establoCache = await loadCatalog("establo.json");
-
-
-
 
   try {
     const raw = await readFile(path.join(__dirname, "personajes.json"), "utf8");
@@ -2133,58 +2085,34 @@ client.once("ready", async () => {
     personajesCache = {};
   }
 
-
-
-
   await refreshTablonSelection();
   await startSchedulers(client, loreCache);
 
-
-
-
   console.log(`Logged in as ${client.user.tag}`);
 });
-
-
-
 
 function getCatalogItems(data) {
   if (Array.isArray(data)) return data;
   return data?.items || data?.equipo || [];
 }
 
-
-
-
 function getDefaultSlots(catalogName, item = {}) {
   const explicitSlots = Number(item.slots ?? item.maxSlots ?? item.cupos ?? item.limite);
   if (Number.isFinite(explicitSlots) && explicitSlots > 0) return explicitSlots;
 
-
-
-
   const tipo = Utils.normalizeKey(item.tipo || "");
   const slot = Utils.normalizeKey(item.slot || "");
-
-
-
 
   if (catalogName === "armeria" || catalogName === "armeria1" || catalogName === "armeria2") return 1;
   if (catalogName === "tienda") return 3;
   if (catalogName === "mercader") return 3;
   if (catalogName === "establo") return 1;
 
-
-
-
   if (slot === "hands" || slot === "escudo" || slot === "pecho" || slot === "casco" || slot === "hombros" || slot === "brazos" || slot === "piernas" || slot === "montura" || slot === "barda") {
     return 1;
   }
   return 1;
 }
-
-
-
 
 function ensureCatalogUsage(profile, catalogName, cycleId) {
   const current = profile.catalogUsage || {};
@@ -2193,26 +2121,17 @@ function ensureCatalogUsage(profile, catalogName, cycleId) {
   return { ...current, [catalogName]: { cycleId, items: {} } };
 }
 
-
-
-
 function getItemRemainingSlots(profile, catalogName, item, cycleId) {
   const currentUsage = profile.catalogUsage?.[catalogName];
   const used = currentUsage?.cycleId === cycleId ? Number(currentUsage?.items?.[item.id] || 0) : 0;
   return Math.max(0, getDefaultSlots(catalogName, item) - used);
 }
 
-
-
-
 function consumeCatalogSlot(profile, catalogName, item, cycleId) {
   const usage = ensureCatalogUsage(profile, catalogName, cycleId);
   usage[catalogName].items[item.id] = Number(usage[catalogName].items[item.id] || 0) + 1;
   return usage;
 }
-
-
-
 
 const VALID_RACES = ["Hombre", "Enano", "Elfo", "Hobbit", "Beornida"];
 const VALID_CLASSES = ["Guardián", "Vigilante", "Campeón", "Cazador", "Luchador", "Bardo", "Guardián Rúnico", "Capitán", "Sabio", "Saqueador", "Marinero", "Beórnida"];
@@ -2221,9 +2140,6 @@ const CLASS_KEY_TO_LABEL = {
   luchador: "Luchador", bardo: "Bardo", guardian_runico: "Guardián Rúnico", capitan: "Capitán",
   sabio: "Sabio", saqueador: "Saqueador", marinero: "Marinero", beornida: "Beórnida"
 };
-
-
-
 
 const STARTER_ITEMS_BY_CLASS = {
   guardian: { id: "espada_larga_tier1", nombre: "Espada Larga", slot: "arma", hands: 1, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.02, damageBonus: 1 } },
@@ -2240,16 +2156,10 @@ const STARTER_ITEMS_BY_CLASS = {
   beornida: { id: "hacha_pesada_leñador_tier1", nombre: "Hacha Pesada de Leñador", slot: "arma", hands: 2, tipo: "arma", raza: "general", rareza: "comun", precioBase: 0, descripcion: "Arma inicial.", efecto: { meleeBonus: 0.01, damageBonus: 2 } }
 };
 
-
-
-
 function parseOption(input, options) {
   const q = Utils.normalizeKey(input);
   return options.find(option => Utils.normalizeKey(option) === q) || null;
 }
-
-
-
 
 function parseClassChoice(input) {
   const q = Utils.normalizeKey(input);
@@ -2259,93 +2169,54 @@ function parseClassChoice(input) {
   return null;
 }
 
-
-
-
 function getStarterItemForClass(classKey) {
   return STARTER_ITEMS_BY_CLASS[Utils.normalizeKey(classKey)] || null;
 }
-
-
-
 
 function buildOnboardingIntroText() {
   return `🎖️ Altéru: Hola, soy Altéru. Te doy la bienvenida a mi campamento. Soy capitán de Gondor y me conocen como el Capitán de las Colinas, porque nací en Pinnath Gelin. He luchado en diferentes batallas y he logrado varias hazañas defendiendo nuestro reino, así que me alegra mucho ver un rostro aliado.\n\nSi estás dispuesto a ayudarnos, lo primero que me gustaría saber es: ¿cuál es tu nombre?`;
 }
 
-
-
-
 function buildRacePrompt(name) {
   return `🎖️ Altéru: Muy bien, ${name}. Mi esposa Nieriel lleva los registros de todos en el campamento para saber quién falta cuando no regresa de una expedición. Mi siguiente pregunta es: ¿cuál es tu raza?\n\n[Hombre, Enano, Elfo, Hobbit, Beornida]`;
 }
-
-
-
 
 function buildAgePrompt() {
   return `🎖️ Altéru: ¿Qué edad tienes?`;
 }
 
-
-
-
 function buildClassPrompt() {
   return `🎖️ Altéru: ¿Cuál es tu estilo de combate?\n\n[Guardián, Vigilante, Campeón, Cazador, Luchador, Bardo, Guardián Rúnico, Capitán, Sabio, Saqueador, Marinero, Beórnida]`;
 }
-
-
-
 
 function buildStarterGiftText(classKey, starterItem) {
   const itemName = starterItem?.nombre || "tu arma inicial";
   return `🎖️ Altéru: Perfecto. Como regalo de bienvenida te entregaré un arma para tu clase: **${itemName}**.\n\nEsta arma queda registrada en tu inventario y podrás revisarla con **!inventario**.\nSi más adelante quieres verla equipada, usa **!equipo** y luego **!equipar** cuando convenga.\n\nA mi espalda encontrarás el **!tablon** de expediciones. Allí verás tareas por cumplir. También puedes **!contratar** a cualquiera de mis compañeros antes de una misión.\n\n¿Te gustaría conocer otras áreas del campamento? Responde **sí** o **no**.`;
 }
 
-
-
-
 function buildTourNoText() {
   return `🎖️ Altéru: Muy bien. Espero que la información que te di te haya servido. Cuanto antes comiences a prepararte, mucho mejor. Si quieres obtener puntos de otra manera, también puedes buscar a Faelon el Elfo, quien siempre tiene alguna **!trivia** interesante que te pondrá a pensar. ¡Espero oír grandes noticias de ti!`;
 }
-
-
-
 
 function buildTourYesText() {
   return `🎖️ Altéru: Bien. A mi derecha encontrarás la **!tienda**, donde puedes **!comprar** y armarte para tus viajes. Te recomiendo pasar siempre que quieras realizar una expedición y revisar que en tu **!inventario** tengas lo que necesites, si necesitas algún compañero para tus viajes allí tienes el !establo.\n\n🎖️ Altéru: A mi izquierda está la herrería y la **!armeria**, dirigida por mi amigo Cirdil. Allí podrás encontrar todo lo necesario para armarte mejor: espadas, escudos, armaduras y más. Usa **!comprar** y luego **!equipar** si conviene. Si no necesitas algo de tu inventario, siempre tienes la opción de **!vender**.\n\n🎖️ Altéru: Si no tienes más preguntas, prepárate. Hay mucho por hacer y muchos rincones que limpiar. No olvides estar bien preparado o acompañado, porque afuera hay muchos peligros. Pásate por la tienda del elfo Faelon, seguro tendrá alguna !trivia divertida para ¡Pero contestale correctamente! O se molestará.\n\n🎖️ Altéru: Si encuentras o escuchas algo sobre un nigromante llamado **Thûlazar**, házmelo saber. Es nuestro mayor enemigo. ¡Espero oír grandes hazañas de ti! Bienvenido al campamento.\n\n🎖️ Altéru: Si necesitas algo más, estaré en mi tienda con **!a**, o también puedes hablar con mi esposa con **!n**.`;
 }
 
-
-
-
 async function grantStarterItem(userId, profile, classKey) {
   const starterItem = getStarterItemForClass(classKey);
   if (!starterItem) return null;
-
-
-
 
   const inventory = normalizeInventory(profile.inventory);
   const category = getInventoryCategoryForItem(starterItem);
   const exists = (inventory[category] || []).some(item => Utils.normalizeKey(item.id) === Utils.normalizeKey(starterItem.id));
 
-
-
-
   if (!exists) {
     inventory[category].push(normalizeItemEntry(starterItem, { cantidad: 1, origen: "onboarding", starterItem: true }));
   }
 
-
-
-
   await db.updateTravelerData(userId, { inventory: normalizeInventory(inventory), starterItemGranted: true });
   return starterItem;
 }
-
-
-
 
 async function handleOnboarding(message, profile) {
   const userId = message.author.id;
@@ -2353,23 +2224,16 @@ async function handleOnboarding(message, profile) {
   const stage = profile.onboardingStage || null;
   const normalized = Utils.normalizeKey(content);
 
-
-
-
   if (!stage) {
     await db.updateTravelerData(userId, { onboardingStage: "name" });
     return message.reply(buildOnboardingIntroText());
   }
-
 
   if (stage === "name") {
     if (!content || content.startsWith("!")) return message.reply("Escribe tu nombre en texto normal, sin comandos.");
     await db.updateTravelerData(userId, { name: content, onboardingStage: "race" });
     return message.reply(buildRacePrompt(content));
   }
-
-
-
 
   if (stage === "race") {
     const race = parseOption(content, VALID_RACES);
@@ -2378,18 +2242,12 @@ async function handleOnboarding(message, profile) {
     return message.reply(buildAgePrompt());
   }
 
-
-
-
   if (stage === "age") {
     const age = Number.parseInt(content, 10);
     if (!Number.isFinite(age) || age < 10 || age > 50000000) return message.reply("Escribe una edad válida en números.");
     await db.updateTravelerData(userId, { age, onboardingStage: "class" });
     return message.reply(buildClassPrompt());
   }
-
-
-
 
   if (stage === "class") {
     const classKey = parseClassChoice(content);
@@ -2399,43 +2257,25 @@ async function handleOnboarding(message, profile) {
     return message.reply(buildStarterGiftText(classKey, starterItem));
   }
 
-
-
-
   if (stage === "tour") {
     const yesAnswers = ["si", "sí", "s", "claro", "vale", "ok", "okay"];
     const noAnswers = ["no", "n"];
-
-
-
 
     if (yesAnswers.includes(normalized)) {
       await db.updateTravelerData(userId, { onboardingCompleted: true, onboardingStage: null });
       return message.reply(buildTourYesText());
     }
 
-
-
-
     if (noAnswers.includes(normalized)) {
       await db.updateTravelerData(userId, { onboardingCompleted: true, onboardingStage: null });
       return message.reply(buildTourNoText());
     }
 
-
-
-
     return message.reply("Responde con **sí** o **no**.");
   }
 
-
-
-
   return null;
 }
-
-
-
 
 const POWER_TIER_TABLE = {
   1: { dangerLabel: "Prácticamente desnudo", powerMin: 6, powerMax: 10, composition: "Casi todo tier 1.", armorRead: "Va prácticamente desnudo." },
@@ -2450,24 +2290,15 @@ const POWER_TIER_TABLE = {
   10: { dangerLabel: "Jefe / monstruo", powerMin: 105, powerMax: 124, composition: "Tier 4 dominante. Composición de élite completa.", armorRead: "Es un rival monstruoso revestido en poder." }
 };
 
-
-
-
 function clampNumber(value, min, max) {
   const n = Number(value);
   if (Number.isNaN(n)) return min;
   return Math.max(min, Math.min(max, n));
 }
 
-
-
-
 function getDangerTierProfile(danger = 1) {
   return POWER_TIER_TABLE[clampNumber(danger, 1, 10)] || POWER_TIER_TABLE[1];
 }
-
-
-
 
 function getTravelerCorePower(profile = {}) {
   const level = calculateLevelFromXP(profile.xp || 0);
@@ -2476,15 +2307,9 @@ function getTravelerCorePower(profile = {}) {
   const classBonus = getPlayerClassBonus(profile);
   const classScore = Math.round(Object.values(classBonus).reduce((sum, v) => sum + (typeof v === "number" ? v : 0), 0) * 100);
 
-
-
-
   const score = Math.max(1, Math.round((level * 10) + Math.floor(health / 10) + Math.floor(points / 25) + classScore));
   return { score, level, health, points, rank: obtenerRangoNivel(level), classScore, classText: getPlayerClassBonusText(profile) };
 }
-
-
-
 
 function getCompanionPowerDetails(profile = {}) {
   const owned = [...new Set(getOwnedCompanions(profile))];
@@ -2495,9 +2320,6 @@ function getCompanionPowerDetails(profile = {}) {
     const score = Math.max(1, eqScore + clsScore);
     return { id, nombre: companions[id]?.nombre || id, score, eqScore, clsScore, base };
   });
-
-
-
 
   return { total: details.reduce((sum, c) => sum + c.score, 0), details };
 }
@@ -3153,6 +2975,26 @@ client.on("messageCreate", async (message) => {
       return resolveFinalScenarioAction(message, expedition);
     }
   }
+
+    else if (command === "!tablon") {
+    const state = await db.getEventState("tablon").catch(() => null);
+    let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
+
+    if (!selection) {
+      const missions = await loadMissions();
+      if (!missions.length) return message.reply("No hay expediciones disponibles.");
+      selection = [...missions].sort(() => Math.random() - 0.5).slice(0, 5);
+      await db.setEventState("tablon", { cycleId: Date.now(), selection }).catch(() => {});
+    }
+
+    let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+    selection.forEach((m, i) => {
+      texto += `${i + 1}. ${m.titulo}\n📍 ${m.destino}\n⚠ Nivel ${m.nivel}\n🎖 ${m.puntos} pts\n📚 ${m.xp} XP\n\n`;
+    });
+
+    texto += "Usa `!expedicion <numero>` para comenzar.";
+    return Utils.replyLong(message, texto);
+    }
 
 
   // ========================================
