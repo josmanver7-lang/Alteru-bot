@@ -2950,6 +2950,17 @@ async function handleExpedicionDesafiar(message) {
   return message.reply(textoResultado);
 }
 
+async function handleExpedicionVolver(message) {
+  const expedition = expeditions.get(message.author.id);
+  if (!expedition) return message.reply("No estás en ninguna expedición activa.");
+
+  const utilMsg = await decrementUtilities(message.author.id);
+  await clearExpeditionParty(message.author.id);
+  expeditions.delete(message.author.id);
+
+  return message.reply(`🏕️ **Has regresado al campamento.**\n\nNo obtienes recompensa por abandonar la expedición.${utilMsg}`);
+}
+
 // ==========================================
 //          MANEJO DE MENSAJES PRINCIPAL
 // ==========================================
