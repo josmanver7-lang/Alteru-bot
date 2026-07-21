@@ -4,7 +4,10 @@ import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
+import express from 'express';
+const app = express();
+app.get('/', (req, res) => res.send('Bot Altéru corriendo'));
+app.listen(process.env.PORT || 3000);
 
 // ==================== IMPORTS DE MÓDULOS ====================
 import * as Config from './modules/config.js';
@@ -4437,10 +4440,6 @@ else if (command === "!resetcatalogo") {
     }
   }
 
-
 });
-
-
-
 
 client.login(DISCORD_TOKEN)
