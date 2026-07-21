@@ -2989,7 +2989,6 @@ client.on("messageCreate", async (message) => {
     }
   }
 
-  // === COMANDOS NORMALES ===
     else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
@@ -3005,21 +3004,19 @@ client.on("messageCreate", async (message) => {
 
     selection.forEach((m, i) => {
       const numEncuentros = Array.isArray(m.encuentros) ? m.encuentros.length : 0;
-      texto += `${i + 1}. **${m.titulo}**\n📍 ${m.destino}\n⚠ Nivel ${m.nivel}\n🎖 ${m.puntos} pts\n📚 ${m.xp} XP\n🔢 Encuentros: **${numEncuentros}**\n\n`;
+      texto += `${i + 1}. **${m.titulo}**\n📍 ${m.destino} | Nivel ${m.nivel}\n🎖 ${m.puntos} pts | 📚 ${m.xp} XP | 🔢 ${numEncuentros} encuentros\n\n`;
     });
 
-    texto += `**Número total de misiones en el tablón:** ${selection.length}\n\n`;
-
-    // Compañeros
-    texto += "**Compañeros disponibles para contratar:**\n";
-    Object.keys(companions).forEach(id => {
+    texto += "**Compañeros disponibles:**\n";
+    Object.keys(companions).slice(0, 6).forEach(id => {
       const c = companions[id];
-      texto += `• ${c.nombre} — Coste: ${c.coste} pts\n`;
+      texto += `• ${c.nombre} — ${c.coste} pts\n`;
     });
 
+    texto += "\nUsa `!contratar <nombre>` del compañero.";
     texto += "\nUsa `!expedicion <numero>` para comenzar.";
     return Utils.replyLong(message, texto);
-    }
+        }
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
