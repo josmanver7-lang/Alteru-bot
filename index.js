@@ -2990,7 +2990,7 @@ client.on("messageCreate", async (message) => {
   }
 
   // === COMANDOS NORMALES ===
-  if (command === "!tablon") {
+    else if (command === "!tablon") {
     const state = await db.getEventState("tablon").catch(() => null);
     let selection = Array.isArray(state?.selection) && state.selection.length ? state.selection : null;
 
@@ -3002,13 +3002,24 @@ client.on("messageCreate", async (message) => {
     }
 
     let texto = "**Te acercas al tablón de anuncios y ves varias expediciones.**\n\n";
+
     selection.forEach((m, i) => {
-      texto += `${i + 1}. ${m.titulo}\n📍 ${m.destino}\n⚠ Nivel ${m.nivel}\n🎖 ${m.puntos} pts\n📚 ${m.xp} XP\n\n`;
+      const numEncuentros = Array.isArray(m.encuentros) ? m.encuentros.length : 0;
+      texto += `${i + 1}. **${m.titulo}**\n📍 ${m.destino}\n⚠ Nivel ${m.nivel}\n🎖 ${m.puntos} pts\n📚 ${m.xp} XP\n🔢 Encuentros: **${numEncuentros}**\n\n`;
     });
 
-    texto += "Usa `!expedicion <numero>` para comenzar.";
+    texto += `**Número total de misiones en el tablón:** ${selection.length}\n\n`;
+
+    // Compañeros
+    texto += "**Compañeros disponibles para contratar:**\n";
+    Object.keys(companions).forEach(id => {
+      const c = companions[id];
+      texto += `• ${c.nombre} — Coste: ${c.coste} pts\n`;
+    });
+
+    texto += "\nUsa `!expedicion <numero>` para comenzar.";
     return Utils.replyLong(message, texto);
-  }
+    }
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
@@ -3030,43 +3041,26 @@ client.on("messageCreate", async (message) => {
       }
     }
 
-
     if (!isCorrect && textNormalize.includes(correctNormalize)) isCorrect = true;
-
-
-
 
     if (isCorrect) {
       clearTimeout(game.timeout);
       triviaGames.delete(message.author.id);
 
-
-
-
       const points = game.difficulty === "facil" ? 20 : game.difficulty === "normal" ? 40 : game.difficulty === "dificil" ? 80 : game.difficulty === "legendario" ? 200 : 20;
-
-
-
 
       await db.addCorrectAnswer(message.author.id, points);
       return message.reply(`🎉 ¡Correcto! +${points} puntos.`);
     }
-
-
-
 
     if (!command.startsWith("!")) {
       clearTimeout(game.timeout);
       triviaGames.delete(message.author.id);
       await db.addWrongAnswer(message.author.id);
 
-
-
-
       return message.reply(`❌ Incorrecto. La respuesta correcta era: ||${correctRaw}||.`);
     }
   }
-
 
   // ========================================
   // ESCENARIO FINAL ACTIVO
@@ -3088,9 +3082,6 @@ client.on("messageCreate", async (message) => {
     }
   }
 
-
-
-
   // ========================================
   // ONBOARDING
   // ========================================
@@ -3100,15 +3091,9 @@ client.on("messageCreate", async (message) => {
     if (result) return result;
   }
 
-
-
-
   // ========================================
   // COMANDOS COMUNES Y MENÚ PRINCIPAL
   // ========================================
-
-
-
 
   if (command === '!resetintro') {
     const userId = message.author.id;
@@ -3127,41 +3112,23 @@ client.on("messageCreate", async (message) => {
     const rawData = await loadCatalog('establo.json');
     const establoItems = Array.isArray(rawData) ? rawData : (rawData?.items || []);
 
-
-
-
     if (!establoItems.length) return message.reply("El establo está cerrado en este momento.");
-
-
-
 
     const monturas = establoItems.filter(item => item.slot === "montura");
     const bardas = establoItems.filter(item => item.slot === "barda");
 
-
-
-
     const horasPorCiclo = 12;
     const cicloActual = Math.floor(Date.now() / (horasPorCiclo * 60 * 60 * 1000));
-
-
-
 
     const monturasEnVenta = [];
     if (monturas.length > 0) {
       for (let i = 0; i < 10; monturasEnVenta.push(monturas[(cicloActual + i) % monturas.length]), i++);
     }
 
-
-
-
     const bardasEnVenta = [];
     if (bardas.length > 0) {
       for (let i = 0; i < 6; bardasEnVenta.push(bardas[(cicloActual + i) % bardas.length]), i++);
     }
-
-
-
 
     const embed = new EmbedBuilder()
       .setTitle('🐴 Establo del Campamento')
@@ -3182,13 +3149,8 @@ client.on("messageCreate", async (message) => {
       )
       .setFooter({ text: 'Usa !comprar para adquirir la montura de tu preferencia.' });
 
-
-
-
     return message.channel.send({ embeds: [embed] });
   }
-
-
 
 
   else if (command === "!compañeros") {
@@ -3644,9 +3606,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
     });
 
-
-
-
     let pipaNombre = accesorioEquipado.nombre || "tu pipa";
     
     let textoFumar = `💨 **Enciendes ${pipaNombre}...**\n\n`;
@@ -3657,47 +3616,26 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
     textoFumar += `*Consumiste 1x ${itemTabaco.nombre}.*`;
 
-
-
-
     return message.reply(textoFumar);
   }
   else if (command === "!info" || command === "!ayuda") { 
     return message.reply( 
 `📜 Campamento de Altéru 
 
-
-
-
 👤 PERFIL 
 !perfil, !puntos, !nivel, !afinidad, !inventario, !equipo !montura
-
-
-
 
 📊 ESTADÍSTICAS 
 !ranking 
 
-
-
-
 🤝 COMPAÑEROS 
 !compañeros, !contratar <nombre>, !grupo 
-
-
-
 
 🗺️ EXPEDICIONES 
 !tablon, !expedicion <numero>, !desafiar, !interactuar, !exploracion, !volver, !curar 
 
-
-
-
 🛍️ COMERCIO 
 !tienda, !armeria1, !armeria2, !mercader, !establo, !comprar <item>, !vender <item>, !equipar <item>, !usar <item> 
-
-
-
 
 📚 TRIVIA 
 !trivia <facil/normal/dificil/legendario> (O puedes dejarlo vacío para aleatorio)
@@ -3706,9 +3644,6 @@ resetear"
 !a <mensaje> (Hablar con Altéru) o directos (!al, !c, !d, !an, !n, !f)` 
     ); 
   }
-
-
-
 
   else if (["!reset", "!reiniciar", "!resetexplorer", "!asignarraza", "!asignarclase"].includes(command)) {
     
