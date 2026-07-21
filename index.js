@@ -4,10 +4,6 @@ import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import express from 'express';
-const app = express();
-app.get('/', (req, res) => res.send('Bot Altéru corriendo'));
-app.listen(process.env.PORT || 3000);
 
 // ==================== IMPORTS DE MÓDULOS ====================
 import * as Config from './modules/config.js';
@@ -3345,9 +3341,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     // NOTA: A partir de aquí debes incluir la lógica para guardar el objeto en la base de datos
     // y removerlo del inventario.
 
-
-
-
     // --- NUEVA LÓGICA DE VALIDACIÓN (DOS MANOS) ---
     if (item.slot === "arma" && item.hands === 2) {
       // Si el jugador intenta equipar un arma de dos manos, desequipamos el escudo si existe
@@ -3361,42 +3354,24 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
     }
 
-
-
-
     if (equipSlot === "escudo" && equipment["arma"]?.hands === 2) {
       return message.reply("❌ **No puedes equipar un escudo** mientras tienes un arma de dos manos equipada. Desequipa tu arma primero.");
     }
     
     const equippedBefore = equipment[equipSlot] || null;
 
-
-
-
     if (item.cantidad > 1 && !isStackableItem(item)) {
       return message.reply(`Solo puedes equipar una unidad de **${item.nombre}**.`);
     }
-
-
-
 
     if (equippedBefore && Utils.normalizeKey(equippedBefore.id) === Utils.normalizeKey(item.id)) {
       return message.reply(`**${item.nombre}** ya está equipado.`);
     }
 
-
-
-
     const equipCheck = canEquipItem(profile, item, equipment);
     if (!equipCheck.ok) return message.reply(equipCheck.reason);
 
-
-
-
     equipment[equipSlot] = item;
-
-
-
 
     const idx = inventory[category].findIndex(x => Utils.normalizeKey(x.id) === Utils.normalizeKey(item.id));
     if (idx !== -1) {
@@ -3408,9 +3383,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }
     }
 
-
-
-
     if (equippedBefore) {
       const oldCategory = getInventoryCategoryForItem(equippedBefore);
       inventory[oldCategory].push(normalizeItemEntry(equippedBefore, {
@@ -3419,22 +3391,13 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       }));
     }
 
-
-
-
     const equipmentPayload = saveResolvedEquipment(profile, equipment);
     if (typeof db.setEquipment === "function") await db.setEquipment(message.author.id, equipment);
-
-
-
 
     await db.updateTravelerData(message.author.id, {
       inventory: normalizeInventory(inventory),
       ...equipmentPayload
     });
-
-
-
 
     return message.reply(`⚙️ Has equipado **${item.nombre}** en **${equipSlot}**.`);
   }
@@ -3442,32 +3405,17 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!usar <nombre del objeto>`.");
 
-
-
-
     const profile = await db.getProfile(message.author.id);
     const inventory = normalizeInventory(profile.inventory);
     const found = findInventoryItemLoose(inventory, query);
 
-
-
-
     if (!found) return message.reply("No tienes ese objeto en tu inventario.");
     const { category, item } = found;
 
-
-
-
     let replyMsg = "";
-
-
-
 
     const itemIdClean = (item?.id || "").toLowerCase();
     const itemNombreClean = (item?.nombre || "").toLowerCase();
-
-
-
 
     if (itemIdClean.includes("tabaco") || itemIdClean.includes("hierba") || itemNombreClean.includes("tabaco")) {
       return message.reply("💨 **No puedes usar esto aquí**\n\nPara consumir este ítem necesitas tener una **Pipa** equipada y usar `!fumar`.");
@@ -3485,30 +3433,18 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
         return message.reply(`Ya tienes **${item.nombre}** activo.`);
       }
 
-
-
-
       let uses = 1;
       if (item.tipo === "utilidad" || Utils.normalizeKey(item.nombre).includes("cuerda") || Utils.normalizeKey(item.nombre).includes("cantimplora")) uses = 3;
       if (Utils.normalizeKey(item.nombre).includes("pipa") || Utils.normalizeKey(item.nombre).includes("tabaco")) uses = 1;
 
-
-
-
       activeUtils.push({ ...item, usesLeft: uses });
       await db.updateTravelerData(message.author.id, { activeUtilities: activeUtils });
-
-
-
 
       const ef = formatEffect(item.efecto);
       replyMsg = `✨ Has usado **${item.nombre}**. Obtienes un bono activo: ${ef} (Duración: ${uses} expediciones).`;
     } else {
       return message.reply(`No puedes usar **${item.nombre}** de esta forma. Intenta equiparlo si es armadura o arma.`);
     }
-
-
-
 
     const idx = inventory[category].findIndex(x => Utils.normalizeKey(x.id) === Utils.normalizeKey(item.id));
     if (idx !== -1) {
@@ -3520,32 +3456,20 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
       await db.updateTravelerData(message.author.id, { inventory });
     }
 
-
-
-
     return message.reply(replyMsg);
   }
   else if (command === "!fumar") {
     const userId = message.author.id;
     const profile = await db.getProfile(userId);
 
-
-
-
     const equipmentRaw = await db.getEquipment?.(userId).catch(() => null);
     const equipment = getResolvedEquipment(profile, equipmentRaw);
     const accesorioEquipado = equipment?.accesorio;
-
-
-
 
     const tienePipa = accesorioEquipado && (
       (accesorioEquipado.id || "").toLowerCase().includes("pipa") || 
       (accesorioEquipado.nombre || "").toLowerCase().includes("pipa")
     );
-
-
-
 
     if (!tienePipa) {
       return message.reply("💨 **No puedes fumar**\n\nNecesitas tener una **Pipa** equipada en tu ranura de accesorios para encender el tabaco. No basta con llevarla en el inventario.");
@@ -3554,15 +3478,9 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     const inventory = normalizeInventory(profile.inventory);
     const foundTabaco = findInventoryItemLoose(inventory, "tabaco") || findInventoryItemLoose(inventory, "hierba");
 
-
-
-
     if (!foundTabaco || foundTabaco.item.cantidad <= 0) {
       return message.reply("🍂 **Sin provisiones**\n\nNo te queda **Hierba de tabaco** en tu inventario para llenar la pipa.");
     }
-
-
-
 
     const { category, item: itemTabaco } = foundTabaco;
     
@@ -3576,9 +3494,6 @@ Puntos: ${profile.points || 0} | ❤️ Salud: ${profile.salud !== undefined ? p
     }
     
     await db.updateTravelerData(userId, { inventory: normalizeInventory(inventory) });
-
-
-
 
     const lineasBonus = [];
     const camposBonus = ['negotiationBonus', 'explorationBonus', 'willpowerBonus', 'negotiation', 'exploration', 'willpower'];
@@ -3747,10 +3662,8 @@ resetear"
       nombre: `${item.nombre} [${item.raza || "Todas las razas"}]`
     }));
 
-
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-
 
     const embed = await renderCatalogEmbed("armeria1", items, "ARMERÍA 1", profile, cycleId);
     return message.reply({ embeds: [embed] });
@@ -3766,79 +3679,51 @@ resetear"
       nombre: `${item.nombre} [${item.raza || "Todas las razas"}]`
     }));
 
-
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || 0;
-
 
     const embed = await renderCatalogEmbed("armeria2", items, "ARMERÍA 2", profile, cycleId);
     return message.reply({ embeds: [embed] });
 }
 
-
   else if (command === "!armeria") {
     return message.reply("La armería está dividida en dos partes: usa `!armeria1` o `!armeria2`.");
   }
-
 
     else if (command === "!mercader") {
     const state = await db.getEventState("merchant").catch(() => null);
     if (!state?.active) return message.reply("El mercader ambulante no está en el campamento en este momento.");
 
-
-
-
     const catalog = mercaderCache || await loadCatalog("mercader.json");
     const catalogItems = getCatalogItems(catalog);
     if (!catalogItems.length) return message.reply("El mercader no tiene mercancía disponible.");
-
-
-
 
     const stock = Array.isArray(state.stock) && state.stock.length ? state.stock : catalogItems;
     const profile = await db.getProfile(message.author.id);
     const cycleId = state?.cycleId || state?.nextAt || state?.lastAt || state?.openedAt || 0;
     const items = stock.slice(0, 10);
 
-
-
-
     // Creamos un encabezado limpio y estilizado para el Mercader
     const mercaderHeader = `👤 **Nombre:** ${state.name || "Desconocido"}\n📍 **Destino próximo:** ${state.destination || "Desconocido"}\n⏳ **Tiempo restante:** ${Utils.formatRemainingTime((state.closesAt || Date.now()) - Date.now())}\n\n───────────────────\n\n`;
-
-
-
 
     // Pasamos 'mercaderHeader' como el 6to argumento de la función
     const embed = await renderCatalogEmbed("mercader", items, "MERCADER AMBULANTE", profile, cycleId, mercaderHeader);
     
     return message.reply({ embeds: [embed] });
-  }
-
-
-
+    }
 
   else if (command === "!comprar") {
     const query = args.slice(1).join(" ").trim();
     if (!query) return message.reply("Usa `!comprar <nombre o id>`.");
 
-
-
-
     const profile = await db.getProfile(message.author.id);
     const inventory = normalizeInventory(profile.inventory);
     const found = await findCatalogItemByQuery(query);
-
-
-
 
     if (!found) return message.reply("No encuentro ese objeto en la tienda, la armería, el mercader o el establo.");
      
     const catalogName = found.catalogName || "tienda";
     let actualCatalogName = catalogName;
-
-
-
 
         let catalogItems = [];
     if (catalogName === "mercader") {
@@ -3849,10 +3734,7 @@ resetear"
       catalogItems = JSON.parse(await readFile(path.join(__dirname, "armeria.json"), "utf-8"));
     } else if (catalogName === "establo") {
       catalogItems = JSON.parse(await readFile(path.join(__dirname, "establo.json"), "utf-8")); 
-    }
-
-
-
+                                                         }
 
     if (catalogName === "armeria") {
       const state1 = await db.getEventState("armeria1").catch(() => null);
@@ -3860,47 +3742,26 @@ resetear"
       const is1 = state1?.selection?.some(i => Utils.normalizeKey(i.id) === Utils.normalizeKey(found.id));
       const is2 = state2?.selection?.some(i => Utils.normalizeKey(i.id) === Utils.normalizeKey(found.id));
 
-
-
-
       if (is1) actualCatalogName = "armeria1";
       else if (is2) actualCatalogName = "armeria2";
       else actualCatalogName = "armeria1";
     }
 
-
-
-
     const cycleState = await db.getEventState(actualCatalogName === "mercader" ? "merchant" : actualCatalogName).catch(() => null);
     const cycleId = cycleState?.cycleId || cycleState?.nextAt || cycleState?.lastAt || cycleState?.openedAt || 0;
 
-
-
-
     const remaining = getItemRemainingSlots(profile, actualCatalogName, found, cycleId);
     if (remaining <= 0) return message.reply(`⚠️ No te quedan slots disponibles para **${found.nombre}** en este ciclo.`);
-
-
-
 
     const price = await db.getDynamicPrice(actualCatalogName, found);
     const category = getInventoryCategoryForItem(found);
     const stackable = isStackableItem(found);
     const existing = inventory[category].find(item => Utils.normalizeKey(item.id) === Utils.normalizeKey(found.id));
 
-
-
-
     if (!stackable && existing) return message.reply(`Ya posees **${found.nombre}**.`);
     if ((profile.points || 0) < price) return message.reply(`Necesitas **${price}** puntos para comprar **${found.nombre}**.`);
 
-
-
-
     await db.spendPoints(message.author.id, price);
-
-
-
 
     if (stackable && existing) {
       existing.cantidad = Math.max(1, Number(existing.cantidad || 1)) + 1;
@@ -3908,14 +3769,8 @@ resetear"
       inventory[category].push(normalizeItemEntry(found, { precioCompra: price, catalogo: actualCatalogName }));
     }
 
-
-
-
     const catalogUsage = consumeCatalogSlot(profile, actualCatalogName, found, cycleId);
     await db.updateTravelerData(message.author.id, { inventory: normalizeInventory(inventory), catalogUsage });
-
-
-
 
     return message.reply(`🛒 Has comprado **${found.nombre}** por **${price}** puntos.`);
   }  
@@ -3986,49 +3841,27 @@ resetear"
   else if (command === "!contratar") {
     if (!args[1]) return message.reply("Usa !contratar <nombre>");
 
-
-
-
     const id = Utils.normalizeKey(args[1]);
     if (!companions[id]) return message.reply("Ese compañero no existe.");
-
-
-
 
     const companion = companions[id];
     const profile = await db.getProfile(message.author.id);
     const owned = getOwnedCompanions(profile);
 
-
-
-
     if (owned.includes(id)) return message.reply(`Ya has contratado a ${companion.nombre}.`);
-
-
-
 
     const xpActual = profile.xp || 0;
     const nivelJugador = calculateLevelFromXP(xpActual);
 
-
     if (companion.nivel && nivelJugador < companion.nivel) return message.reply(`Necesitas nivel ${companion.nivel} para contratar a ${companion.nombre}.`);
     if ((profile.points || 0) < companion.coste) return message.reply(`Necesitas ${companion.coste} puntos.`);
-
-
-
 
     await db.spendPoints(message.author.id, companion.coste);
     await db.hireCompanion(message.author.id, id);
     await db.addAffinity(message.author.id, id, 2);
 
-
-
-
     const scene = { titulo: `Contratación de ${companion.nombre}`, tipo: "evento_especial", categoria: "social", descripcion: `El viajero contrata a ${companion.nombre}.`, userId: message.author.id };
     const reaction = await companionReaction(id, scene, "contratacion");
-
-
-
 
     return message.reply(`🤝 Has contratado a ${companion.nombre}.\n\n${reaction || ""}`.trim());
   }
@@ -4049,24 +3882,12 @@ resetear"
     const expedition = expeditions.get(message.author.id);
     const canHealAtStart = expedition?.pendingStartHeal && expedition?.currentEncounter === null && expedition?.progress === 0;
 
-
-
-
     if (expedition && !canHealAtStart) return message.reply("⚠️ No puedes curarte en medio de una expedición. Termina o usa `!volver` primero.");
-
-
-
 
     const profile = await db.getProfile(message.author.id);
     const saludActual = profile.salud !== undefined ? profile.salud : 100;
 
-
-
-
     if (saludActual >= 100) return message.reply("🌿 Faelon te mira con calma desde su tienda: estás en plena forma. Regresa si necesitas mi ayuda.");
-
-
-
 
     await db.updateTravelerData(message.author.id, { salud: 100 });
     if (expedition?.pendingStartHeal) expedition.pendingStartHeal = false;
@@ -4088,15 +3909,9 @@ resetear"
   else if (command === "!trivia") {
     const state = await db.getQuotaState(message.author.id, "trivia", TRIVIA_WINDOW_MS);
 
-
-
-
     if (state.attempts >= TRIVIA_LIMIT) {
       return message.reply(`⚠️ Agotaste tus intentos. Vuelve en ${Utils.formatRemainingTime(state.resetAt - Date.now())}.`);
     }
-
-
-
 
     let difficulty;
     if (args[1]) {
@@ -4106,14 +3921,8 @@ resetear"
       difficulty = diffs[Math.floor(Math.random() * diffs.length)];
     }
 
-
-
-
     const allowed = ["facil", "normal", "dificil", "legendario"];
     if (!allowed.includes(difficulty)) return message.reply("⚠️ Dificultad inválida. Usa: `!trivia facil`, `!trivia normal`, `!trivia dificil` o `!trivia legendario`.");
-
-
-
 
     const profile = await db.getProfile(message.author.id);
     const questions = await loadQuestions();
@@ -4121,36 +3930,21 @@ resetear"
     const history = profile.triviaHistory || [];
     let filtered = questions.filter(q => Utils.normalizeDifficulty(q.dificultad || q.difficulty || "normal") === difficulty && !history.includes(q.pregunta || q.question));
 
-
-
-
     if (!filtered.length) {
       filtered = questions.filter(q => Utils.normalizeDifficulty(q.dificultad || q.difficulty || "normal") === difficulty);
       history.length = 0;
     }
 
-
-
-
     if (!filtered.length) return message.reply(`No hay preguntas configuradas para la dificultad: **${difficulty}**.`);
-
-
-
 
     const question = filtered[Math.floor(Math.random() * filtered.length)];
     history.push(question.pregunta || question.question);
     if (history.length > 20) history.shift();
     await db.updateTravelerData(message.author.id, { triviaHistory: history });
 
-
-
-
     const correctAnswer = question.respuestaCorrecta || question.respuesta || question.answer || "";
     const options = difficulty === "facil" ? [] : (question.opciones || question.options || []);
     const showOptions = difficulty !== "facil" && Array.isArray(options) && options.length > 0;
-
-
-
 
     const timeout = setTimeout(async () => {
       triviaGames.delete(message.author.id);
@@ -4158,55 +3952,31 @@ resetear"
       await message.channel.send(`⌛ Tiempo agotado para <@${message.author.id}>.\n\nLa respuesta correcta era: ||${correctAnswer}||`);
     }, 15000);
 
-
-
-
     triviaGames.set(message.author.id, { question, difficulty, options: showOptions ? options : [], timeout });
     await db.setQuotaState(message.author.id, "trivia", state.attempts + 1, state.resetAt);
-
-
-
 
     let promptText = `📚 **Pregunta de Trivia (${difficulty.toUpperCase()})**\n**Intento ${state.attempts + 1}/${TRIVIA_LIMIT}**\n\n${question.pregunta || question.question}`;
     if (showOptions) options.forEach((op, index) => promptText += `\n${index + 1}️⃣ ${op}`);
 
-
-
-
     promptText += `\n\n⏳ Tienes 15 segundos`;
     return message.reply(promptText);
   }
-
-
-
 
   // ========================================
   // ROLEPLAY
   // ========================================
   const companionCommands = { "!al": "alteru", "!c": "cirdil", "!d": "duinor", "!an": "andaer", "!n": "nieriel", "!f": "faelon", "!m": "montaraces" };
 
-
-
-
   if (companionCommands[command]) {
     const companionId = companionCommands[command];
     const mensaje = content.slice(args[0].length).trim();
     if (!mensaje) return message.reply("Escribe algo después del comando.");
 
-
-
-
     const personaje = getPersonaje(companionId) || companions[companionId];
     if (!personaje) return message.reply("Ese compañero no está disponible.");
 
-
-
-
     const profile = await db.getProfile(message.author.id);
     const affinity = (profile.affinity || {})[companionId] || 0;
-
-
-
 
     try {
       const reply = await askCompanionAI({
@@ -4227,9 +3997,6 @@ resetear"
     const prompt = content.slice(args[0].length).trim();
     if (!prompt) return message.reply('Escribe algo después de !a para hablar con Altéru.');
 
-
-
-
     try {
       if (!loreCache) loreCache = await loadAlteruLore();
       await message.channel.sendTyping();
@@ -4241,30 +4008,18 @@ resetear"
     }
   }
 
-
-
-
         // ==========================================
   // COMANDO: DAR PUNTOS
   // ==========================================
   else if (command === "!darpuntos") {
     if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos para usar este comando.");
 
-
-
-
     const mention = message.mentions.users.first();
     const targetId = mention ? mention.id : args[1];
     const cantidad = parseInt(args[2]); 
 
-
-
-
     if (!targetId || isNaN(cantidad)) return message.reply("Uso correcto: `!darpuntos <@Usuario o ID> <Cantidad>`");
     if (targetId.length < 15) return message.reply("⚠️ Usa una ID válida de Discord o la mención con `@`. ¡No escribas el nombre del personaje!");
-
-
-
 
     try {
       const targetProfile = await db.getProfile(targetId);
@@ -4285,7 +4040,6 @@ else if (command === "!resetcatalogo") {
     // Solo tú (el admin) puedes usar esto
     if (message.author.id !== ADMIN_USER_ID) return message.reply("❌ No tienes permisos para usar este comando.");
 
-
     try {
       // 1. Forzamos la lectura fresca del archivo local armeria.json
       const armeriaRaw = await readFile(path.join(__dirname, "armeria.json"), "utf8");
@@ -4294,11 +4048,9 @@ else if (command === "!resetcatalogo") {
       const armeriaItems = Array.isArray(armeria?.items) ? armeria.items : Array.isArray(armeria?.equipo) ? armeria.equipo : Array.isArray(armeria) ? armeria : [];
       const armeriaShuffled = [...armeriaItems].sort(() => Math.random() - 0.5);
 
-
       if (armeriaItems.length === 0) {
         return message.reply("⚠️ El archivo `armeria.json` está vacío o no tiene el formato correcto.");
       }
-
 
       // 2. Sobrescribimos la base de datos forzando el nuevo stock
       await db.setEventState("armeria1", {
@@ -4308,14 +4060,12 @@ else if (command === "!resetcatalogo") {
         cycleId: Date.now()
       });
 
-
       await db.setEventState("armeria2", {
         selection: armeriaShuffled.slice(15, 30),
         lastAt: Date.now(),
         nextAt: Date.now() + (12 * 60 * 60 * 1000),
         cycleId: Date.now()
       });
-
 
       return message.reply("✅ **Catálogo de Armería reseteado.** Los datos se han recargado desde el archivo a la base de datos con éxito. Revisa la `!armeria1`.");
       
@@ -4325,28 +4075,18 @@ else if (command === "!resetcatalogo") {
     }
   }
 
-
   // ==========================================
   // COMANDO: DAR EXPERIENCIA
   // ==========================================
   else if (command === "!darexp") {
     if (message.author.id !== ADMIN_USER_ID) return message.reply("No tienes permisos.");
 
-
-
-
     const mention = message.mentions.users.first();
     const targetId = mention ? mention.id : args[1];
     const cantidad = parseInt(args[2]); 
 
-
-
-
     if (!targetId || isNaN(cantidad)) return message.reply("Uso correcto: `!darexp <@Usuario o ID> <Cantidad>`");
     if (targetId.length < 15) return message.reply("⚠️ Usa una ID válida de Discord o la mención con `@`.");
-
-
-
 
     try {
       const targetProfile = await db.getProfile(targetId);
@@ -4362,7 +4102,11 @@ else if (command === "!resetcatalogo") {
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
-
+import express from 'express';
+const app = express();
+app.get('/', (req, res) => res.send('Bot Altéru corriendo'));
+app.listen(process.env.PORT || 3000);
+  
 });
 
 client.login(DISCORD_TOKEN)
