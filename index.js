@@ -4,6 +4,7 @@ import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import express from 'express';
 
 // ==================== IMPORTS DE MÓDULOS ====================
 import * as Config from './modules/config.js';
@@ -4102,10 +4103,18 @@ else if (command === "!resetcatalogo") {
       return message.reply("Hubo un error al intentar otorgar la experiencia.");
     }
   }
-import express from 'express';
+  
+// ==================== SERVIDOR WEB PARA RENDER ====================
 const app = express();
-app.get('/', (req, res) => res.send('Bot Altéru corriendo'));
-app.listen(process.env.PORT || 3000);
+
+app.get('/', (req, res) => {
+  res.send('✅ Bot Altéru Camp está corriendo correctamente.');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🌐 Servidor web escuchando en puerto ${PORT}`);
+});
   
 });
 
