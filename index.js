@@ -2345,13 +2345,9 @@ function getPowerComparisonText(delta) {
   if (delta >= -19) return "Desventaja clara";
   return "Desventaja brutal";
 }
-
-
 // ==========================================
 //        INTEGRACIÓN GROQ IA (COMPAÑEROS)
 // ==========================================
-
-
 async function obtenerReaccionIA(companero, contexto, resultado) {
   try {
     const nombreEncuentro = contexto.encounter?.titulo || contexto.encounter || "un desafío en el camino";
@@ -2526,8 +2522,6 @@ async function handleExpedicionStart(message, args) {
   const textoExpedicion = `${advertenciaSalud}\n📜 **${mission.titulo}**\n\n📍 Destino: ${mission.destino}\n\n${mission.descripcion}\n\nUsa \`!desafiar\` para comenzar el viaje.${reactionAsync}`;
   return Utils.replyLong(message, textoExpedicion);
 }
-
-
 // ==========================================
 //   RESOLUCIÓN DE ENCUENTROS Y TRANSICIONES
 // ==========================================
@@ -2847,16 +2841,13 @@ async function handleExpedicionDesafiar(message) {
     return message.reply("No estás en ninguna expedición activa. Usa !tablon.");
   }
 
-
   const expedition = expeditions.get(message.author.id);
   const activeEncounter = expedition.currentEncounter;
-
 
   // Verificamos que haya un encuentro válido y que sea de tipo evento_especial
   if (!activeEncounter || activeEncounter.tipo !== "evento_especial") {
     return message.reply("No hay nada con lo que interactuar en este momento. Usa `!desafiar`.");
   }
-
 
   const profile = await db.getProfile(message.author.id);
   const equipmentRaw = await db.getEquipment?.(message.author.id).catch(() => null);
@@ -2864,10 +2855,8 @@ async function handleExpedicionDesafiar(message) {
   const adventureBonuses = getAdventureBonuses(profile, equipment);
   const owned = getOwnedCompanions(profile);
 
-
   let textoResultado = "";
   const categoria = Utils.normalizeKey(activeEncounter.categoria);
-
 
   // ==========================================
   // 1. LÓGICA DE EXPLORACIÓN
@@ -3007,16 +2996,18 @@ client.on("messageCreate", async (message) => {
       texto += `${i + 1}. **${m.titulo}**\n📍 ${m.destino} | Nivel ${m.nivel}\n🎖 ${m.puntos} pts | 📚 ${m.xp} XP | 🔢 ${numEncuentros} encuentros\n\n`;
     });
 
-    texto += "**Compañeros disponibles:**\n";
-    Object.keys(companions).slice(0, 6).forEach(id => {
+    texto += "**Compañeros disponibles para contratar:**\n\n";
+
+    Object.keys(companions).forEach(id => {
       const c = companions[id];
-      texto += `• ${c.nombre} — ${c.coste} pts\n`;
+      texto += `• ${c.nombre} — ${c.clase || "Sin clase"}\n`;
+      if (c.habilidad) texto += `   Habilidad: ${c.habilidad}\n`;
+      texto += `   Coste: ${c.coste} pts\n\n`;
     });
 
-    texto += "\nUsa `!contratar <nombre>` del compañero.";
-    texto += "\nUsa `!expedicion <numero>` para comenzar.";
+    texto += "Usa `!contratar <nombre>`\nUsa `!expedicion <numero>` para comenzar.";
     return Utils.replyLong(message, texto);
-        }
+    }
 
   // ========================================
   // CONTROL ACTIVO DE TRIVIA
