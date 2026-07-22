@@ -4114,7 +4114,11 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🌐 Servidor web escuchando en puerto ${PORT}`);
-});
+
+  // ==================== KEEP RENDER ALIVE ====================
+setInterval(() => {
+  console.log(`[KEEP-ALIVE] ${new Date().toISOString()}`);
+}, 5 * 60 * 1000); // cada 5 minutos
   
 });
 
